@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, ChevronDown } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { EditorConfig } from "@/types/editor";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { ThemeStyles } from "../../types/theme";
@@ -57,9 +57,9 @@ const CodePanel: React.FC<CodePanelProps> = ({ config, styles }) => {
           <Select
             value={tailwindVersion}
             onValueChange={(value: "3" | "4") => {
-               setTailwindVersion(value)
-               setColorFormat(value === "4" ? "oklch" : "hsl")
-               }}
+              setTailwindVersion(value)
+              setColorFormat(value === "4" ? "oklch" : "hsl")
+            }}
           >
             <SelectTrigger className="w-fit focus:ring-transparent focus:border-none bg-muted/50 outline-none border-none gap-1">
               <SelectValue className="focus:ring-transparent" />

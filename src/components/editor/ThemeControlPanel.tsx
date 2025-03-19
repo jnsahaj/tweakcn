@@ -7,14 +7,26 @@ import { useLocation } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import ThemePresetSelect from "./ThemePresetSelect";
 import { presets } from "../../utils/themePresets";
-import { fonts, getAppliedThemeFont } from "../../utils/theme-fonts";
+import {
+  fonts,
+  getAppliedThemeFont,
+  monoFonts,
+  sansSerifFontNames,
+  sansSerifFonts,
+  serifFonts,
+} from "../../utils/theme-fonts";
 import { useEditorStore } from "../../store/editorStore";
 import { Label } from "../ui/label";
 import { SliderWithInput } from "./slider-with-input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import ThemeFontSelect from "./theme-font-select";
-import { DEFAULT_FONT_MONO, DEFAULT_FONT_SANS, DEFAULT_FONT_SERIF } from "../../config/theme";
+import {
+  DEFAULT_FONT_MONO,
+  DEFAULT_FONT_SANS,
+  DEFAULT_FONT_SERIF,
+} from "../../config/theme";
 import { Separator } from "../ui/separator";
+import { AlertCircle } from "lucide-react";
 
 const ThemeControlPanel = ({
   styles,
@@ -47,8 +59,17 @@ const ThemeControlPanel = ({
       value: (typeof currentStyles)[K],
     ) => {
       // apply common styles to both light and dark modes
-      if (key === "font-sans" || key === "font-serif" || key === "font-mono" || key === "radius") {
-        onChange({ ...styles, light: { ...styles.light, [key]: value }, dark: { ...styles.dark, [key]: value } });
+      if (
+        key === "font-sans" ||
+        key === "font-serif" ||
+        key === "font-mono" ||
+        key === "radius"
+      ) {
+        onChange({
+          ...styles,
+          light: { ...styles.light, [key]: value },
+          dark: { ...styles.dark, [key]: value },
+        });
         return;
       }
 
@@ -298,13 +319,31 @@ const ThemeControlPanel = ({
           </TabsContent>
 
           <TabsContent value="typography" className="flex flex-col gap-4">
+            <div className="p-3 bg-muted/50 rounded-md border mb-2 flex items-start gap-2.5">
+              <AlertCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+              <div className="text-sm text-muted-foreground">
+                <p>
+                  To use custom fonts, embed them in your project. <br />
+                  See{" "}
+                  <a
+                    href="https://tailwindcss.com/docs/font-family"
+                    target="_blank"
+                    className="underline underline-offset-2 hover:text-muted-foreground/90"
+                  >
+                    Tailwind docs
+                  </a>{" "}
+                  for details.
+                </p>
+              </div>
+            </div>
+
             <ControlSection title="Font Family" expanded>
               <div className="mb-4">
                 <Label htmlFor="font-sans" className="text-xs mb-1.5 block">
                   Sans-Serif Font
                 </Label>
                 <ThemeFontSelect
-                  fonts={fonts}
+                  fonts={{ ...sansSerifFonts, ...serifFonts, ...monoFonts }}
                   defaultValue={DEFAULT_FONT_SANS}
                   currentFont={getAppliedThemeFont(themeState, "font-sans")}
                   onFontChange={(value) => updateStyle("font-sans", value)}
@@ -318,7 +357,7 @@ const ThemeControlPanel = ({
                   Serif Font
                 </Label>
                 <ThemeFontSelect
-                  fonts={fonts}
+                  fonts={{ ...serifFonts, ...sansSerifFonts, ...monoFonts }}
                   defaultValue={DEFAULT_FONT_SERIF}
                   currentFont={getAppliedThemeFont(themeState, "font-serif")}
                   onFontChange={(value) => updateStyle("font-serif", value)}
@@ -331,7 +370,7 @@ const ThemeControlPanel = ({
                   Monospace Font
                 </Label>
                 <ThemeFontSelect
-                  fonts={fonts}
+                  fonts={{ ...monoFonts, ...sansSerifFonts, ...serifFonts }}
                   defaultValue={DEFAULT_FONT_MONO}
                   currentFont={getAppliedThemeFont(themeState, "font-mono")}
                   onFontChange={(value) => updateStyle("font-mono", value)}

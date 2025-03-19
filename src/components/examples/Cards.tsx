@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { DemoCookieSettings } from "./cards/cookie-settings";
 import { DemoCreateAccount } from "./cards/create-account";
@@ -10,6 +11,7 @@ import { DemoShareDocument } from "./cards/share-document";
 import { DemoTeamMembers } from "./cards/team-members";
 import { DemoStats } from "./cards/stats";
 import { DemoChat } from "./cards/chat";
+import { DemoFontShowcase } from "./cards/font-showcase";
 
 export function DemoContainer({
   className,
@@ -43,6 +45,9 @@ function DemoCards() {
           </DemoContainer>
           <DemoContainer>
             <DemoTeamMembers />
+          </DemoContainer>
+          <DemoContainer>
+            <DemoFontShowcase />
           </DemoContainer>
         </div>
 

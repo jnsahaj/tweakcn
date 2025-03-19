@@ -61,7 +61,7 @@ export const presets: Record<string, ThemeStyles> = {
       "sidebar-border": "#e5e7eb",
       "sidebar-ring": "#3b82f6",
       "font-sans": "Inter, sans-serif",
-      "font-serif": '"Source Serif Pro", serif',
+      "font-serif": '"Source Serif 4", serif',
       "font-mono": '"JetBrains Mono", monospace',
     },
     dark: {
@@ -365,7 +365,6 @@ export const presets: Record<string, ThemeStyles> = {
       "sidebar-border": "#000000",
       "sidebar-ring": "#ff3333",
       "font-sans": '"DM Sans", sans-serif',
-      "font-serif": "Georgia, serif",
       "font-mono": '"Space Mono", monospace',
     },
     dark: {
@@ -592,7 +591,7 @@ export const presets: Record<string, ThemeStyles> = {
       "sidebar-border": "#e9d8fd",
       "sidebar-ring": "#a78bfa",
       "font-sans": '"Open Sans", sans-serif',
-      "font-serif": '"Source Serif Pro", serif',
+      "font-serif": '"Source Serif 4", serif',
       "font-mono": '"IBM Plex Mono", monospace',
     },
     dark: {
@@ -1046,7 +1045,7 @@ export const presets: Record<string, ThemeStyles> = {
       "sidebar-border": "#d4d4d4",
       "sidebar-ring": "#34a85a",
       "font-sans": '"Plus Jakarta Sans", sans-serif',
-      "font-serif": '"Source Serif Pro", serif',
+      "font-serif": '"Source Serif 4", serif',
       "font-mono": '"JetBrains Mono", monospace',
     },
     dark: {
