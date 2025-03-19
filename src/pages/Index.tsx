@@ -1,21 +1,85 @@
-import { getEditorConfig } from "@/config/editors";
+import GitHubIcon from "@/assets/github.svg?react";
+import logo from "@/assets/logo.png";
 import Editor from "@/components/editor/Editor";
 import { Button } from "@/components/ui/button";
-import { Link, useParams } from "react-router-dom";
-import EditorCombobox from "../components/editor/EditorCombobox";
-import { Heart, Moon, Sun } from "lucide-react";
-import GitHubIcon from "@/assets/github.svg?react";
-import { cn } from "../lib/utils";
-import { useTheme } from "../components/theme-provider";
+import { useToast } from "@/components/ui/use-toast";
+import { getEditorConfig } from "@/config/editors";
+import { deserializeEditorState, serializeEditorState } from "@/utils/shareUtils";
+import { Heart, Moon, Share, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
-import logo from "@/assets/logo.png";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import EditorCombobox from "../components/editor/EditorCombobox";
+import { useTheme } from "../components/theme-provider";
+import { cn } from "../lib/utils";
 
 const Index = () => {
   const { editorType = "button" } = useParams();
   const editorConfig = getEditorConfig(editorType);
   const { theme, toggleTheme } = useTheme();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [stargazersCount, setStargazersCount] = useState(0);
+
+  const generateShareLink = () => {
+    const serializedState = serializeEditorState();
+    if (!serializedState) {
+      toast({
+        title: "Error",
+        description: "Could not generate a share link. Try again later.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    //Do you also want to update the URL with serialized state without navigating?
+    //setSearchParams({ theme: serializedState });
+
+    // Copy to clipboard
+    const shareUrl = `${window.location.origin}${window.location.pathname}?theme=${serializedState}`;
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        toast({
+          title: "Link copied!",
+          description: "Share link has been copied to clipboard.",
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "Copy failed",
+          description: "Could not copy the link to clipboard.",
+          variant: "destructive",
+        });
+      });
+  };
+
+  useEffect(() => {
+    // Check for state parameter in URL
+    const stateParam = searchParams.get('theme');
+    if (stateParam) {
+      const success = deserializeEditorState(stateParam);
+      if (success) {
+        toast({
+          title: "State loaded",
+          description: "Shared configuration has been applied.",
+        });
+
+        // Clear the state parameter from URL to avoid reloading on refresh
+        // but keep the current path
+        navigate(window.location.pathname, { replace: true });
+
+        // Force a reload to apply the new state from localStorage
+        window.location.reload();
+      } else {
+        toast({
+          title: "Error",
+          description: "Could not load the shared configuration.",
+          variant: "destructive",
+        });
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const owner = "jnsahaj";
@@ -50,6 +114,9 @@ const Index = () => {
             </Button>
           </div>
           <div className="flex items-center gap-1">
+            <Button variant="outline" size="icon" onClick={generateShareLink}>
+              <Share className="h-5 w-5" />
+            </Button>
             <Link
               to="https://github.com/sponsors/jnsahaj"
               target="_blank"
