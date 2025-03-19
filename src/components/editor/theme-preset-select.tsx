@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { ThemePreset } from "../../types/theme";
 import { useEditorStore } from "../../store/editorStore";
-import { getPresetThemeStyles } from "../../utils/themePresets";
+import { getPresetThemeStyles } from "../../utils/theme-presets";
 import { Button } from "../ui/button";
 import { Shuffle } from "lucide-react";
 

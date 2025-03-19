@@ -5,7 +5,7 @@ import { ButtonVariant, ButtonSize } from "@/types/button";
 import { isEqual } from "lodash";
 import { defaultThemeState } from "@/config/theme";
 import defaultButtonStyles from "@/config/button";
-import { getPresetThemeStyles } from "../utils/themePresets";
+import { getPresetThemeStyles } from "../utils/theme-presets";
 
 // Default button state
 const defaultButtonState: ButtonEditorState = {

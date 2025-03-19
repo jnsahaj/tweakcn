@@ -1,10 +1,6 @@
-
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Code, Type } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,16 +8,7 @@ import { cn } from "@/lib/utils";
 export function DemoFontShowcase() {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Type className="h-5 w-5" />
-          Typography Showcase
-        </CardTitle>
-        <CardDescription>
-          Examples of different font families available in the theme
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
+      <CardContent className="grid gap-4 pt-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Type className="h-4 w-4" />
@@ -42,14 +29,14 @@ export function DemoFontShowcase() {
             <span>Monospace Font</span>
           </div>
           <div className={cn("rounded-md border bg-muted p-4 font-mono")}>
-            <p className="text-xl font-semibold">const hello = "world";</p>
-            <p className="text-muted-foreground">
-              function greet() {
+            <p className="font-semibold">const hello = "world";</p>
+            <pre className="text-muted-foreground">
+              {`function greet() {`}
               <br />
-              &nbsp;&nbsp;return "Hello, developer!";
+              {`  console.log("hello world");`}
               <br />
-              }
-            </p>
+              {`}`}
+            </pre>
           </div>
         </div>
       </CardContent>

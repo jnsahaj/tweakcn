@@ -21,8 +21,8 @@ interface CodePanelProps {
 
 const CodePanel: React.FC<CodePanelProps> = ({ config, styles }) => {
   const { type: editorType } = config;
-  const [colorFormat, setColorFormat] = useState<ColorFormat>("hsl");
-  const [tailwindVersion, setTailwindVersion] = useState<"3" | "4">("3");
+  const [colorFormat, setColorFormat] = useState<ColorFormat>("oklch");
+  const [tailwindVersion, setTailwindVersion] = useState<"3" | "4">("4");
   const code = config.codeGenerator.generateComponentCode(styles, colorFormat, tailwindVersion);
   const [copied, setCopied] = useState(false);
 

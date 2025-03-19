@@ -38,7 +38,7 @@ function DemoCards() {
             <DemoCreateAccount />
           </DemoContainer>
           <DemoContainer>
-            <DemoPaymentMethod />
+            <DemoGithub />
           </DemoContainer>
           <DemoContainer>
             <DemoCookieSettings />
@@ -49,6 +49,9 @@ function DemoCards() {
           <DemoContainer>
             <DemoFontShowcase />
           </DemoContainer>
+          <DemoContainer>
+            <DemoDatePicker />
+          </DemoContainer>
         </div>
 
         {/* Third column */}
@@ -57,10 +60,7 @@ function DemoCards() {
             <DemoReportAnIssue />
           </DemoContainer>
           <DemoContainer>
-            <DemoGithub />
-          </DemoContainer>
-          <DemoContainer>
-            <DemoDatePicker />
+            <DemoPaymentMethod />
           </DemoContainer>
           <DemoContainer>
             <DemoShareDocument />

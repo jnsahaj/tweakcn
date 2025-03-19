@@ -5,13 +5,11 @@ import ColorPicker from "./ColorPicker";
 import ResetButton from "./ResetButton";
 import { useLocation } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
-import ThemePresetSelect from "./ThemePresetSelect";
-import { presets } from "../../utils/themePresets";
+import ThemePresetSelect from "./theme-preset-select";
+import { presets } from "../../utils/theme-presets";
 import {
-  fonts,
   getAppliedThemeFont,
   monoFonts,
-  sansSerifFontNames,
   sansSerifFonts,
   serifFonts,
 } from "../../utils/theme-fonts";
