@@ -12,7 +12,6 @@ const sansSerifFontNames = [
 ];
 
 const serifFontNames = [
-  "Georgia",
   "Merriweather",
   "Playfair Display",
   "Lora",
@@ -43,7 +42,6 @@ export const fonts = {
   "IBM Plex Sans": "IBM Plex Sans, sans-serif",
 
   // Serif fonts
-  Georgia: "Georgia, serif",
   Merriweather: "Merriweather, serif",
   "Playfair Display": "Playfair Display, serif",
   Lora: "Lora, serif",
