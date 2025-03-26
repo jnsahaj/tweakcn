@@ -1,16 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { ColorPickerProps } from "@/types";
-
-function debounce(fn, delay) {
-  let timeoutId;
-  return function (...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      fn.apply(this, args);
-    }, delay);
-  };
-}
+import { debounce } from "@/utils/debounce";
 
 const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +17,7 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
     debounce((value) => {
       onChange(value);
     }, 10), // 300ms debounce delay - adjust as needed
-    [onChange],
+    [onChange]
   );
 
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {

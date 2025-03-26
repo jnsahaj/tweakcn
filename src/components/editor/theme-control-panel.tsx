@@ -38,10 +38,12 @@ const ThemeControlPanel = ({
   onReset,
   hasChanges = false,
 }: ThemeEditorControlsProps) => {
+  const currentStyles = styles?.[currentMode];
+
   const { applyThemePreset, themeState } = useEditorStore();
   const [cssImportOpen, setCssImportOpen] = useState(false);
-
-  const currentStyles = styles?.[currentMode];
+  const { isPassingContrastCheck, contrastRatio, minimumRequiredRatio } =
+    useContrastChecker(currentStyles["primary"], currentStyles["background"]);
 
   const updateStyle = React.useCallback(
     <K extends keyof typeof currentStyles>(
@@ -97,9 +99,6 @@ const ThemeControlPanel = ({
   }
 
   const radius = parseFloat(currentStyles.radius.replace("rem", ""));
-
-  const { isPassingContrastCheck, contrastRatio, minimumRequiredRatio } =
-    useContrastChecker(currentStyles["primary"], currentStyles["background"]);
 
   return (
     <div className="space-y-4 h-full">
