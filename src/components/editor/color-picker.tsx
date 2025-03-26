@@ -16,7 +16,7 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
   const debouncedOnChange = useCallback(
     debounce((value) => {
       onChange(value);
-    }, 10), // 300ms debounce delay - adjust as needed
+    }, 10),
     [onChange]
   );
 

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -12,7 +12,6 @@ import CodePanel from "./code-panel";
 import { PanelRightClose, PanelRightOpen, Sliders } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 import { useToast } from "@/components/ui/use-toast";
-import { convertToHSL } from "../../utils/colorConverter";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,

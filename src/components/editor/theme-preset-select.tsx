@@ -45,7 +45,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   return (
     <Select value={value || ""} onValueChange={onPresetChange}>
       <div className="flex gap-1 items-center">
-        <SelectTrigger className="w-full md:w-64">
+        <SelectTrigger className="w-full md:w-64 h-10">
           <SelectValue placeholder="Select theme preset" />
         </SelectTrigger>
         <Button
