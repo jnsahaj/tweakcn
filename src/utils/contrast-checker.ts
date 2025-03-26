@@ -1,6 +1,4 @@
 import * as culori from "culori";
-// Removed the unused import
-// import { colorFormatter } from "./color-converter";
 
 /**
  * Calculates the luminance of a color according to WCAG standard

@@ -2,56 +2,76 @@ import { useState, useEffect, useCallback } from "react";
 import { getContrastRatio } from "../utils/contrast-checker";
 import { debounce } from "../utils/debounce";
 
+type ColorPair = {
+  id: string;
+  foreground: string;
+  background: string;
+  label: string;
+};
+
 /**
  * Hook that checks if the contrast between two colors meets accessibility standards
  * @param foregroundColor - Text color or foreground element color
  * @param backgroundColor - Background color
  * @returns Object with contrast information and whether it meets WCAG AA requirements
  */
-export function useContrastChecker(
-  foregroundColor: string,
-  backgroundColor: string
-) {
-  const [contrastRatio, setContrastRatio] = useState<number>(0);
-  const [isPassingContrastCheck, setIsPassingContrastCheck] =
-    useState<boolean>(false);
+export function useContrastChecker(colorPairs: ColorPair[]) {
+  const [contrastResults, setContrastResults] = useState<
+    Array<{
+      id: string;
+      contrastRatio: number;
+      isValid: boolean;
+      label: string;
+    }>
+  >([]);
+  const [failingPairs, setFailingPairs] = useState<string[]>([]);
   const minimumRequiredRatio = 4.5; // WCAG AA standard for normal text
 
   const debouncedCalculation = useCallback(
-    debounce((fg: string, bg: string) => {
-      if (!fg || !bg) {
-        setContrastRatio(0);
-        setIsPassingContrastCheck(false);
+    debounce((pairs: ColorPair[]) => {
+      if (!pairs.length) {
+        setContrastResults([]);
+        setFailingPairs([]);
         return;
       }
 
       try {
-        const ratio = parseFloat(getContrastRatio(fg, bg));
-        setContrastRatio(ratio);
-        setIsPassingContrastCheck(ratio >= minimumRequiredRatio);
+        const results = pairs.map((pair) => {
+          const ratio = parseFloat(
+            getContrastRatio(pair.foreground, pair.background)
+          );
+          return {
+            id: pair.id,
+            contrastRatio: ratio,
+            isValid: ratio >= minimumRequiredRatio,
+            label: pair.label,
+          };
+        });
+
+        setContrastResults(results);
+
+        const failing = results
+          .filter((result) => !result.isValid)
+          .map((result) => result.label);
+
+        setFailingPairs(failing);
       } catch (error) {
-        console.error("Error while checking contrast:", error);
-        setContrastRatio(0);
-        setIsPassingContrastCheck(false);
+        console.error("Error checking contrast:", error);
+        setContrastResults([]);
+        setFailingPairs([]);
       }
     }, 750),
     [minimumRequiredRatio]
   );
 
-  const calculateContrast = useCallback(
-    (fg: string, bg: string) => {
-      debouncedCalculation(fg, bg);
-    },
-    [debouncedCalculation]
-  );
-
   useEffect(() => {
-    calculateContrast(foregroundColor, backgroundColor);
-  }, [foregroundColor, backgroundColor, calculateContrast]);
+    debouncedCalculation(colorPairs);
+  }, [colorPairs, debouncedCalculation]);
 
   return {
-    contrastRatio,
-    isPassingContrastCheck,
+    contrastResults,
+    failingPairs,
+    hasFailingContrast: failingPairs.length > 0,
     minimumRequiredRatio,
   };
 }

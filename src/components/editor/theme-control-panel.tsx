@@ -28,8 +28,7 @@ import { Button } from "../ui/button";
 import CssImportDialog from "./css-import-dialog";
 import { toast } from "../ui/use-toast";
 import { parseCssInput } from "../../utils/parse-css-input";
-import { useContrastChecker } from "../../hooks/use-contrast-checker";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import ContrastChecker from "./contrast-checker";
 
 const ThemeControlPanel = ({
   styles,
@@ -42,8 +41,6 @@ const ThemeControlPanel = ({
 
   const { applyThemePreset, themeState } = useEditorStore();
   const [cssImportOpen, setCssImportOpen] = useState(false);
-  const { isPassingContrastCheck, contrastRatio, minimumRequiredRatio } =
-    useContrastChecker(currentStyles["primary"], currentStyles["background"]);
 
   const updateStyle = React.useCallback(
     <K extends keyof typeof currentStyles>(
@@ -120,18 +117,7 @@ const ThemeControlPanel = ({
         </div>
       </div>
 
-      {!isPassingContrastCheck && (
-        <div className="mb-6 ml-1">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Low contrast warning</AlertTitle>
-            <AlertDescription>
-              Contrast ratio: {contrastRatio.toFixed(2)} (minimum required:{" "}
-              {minimumRequiredRatio})
-            </AlertDescription>
-          </Alert>
-        </div>
-      )}
+      <ContrastChecker currentStyles={currentStyles} />
 
       <div className="mb-6 ml-1">
         <ThemePresetSelect
