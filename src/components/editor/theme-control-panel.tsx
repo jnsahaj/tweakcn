@@ -28,6 +28,8 @@ import { Button } from "../ui/button";
 import CssImportDialog from "./css-import-dialog";
 import { toast } from "../ui/use-toast";
 import { parseCssInput } from "../../utils/parse-css-input";
+import { useContrastChecker } from "../../hooks/use-contrast-checker";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 const ThemeControlPanel = ({
   styles,
@@ -96,6 +98,9 @@ const ThemeControlPanel = ({
 
   const radius = parseFloat(currentStyles.radius.replace("rem", ""));
 
+  const { isPassingContrastCheck, contrastRatio, minimumRequiredRatio } =
+    useContrastChecker(currentStyles["primary"], currentStyles["background"]);
+
   return (
     <div className="space-y-4 h-full">
       <div className="flex items-center justify-between">
@@ -115,6 +120,19 @@ const ThemeControlPanel = ({
           </Button>
         </div>
       </div>
+
+      {!isPassingContrastCheck && (
+        <div className="mb-6 ml-1">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Low contrast warning</AlertTitle>
+            <AlertDescription>
+              Contrast ratio: {contrastRatio.toFixed(2)} (minimum required:{" "}
+              {minimumRequiredRatio})
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
 
       <div className="mb-6 ml-1">
         <ThemePresetSelect
