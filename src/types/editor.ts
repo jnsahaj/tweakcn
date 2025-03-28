@@ -35,7 +35,9 @@ export interface ButtonEditorState extends BaseEditorState {
 export interface ThemeEditorState extends BaseEditorState {
   preset?: string;
   styles: ThemeStyles;
-  currentMode: "light" | "dark";
+  currentMode: "light" | "dark" | "system";
+
+
 }
 
 // Type for available editors
