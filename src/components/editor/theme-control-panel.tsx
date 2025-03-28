@@ -28,6 +28,7 @@ import { Button } from "../ui/button";
 import CssImportDialog from "./css-import-dialog";
 import { toast } from "../ui/use-toast";
 import { parseCssInput } from "../../utils/parse-css-input";
+import ContrastChecker from "./contrast-checker";
 
 const ThemeControlPanel = ({
   styles,
@@ -36,10 +37,10 @@ const ThemeControlPanel = ({
   onReset,
   hasChanges = false,
 }: ThemeEditorControlsProps) => {
+  const currentStyles = styles?.[currentMode];
+
   const { applyThemePreset, themeState } = useEditorStore();
   const [cssImportOpen, setCssImportOpen] = useState(false);
-
-  const currentStyles = styles?.[currentMode];
 
   const updateStyle = React.useCallback(
     <K extends keyof typeof currentStyles>(
@@ -115,6 +116,8 @@ const ThemeControlPanel = ({
           </Button>
         </div>
       </div>
+
+      <ContrastChecker currentStyles={currentStyles} />
 
       <div className="mb-6 ml-1">
         <ThemePresetSelect
