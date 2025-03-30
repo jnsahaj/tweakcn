@@ -14,42 +14,23 @@
 
 <br />
 
-**tweakcn** is a powerful Visual Theme Editor for tailwind CSS & shadcn/ui components. It comes with Beautiful theme presets to get started, while aimming to offer advanced customisation for each aspect of your UI
+**[tweakcn](https://tweakcn.com)** is a powerful Visual Theme Editor for tailwind CSS & shadcn/ui components. It comes with Beautiful theme presets to get started, while aimming to offer advanced customisation for each aspect of your UI
 
 ![tweakcn.com](public/og-image.png)
 
 
-## About
+## Motivation
 
 Websites made with shadcn/ui famously look the same. tweakcn is a tool that helps you customize shadcn/ui components visually, to make your components stand-out.
-Currently in beta, only starting with the button component. Support for all other shadcn/ui components will be added in future releases.
+Currently in beta, starting with a Tailwind CSS theme editor. Support for all other shadcn/ui components is planned.
 
 ## Current Features
-
-- Visual theme customizer with real-time preview
-- Visual advanced button customizer with real-time preview
-- Full control over:
-  - Colors (background, text, border)
-  - Dimensions (padding, border radius)
-  - Typography (font size, weight, transform)
-  - Effects (shadow, transitions)
-  - States (hover, focus, active)
-- Export Code:
-  - React component
-  - CSS (for tailwind)
+You can find the full feature list here: https://tweakcn.com/#features
 
 ## Roadmap
+You can find the updated roadmap here: https://tweakcn.com/#roadmap
 
-- [x] Add global theme editor with presets
-- [ ] Add advanced customization support for shadcn/ui components
-  - [ ] Button
-  - [ ] Input
-  - [ ] Select
-  - [ ] ...and more
-- [ ] Add support to import/export themes
-- [ ] Add collaboration features
-
-## Getting Started
+## Run Locally
 
 ### Prerequisites
 
@@ -79,6 +60,23 @@ npm run dev
 
 4. Open [http://localhost:8080](http://localhost:8080) in your browser.
 
-## Contributing
+## Contributors
+<a href="https://github.com/jnsahaj/tweakcn/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=jnsahaj/tweakcn" />
+</a>
 
+Made with [contrib.rocks](https://contrib.rocks).
+
+### Interested in Contributing?
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+# Star History
+
+<p align="center">
+  <a target="_blank" href="https://star-history.com/#jnsahaj/tweakcn&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=jnsahaj/tweakcn&type=Date&theme=dark">
+      <img alt="GitHub Star History for jnsahaj/tweakcn" src="https://api.star-history.com/svg?repos=jnsahaj/tweakcn&type=Date">
+    </picture>
+  </a>
+</p>

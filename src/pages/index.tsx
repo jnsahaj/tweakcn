@@ -9,6 +9,7 @@ import { cn } from "../lib/utils";
 import { useTheme } from "../components/theme-provider";
 import { useEffect, useState } from "react";
 import logo from "@/assets/logo.png";
+import { Helmet } from "react-helmet-async";
 
 const Index = () => {
   const { editorType = "button" } = useParams();
@@ -36,6 +37,13 @@ const Index = () => {
         "h-screen flex flex-col text-foreground bg-background transition-colors"
       )}
     >
+      <Helmet>
+        <title>{`${editorConfig.name} Editor for shadcn/ui — tweakcn`}</title>
+        <meta
+          name="description"
+          content={`Customize ${editorConfig.name} for shadcn/ui with tweakcn's interactive editor. Supports Tailwind CSS v4, Shadcn UI, and custom styles. Modify properties, preview changes, and get the code in real time.`}
+        />
+      </Helmet>
       <header className="border-b">
         <div className="px-2 md:px-4 py-4 flex items-center gap-2 justify-between">
           <div className="flex items-center gap-1">
