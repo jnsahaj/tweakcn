@@ -2,16 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/home";
-import NotFound from "./pages/not-found";
+import { Route, Routes } from "react-router";
 import { ThemeProvider } from "./components/theme-provider";
 import { PostHogProvider } from "posthog-js/react";
-import { HelmetProvider } from "react-helmet-async";
+import Home from "./pages/home";
 import { lazy, Suspense } from "react";
-import { Loading } from "@/components/loading";
+import { Loading } from "./components/loading";
+import { HelmetProvider } from "react-helmet-async";
 
-const Index = lazy(() => import("./pages/index"));
+const Index = lazy(() => import("@/pages/index"));
 
 const queryClient = new QueryClient();
 const options = {
@@ -19,30 +18,27 @@ const options = {
 };
 
 const App = () => (
-  <HelmetProvider>
-    <ThemeProvider defaultTheme="light">
-      <PostHogProvider
-        apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
-        options={options}
-      >
-        <QueryClientProvider client={queryClient}>
+  <ThemeProvider defaultTheme="light">
+    <PostHogProvider
+      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+      options={options}
+    >
+      <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
           <TooltipProvider>
             <Toaster />
             <Sonner />
             <Suspense fallback={<Loading />}>
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/editor/:editorType" element={<Index />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/editor/theme" element={<Index />} />
+              </Routes>
             </Suspense>
           </TooltipProvider>
-        </QueryClientProvider>
-      </PostHogProvider>
-    </ThemeProvider>
-  </HelmetProvider>
+        </HelmetProvider>
+      </QueryClientProvider>
+    </PostHogProvider>
+  </ThemeProvider>
 );
 
 export default App;

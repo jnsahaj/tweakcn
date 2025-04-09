@@ -9,10 +9,14 @@ lerna-debug.log*
 
 .env
 
+.react-router/
 node_modules
 dist
 dist-ssr
 *.local
+
+build/
+public/r/themes
 
 # Editor directories and files
 .vscode/*

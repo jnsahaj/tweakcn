@@ -9,6 +9,7 @@ const sansSerifFontNames = [
   "Outfit",
   "Plus Jakarta Sans",
   "DM Sans",
+  "Geist",
 ];
 
 const serifFontNames = [
@@ -27,6 +28,7 @@ const monoFontNames = [
   "IBM Plex Mono",
   "Roboto Mono",
   "Space Mono",
+  "Geist Mono",
 ];
 
 export const fonts = {
@@ -40,6 +42,7 @@ export const fonts = {
   "Plus Jakarta Sans": "Plus Jakarta Sans, sans-serif",
   "DM Sans": "DM Sans, sans-serif",
   "IBM Plex Sans": "IBM Plex Sans, sans-serif",
+  Geist: "Geist, sans-serif",
 
   // Serif fonts
   Merriweather: "Merriweather, serif",
@@ -56,21 +59,22 @@ export const fonts = {
   "IBM Plex Mono": "IBM Plex Mono, monospace",
   "Roboto Mono": "Roboto Mono, monospace",
   "Space Mono": "Space Mono, monospace",
+  "Geist Mono": "Geist Mono, monospace",
 };
 
 export const sansSerifFonts = Object.fromEntries(
-  Object.entries(fonts).filter(([key]) => sansSerifFontNames.includes(key)),
+  Object.entries(fonts).filter(([key]) => sansSerifFontNames.includes(key))
 );
 export const serifFonts = Object.fromEntries(
-  Object.entries(fonts).filter(([key]) => serifFontNames.includes(key)),
+  Object.entries(fonts).filter(([key]) => serifFontNames.includes(key))
 );
 export const monoFonts = Object.fromEntries(
-  Object.entries(fonts).filter(([key]) => monoFontNames.includes(key)),
+  Object.entries(fonts).filter(([key]) => monoFontNames.includes(key))
 );
 
 export const getAppliedThemeFont = (
   state: ThemeEditorState,
-  fontKey: keyof ThemeStyleProps,
+  fontKey: keyof ThemeStyleProps
 ): string | null => {
   const fontSans = state.styles.light[fontKey];
   // find key of font in fonts object based on value

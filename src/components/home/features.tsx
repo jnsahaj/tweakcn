@@ -36,9 +36,9 @@ const features = [
     icon: <Code className="size-5" />,
   },
   {
-    title: "Dimension Control",
+    title: "Tailwind properties",
     description:
-      "Adjust padding, border radius, and other dimensions to match your design system.",
+      "Fine-tune every aspect of your components with precise control over radius, spacing, shadows, and other Tailwind properties.",
     icon: <Layers className="size-5" />,
   },
   {

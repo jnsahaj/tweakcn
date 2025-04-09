@@ -8,7 +8,10 @@ import { colorFormatter } from "@/utils/color-converter";
 import { DemoContainer } from "@/components/examples/demo-cards";
 import { DemoGithub } from "@/components/examples/cards/github-card";
 import { DemoStats } from "@/components/examples/cards/stats";
-import DemoMail from "@/components/examples/mail";
+import { lazy, Suspense } from "react";
+import { Loading } from "../loading";
+
+const DemoMail = lazy(() => import("@/components/examples/mail"));
 
 const ColorBox = ({ color }: { color: string }) => {
   return (
@@ -107,17 +110,19 @@ export function ThemePresetSelector() {
                 "linear-gradient(to bottom, rgba(255,255,255,0), var(--background))",
             }}
           />
-          <div className="hidden md:block">
-            <DemoMail />
-          </div>
-          <div className="block md:hidden p-4 flex flex-col gap-4">
-            <DemoContainer>
-              <DemoStats />
-            </DemoContainer>
-            <DemoContainer>
-              <DemoGithub />
-            </DemoContainer>
-          </div>
+          <Suspense fallback={<Loading />}>
+            <div className="hidden md:block">
+              <DemoMail />
+            </div>
+            <div className="block md:hidden p-4 flex flex-col gap-4">
+              <DemoContainer>
+                <DemoStats />
+              </DemoContainer>
+              <DemoContainer>
+                <DemoGithub />
+              </DemoContainer>
+            </div>
+          </Suspense>
         </motion.div>
       </div>
     </section>

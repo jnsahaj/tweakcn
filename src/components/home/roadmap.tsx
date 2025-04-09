@@ -18,8 +18,9 @@ const roadmapItems = [
     icon: <Repeat className="size-5" />,
   },
   {
-    title: "More Components",
-    description: "Support for Input, Select, and other shadcn/ui components.",
+    title: "More Controls",
+    description:
+      "Support for more controls, including Spacing, Shadows, Tracking and more",
     status: "Coming Soon",
     icon: <Layers className="size-5" />,
   },
@@ -37,7 +38,7 @@ const roadmapItems = [
     icon: <Folder className="size-5" />,
   },
   {
-    title: "Way More Preset Options",
+    title: "More Presets",
     description:
       "Expand the preset library with a wider variety of stunning themes for quick customization.",
     status: "Planned",

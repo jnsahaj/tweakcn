@@ -9,7 +9,7 @@ import { FAQ } from "@/components/home/faq";
 import { CTA } from "@/components/home/cta";
 import { Footer } from "@/components/home/footer";
 
-export default function HomePage() {
+export default function Component() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

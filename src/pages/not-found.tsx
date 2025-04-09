@@ -1,13 +1,13 @@
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { useEffect } from "react";
 
-const NotFound = () => {
+export default function Component() {
   const location = useLocation();
 
   useEffect(() => {
     console.error(
       "404 Error: User attempted to access non-existent route:",
-      location.pathname,
+      location.pathname
     );
   }, [location.pathname]);
 
@@ -22,6 +22,4 @@ const NotFound = () => {
       </div>
     </div>
   );
-};
-
-export default NotFound;
+}

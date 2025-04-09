@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useEditorStore } from "@/store/editor-store";
 import { motion } from "motion/react";
 import { ArrowRight, Check, Copy, Circle, Eye, Palette } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const ColorBox = ({ color }: { color: string }) => {
   return (
@@ -17,11 +17,8 @@ export function Hero() {
   const mode = themeState.currentMode;
 
   return (
-    <section className="w-full py-20 md:py-32 lg:py-40 overflow-hidden">
-      <div className="container px-4 md:px-6 relative">
-        <div className="absolute inset-0 -z-10 h-full w-full bg-background"></div>
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(var(--primary-rgb),0.08),transparent_50%)]"></div>
-
+    <section className="w-full py-20 md:py-32 lg:py-40 relative">
+      <div className="container px-4 md:px-6 z-10 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -192,6 +189,8 @@ export function Hero() {
           </motion.div>
         </motion.div>
       </div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_90%_30%,var(--muted),transparent_35%)] blur-3xl"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_10%_70%,var(--muted),transparent_10%)] blur-3xl"></div>
     </section>
   );
 }

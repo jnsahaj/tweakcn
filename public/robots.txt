@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /editor/theme
+Allow: /sitemap.xml
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+Sitemap: https://tweakcn.com/sitemap.xml 

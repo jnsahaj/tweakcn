@@ -4,21 +4,19 @@ import { motion } from "motion/react";
 const steps = [
   {
     step: "01",
-    title: "Select Component",
-    description:
-      "Choose the shadcn/ui component you want to customize from our growing library.",
+    title: "Select Theme Preset",
+    description: "Choose the theme you want to customize from our growing library.",
   },
   {
     step: "02",
     title: "Customize Visually",
     description:
-      "Use our intuitive interface to adjust colors, dimensions, typography, and effects.",
+      "Use our intuitive interface to adjust colors, dimensions, typography, and other properties.",
   },
   {
     step: "03",
-    title: "Export Code",
-    description:
-      "Copy the generated React component or Tailwind CSS code directly into your project.",
+    title: "Copy Code",
+    description: "Copy the generated Tailwind CSS code directly into your project.",
   },
 ];
 

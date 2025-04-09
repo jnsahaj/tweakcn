@@ -1,111 +1,92 @@
-import { ThemeStyles } from "@/types/theme";
-import { ButtonStyles } from "@/types/button";
+import { ThemeEditorState, ThemeStyles } from "@/types/theme";
 import { colorFormatter } from "./color-converter";
 import { ColorFormat } from "../types";
+import { getShadowMap } from "./shadows";
 
-export const generateThemeCode = (
-  styles: ButtonStyles | ThemeStyles,
-  colorFormat: ColorFormat = "hsl",
-  tailwindVersion: "3" | "4" = "3"
+type ThemeMode = "light" | "dark";
+
+const generateColorVariables = (
+  themeStyles: ThemeStyles,
+  mode: ThemeMode,
+  formatColor: (color: string) => string
 ): string => {
-  if (!("light" in styles) || !("dark" in styles)) {
-    throw new Error("Invalid theme styles: missing light or dark mode");
-  }
+  const styles = themeStyles[mode];
+  return `
+  --background: ${formatColor(styles.background)};
+  --foreground: ${formatColor(styles.foreground)};
+  --card: ${formatColor(styles.card)};
+  --card-foreground: ${formatColor(styles["card-foreground"])};
+  --popover: ${formatColor(styles.popover)};
+  --popover-foreground: ${formatColor(styles["popover-foreground"])};
+  --primary: ${formatColor(styles.primary)};
+  --primary-foreground: ${formatColor(styles["primary-foreground"])};
+  --secondary: ${formatColor(styles.secondary)};
+  --secondary-foreground: ${formatColor(styles["secondary-foreground"])};
+  --muted: ${formatColor(styles.muted)};
+  --muted-foreground: ${formatColor(styles["muted-foreground"])};
+  --accent: ${formatColor(styles.accent)};
+  --accent-foreground: ${formatColor(styles["accent-foreground"])};
+  --destructive: ${formatColor(styles.destructive)};
+  --destructive-foreground: ${formatColor(styles["destructive-foreground"])};
+  --border: ${formatColor(styles.border)};
+  --input: ${formatColor(styles.input)};
+  --ring: ${formatColor(styles.ring)};
+  --chart-1: ${formatColor(styles["chart-1"])};
+  --chart-2: ${formatColor(styles["chart-2"])};
+  --chart-3: ${formatColor(styles["chart-3"])};
+  --chart-4: ${formatColor(styles["chart-4"])};
+  --chart-5: ${formatColor(styles["chart-5"])};
+  --sidebar: ${formatColor(styles.sidebar)};
+  --sidebar-foreground: ${formatColor(styles["sidebar-foreground"])};
+  --sidebar-primary: ${formatColor(styles["sidebar-primary"])};
+  --sidebar-primary-foreground: ${formatColor(styles["sidebar-primary-foreground"])};
+  --sidebar-accent: ${formatColor(styles["sidebar-accent"])};
+  --sidebar-accent-foreground: ${formatColor(styles["sidebar-accent-foreground"])};
+  --sidebar-border: ${formatColor(styles["sidebar-border"])};
+  --sidebar-ring: ${formatColor(styles["sidebar-ring"])};`;
+};
 
-  const formatColor = (color: string) =>
-    colorFormatter(color, colorFormat, tailwindVersion);
+const generateFontVariables = (
+  themeStyles: ThemeStyles,
+  mode: ThemeMode
+): string => {
+  const styles = themeStyles[mode];
+  return `
+  --font-sans: ${styles["font-sans"]};
+  --font-serif: ${styles["font-serif"]};
+  --font-mono: ${styles["font-mono"]};`;
+};
 
-  const themeStyles = styles as ThemeStyles;
-  if (tailwindVersion === "4") {
-    return `:root {
-  --background: ${formatColor(themeStyles.light.background)};
-  --foreground: ${formatColor(themeStyles.light.foreground)};
-  --card: ${formatColor(themeStyles.light.card)};
-  --card-foreground: ${formatColor(themeStyles.light["card-foreground"])};
-  --popover: ${formatColor(themeStyles.light.popover)};
-  --popover-foreground: ${formatColor(themeStyles.light["popover-foreground"])};
-  --primary: ${formatColor(themeStyles.light.primary)};
-  --primary-foreground: ${formatColor(themeStyles.light["primary-foreground"])};
-  --secondary: ${formatColor(themeStyles.light.secondary)};
-  --secondary-foreground: ${formatColor(themeStyles.light["secondary-foreground"])};
-  --muted: ${formatColor(themeStyles.light.muted)};
-  --muted-foreground: ${formatColor(themeStyles.light["muted-foreground"])};
-  --accent: ${formatColor(themeStyles.light.accent)};
-  --accent-foreground: ${formatColor(themeStyles.light["accent-foreground"])};
-  --destructive: ${formatColor(themeStyles.light.destructive)};
-  --destructive-foreground: ${formatColor(
-    themeStyles.light["destructive-foreground"]
-  )};
-  --border: ${formatColor(themeStyles.light.border)};
-  --input: ${formatColor(themeStyles.light.input)};
-  --ring: ${formatColor(themeStyles.light.ring)};
-  --chart-1: ${formatColor(themeStyles.light["chart-1"])};
-  --chart-2: ${formatColor(themeStyles.light["chart-2"])};
-  --chart-3: ${formatColor(themeStyles.light["chart-3"])};
-  --chart-4: ${formatColor(themeStyles.light["chart-4"])};
-  --chart-5: ${formatColor(themeStyles.light["chart-5"])};
-  --sidebar: ${formatColor(themeStyles.light.sidebar)};
-  --sidebar-foreground: ${formatColor(themeStyles.light["sidebar-foreground"])};
-  --sidebar-primary: ${formatColor(themeStyles.light["sidebar-primary"])};
-  --sidebar-primary-foreground: ${formatColor(
-    themeStyles.light["sidebar-primary-foreground"]
-  )};
-  --sidebar-accent: ${formatColor(themeStyles.light["sidebar-accent"])};
-  --sidebar-accent-foreground: ${formatColor(
-    themeStyles.light["sidebar-accent-foreground"]
-  )};
-  --sidebar-border: ${formatColor(themeStyles.light["sidebar-border"])};
-  --sidebar-ring: ${formatColor(themeStyles.light["sidebar-ring"])};
+const generateShadowVariables = (shadowMap: Record<string, string>): string => {
+  return `
+  --shadow-2xs: ${shadowMap["shadow-2xs"]};
+  --shadow-xs: ${shadowMap["shadow-xs"]};
+  --shadow-sm: ${shadowMap["shadow-sm"]};
+  --shadow: ${shadowMap["shadow"]};
+  --shadow-md: ${shadowMap["shadow-md"]};
+  --shadow-lg: ${shadowMap["shadow-lg"]};
+  --shadow-xl: ${shadowMap["shadow-xl"]};
+  --shadow-2xl: ${shadowMap["shadow-2xl"]};`;
+};
 
-  --font-sans: ${themeStyles.light["font-sans"]};
-  --font-serif: ${themeStyles.light["font-serif"]};
-  --font-mono: ${themeStyles.light["font-mono"]};
+const generateThemeVariables = (
+  themeStyles: ThemeStyles,
+  mode: ThemeMode,
+  formatColor: (color: string) => string
+): string => {
+  return `${mode === "dark" ? ".dark" : ":root"} {${generateColorVariables(
+    themeStyles,
+    mode,
+    formatColor
+  )}${generateFontVariables(themeStyles, mode)}
+  --radius: ${themeStyles[mode].radius};${generateShadowVariables(
+    getShadowMap({ styles: themeStyles, currentMode: mode })
+  )}
+}\n\n`;
+};
 
-  --radius: ${themeStyles.light.radius};
-}
-
-.dark {
-  --background: ${formatColor(themeStyles.dark.background)};
-  --foreground: ${formatColor(themeStyles.dark.foreground)};
-  --card: ${formatColor(themeStyles.dark.card)};
-  --card-foreground: ${formatColor(themeStyles.dark["card-foreground"])};
-  --popover: ${formatColor(themeStyles.dark.popover)};
-  --popover-foreground: ${formatColor(themeStyles.dark["popover-foreground"])};
-  --primary: ${formatColor(themeStyles.dark.primary)};
-  --primary-foreground: ${formatColor(themeStyles.dark["primary-foreground"])};
-  --secondary: ${formatColor(themeStyles.dark.secondary)};
-  --secondary-foreground: ${formatColor(themeStyles.dark["secondary-foreground"])};
-  --muted: ${formatColor(themeStyles.dark.muted)};
-  --muted-foreground: ${formatColor(themeStyles.dark["muted-foreground"])};
-  --accent: ${formatColor(themeStyles.dark.accent)};
-  --accent-foreground: ${formatColor(themeStyles.dark["accent-foreground"])};
-  --destructive: ${formatColor(themeStyles.dark.destructive)};
-  --destructive-foreground: ${formatColor(
-    themeStyles.dark["destructive-foreground"]
-  )};
-  --border: ${formatColor(themeStyles.dark.border)};
-  --input: ${formatColor(themeStyles.dark.input)};
-  --ring: ${formatColor(themeStyles.dark.ring)};
-  --chart-1: ${formatColor(themeStyles.dark["chart-1"])};
-  --chart-2: ${formatColor(themeStyles.dark["chart-2"])};
-  --chart-3: ${formatColor(themeStyles.dark["chart-3"])};
-  --chart-4: ${formatColor(themeStyles.dark["chart-4"])};
-  --chart-5: ${formatColor(themeStyles.dark["chart-5"])};
-  --sidebar: ${formatColor(themeStyles.dark.sidebar)};
-  --sidebar-foreground: ${formatColor(themeStyles.dark["sidebar-foreground"])};
-  --sidebar-primary: ${formatColor(themeStyles.dark["sidebar-primary"])};
-  --sidebar-primary-foreground: ${formatColor(
-    themeStyles.dark["sidebar-primary-foreground"]
-  )};
-  --sidebar-accent: ${formatColor(themeStyles.dark["sidebar-accent"])};
-  --sidebar-accent-foreground: ${formatColor(
-    themeStyles.dark["sidebar-accent-foreground"]
-  )};
-  --sidebar-border: ${formatColor(themeStyles.dark["sidebar-border"])};
-  --sidebar-ring: ${formatColor(themeStyles.dark["sidebar-ring"])};
-}
-
-@theme inline {
+const generateTailwindV4ThemeInline = (): string => {
+  return `@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -147,94 +128,41 @@ export const generateThemeCode = (
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
 }`;
+};
+
+export const generateThemeCode = (
+  themeEditorState: ThemeEditorState,
+  colorFormat: ColorFormat = "hsl",
+  tailwindVersion: "3" | "4" = "3"
+): string => {
+  if (
+    !themeEditorState ||
+    !("light" in themeEditorState.styles) ||
+    !("dark" in themeEditorState.styles)
+  ) {
+    throw new Error("Invalid theme styles: missing light or dark mode");
   }
 
-  return `:root {
-  --background: ${formatColor(themeStyles.light.background)};
-  --foreground: ${formatColor(themeStyles.light.foreground)};
-  --card: ${formatColor(themeStyles.light.card)};
-  --card-foreground: ${formatColor(themeStyles.light["card-foreground"])};
-  --popover: ${formatColor(themeStyles.light.popover)};
-  --popover-foreground: ${formatColor(themeStyles.light["popover-foreground"])};
-  --primary: ${formatColor(themeStyles.light.primary)};
-  --primary-foreground: ${formatColor(themeStyles.light["primary-foreground"])};
-  --secondary: ${formatColor(themeStyles.light.secondary)};
-  --secondary-foreground: ${formatColor(themeStyles.light["secondary-foreground"])};
-  --muted: ${formatColor(themeStyles.light.muted)};
-  --muted-foreground: ${formatColor(themeStyles.light["muted-foreground"])};
-  --accent: ${formatColor(themeStyles.light.accent)};
-  --accent-foreground: ${formatColor(themeStyles.light["accent-foreground"])};
-  --destructive: ${formatColor(themeStyles.light.destructive)};
-  --destructive-foreground: ${formatColor(
-    themeStyles.light["destructive-foreground"]
-  )};
-  --border: ${formatColor(themeStyles.light.border)};
-  --input: ${formatColor(themeStyles.light.input)};
-  --ring: ${formatColor(themeStyles.light.ring)};
-  --chart-1: ${formatColor(themeStyles.light["chart-1"])};
-  --chart-2: ${formatColor(themeStyles.light["chart-2"])};
-  --chart-3: ${formatColor(themeStyles.light["chart-3"])};
-  --chart-4: ${formatColor(themeStyles.light["chart-4"])};
-  --chart-5: ${formatColor(themeStyles.light["chart-5"])};
-  --sidebar: ${formatColor(themeStyles.light.sidebar)};
-  --sidebar-foreground: ${formatColor(themeStyles.light["sidebar-foreground"])};
-  --sidebar-primary: ${formatColor(themeStyles.light["sidebar-primary"])};
-  --sidebar-primary-foreground: ${formatColor(
-    themeStyles.light["sidebar-primary-foreground"]
-  )};
-  --sidebar-accent: ${formatColor(themeStyles.light["sidebar-accent"])};
-  --sidebar-accent-foreground: ${formatColor(
-    themeStyles.light["sidebar-accent-foreground"]
-  )};
-  --sidebar-border: ${formatColor(themeStyles.light["sidebar-border"])};
-  --sidebar-ring: ${formatColor(themeStyles.light["sidebar-ring"])};
+  const themeStyles = themeEditorState.styles as ThemeStyles;
+  const formatColor = (color: string) =>
+    colorFormatter(color, colorFormat, tailwindVersion);
 
-  --font-sans: ${themeStyles.light["font-sans"]};
-  --font-serif: ${themeStyles.light["font-serif"]};
-  --font-mono: ${themeStyles.light["font-mono"]};
+  const lightTheme = generateThemeVariables(themeStyles, "light", formatColor);
+  const darkTheme = generateThemeVariables(themeStyles, "dark", formatColor);
 
-  --radius: ${themeStyles.light.radius};
-}
+  if (tailwindVersion === "4") {
+    return `${lightTheme}${darkTheme}${generateTailwindV4ThemeInline()}`;
+  }
 
-.dark {
-  --background: ${formatColor(themeStyles.dark.background)};
-  --foreground: ${formatColor(themeStyles.dark.foreground)};
-  --card: ${formatColor(themeStyles.dark.card)};
-  --card-foreground: ${formatColor(themeStyles.dark["card-foreground"])};
-  --popover: ${formatColor(themeStyles.dark.popover)};
-  --popover-foreground: ${formatColor(themeStyles.dark["popover-foreground"])};
-  --primary: ${formatColor(themeStyles.dark.primary)};
-  --primary-foreground: ${formatColor(themeStyles.dark["primary-foreground"])};
-  --secondary: ${formatColor(themeStyles.dark.secondary)};
-  --secondary-foreground: ${formatColor(themeStyles.dark["secondary-foreground"])};
-  --muted: ${formatColor(themeStyles.dark.muted)};
-  --muted-foreground: ${formatColor(themeStyles.dark["muted-foreground"])};
-  --accent: ${formatColor(themeStyles.dark.accent)};
-  --accent-foreground: ${formatColor(themeStyles.dark["accent-foreground"])};
-  --destructive: ${formatColor(themeStyles.dark.destructive)};
-  --destructive-foreground: ${formatColor(
-    themeStyles.dark["destructive-foreground"]
-  )};
-  --border: ${formatColor(themeStyles.dark.border)};
-  --input: ${formatColor(themeStyles.dark.input)};
-  --ring: ${formatColor(themeStyles.dark.ring)};
-  --chart-1: ${formatColor(themeStyles.dark["chart-1"])};
-  --chart-2: ${formatColor(themeStyles.dark["chart-2"])};
-  --chart-3: ${formatColor(themeStyles.dark["chart-3"])};
-  --chart-4: ${formatColor(themeStyles.dark["chart-4"])};
-  --chart-5: ${formatColor(themeStyles.dark["chart-5"])};
-  --sidebar: ${formatColor(themeStyles.dark.sidebar)};
-  --sidebar-foreground: ${formatColor(themeStyles.dark["sidebar-foreground"])};
-  --sidebar-primary: ${formatColor(themeStyles.dark["sidebar-primary"])};
-  --sidebar-primary-foreground: ${formatColor(
-    themeStyles.dark["sidebar-primary-foreground"]
-  )};
-  --sidebar-accent: ${formatColor(themeStyles.dark["sidebar-accent"])};
-  --sidebar-accent-foreground: ${formatColor(
-    themeStyles.dark["sidebar-accent-foreground"]
-  )};
-  --sidebar-border: ${formatColor(themeStyles.dark["sidebar-border"])};
-  --sidebar-ring: ${formatColor(themeStyles.dark["sidebar-ring"])};
-}`;
+  return `${lightTheme}${darkTheme}`;
 };

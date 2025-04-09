@@ -1,6 +1,9 @@
 import { createContext, useContext, useLayoutEffect } from "react";
 import { useEditorStore } from "../store/editor-store";
 import { colorFormatter } from "../utils/color-converter";
+import { setShadowVariables } from "@/utils/shadows";
+import { applyStyleToElement } from "@/utils/apply-style-to-element";
+import { ThemeStyleProps, ThemeStyles } from "@/types/theme";
 
 type Theme = "dark" | "light";
 
@@ -9,11 +12,25 @@ type ThemeProviderProps = {
   defaultTheme?: Theme;
 };
 
+type Coords = { x: number; y: number };
+
 type ThemeProviderState = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
+  toggleTheme: (coords?: Coords) => void;
 };
+
+const COMMON_NON_COLOR_KEYS = [
+  "font-sans",
+  "font-serif",
+  "font-mono",
+  "radius",
+  "shadow-opacity",
+  "shadow-blur",
+  "shadow-spread",
+  "shadow-offset-x",
+  "shadow-offset-y",
+] as const;
 
 const initialState: ThemeProviderState = {
   theme: "light",
@@ -23,47 +40,87 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-function applyStyleToElement(element: HTMLElement, key: string, value: string) {
-  element.setAttribute(
-    `style`,
-    `${element.getAttribute("style") || ""}--${key}: ${value};`
-  );
-}
+// Helper functions
+const applyCommonStyles = (root: HTMLElement, themeStyles: ThemeStyleProps) => {
+  Object.entries(themeStyles)
+    .filter(([key]) =>
+      COMMON_NON_COLOR_KEYS.includes(key as (typeof COMMON_NON_COLOR_KEYS)[number])
+    )
+    .forEach(([key, value]) => {
+      if (typeof value === "string") {
+        applyStyleToElement(root, key, value);
+      }
+    });
+};
+
+const applyThemeColors = (
+  root: HTMLElement,
+  themeStyles: ThemeStyles,
+  mode: Theme
+) => {
+  Object.entries(themeStyles[mode]).forEach(([key, value]) => {
+    if (
+      typeof value === "string" &&
+      !COMMON_NON_COLOR_KEYS.includes(key as (typeof COMMON_NON_COLOR_KEYS)[number])
+    ) {
+      const hslValue = colorFormatter(value, "hsl", "4");
+      applyStyleToElement(root, key, hslValue);
+    }
+  });
+};
+
+const updateThemeClass = (root: HTMLElement, mode: Theme) => {
+  if (mode === "light") {
+    root.classList.remove("dark");
+  } else {
+    root.classList.add("dark");
+  }
+};
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const { themeState, setThemeState } = useEditorStore();
 
   useLayoutEffect(() => {
     const root = window.document.documentElement;
-    const mode = themeState.currentMode;
-    const themeStyles = themeState.styles;
+    const { currentMode: mode, styles: themeStyles } = themeState;
 
-    const commonNonColorKeys = ["font-sans", "font-serif", "font-mono", "radius"];
-    Object.entries(themeStyles.light)
-      .filter(([key]) => commonNonColorKeys.includes(key))
-      .forEach(([key, value]) => {
-        applyStyleToElement(root, key, value);
-      });
-
-    Object.entries(themeStyles[mode]).forEach(([key, value]) => {
-      if (typeof value === "string" && !commonNonColorKeys.includes(key)) {
-        const hslValue = colorFormatter(value, "hsl", "4");
-        applyStyleToElement(root, key, hslValue);
-      }
-    });
+    updateThemeClass(root, mode);
+    applyCommonStyles(root, themeStyles.light);
+    applyThemeColors(root, themeStyles, mode);
+    setShadowVariables(themeState);
   }, [themeState]);
 
-  const value = {
+  const handleThemeChange = (newMode: Theme) => {
+    setThemeState({ ...themeState, currentMode: newMode });
+  };
+
+  const handleThemeToggle = (coords?: Coords) => {
+    const root = document.documentElement;
+    const newMode = themeState.currentMode === "light" ? "dark" : "light";
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (!document.startViewTransition || prefersReducedMotion) {
+      handleThemeChange(newMode);
+      return;
+    }
+
+    if (coords) {
+      root.style.setProperty("--x", `${coords.x}px`);
+      root.style.setProperty("--y", `${coords.y}px`);
+    }
+
+    document.startViewTransition(() => {
+      handleThemeChange(newMode);
+    });
+  };
+
+  const value: ThemeProviderState = {
     theme: themeState.currentMode,
-    setTheme: (theme: Theme) => {
-      setThemeState({ ...themeState, currentMode: theme });
-    },
-    toggleTheme: () => {
-      setThemeState({
-        ...themeState,
-        currentMode: themeState.currentMode === "light" ? "dark" : "light",
-      });
-    },
+    setTheme: handleThemeChange,
+    toggleTheme: handleThemeToggle,
   };
 
   return (
@@ -76,8 +133,9 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
 
-  if (context === undefined)
+  if (context === undefined) {
     throw new Error("useTheme must be used within a ThemeProvider");
+  }
 
   return context;
 };

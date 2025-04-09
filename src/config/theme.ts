@@ -2,7 +2,17 @@ import { ThemeEditorState } from "../types/theme";
 
 // these are common between light and dark modes
 // we can assume that light mode's value will be used for dark mode as well
-export const COMMON_STYLES = ["font-sans", "font-serif", "font-mono", "radius"];
+export const COMMON_STYLES = [
+  "font-sans",
+  "font-serif",
+  "font-mono",
+  "radius",
+  "shadow-opacity",
+  "shadow-blur",
+  "shadow-spread",
+  "shadow-offset-x",
+  "shadow-offset-y",
+];
 
 export const DEFAULT_FONT_SANS =
   "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'";
@@ -51,6 +61,13 @@ export const defaultLightThemeStyles = {
   "font-sans": DEFAULT_FONT_SANS,
   "font-serif": DEFAULT_FONT_SERIF,
   "font-mono": DEFAULT_FONT_MONO,
+
+  "shadow-color": "hsl(0 0% 0%)",
+  "shadow-opacity": "0.1",
+  "shadow-blur": "3px",
+  "shadow-spread": "0px",
+  "shadow-offset-x": "0",
+  "shadow-offset-y": "1px",
 };
 
 // Default dark theme styles
@@ -90,6 +107,8 @@ export const defaultDarkThemeStyles = {
   "sidebar-accent-foreground": "hsl(240 4.8% 95.9%)",
   "sidebar-border": "hsl(240 3.7% 15.9%)",
   "sidebar-ring": "hsl(240 4.9% 83.9%)",
+
+  "shadow-color": "hsl(0 0% 0%)",
 };
 
 // Default theme state
@@ -98,8 +117,9 @@ export const defaultThemeState: ThemeEditorState = {
     light: defaultLightThemeStyles,
     dark: defaultDarkThemeStyles,
   },
-  currentMode: typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
-  ? "dark"
-  : "light",
-
+  currentMode:
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light",
 };

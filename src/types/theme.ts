@@ -35,6 +35,12 @@ export interface ThemeStyleProps {
   "font-serif"?: string;
   "font-mono"?: string;
   radius?: string;
+  "shadow-color"?: string;
+  "shadow-opacity"?: string;
+  "shadow-blur"?: string;
+  "shadow-spread"?: string;
+  "shadow-offset-x"?: string;
+  "shadow-offset-y"?: string;
 }
 
 export interface ThemeStyles {
@@ -50,6 +56,8 @@ export interface ThemeEditorState {
 export interface ThemeEditorPreviewProps {
   styles: ThemeStyles;
   currentMode: "light" | "dark";
+  isCodePanelOpen: boolean;
+  onCodePanelToggle: (open: boolean) => void;
 }
 
 export interface ThemeEditorControlsProps {
@@ -61,6 +69,10 @@ export interface ThemeEditorControlsProps {
 }
 
 export type ThemePreset = {
-  light?: Partial<ThemeStyleProps>;
-  dark?: Partial<ThemeStyleProps>;
+  createdAt?: string;
+  label?: string;
+  styles: {
+    light?: Partial<ThemeStyleProps>;
+    dark?: Partial<ThemeStyleProps>;
+  };
 };

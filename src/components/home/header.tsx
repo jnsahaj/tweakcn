@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 import { motion } from "motion/react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Menu, Moon, Sun, X, ChevronRight } from "lucide-react";
-import logo from "@/assets/logo.png";
+import Logo from "@/assets/logo.svg?react";
+import GitHubIcon from "@/assets/github.svg?react";
+import { useGithubStars } from "@/hooks/use-github-stars";
 
 interface HeaderProps {
   isScrolled: boolean;
@@ -17,6 +19,23 @@ export function Header({
   setMobileMenuOpen,
 }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const { stargazersCount } = useGithubStars("jnsahaj", "tweakcn");
+
+  const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { clientX: x, clientY: y } = event;
+    toggleTheme({ x, y });
+  };
+
+  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const targetId = e.currentTarget.getAttribute("href")?.slice(1);
+    if (!targetId) return;
+
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <header
@@ -29,21 +48,8 @@ export function Header({
       <div className="container flex h-16 px-4 min-w-full items-center justify-between">
         <Link to="/">
           <div className="flex items-center gap-2 font-bold">
-            <motion.img
-              initial={{ rotate: -10 }}
-              animate={{ rotate: 0 }}
-              transition={{ duration: 0.5 }}
-              src={logo}
-              alt="tweakcn"
-              className="h-8 w-8 mr-1 md:mr-2"
-            />
-            <motion.span
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              tweakcn
-            </motion.span>
+            <Logo className="size-6" />
+            <span>tweakcn</span>
           </div>
         </Link>
         <nav className="hidden md:flex gap-8">
@@ -55,6 +61,7 @@ export function Header({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
                 href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
+                onClick={handleScrollToSection}
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground relative group"
               >
                 {item}
@@ -67,12 +74,30 @@ export function Header({
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.45 }}
+          >
+            <Button variant="ghost" asChild>
+              <a
+                href="https://github.com/jnsahaj/tweakcn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold"
+              >
+                <GitHubIcon className="h-5 w-5" />
+                {stargazersCount > 0 && stargazersCount}
+              </a>
+            </Button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: 0.4 }}
           >
             <Button
               variant="secondary"
               size="icon"
-              onClick={toggleTheme}
+              onClick={handleThemeToggle}
               className="rounded-full transition-transform hover:scale-105"
             >
               {theme === "light" ? (
@@ -99,7 +124,7 @@ export function Header({
           <Button
             variant="ghost"
             size="icon"
-            onClick={toggleTheme}
+            onClick={handleThemeToggle}
             className="rounded-full cursor-pointer"
           >
             {theme === "dark" ? (
@@ -135,8 +160,11 @@ export function Header({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.2, delay: i * 0.05 }}
                   href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
+                  onClick={(e) => {
+                    handleScrollToSection(e);
+                    setMobileMenuOpen(false);
+                  }}
                   className="py-2 text-sm font-medium relative overflow-hidden group"
-                  onClick={() => setMobileMenuOpen(false)}
                 >
                   <span className="relative z-10">{item}</span>
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>

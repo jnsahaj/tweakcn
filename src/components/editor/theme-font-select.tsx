@@ -31,13 +31,10 @@ const ThemeFontSelect: React.FC<ThemeFontSelectProps> = ({
           <SelectValue placeholder="Select theme font" />
         </SelectTrigger>
       </div>
-      <SelectContent>
+      <SelectContent className="max-h-[400px]">
         <SelectGroup>
           {fontNames.map((fontName) => (
-            <SelectItem
-              key={fontName}
-              value={fonts[fontName] ?? defaultValue}
-            >
+            <SelectItem key={fontName} value={fonts[fontName] ?? defaultValue}>
               <span
                 style={{
                   fontFamily: fonts[fontName] ?? defaultValue,

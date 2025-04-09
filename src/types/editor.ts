@@ -1,10 +1,9 @@
 import { ColorFormat } from ".";
-import { ButtonStyles } from "./button";
 import { ThemeStyles } from "./theme";
 
 // Base interface for any editor's state
 export interface BaseEditorState {
-  styles: ButtonStyles | ThemeStyles;
+  styles: ThemeStyles;
 }
 
 // Interface for editor-specific controls
@@ -14,21 +13,15 @@ export interface EditorControls {
 
 // Interface for editor-specific preview props
 export interface EditorPreviewProps {
-  styles: ButtonStyles | ThemeStyles;
+  styles: ThemeStyles;
 }
 
-// Interface for editor-specific code generation
 export interface EditorCodeGenerator {
   generateComponentCode: (
-    styles: ThemeStyles | ButtonStyles,
+    themeEditorState: ThemeEditorState,
     colorFormat?: ColorFormat,
     tailwindVersion?: "3" | "4"
   ) => string;
-}
-
-// Button-specific editor state
-export interface ButtonEditorState extends BaseEditorState {
-  styles: ButtonStyles;
 }
 
 // Theme-specific editor state

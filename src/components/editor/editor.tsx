@@ -7,17 +7,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EditorConfig, BaseEditorState, ThemeEditorState } from "@/types/editor";
 import { ThemeStyles } from "@/types/theme";
-import { ButtonStyles } from "@/types/button";
 import CodePanel from "./code-panel";
-import { PanelRightClose, PanelRightOpen, Sliders } from "lucide-react";
+import { Sliders } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 
 interface EditorProps {
   config: EditorConfig;
@@ -29,28 +23,17 @@ const isThemeStyles = (styles: any): styles is ThemeStyles => {
 };
 
 const Editor: React.FC<EditorProps> = ({ config }) => {
-  const {
-    buttonState,
-    themeState,
-    setButtonState,
-    setThemeState,
-    resetToDefault,
-    hasStateChanged,
-  } = useEditorStore();
+  const { themeState, setThemeState, resetToDefault, hasStateChanged } =
+    useEditorStore();
   const { toast } = useToast();
   const Controls = config.controls;
   const Preview = config.preview;
   const [isCodePanelOpen, setIsCodePanelOpen] = useState(true);
 
-  const state = config.type === "theme" ? themeState : buttonState;
   const hasChanges = hasStateChanged(config.type);
 
-  const handleStyleChange = (newStyles: ThemeStyles | ButtonStyles) => {
-    if (config.type === "theme") {
-      setThemeState({ ...themeState, styles: newStyles as ThemeStyles });
-    } else {
-      setButtonState({ ...buttonState, styles: newStyles as ButtonStyles });
-    }
+  const handleStyleChange = (newStyles: ThemeStyles) => {
+    setThemeState({ ...themeState, styles: newStyles });
   };
 
   const handleReset = () => {
@@ -61,13 +44,10 @@ const Editor: React.FC<EditorProps> = ({ config }) => {
     });
   };
 
-  const isThemeEditor = config.type === "theme";
-
-  // Ensure we have valid theme styles for theme editor
-  const styles =
-    isThemeEditor && !isThemeStyles(state.styles)
-      ? (config.defaultState as ThemeEditorState).styles
-      : state.styles;
+  // Ensure we have valid theme styles
+  const styles = !isThemeStyles(themeState.styles)
+    ? (config.defaultState as ThemeEditorState).styles
+    : themeState.styles;
 
   return (
     <div className="h-full overflow-hidden">
@@ -77,13 +57,11 @@ const Editor: React.FC<EditorProps> = ({ config }) => {
           <ResizablePanel defaultSize={30} minSize={20} maxSize={40}>
             <div className="h-full p-4">
               <Controls
-                styles={state.styles}
+                styles={styles}
                 onChange={handleStyleChange}
                 onReset={handleReset}
                 hasChanges={hasChanges}
-                {...(isThemeEditor && {
-                  currentMode: (state as ThemeEditorState).currentMode,
-                })}
+                currentMode={themeState.currentMode}
               />
             </div>
           </ResizablePanel>
@@ -91,46 +69,29 @@ const Editor: React.FC<EditorProps> = ({ config }) => {
           <ResizablePanel defaultSize={70}>
             <div className="h-full flex flex-col">
               <div className="flex-1 min-h-0">
-                <Collapsible
-                  open={isCodePanelOpen}
-                  onOpenChange={setIsCodePanelOpen}
-                  className="h-full"
-                >
+                <Collapsible open={isCodePanelOpen} className="h-full">
                   <div className="h-full flex">
                     <div className="flex-1 p-4">
                       <Preview
                         styles={styles}
-                        {...(isThemeEditor && {
-                          currentMode: (state as ThemeEditorState).currentMode,
-                        })}
+                        currentMode={themeState.currentMode}
+                        isCodePanelOpen={isCodePanelOpen}
+                        onCodePanelToggle={() =>
+                          setIsCodePanelOpen(!isCodePanelOpen)
+                        }
                       />
                     </div>
 
                     <CollapsibleContent className="w-1/3 border-l transition-all">
-                      <CodePanel config={config} styles={styles} />
+                      <CodePanel
+                        config={config}
+                        themeEditorState={themeState}
+                        onCodePanelToggle={() =>
+                          setIsCodePanelOpen(!isCodePanelOpen)
+                        }
+                      />
                     </CollapsibleContent>
                   </div>
-
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-2 top-20 z-10"
-                      aria-label={
-                        isCodePanelOpen ? "Hide code panel" : "Show code panel"
-                      }
-                      title={isCodePanelOpen ? "Hide code panel" : "Show code panel"}
-                    >
-                      {isCodePanelOpen ? (
-                        <PanelRightClose className="h-4 w-4" />
-                      ) : (
-                        <>
-                          <PanelRightOpen className="h-4 w-4" />
-                          Code
-                        </>
-                      )}
-                    </Button>
-                  </CollapsibleTrigger>
                 </Collapsible>
               </div>
             </div>
@@ -160,9 +121,7 @@ const Editor: React.FC<EditorProps> = ({ config }) => {
                 onChange={handleStyleChange}
                 onReset={handleReset}
                 hasChanges={hasChanges}
-                {...(isThemeEditor && {
-                  currentMode: (state as ThemeEditorState).currentMode,
-                })}
+                currentMode={themeState.currentMode}
               />
             </div>
           </TabsContent>
@@ -170,14 +129,18 @@ const Editor: React.FC<EditorProps> = ({ config }) => {
             <div className="h-full p-4">
               <Preview
                 styles={styles}
-                {...(isThemeEditor && {
-                  currentMode: (state as ThemeEditorState).currentMode,
-                })}
+                currentMode={themeState.currentMode}
+                isCodePanelOpen={isCodePanelOpen}
+                onCodePanelToggle={() => setIsCodePanelOpen(!isCodePanelOpen)}
               />
             </div>
           </TabsContent>
           <TabsContent value="code" className="h-[calc(100%-2.5rem)]">
-            <CodePanel config={config} styles={styles} />
+            <CodePanel
+              config={config}
+              themeEditorState={themeState}
+              onCodePanelToggle={() => setIsCodePanelOpen(!isCodePanelOpen)}
+            />
           </TabsContent>
         </Tabs>
       </div>

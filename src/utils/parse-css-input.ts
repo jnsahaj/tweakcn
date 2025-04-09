@@ -30,6 +30,20 @@ export const variableNames = [
   "font-sans",
   "font-serif",
   "font-mono",
+  "shadow-color",
+  "shadow-opacity",
+  "shadow-blur",
+  "shadow-spread",
+  "shadow-offset-x",
+  "shadow-offset-y",
+  "shadow",
+  "shadow-2xs",
+  "shadow-xs",
+  "shadow-sm",
+  "shadow-md",
+  "shadow-lg",
+  "shadow-xl",
+  "shadow-2xl",
 ];
 
 const nonColorVariables = ["font-sans", "font-serif", "font-mono", "radius"];
@@ -65,7 +79,7 @@ const extractCssBlockContent = (input: string, selector: string): string | null 
 const parseColorVariables = (
   cssContent: string,
   target: ThemeStyleProps,
-  validNames: string[],
+  validNames: string[]
 ) => {
   const variableDeclarations = cssContent.match(/--[^:]+:\s*[^;]+/g) || [];
 

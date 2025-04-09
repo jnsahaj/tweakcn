@@ -1,5 +1,3 @@
-import { ButtonStyles } from "./button";
-
 export type ControlSectionProps = {
   title: string;
   children: React.ReactNode;
@@ -29,30 +27,6 @@ export type ToggleOptionProps<T> = {
   options: { label: string; value: T }[];
   onChange: (value: T) => void;
   label: string;
-};
-
-export type ControlPanelProps = {
-  styles: ButtonStyles;
-  onChange: (styles: ButtonStyles) => void;
-  onReset: () => void;
-  hasChanges?: boolean;
-};
-
-export type PreviewPanelProps = {
-  styles: ButtonStyles;
-};
-
-export type CodePanelProps = {
-  styles: ButtonStyles;
-};
-
-export type ButtonPreviewProps = {
-  styles: ButtonStyles;
-  label?: string;
-  className?: string;
-  disabled?: boolean;
-  hover?: boolean;
-  size?: "default" | "sm" | "lg" | "icon";
 };
 
 export type ReadOnlyColorDisplayProps = {

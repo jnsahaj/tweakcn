@@ -1,29 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ButtonEditorState, ThemeEditorState, EditorType } from "@/types/editor";
-import { isEqual } from "lodash";
+import { ThemeEditorState, EditorType } from "@/types/editor";
+import { isEqual } from "@ngard/tiny-isequal";
 import { defaultThemeState } from "@/config/theme";
-import defaultButtonStyles from "@/config/button";
 import { getPresetThemeStyles } from "../utils/theme-presets";
 
-// Default button state
-const defaultButtonState: ButtonEditorState = {
-  styles: defaultButtonStyles,
-};
-
-const getDefaultButtonState = (theme: ThemeEditorState) => {
-  return {
-    ...defaultButtonState,
-    styles: {
-      ...defaultButtonState.styles,
-      borderRadius: theme.styles.light.radius,
-    },
-  };
-};
 interface EditorStore {
-  buttonState: ButtonEditorState;
   themeState: ThemeEditorState;
-  setButtonState: (state: ButtonEditorState) => void;
   setThemeState: (state: ThemeEditorState) => void;
   applyThemePreset: (preset: string) => void;
   resetToDefault: (type: EditorType) => void;
@@ -33,21 +16,9 @@ interface EditorStore {
 export const useEditorStore = create<EditorStore>()(
   persist(
     (set, get) => ({
-      buttonState: defaultButtonState,
       themeState: defaultThemeState,
-      setButtonState: (state: ButtonEditorState) => set({ buttonState: state }),
       setThemeState: (state: ThemeEditorState) => {
         set({ themeState: state });
-        const buttonState = get().buttonState;
-        set({
-          buttonState: {
-            ...buttonState,
-            styles: {
-              ...buttonState.styles,
-              borderRadius: state.styles.light.radius,
-            },
-          },
-        });
       },
       applyThemePreset: (preset: string) => {
         const themeState = get().themeState;
@@ -60,24 +31,14 @@ export const useEditorStore = create<EditorStore>()(
         });
       },
       resetToDefault: (type: EditorType) => {
-        if (type === "button") {
-          const defaultButtonState = getDefaultButtonState(get().themeState);
-          set({
-            buttonState: defaultButtonState,
-          });
-        } else if (type === "theme") {
+        if (type === "theme") {
           const mode = get().themeState.currentMode;
           set({ themeState: { ...defaultThemeState, currentMode: mode } });
         }
       },
       hasStateChanged: (type: EditorType) => {
         const state = get();
-        if (type === "button") {
-          return !isEqual(
-            state.buttonState,
-            getDefaultButtonState(state.themeState)
-          );
-        } else if (type === "theme") {
+        if (type === "theme") {
           return !isEqual(state.themeState.styles, defaultThemeState.styles);
         }
         return false;

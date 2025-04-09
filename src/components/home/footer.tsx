@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import logo from "@/assets/logo.png";
+import { Link } from "react-router";
+import Logo from "@/assets/logo.svg?react";
 import GitHubIcon from "@/assets/github.svg?react";
 import TwitterIcon from "@/assets/twitter.svg?react";
 import DiscordIcon from "@/assets/discord.svg?react";
@@ -10,15 +10,10 @@ export function Footer() {
       <div className="container max-w-8xl mx-auto flex flex-col gap-8 px-4 md:px-0 py-10 lg:py-16">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
           <div className="space-y-4 col-span-2 max-w-md">
-            <div className="flex items-center gap-2 font-bold">
-              <img
-                src={logo || "/placeholder.svg"}
-                alt="tweakcn"
-                className="h-8 w-8 mr-1 md:mr-2"
-                title="Nothing here yet..."
-              />
+            <Link to="/" className="flex items-center gap-2 font-bold">
+              <Logo className="size-6" />
               <span>tweakcn</span>
-            </div>
+            </Link>
             <p className="text-sm text-muted-foreground">
               A powerful visual theme editor for shadcn/ui components with Tailwind
               CSS support. Make your components stand out.
@@ -32,7 +27,7 @@ export function Footer() {
                 <span className="sr-only">GitHub</span>
               </a>
               <a
-                href="https://discord.com/invite/qYkxuJyd"
+                href="https://discord.gg/Phs4u2NM3n"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <DiscordIcon className="size-5" />
@@ -89,7 +84,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://discord.com/invite/qYkxuJyd"
+                  href="https://discord.gg/Phs4u2NM3n"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Discord

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
