@@ -1,3 +1,5 @@
+"use client";
+
 import { ThemeEditorPreviewProps } from "@/types/theme";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
@@ -10,7 +12,11 @@ import { Maximize, Minimize, PanelRight, Moon, Sun } from "lucide-react";
 import { useFullscreen } from "@/hooks/use-fullscreen";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme-provider";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const DemoCards = lazy(() => import("@/components/examples/demo-cards"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
@@ -118,13 +124,19 @@ const ThemePreviewPanel = ({
 
           <ScrollArea className="rounded-lg border mt-2 flex flex-col flex-1">
             <div className="flex flex-col flex-1">
-              <TabsContent value="cards" className="space-y-6 mt-0 py-4 px-4 h-full">
+              <TabsContent
+                value="cards"
+                className="space-y-6 mt-0 py-4 px-4 h-full"
+              >
                 <ExamplesPreviewContainer>
                   <DemoCards />
                 </ExamplesPreviewContainer>
               </TabsContent>
 
-              <TabsContent value="mail" className="space-y-6 mt-0 h-full @container">
+              <TabsContent
+                value="mail"
+                className="space-y-6 mt-0 h-full @container"
+              >
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMail />
                 </ExamplesPreviewContainer>

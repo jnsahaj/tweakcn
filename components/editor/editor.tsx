@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import {
   ResizablePanelGroup,
@@ -5,7 +7,11 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { EditorConfig, BaseEditorState, ThemeEditorState } from "@/types/editor";
+import {
+  EditorConfig,
+  BaseEditorState,
+  ThemeEditorState,
+} from "@/types/editor";
 import { ThemeStyles } from "@/types/theme";
 import CodePanel from "./code-panel";
 import { Sliders } from "lucide-react";
@@ -16,8 +22,14 @@ interface EditorProps {
   initialState?: BaseEditorState;
 }
 
-const isThemeStyles = (styles: any): styles is ThemeStyles => {
-  return !!styles && "light" in styles && "dark" in styles;
+const isThemeStyles = (styles: unknown): styles is ThemeStyles => {
+  return (
+    !!styles &&
+    typeof styles === "object" &&
+    styles !== null &&
+    "light" in styles &&
+    "dark" in styles
+  );
 };
 
 const Editor: React.FC<EditorProps> = ({ config }) => {
@@ -67,7 +79,6 @@ const Editor: React.FC<EditorProps> = ({ config }) => {
               <ResizableHandle />
               <ResizablePanel defaultSize={25} minSize={10}>
                 <CodePanel
-                  config={config}
                   themeEditorState={themeState}
                   onCodePanelToggle={() => setIsCodePanelOpen(!isCodePanelOpen)}
                 />
@@ -113,7 +124,6 @@ const Editor: React.FC<EditorProps> = ({ config }) => {
           </TabsContent>
           <TabsContent value="code" className="h-[calc(100%-2.5rem)]">
             <CodePanel
-              config={config}
               themeEditorState={themeState}
               onCodePanelToggle={() => setIsCodePanelOpen(!isCodePanelOpen)}
             />

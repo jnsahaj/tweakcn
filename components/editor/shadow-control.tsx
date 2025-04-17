@@ -1,5 +1,4 @@
 import React from "react";
-import { Label } from "../ui/label";
 import { SliderWithInput } from "./slider-with-input";
 import ColorPicker from "./color-picker";
 import ControlSection from "./control-section";
@@ -11,7 +10,7 @@ interface ShadowControlProps {
   shadowSpread: number;
   shadowOffsetX: number;
   shadowOffsetY: number;
-  onChange: (key: string, value: any) => void;
+  onChange: (key: string, value: string | number) => void;
 }
 
 const ShadowControl: React.FC<ShadowControlProps> = ({

@@ -6,7 +6,6 @@ import { defaultThemeState } from "../config/theme";
 export const getShadowMap = (themeEditorState: ThemeEditorState) => {
   const mode = themeEditorState.currentMode;
   const styles = {
-    ...defaultThemeState.styles.light,
     ...defaultThemeState.styles[mode],
     ...themeEditorState.styles[mode],
   };
@@ -48,10 +47,9 @@ export const getShadowMap = (themeEditorState: ThemeEditorState) => {
     "shadow-sm": `${offsetX} ${offsetY} ${blur} ${spread} ${color(
       1.0
     )}, ${secondLayer("1px", "2px")}`,
-    shadow: `${offsetX} ${offsetY} ${blur} ${spread} ${color(1.0)}, ${secondLayer(
-      "1px",
-      "2px"
-    )}`, // Alias for the 'shadow:' example line
+    shadow: `${offsetX} ${offsetY} ${blur} ${spread} ${color(
+      1.0
+    )}, ${secondLayer("1px", "2px")}`, // Alias for the 'shadow:' example line
 
     "shadow-md": `${offsetX} ${offsetY} ${blur} ${spread} ${color(
       1.0

@@ -31,23 +31,23 @@ export interface ThemeStyleProps {
   "sidebar-accent-foreground": string;
   "sidebar-border": string;
   "sidebar-ring": string;
-  "font-sans"?: string;
-  "font-serif"?: string;
-  "font-mono"?: string;
-  radius?: string;
-  "shadow-color"?: string;
-  "shadow-opacity"?: string;
-  "shadow-blur"?: string;
-  "shadow-spread"?: string;
-  "shadow-offset-x"?: string;
-  "shadow-offset-y"?: string;
-  "letter-spacing"?: string;
-  spacing?: string;
+  "font-sans": string;
+  "font-serif": string;
+  "font-mono": string;
+  radius: string;
+  "shadow-color": string;
+  "shadow-opacity": string;
+  "shadow-blur": string;
+  "shadow-spread": string;
+  "shadow-offset-x": string;
+  "shadow-offset-y": string;
+  "letter-spacing": string;
+  spacing: string;
 }
 
 export interface ThemeStyles {
   light: ThemeStyleProps;
-  dark: Partial<ThemeStyleProps>;
+  dark: ThemeStyleProps;
 }
 
 export interface ThemeEditorState {

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
 import ControlSection from "./control-section";
@@ -46,11 +48,13 @@ const ThemeControlPanel = ({
   } = useEditorStore();
   const [cssImportOpen, setCssImportOpen] = useState(false);
 
-  const currentStyles = {
-    ...defaultThemeState.styles.light,
-    ...defaultThemeState.styles[currentMode],
-    ...styles?.[currentMode],
-  };
+  const currentStyles = React.useMemo(
+    () => ({
+      ...defaultThemeState.styles[currentMode],
+      ...styles?.[currentMode],
+    }),
+    [currentMode, styles]
+  );
 
   const updateStyle = React.useCallback(
     <K extends keyof typeof currentStyles>(
@@ -119,7 +123,7 @@ const ThemeControlPanel = ({
       <div className="mb-6 ml-1">
         <ThemePresetSelect
           presets={presets}
-          currentPreset={themeState.preset}
+          currentPreset={themeState.preset || null}
           onPresetChange={applyThemePreset}
         />
       </div>
@@ -232,7 +236,9 @@ const ThemeControlPanel = ({
               />
               <ColorPicker
                 color={currentStyles["destructive-foreground"]}
-                onChange={(color) => updateStyle("destructive-foreground", color)}
+                onChange={(color) =>
+                  updateStyle("destructive-foreground", color)
+                }
                 label="Destructive Foreground"
               />
             </ControlSection>
@@ -313,7 +319,9 @@ const ThemeControlPanel = ({
               />
               <ColorPicker
                 color={currentStyles["sidebar-accent-foreground"]}
-                onChange={(color) => updateStyle("sidebar-accent-foreground", color)}
+                onChange={(color) =>
+                  updateStyle("sidebar-accent-foreground", color)
+                }
                 label="Sidebar Accent Foreground"
               />
               <ColorPicker
@@ -394,7 +402,9 @@ const ThemeControlPanel = ({
                 value={parseFloat(
                   currentStyles["letter-spacing"]?.replace("em", "")
                 )}
-                onChange={(value) => updateStyle("letter-spacing", `${value}em`)}
+                onChange={(value) =>
+                  updateStyle("letter-spacing", `${value}em`)
+                }
                 min={-0.5}
                 max={0.5}
                 step={0.025}
@@ -446,7 +456,7 @@ const ThemeControlPanel = ({
                 )}
                 onChange={(key, value) => {
                   if (key === "shadow-color") {
-                    updateStyle(key, value);
+                    updateStyle(key, value as string);
                   } else if (key === "shadow-opacity") {
                     updateStyle(key, value.toString());
                   } else {

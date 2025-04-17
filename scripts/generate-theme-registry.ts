@@ -34,13 +34,8 @@ const getThemeValue = (
 const convertThemeStyles = (styles: ThemeStyles) => {
   const { light, dark } = styles;
 
-  const convertTheme = (
-    theme: ThemeStyleProps | Partial<ThemeStyleProps>
-  ): ThemeStyleProps => {
-    const result: ThemeStyleProps = {
-      ...defaultLightThemeStyles,
-      ...theme,
-    };
+  const convertTheme = (theme: ThemeStyleProps): ThemeStyleProps => {
+    const result: ThemeStyleProps = theme;
     const convertColor = (color?: string) =>
       convertToRegistryColor(color || "");
 

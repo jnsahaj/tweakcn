@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, Check, PanelRight } from "lucide-react";
-import { EditorConfig, ThemeEditorState } from "@/types/editor";
+import { ThemeEditorState } from "@/types/editor";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { ColorFormat } from "../../types";
 import {
@@ -14,32 +14,38 @@ import {
 import { usePostHog } from "posthog-js/react";
 import { useEditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { generateThemeCode } from "@/utils/theme-style-generator";
 interface CodePanelProps {
-  config: EditorConfig;
   themeEditorState: ThemeEditorState;
   onCodePanelToggle: () => void;
 }
 
 const CodePanel: React.FC<CodePanelProps> = ({
-  config,
   themeEditorState,
   onCodePanelToggle,
 }) => {
   const [registryCopied, setRegistryCopied] = useState(false);
   const [copied, setCopied] = useState(false);
   const posthog = usePostHog();
-  
+
   const preset = useEditorStore((state) => state.themeState.preset);
   const colorFormat = usePreferencesStore((state) => state.colorFormat);
   const tailwindVersion = usePreferencesStore((state) => state.tailwindVersion);
   const packageManager = usePreferencesStore((state) => state.packageManager);
   const setColorFormat = usePreferencesStore((state) => state.setColorFormat);
-  const setTailwindVersion = usePreferencesStore((state) => state.setTailwindVersion);
-  const setPackageManager = usePreferencesStore((state) => state.setPackageManager);
+  const setTailwindVersion = usePreferencesStore(
+    (state) => state.setTailwindVersion
+  );
+  const setPackageManager = usePreferencesStore(
+    (state) => state.setPackageManager
+  );
 
-  const code = config.codeGenerator.generateComponentCode(
+  const code = generateThemeCode(
     themeEditorState,
     colorFormat,
     tailwindVersion
@@ -61,7 +67,9 @@ const CodePanel: React.FC<CodePanelProps> = ({
 
   const copyRegistryCommand = async () => {
     try {
-      await navigator.clipboard.writeText(getRegistryCommand(preset));
+      await navigator.clipboard.writeText(
+        getRegistryCommand(preset ?? "default")
+      );
       setRegistryCopied(true);
       setTimeout(() => setRegistryCopied(false), 2000);
       captureCopyEvent("COPY_REGISTRY_COMMAND");

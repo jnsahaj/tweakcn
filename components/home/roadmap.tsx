@@ -70,11 +70,11 @@ export function Roadmap() {
             <span className="mr-1 text-primary">✦</span> Roadmap
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
-            What's Coming Next
+            What&apos;s Coming Next
           </h2>
           <p className="max-w-[800px] text-muted-foreground md:text-lg">
-            We're constantly working to improve tweakcn and add new features. Here's
-            what's on our roadmap.
+            We&apos;re constantly working to improve tweakcn and add new
+            features. Here&apos;s what&apos;s on our roadmap.
           </p>
         </motion.div>
 

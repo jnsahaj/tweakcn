@@ -47,7 +47,7 @@ const CssImportDialog: React.FC<CssImportDialogProps> = ({
       setCssText("");
       setError(null);
       onOpenChange(false);
-    } catch (err) {
+    } catch {
       setError("Failed to parse CSS. Please check your syntax.");
     }
   };
@@ -62,7 +62,9 @@ const CssImportDialog: React.FC<CssImportDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle className="text-foreground">Import Custom CSS</DialogTitle>
+          <DialogTitle className="text-foreground">
+            Import Custom CSS
+          </DialogTitle>
           <DialogDescription>
             Paste your CSS file below to customize the theme colors. Make sure
             to include variables like --primary, --background, etc.

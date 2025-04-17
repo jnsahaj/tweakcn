@@ -32,7 +32,7 @@ const monoFontNames = [
   "Geist Mono",
 ];
 
-export const fonts = {
+export const fonts: Record<string, string> = {
   // Sans-serif fonts
   Inter: "Inter, sans-serif",
   Roboto: "Roboto, sans-serif",
@@ -76,7 +76,7 @@ export const monoFonts = Object.fromEntries(
 
 export const getAppliedThemeFont = (
   state: ThemeEditorState,
-  fontKey: keyof ThemeStyleProps
+  fontKey: "font-sans" | "font-serif" | "font-mono"
 ): string | null => {
   const fontSans = state.styles.light[fontKey];
   // find key of font in fonts object based on value

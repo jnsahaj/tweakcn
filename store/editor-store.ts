@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ThemeEditorState, EditorType } from "@/types/editor";
+import { ThemeEditorState } from "@/types/editor";
+// @ts-expect-error: owned by ngard
 import { isEqual } from "@ngard/tiny-isequal";
 import { defaultThemeState } from "@/config/theme";
 import { getPresetThemeStyles } from "@/utils/theme-presets";
@@ -47,7 +48,7 @@ export const useEditorStore = create<EditorStore>()(
         set({
           themeState: {
             ...themeState,
-            styles: getPresetThemeStyles(themeState.preset),
+            styles: getPresetThemeStyles(themeState.preset || "default"),
           },
         });
       },
@@ -57,7 +58,9 @@ export const useEditorStore = create<EditorStore>()(
       },
       hasCurrentPresetChanged: () => {
         const state = get();
-        const presetStyles = getPresetThemeStyles(state.themeState.preset);
+        const presetStyles = getPresetThemeStyles(
+          state.themeState.preset || "default"
+        );
         return !isEqual(state.themeState.styles, presetStyles);
       },
     }),

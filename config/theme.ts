@@ -77,6 +77,7 @@ export const defaultLightThemeStyles = {
 
 // Default dark theme styles
 export const defaultDarkThemeStyles = {
+  ...defaultLightThemeStyles,
   background: "hsl(240 10% 3.9%)",
   foreground: "hsl(0 0% 98%)",
   card: "hsl(240 10% 3.9%)",

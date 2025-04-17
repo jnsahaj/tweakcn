@@ -14,9 +14,11 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
 
   // Create debounced onChange handler with useCallback to maintain reference
   const debouncedOnChange = useCallback(
-    debounce((value) => {
-      onChange(value);
-    }, 10),
+    (value: string) => {
+      debounce(() => {
+        onChange(value);
+      }, 10)();
+    },
     [onChange]
   );
 

@@ -71,7 +71,10 @@ export const parseCssInput = (input: string) => {
   return { lightColors, darkColors };
 };
 
-const extractCssBlockContent = (input: string, selector: string): string | null => {
+const extractCssBlockContent = (
+  input: string,
+  selector: string
+): string | null => {
   const regex = new RegExp(`${escapeRegExp(selector)}\\s*{([^}]+)}`);
   return input.match(regex)?.[1]?.trim() || null;
 };
@@ -89,13 +92,13 @@ const parseColorVariables = (
 
     if (validNames.includes(cleanName)) {
       if (nonColorVariables.includes(cleanName)) {
-        target[cleanName] = value;
+        target[cleanName as keyof ThemeStyleProps] = value;
         return;
       }
 
       const colorValue = processColorValue(value);
       const formattedValue = colorFormatter(colorValue, "hex");
-      target[cleanName] = formattedValue;
+      target[cleanName as keyof ThemeStyleProps] = formattedValue;
     }
   });
 };

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeScript } from "@/components/theme-script";
 import "./globals.css";
 import { PostHogInit } from "@/components/posthog-init";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
@@ -15,7 +16,8 @@ export const metadata: Metadata = {
     "theme editor, theme generator, shadcn, ui, components, react, tailwind, button, editor, visual editor, component editor, web development, frontend, design system, UI components, React components, Tailwind CSS, shadcn/ui themes",
   authors: [{ name: "Sahaj Jain" }],
   openGraph: {
-    title: "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
+    title:
+      "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
     description:
       "Customize theme for shadcn/ui with tweakcn's interactive editor. Supports Tailwind CSS v4, Shadcn UI, and custom styles. Modify properties, preview changes, and get the code in real time.",
     url: "https://tweakcn.com/",
@@ -32,7 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
+    title:
+      "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
     description:
       "Customize theme for shadcn/ui with tweakcn's interactive editor. Supports Tailwind CSS v4, Shadcn UI, and custom styles. Modify properties, preview changes, and get the code in real time.",
     images: ["https://tweakcn.com/og-image.png"],
@@ -41,15 +44,29 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1.0",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <head>
         <ThemeScript />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
         <link
           rel="apple-touch-icon"
           href="/apple-touch-icon.png"
@@ -70,12 +87,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <NuqsAdapter>
-          <ThemeProvider defaultTheme="light">
-            <TooltipProvider>
-              <Toaster />
-              {children}
-            </TooltipProvider>
-          </ThemeProvider>
+          <Suspense>
+            <ThemeProvider defaultTheme="light">
+              <TooltipProvider>
+                <Toaster />
+                {children}
+              </TooltipProvider>
+            </ThemeProvider>
+          </Suspense>
         </NuqsAdapter>
         <PostHogInit />
       </body>

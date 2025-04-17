@@ -22,7 +22,7 @@ const ThemeFontSelect: React.FC<ThemeFontSelectProps> = ({
   onFontChange,
 }) => {
   const fontNames = useMemo(() => ["System", ...Object.keys(fonts)], [fonts]);
-  const value = fonts[currentFont] ?? defaultValue;
+  const value = currentFont ? fonts[currentFont] ?? defaultValue : defaultValue;
 
   return (
     <Select value={value || ""} onValueChange={onFontChange}>

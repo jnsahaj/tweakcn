@@ -1,4 +1,3 @@
-import { ColorFormat } from ".";
 import { ThemeStyles } from "./theme";
 
 // Base interface for any editor's state
@@ -16,15 +15,6 @@ export interface EditorPreviewProps {
   styles: ThemeStyles;
 }
 
-export interface EditorCodeGenerator {
-  generateComponentCode: (
-    themeEditorState: ThemeEditorState,
-    colorFormat?: ColorFormat,
-    tailwindVersion?: "3" | "4"
-  ) => string;
-}
-
-// Theme-specific editor state
 export interface ThemeEditorState extends BaseEditorState {
   preset?: string;
   styles: ThemeStyles;
@@ -42,5 +32,4 @@ export interface EditorConfig {
   defaultState: BaseEditorState;
   controls: React.ComponentType<any>;
   preview: React.ComponentType<any>;
-  codeGenerator: EditorCodeGenerator;
 }

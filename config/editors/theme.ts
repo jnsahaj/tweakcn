@@ -11,7 +11,4 @@ export const themeEditorConfig: EditorConfig = {
   defaultState: defaultThemeState,
   controls: ThemeControlPanel,
   preview: ThemePreviewPanel,
-  codeGenerator: {
-    generateComponentCode: generateThemeCode,
-  },
 };

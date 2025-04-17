@@ -34,8 +34,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  CheckCircle2Icon,
-  CheckCircleIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -43,7 +41,6 @@ import {
   ChevronsRightIcon,
   ColumnsIcon,
   GripVerticalIcon,
-  LoaderIcon,
   MoreVerticalIcon,
   PlusIcon,
   TrendingUpIcon,
@@ -246,12 +243,17 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             Reviewer
           </Label>
           <Select>
-            <SelectTrigger className="h-8 w-40" id={`${row.original.id}-reviewer`}>
+            <SelectTrigger
+              className="h-8 w-40"
+              id={`${row.original.id}-reviewer`}
+            >
               <SelectValue placeholder="Assign reviewer" />
             </SelectTrigger>
             <SelectContent align="end">
               <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-              <SelectItem value="Jamik Tashpulatov">Jamik Tashpulatov</SelectItem>
+              <SelectItem value="Jamik Tashpulatov">
+                Jamik Tashpulatov
+              </SelectItem>
             </SelectContent>
           </Select>
         </>
@@ -316,10 +318,11 @@ export function DataTable({
 }) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(
-    {}
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
   );
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -383,7 +386,10 @@ export function DataTable({
           View
         </Label>
         <Select defaultValue="outline">
-          <SelectTrigger className="@4xl/main:hidden flex w-fit" id="view-selector">
+          <SelectTrigger
+            className="@4xl/main:hidden flex w-fit"
+            id="view-selector"
+          >
             <SelectValue placeholder="Select a view" />
           </SelectTrigger>
           <SelectContent>
@@ -430,7 +436,8 @@ export function DataTable({
                 .getAllColumns()
                 .filter(
                   (column) =>
-                    typeof column.accessorFn !== "undefined" && column.getCanHide()
+                    typeof column.accessorFn !== "undefined" &&
+                    column.getCanHide()
                 )
                 .map((column) => {
                   return (
@@ -438,7 +445,9 @@ export function DataTable({
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
@@ -495,7 +504,10 @@ export function DataTable({
                   </SortableContext>
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
                       No results.
                     </TableCell>
                   </TableRow>
@@ -521,7 +533,9 @@ export function DataTable({
                 }}
               >
                 <SelectTrigger className="w-20" id="rows-per-page">
-                  <SelectValue placeholder={table.getState().pagination.pageSize} />
+                  <SelectValue
+                    placeholder={table.getState().pagination.pageSize}
+                  />
                 </SelectTrigger>
                 <SelectContent side="top">
                   {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -580,13 +594,19 @@ export function DataTable({
           </div>
         </div>
       </TabsContent>
-      <TabsContent value="past-performance" className="flex flex-col px-4 lg:px-6">
+      <TabsContent
+        value="past-performance"
+        className="flex flex-col px-4 lg:px-6"
+      >
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
       <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
-      <TabsContent value="focus-documents" className="flex flex-col px-4 lg:px-6">
+      <TabsContent
+        value="focus-documents"
+        className="flex flex-col px-4 lg:px-6"
+      >
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
@@ -680,9 +700,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                   <TrendingUpIcon className="size-4" />
                 </div>
                 <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just some
-                  random text to test the layout. It spans multiple lines and should
-                  wrap around.
+                  Showing total visitors for the last 6 months. This is just
+                  some random text to test the layout. It spans multiple lines
+                  and should wrap around.
                 </div>
               </div>
               <Separator />
@@ -712,7 +732,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                     </SelectItem>
                     <SelectItem value="Design">Design</SelectItem>
                     <SelectItem value="Capabilities">Capabilities</SelectItem>
-                    <SelectItem value="Focus Documents">Focus Documents</SelectItem>
+                    <SelectItem value="Focus Documents">
+                      Focus Documents
+                    </SelectItem>
                     <SelectItem value="Narrative">Narrative</SelectItem>
                     <SelectItem value="Cover Page">Cover Page</SelectItem>
                   </SelectContent>
