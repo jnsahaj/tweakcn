@@ -2,7 +2,6 @@
 
 # dependencies
 node_modules
-tweakcn-next
 /.pnp
 .pnp.*
 .yarn/*
