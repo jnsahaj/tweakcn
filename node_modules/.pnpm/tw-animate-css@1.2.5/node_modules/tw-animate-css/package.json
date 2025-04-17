@@ -1,0 +1,67 @@
+{
+  "name": "tw-animate-css",
+  "version": "1.2.5",
+  "description": "TailwindCSS v4.0 compatible replacement for `tailwindcss-animate`.",
+  "keywords": [
+    "accordion",
+    "animate",
+    "animation",
+    "css",
+    "fades",
+    "opacity",
+    "scale",
+    "shadcn",
+    "slide",
+    "spin",
+    "tailwind-animate",
+    "tailwind",
+    "tailwindcss-animate",
+    "tailwindcss",
+    "transform",
+    "transition",
+    "translate",
+    "zoom"
+  ],
+  "homepage": "https://github.com/Wombosvideo/tw-animate-css#readme",
+  "bugs": "https://github.com/Wombosvideo/tw-animate-css/issues",
+  "repository": "Wombosvideo/tw-animate-css",
+  "funding": "https://github.com/sponsors/Wombosvideo",
+  "license": "MIT",
+  "author": {
+    "name": "Luca Bosin",
+    "url": "https://github.com/Wombosvideo"
+  },
+  "exports": "./dist/tw-animate.css",
+  "main": "./dist/tw-animate.css",
+  "files": [
+    "dist"
+  ],
+  "simple-git-hooks": {
+    "pre-commit": "pnpx lint-staged",
+    "commit-msg": "pnpx commitlint --edit $1"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown",
+    "package.json": "sort-package-json"
+  },
+  "prettier": {
+    "printWidth": 100
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3",
+    "simple-git-hooks": "^2.12.1",
+    "sort-package-json": "^3.0.0"
+  },
+  "scripts": {
+    "build": "pnpx @tailwindcss/cli -i ./src/tw-animate.css -o ./dist/tw-animate.css -m",
+    "format": "prettier --write --ignore-unknown ."
+  }
+}

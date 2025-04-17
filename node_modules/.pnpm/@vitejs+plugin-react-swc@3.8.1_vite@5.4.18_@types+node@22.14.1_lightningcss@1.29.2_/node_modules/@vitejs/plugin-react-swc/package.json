@@ -1,0 +1,33 @@
+{
+  "name": "@vitejs/plugin-react-swc",
+  "description": "Speed up your Vite dev server with SWC",
+  "version": "3.8.1",
+  "author": "Arnaud Barré (https://github.com/ArnaudBarre)",
+  "license": "MIT",
+  "repository": "github:vitejs/vite-plugin-react-swc",
+  "type": "module",
+  "main": "index.cjs",
+  "types": "index.d.ts",
+  "module": "index.mjs",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "require": "./index.cjs",
+      "import": "./index.mjs"
+    }
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "react",
+    "swc",
+    "react-refresh",
+    "fast refresh"
+  ],
+  "peerDependencies": {
+    "vite": "^4 || ^5 || ^6"
+  },
+  "dependencies": {
+    "@swc/core": "^1.11.11"
+  }
+}

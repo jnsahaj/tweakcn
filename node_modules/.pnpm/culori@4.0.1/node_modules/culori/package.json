@@ -1,0 +1,91 @@
+{
+	"name": "culori",
+	"version": "4.0.1",
+	"type": "module",
+	"main": "./bundled/culori.cjs",
+	"module": "./bundled/culori.min.mjs",
+	"browser": "./bundled/culori.min.js",
+	"jsdelivr": "./bundled/culori.umd.js",
+	"exports": {
+		".": {
+			"require": "./bundled/culori.cjs",
+			"import": "./src/index.js"
+		},
+		"./require": "./bundled/culori.cjs",
+		"./css": "./src/bootstrap/css.js",
+		"./all": "./src/bootstrap/all.js",
+		"./fn": "./src/index-fn.js",
+		"./package.json": "./package.json"
+	},
+	"repository": "git@github.com:Evercoder/culori.git",
+	"author": "Dan Burzo <dan@danburzo.ro>",
+	"description": "A general-purpose color library for JavaScript",
+	"keywords": [
+		"blend",
+		"ciede2000",
+		"cielab",
+		"color",
+		"color-difference",
+		"cubehelix",
+		"din99",
+		"gradients",
+		"hsi",
+		"hsl",
+		"hsv",
+		"hwb",
+		"interpolation",
+		"lab",
+		"lch",
+		"lrgb",
+		"mix",
+		"rgb",
+		"yiq"
+	],
+	"license": "MIT",
+	"files": [
+		"bundled",
+		"src"
+	],
+	"devDependencies": {
+		"@11ty/eleventy": "^2.0.1",
+		"@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
+		"esbuild": "^0.19.11",
+		"eslint": "^8.56.0",
+		"eslint-plugin-import": "^2.29.1",
+		"gh-pages": "^6.1.1",
+		"prettier": "^3.2.4",
+		"pretty-quick": "^4.0.0",
+		"tap-arc": "^1.2.2",
+		"tape": "^5.7.3"
+	},
+	"scripts": {
+		"prepare": "git config core.hooksPath .git-hooks",
+		"test": "tape 'test/**/*.test.js' | tap-arc",
+		"start": "npx esbuild --servedir=.",
+		"build": "node build.js",
+		"benchmark": "node benchmark/index.js",
+		"prepublishOnly": "npm run lint && npm run build && npm run test",
+		"docs:start": "eleventy --config=eleventy.config.cjs --serve",
+		"docs:build": "npm run build && rm -rf www && eleventy --config=eleventy.config.cjs && cp bundled/culori.min.mjs www/",
+		"docs:deploy": "npm run docs:build && gh-pages -d www --dotfiles",
+		"lint": "eslint '{src,test}/**/*.js'"
+	},
+	"prettier": {
+		"bracketSpacing": true,
+		"semi": true,
+		"singleQuote": true,
+		"trailingComma": "none",
+		"useTabs": true,
+		"tabWidth": 4,
+		"arrowParens": "avoid",
+		"printWidth": 80
+	},
+	"sideEffects": [
+		"src/index.js",
+		"src/bootstrap/all.js",
+		"src/bootstrap/css.js"
+	],
+	"engines": {
+		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+	}
+}

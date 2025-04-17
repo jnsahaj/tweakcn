@@ -1,0 +1,1 @@
+{"version":3,"file":"no-base-to-string.d.ts","sourceRoot":"","sources":["../../src/rules/no-base-to-string.ts"],"names":[],"mappings":"AAoBA,MAAM,MAAM,OAAO,GAAG;IACpB;QACE,gBAAgB,CAAC,EAAE,MAAM,EAAE,CAAC;KAC7B;CACF,CAAC;AACF,MAAM,MAAM,UAAU,GAAG,eAAe,GAAG,cAAc,CAAC;;AAE1D,wBAwTG"}

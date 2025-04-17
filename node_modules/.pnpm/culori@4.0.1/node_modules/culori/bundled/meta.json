@@ -1,0 +1,3813 @@
+{
+  "inputs": {
+    "src/rgb/parseNumber.js": {
+      "bytes": 1050,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/colors/named.js": {
+      "bytes": 3377,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/rgb/parseNamed.js": {
+      "bytes": 311,
+      "imports": [
+        {
+          "path": "src/rgb/parseNumber.js",
+          "kind": "import-statement",
+          "original": "./parseNumber.js"
+        },
+        {
+          "path": "src/colors/named.js",
+          "kind": "import-statement",
+          "original": "../colors/named.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/rgb/parseHex.js": {
+      "bytes": 336,
+      "imports": [
+        {
+          "path": "src/rgb/parseNumber.js",
+          "kind": "import-statement",
+          "original": "./parseNumber.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/util/regex.js": {
+      "bytes": 963,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/rgb/parseRgbLegacy.js": {
+      "bytes": 1201,
+      "imports": [
+        {
+          "path": "src/util/regex.js",
+          "kind": "import-statement",
+          "original": "../util/regex.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/_prepare.js": {
+      "bytes": 259,
+      "imports": [
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "./parse.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/converter.js": {
+      "bytes": 908,
+      "imports": [
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        },
+        {
+          "path": "src/_prepare.js",
+          "kind": "import-statement",
+          "original": "./_prepare.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/modes.js": {
+      "bytes": 2024,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/parse.js": {
+      "bytes": 7107,
+      "imports": [
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/rgb/parseRgb.js": {
+      "bytes": 808,
+      "imports": [
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "../parse.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/rgb/parseTransparent.js": {
+      "bytes": 148,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/interpolate/lerp.js": {
+      "bytes": 446,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/interpolate/piecewise.js": {
+      "bytes": 738,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/interpolate/linear.js": {
+      "bytes": 154,
+      "imports": [
+        {
+          "path": "src/interpolate/lerp.js",
+          "kind": "import-statement",
+          "original": "./lerp.js"
+        },
+        {
+          "path": "src/interpolate/piecewise.js",
+          "kind": "import-statement",
+          "original": "./piecewise.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/fixup/alpha.js": {
+      "bytes": 225,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/rgb/definition.js": {
+      "bytes": 806,
+      "imports": [
+        {
+          "path": "src/rgb/parseNamed.js",
+          "kind": "import-statement",
+          "original": "./parseNamed.js"
+        },
+        {
+          "path": "src/rgb/parseHex.js",
+          "kind": "import-statement",
+          "original": "./parseHex.js"
+        },
+        {
+          "path": "src/rgb/parseRgbLegacy.js",
+          "kind": "import-statement",
+          "original": "./parseRgbLegacy.js"
+        },
+        {
+          "path": "src/rgb/parseRgb.js",
+          "kind": "import-statement",
+          "original": "./parseRgb.js"
+        },
+        {
+          "path": "src/rgb/parseTransparent.js",
+          "kind": "import-statement",
+          "original": "./parseTransparent.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/a98/convertA98ToXyz65.js": {
+      "bytes": 853,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/a98/convertXyz65ToA98.js": {
+      "bytes": 837,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/lrgb/convertRgbToLrgb.js": {
+      "bytes": 382,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/xyz65/convertRgbToXyz65.js": {
+      "bytes": 793,
+      "imports": [
+        {
+          "path": "src/lrgb/convertRgbToLrgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertRgbToLrgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lrgb/convertLrgbToRgb.js": {
+      "bytes": 393,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/xyz65/convertXyz65ToRgb.js": {
+      "bytes": 846,
+      "imports": [
+        {
+          "path": "src/lrgb/convertLrgbToRgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertLrgbToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/a98/definition.js": {
+      "bytes": 608,
+      "imports": [
+        {
+          "path": "src/rgb/definition.js",
+          "kind": "import-statement",
+          "original": "../rgb/definition.js"
+        },
+        {
+          "path": "src/a98/convertA98ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertA98ToXyz65.js"
+        },
+        {
+          "path": "src/a98/convertXyz65ToA98.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToA98.js"
+        },
+        {
+          "path": "src/xyz65/convertRgbToXyz65.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertRgbToXyz65.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertXyz65ToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/util/normalizeHue.js": {
+      "bytes": 101,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/fixup/hue.js": {
+      "bytes": 1026,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/cubehelix/constants.js": {
+      "bytes": 149,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/cubehelix/convertRgbToCubehelix.js": {
+      "bytes": 1031,
+      "imports": [
+        {
+          "path": "src/cubehelix/constants.js",
+          "kind": "import-statement",
+          "original": "./constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/cubehelix/convertCubehelixToRgb.js": {
+      "bytes": 558,
+      "imports": [
+        {
+          "path": "src/cubehelix/constants.js",
+          "kind": "import-statement",
+          "original": "./constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/difference.js": {
+      "bytes": 8129,
+      "imports": [
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        },
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "./util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/average.js": {
+      "bytes": 1327,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/cubehelix/definition.js": {
+      "bytes": 2220,
+      "imports": [
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/cubehelix/convertRgbToCubehelix.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToCubehelix.js"
+        },
+        {
+          "path": "src/cubehelix/convertCubehelixToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertCubehelixToRgb.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lch/convertLabToLch.js": {
+      "bytes": 531,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lch/convertLchToLab.js": {
+      "bytes": 446,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/xyz65/constants.js": {
+      "bytes": 102,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/constants.js": {
+      "bytes": 449,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/lab65/convertLab65ToXyz65.js": {
+      "bytes": 581,
+      "imports": [
+        {
+          "path": "src/xyz65/constants.js",
+          "kind": "import-statement",
+          "original": "../xyz65/constants.js"
+        },
+        {
+          "path": "src/constants.js",
+          "kind": "import-statement",
+          "original": "../constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab65/convertLab65ToRgb.js": {
+      "bytes": 237,
+      "imports": [
+        {
+          "path": "src/lab65/convertLab65ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertLab65ToXyz65.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertXyz65ToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab65/convertXyz65ToLab65.js": {
+      "bytes": 581,
+      "imports": [
+        {
+          "path": "src/xyz65/constants.js",
+          "kind": "import-statement",
+          "original": "../xyz65/constants.js"
+        },
+        {
+          "path": "src/constants.js",
+          "kind": "import-statement",
+          "original": "../constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab65/convertRgbToLab65.js": {
+      "bytes": 522,
+      "imports": [
+        {
+          "path": "src/xyz65/convertRgbToXyz65.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertRgbToXyz65.js"
+        },
+        {
+          "path": "src/lab65/convertXyz65ToLab65.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToLab65.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/dlch/constants.js": {
+      "bytes": 214,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/dlch/convertDlchToLab65.js": {
+      "bytes": 702,
+      "imports": [
+        {
+          "path": "src/dlch/constants.js",
+          "kind": "import-statement",
+          "original": "./constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/dlch/convertLab65ToDlch.js": {
+      "bytes": 759,
+      "imports": [
+        {
+          "path": "src/dlch/constants.js",
+          "kind": "import-statement",
+          "original": "./constants.js"
+        },
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/dlab/definition.js": {
+      "bytes": 1235,
+      "imports": [
+        {
+          "path": "src/lch/convertLabToLch.js",
+          "kind": "import-statement",
+          "original": "../lch/convertLabToLch.js"
+        },
+        {
+          "path": "src/lch/convertLchToLab.js",
+          "kind": "import-statement",
+          "original": "../lch/convertLchToLab.js"
+        },
+        {
+          "path": "src/lab65/convertLab65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../lab65/convertLab65ToRgb.js"
+        },
+        {
+          "path": "src/lab65/convertRgbToLab65.js",
+          "kind": "import-statement",
+          "original": "../lab65/convertRgbToLab65.js"
+        },
+        {
+          "path": "src/dlch/convertDlchToLab65.js",
+          "kind": "import-statement",
+          "original": "../dlch/convertDlchToLab65.js"
+        },
+        {
+          "path": "src/dlch/convertLab65ToDlch.js",
+          "kind": "import-statement",
+          "original": "../dlch/convertLab65ToDlch.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/dlch/definition.js": {
+      "bytes": 1405,
+      "imports": [
+        {
+          "path": "src/lch/convertLabToLch.js",
+          "kind": "import-statement",
+          "original": "../lch/convertLabToLch.js"
+        },
+        {
+          "path": "src/lch/convertLchToLab.js",
+          "kind": "import-statement",
+          "original": "../lch/convertLchToLab.js"
+        },
+        {
+          "path": "src/dlch/convertDlchToLab65.js",
+          "kind": "import-statement",
+          "original": "./convertDlchToLab65.js"
+        },
+        {
+          "path": "src/dlch/convertLab65ToDlch.js",
+          "kind": "import-statement",
+          "original": "./convertLab65ToDlch.js"
+        },
+        {
+          "path": "src/lab65/convertLab65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../lab65/convertLab65ToRgb.js"
+        },
+        {
+          "path": "src/lab65/convertRgbToLab65.js",
+          "kind": "import-statement",
+          "original": "../lab65/convertRgbToLab65.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hsi/convertHsiToRgb.js": {
+      "bytes": 1414,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hsi/convertRgbToHsi.js": {
+      "bytes": 598,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/hsi/definition.js": {
+      "bytes": 912,
+      "imports": [
+        {
+          "path": "src/hsi/convertHsiToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertHsiToRgb.js"
+        },
+        {
+          "path": "src/hsi/convertRgbToHsi.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToHsi.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hsl/convertHslToRgb.js": {
+      "bytes": 955,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hsl/convertRgbToHsl.js": {
+      "bytes": 598,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/util/hue.js": {
+      "bytes": 237,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/hsl/parseHslLegacy.js": {
+      "bytes": 1001,
+      "imports": [
+        {
+          "path": "src/util/hue.js",
+          "kind": "import-statement",
+          "original": "../util/hue.js"
+        },
+        {
+          "path": "src/util/regex.js",
+          "kind": "import-statement",
+          "original": "../util/regex.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hsl/parseHsl.js": {
+      "bytes": 758,
+      "imports": [
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "../parse.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hsl/definition.js": {
+      "bytes": 1206,
+      "imports": [
+        {
+          "path": "src/hsl/convertHslToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertHslToRgb.js"
+        },
+        {
+          "path": "src/hsl/convertRgbToHsl.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToHsl.js"
+        },
+        {
+          "path": "src/hsl/parseHslLegacy.js",
+          "kind": "import-statement",
+          "original": "./parseHslLegacy.js"
+        },
+        {
+          "path": "src/hsl/parseHsl.js",
+          "kind": "import-statement",
+          "original": "./parseHsl.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hsv/convertHsvToRgb.js": {
+      "bytes": 975,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hsv/convertRgbToHsv.js": {
+      "bytes": 560,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/hsv/definition.js": {
+      "bytes": 912,
+      "imports": [
+        {
+          "path": "src/hsv/convertHsvToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertHsvToRgb.js"
+        },
+        {
+          "path": "src/hsv/convertRgbToHsv.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToHsv.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hwb/convertHwbToRgb.js": {
+      "bytes": 581,
+      "imports": [
+        {
+          "path": "src/hsv/convertHsvToRgb.js",
+          "kind": "import-statement",
+          "original": "../hsv/convertHsvToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hwb/convertRgbToHwb.js": {
+      "bytes": 652,
+      "imports": [
+        {
+          "path": "src/hsv/convertRgbToHsv.js",
+          "kind": "import-statement",
+          "original": "../hsv/convertRgbToHsv.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hwb/parseHwb.js": {
+      "bytes": 732,
+      "imports": [
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "../parse.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hwb/definition.js": {
+      "bytes": 1130,
+      "imports": [
+        {
+          "path": "src/hwb/convertHwbToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertHwbToRgb.js"
+        },
+        {
+          "path": "src/hwb/convertRgbToHwb.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToHwb.js"
+        },
+        {
+          "path": "src/hwb/parseHwb.js",
+          "kind": "import-statement",
+          "original": "./parseHwb.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/hdr/constants.js": {
+      "bytes": 191,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/hdr/transfer.js": {
+      "bytes": 794,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/itp/convertItpToXyz65.js": {
+      "bytes": 989,
+      "imports": [
+        {
+          "path": "src/hdr/constants.js",
+          "kind": "import-statement",
+          "original": "../hdr/constants.js"
+        },
+        {
+          "path": "src/hdr/transfer.js",
+          "kind": "import-statement",
+          "original": "../hdr/transfer.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/itp/convertXyz65ToItp.js": {
+      "bytes": 958,
+      "imports": [
+        {
+          "path": "src/hdr/constants.js",
+          "kind": "import-statement",
+          "original": "../hdr/constants.js"
+        },
+        {
+          "path": "src/hdr/transfer.js",
+          "kind": "import-statement",
+          "original": "../hdr/transfer.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/itp/definition.js": {
+      "bytes": 1151,
+      "imports": [
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/itp/convertItpToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertItpToXyz65.js"
+        },
+        {
+          "path": "src/itp/convertXyz65ToItp.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToItp.js"
+        },
+        {
+          "path": "src/xyz65/convertRgbToXyz65.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertRgbToXyz65.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertXyz65ToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/jab/convertXyz65ToJab.js": {
+      "bytes": 1096,
+      "imports": [
+        {
+          "path": "src/hdr/transfer.js",
+          "kind": "import-statement",
+          "original": "../hdr/transfer.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/jab/convertJabToXyz65.js": {
+      "bytes": 1160,
+      "imports": [
+        {
+          "path": "src/hdr/transfer.js",
+          "kind": "import-statement",
+          "original": "../hdr/transfer.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/jab/convertRgbToJab.js": {
+      "bytes": 491,
+      "imports": [
+        {
+          "path": "src/jab/convertXyz65ToJab.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToJab.js"
+        },
+        {
+          "path": "src/xyz65/convertRgbToXyz65.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertRgbToXyz65.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/jab/convertJabToRgb.js": {
+      "bytes": 231,
+      "imports": [
+        {
+          "path": "src/xyz65/convertXyz65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertXyz65ToRgb.js"
+        },
+        {
+          "path": "src/jab/convertJabToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertJabToXyz65.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/jab/definition.js": {
+      "bytes": 1134,
+      "imports": [
+        {
+          "path": "src/jab/convertXyz65ToJab.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToJab.js"
+        },
+        {
+          "path": "src/jab/convertJabToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertJabToXyz65.js"
+        },
+        {
+          "path": "src/jab/convertRgbToJab.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToJab.js"
+        },
+        {
+          "path": "src/jab/convertJabToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertJabToRgb.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/jch/convertJabToJch.js": {
+      "bytes": 411,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/jch/convertJchToJab.js": {
+      "bytes": 305,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/jch/definition.js": {
+      "bytes": 1140,
+      "imports": [
+        {
+          "path": "src/jch/convertJabToJch.js",
+          "kind": "import-statement",
+          "original": "./convertJabToJch.js"
+        },
+        {
+          "path": "src/jch/convertJchToJab.js",
+          "kind": "import-statement",
+          "original": "./convertJchToJab.js"
+        },
+        {
+          "path": "src/jab/convertJabToRgb.js",
+          "kind": "import-statement",
+          "original": "../jab/convertJabToRgb.js"
+        },
+        {
+          "path": "src/jab/convertRgbToJab.js",
+          "kind": "import-statement",
+          "original": "../jab/convertRgbToJab.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/xyz50/constants.js": {
+      "bytes": 102,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/lab/convertLabToXyz50.js": {
+      "bytes": 576,
+      "imports": [
+        {
+          "path": "src/xyz50/constants.js",
+          "kind": "import-statement",
+          "original": "../xyz50/constants.js"
+        },
+        {
+          "path": "src/constants.js",
+          "kind": "import-statement",
+          "original": "../constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/xyz50/convertXyz50ToRgb.js": {
+      "bytes": 782,
+      "imports": [
+        {
+          "path": "src/lrgb/convertLrgbToRgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertLrgbToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab/convertLabToRgb.js": {
+      "bytes": 227,
+      "imports": [
+        {
+          "path": "src/lab/convertLabToXyz50.js",
+          "kind": "import-statement",
+          "original": "./convertLabToXyz50.js"
+        },
+        {
+          "path": "src/xyz50/convertXyz50ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz50/convertXyz50ToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/xyz50/convertRgbToXyz50.js": {
+      "bytes": 740,
+      "imports": [
+        {
+          "path": "src/lrgb/convertRgbToLrgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertRgbToLrgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab/convertXyz50ToLab.js": {
+      "bytes": 575,
+      "imports": [
+        {
+          "path": "src/xyz50/constants.js",
+          "kind": "import-statement",
+          "original": "../xyz50/constants.js"
+        },
+        {
+          "path": "src/constants.js",
+          "kind": "import-statement",
+          "original": "../constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab/convertRgbToLab.js": {
+      "bytes": 512,
+      "imports": [
+        {
+          "path": "src/xyz50/convertRgbToXyz50.js",
+          "kind": "import-statement",
+          "original": "../xyz50/convertRgbToXyz50.js"
+        },
+        {
+          "path": "src/lab/convertXyz50ToLab.js",
+          "kind": "import-statement",
+          "original": "./convertXyz50ToLab.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab/parseLab.js": {
+      "bytes": 768,
+      "imports": [
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "../parse.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab/definition.js": {
+      "bytes": 1030,
+      "imports": [
+        {
+          "path": "src/lab/convertLabToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertLabToRgb.js"
+        },
+        {
+          "path": "src/lab/convertLabToXyz50.js",
+          "kind": "import-statement",
+          "original": "./convertLabToXyz50.js"
+        },
+        {
+          "path": "src/lab/convertRgbToLab.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToLab.js"
+        },
+        {
+          "path": "src/lab/convertXyz50ToLab.js",
+          "kind": "import-statement",
+          "original": "./convertXyz50ToLab.js"
+        },
+        {
+          "path": "src/lab/parseLab.js",
+          "kind": "import-statement",
+          "original": "./parseLab.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lab65/definition.js": {
+      "bytes": 620,
+      "imports": [
+        {
+          "path": "src/lab65/convertLab65ToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertLab65ToRgb.js"
+        },
+        {
+          "path": "src/lab65/convertLab65ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertLab65ToXyz65.js"
+        },
+        {
+          "path": "src/lab65/convertRgbToLab65.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToLab65.js"
+        },
+        {
+          "path": "src/lab65/convertXyz65ToLab65.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToLab65.js"
+        },
+        {
+          "path": "src/lab/definition.js",
+          "kind": "import-statement",
+          "original": "../lab/definition.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lch/parseLch.js": {
+      "bytes": 762,
+      "imports": [
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "../parse.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lch/definition.js": {
+      "bytes": 1334,
+      "imports": [
+        {
+          "path": "src/lch/convertLabToLch.js",
+          "kind": "import-statement",
+          "original": "./convertLabToLch.js"
+        },
+        {
+          "path": "src/lch/convertLchToLab.js",
+          "kind": "import-statement",
+          "original": "./convertLchToLab.js"
+        },
+        {
+          "path": "src/lab/convertLabToRgb.js",
+          "kind": "import-statement",
+          "original": "../lab/convertLabToRgb.js"
+        },
+        {
+          "path": "src/lab/convertRgbToLab.js",
+          "kind": "import-statement",
+          "original": "../lab/convertRgbToLab.js"
+        },
+        {
+          "path": "src/lch/parseLch.js",
+          "kind": "import-statement",
+          "original": "./parseLch.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lch65/definition.js": {
+      "bytes": 708,
+      "imports": [
+        {
+          "path": "src/lch/convertLabToLch.js",
+          "kind": "import-statement",
+          "original": "../lch/convertLabToLch.js"
+        },
+        {
+          "path": "src/lch/convertLchToLab.js",
+          "kind": "import-statement",
+          "original": "../lch/convertLchToLab.js"
+        },
+        {
+          "path": "src/lab65/convertLab65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../lab65/convertLab65ToRgb.js"
+        },
+        {
+          "path": "src/lab65/convertRgbToLab65.js",
+          "kind": "import-statement",
+          "original": "../lab65/convertRgbToLab65.js"
+        },
+        {
+          "path": "src/lch/definition.js",
+          "kind": "import-statement",
+          "original": "../lch/definition.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lchuv/convertLuvToLchuv.js": {
+      "bytes": 423,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lchuv/convertLchuvToLuv.js": {
+      "bytes": 319,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/luv/convertXyz50ToLuv.js": {
+      "bytes": 924,
+      "imports": [
+        {
+          "path": "src/xyz50/constants.js",
+          "kind": "import-statement",
+          "original": "../xyz50/constants.js"
+        },
+        {
+          "path": "src/constants.js",
+          "kind": "import-statement",
+          "original": "../constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/luv/convertLuvToXyz50.js": {
+      "bytes": 865,
+      "imports": [
+        {
+          "path": "src/xyz50/constants.js",
+          "kind": "import-statement",
+          "original": "../xyz50/constants.js"
+        },
+        {
+          "path": "src/constants.js",
+          "kind": "import-statement",
+          "original": "../constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lchuv/definition.js": {
+      "bytes": 1544,
+      "imports": [
+        {
+          "path": "src/lchuv/convertLuvToLchuv.js",
+          "kind": "import-statement",
+          "original": "./convertLuvToLchuv.js"
+        },
+        {
+          "path": "src/lchuv/convertLchuvToLuv.js",
+          "kind": "import-statement",
+          "original": "./convertLchuvToLuv.js"
+        },
+        {
+          "path": "src/luv/convertXyz50ToLuv.js",
+          "kind": "import-statement",
+          "original": "../luv/convertXyz50ToLuv.js"
+        },
+        {
+          "path": "src/luv/convertLuvToXyz50.js",
+          "kind": "import-statement",
+          "original": "../luv/convertLuvToXyz50.js"
+        },
+        {
+          "path": "src/xyz50/convertXyz50ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz50/convertXyz50ToRgb.js"
+        },
+        {
+          "path": "src/xyz50/convertRgbToXyz50.js",
+          "kind": "import-statement",
+          "original": "../xyz50/convertRgbToXyz50.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "../fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "../difference.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "../average.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/lrgb/definition.js": {
+      "bytes": 359,
+      "imports": [
+        {
+          "path": "src/rgb/definition.js",
+          "kind": "import-statement",
+          "original": "../rgb/definition.js"
+        },
+        {
+          "path": "src/lrgb/convertRgbToLrgb.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToLrgb.js"
+        },
+        {
+          "path": "src/lrgb/convertLrgbToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertLrgbToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/luv/definition.js": {
+      "bytes": 1031,
+      "imports": [
+        {
+          "path": "src/luv/convertXyz50ToLuv.js",
+          "kind": "import-statement",
+          "original": "./convertXyz50ToLuv.js"
+        },
+        {
+          "path": "src/luv/convertLuvToXyz50.js",
+          "kind": "import-statement",
+          "original": "./convertLuvToXyz50.js"
+        },
+        {
+          "path": "src/xyz50/convertXyz50ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz50/convertXyz50ToRgb.js"
+        },
+        {
+          "path": "src/xyz50/convertRgbToXyz50.js",
+          "kind": "import-statement",
+          "original": "../xyz50/convertRgbToXyz50.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/oklab/convertLrgbToOklab.js": {
+      "bytes": 735,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/oklab/convertRgbToOklab.js": {
+      "bytes": 326,
+      "imports": [
+        {
+          "path": "src/lrgb/convertRgbToLrgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertRgbToLrgb.js"
+        },
+        {
+          "path": "src/oklab/convertLrgbToOklab.js",
+          "kind": "import-statement",
+          "original": "./convertLrgbToOklab.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/oklab/convertOklabToLrgb.js": {
+      "bytes": 906,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/oklab/convertOklabToRgb.js": {
+      "bytes": 226,
+      "imports": [
+        {
+          "path": "src/lrgb/convertLrgbToRgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertLrgbToRgb.js"
+        },
+        {
+          "path": "src/oklab/convertOklabToLrgb.js",
+          "kind": "import-statement",
+          "original": "./convertOklabToLrgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/okhsl/helpers.js": {
+      "bytes": 8629,
+      "imports": [
+        {
+          "path": "src/oklab/convertOklabToLrgb.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertOklabToLrgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/okhsl/convertOklabToOkhsl.js": {
+      "bytes": 2119,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        },
+        {
+          "path": "src/okhsl/helpers.js",
+          "kind": "import-statement",
+          "original": "./helpers.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/okhsl/convertOkhslToOklab.js": {
+      "bytes": 2022,
+      "imports": [
+        {
+          "path": "src/okhsl/helpers.js",
+          "kind": "import-statement",
+          "original": "./helpers.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/okhsl/modeOkhsl.js": {
+      "bytes": 651,
+      "imports": [
+        {
+          "path": "src/oklab/convertRgbToOklab.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertRgbToOklab.js"
+        },
+        {
+          "path": "src/oklab/convertOklabToRgb.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertOklabToRgb.js"
+        },
+        {
+          "path": "src/okhsl/convertOklabToOkhsl.js",
+          "kind": "import-statement",
+          "original": "./convertOklabToOkhsl.js"
+        },
+        {
+          "path": "src/okhsl/convertOkhslToOklab.js",
+          "kind": "import-statement",
+          "original": "./convertOkhslToOklab.js"
+        },
+        {
+          "path": "src/hsl/definition.js",
+          "kind": "import-statement",
+          "original": "../hsl/definition.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/okhsv/convertOklabToOkhsv.js": {
+      "bytes": 2322,
+      "imports": [
+        {
+          "path": "src/util/normalizeHue.js",
+          "kind": "import-statement",
+          "original": "../util/normalizeHue.js"
+        },
+        {
+          "path": "src/oklab/convertOklabToLrgb.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertOklabToLrgb.js"
+        },
+        {
+          "path": "src/okhsl/helpers.js",
+          "kind": "import-statement",
+          "original": "../okhsl/helpers.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/okhsv/convertOkhsvToOklab.js": {
+      "bytes": 2164,
+      "imports": [
+        {
+          "path": "src/oklab/convertOklabToLrgb.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertOklabToLrgb.js"
+        },
+        {
+          "path": "src/okhsl/helpers.js",
+          "kind": "import-statement",
+          "original": "../okhsl/helpers.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/okhsv/modeOkhsv.js": {
+      "bytes": 651,
+      "imports": [
+        {
+          "path": "src/oklab/convertRgbToOklab.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertRgbToOklab.js"
+        },
+        {
+          "path": "src/oklab/convertOklabToRgb.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertOklabToRgb.js"
+        },
+        {
+          "path": "src/okhsv/convertOklabToOkhsv.js",
+          "kind": "import-statement",
+          "original": "./convertOklabToOkhsv.js"
+        },
+        {
+          "path": "src/okhsv/convertOkhsvToOklab.js",
+          "kind": "import-statement",
+          "original": "./convertOkhsvToOklab.js"
+        },
+        {
+          "path": "src/hsv/definition.js",
+          "kind": "import-statement",
+          "original": "../hsv/definition.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/oklab/parseOklab.js": {
+      "bytes": 824,
+      "imports": [
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "../parse.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/oklab/definition.js": {
+      "bytes": 937,
+      "imports": [
+        {
+          "path": "src/oklab/convertOklabToLrgb.js",
+          "kind": "import-statement",
+          "original": "./convertOklabToLrgb.js"
+        },
+        {
+          "path": "src/oklab/convertLrgbToOklab.js",
+          "kind": "import-statement",
+          "original": "./convertLrgbToOklab.js"
+        },
+        {
+          "path": "src/oklab/convertRgbToOklab.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToOklab.js"
+        },
+        {
+          "path": "src/oklab/convertOklabToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertOklabToRgb.js"
+        },
+        {
+          "path": "src/oklab/parseOklab.js",
+          "kind": "import-statement",
+          "original": "./parseOklab.js"
+        },
+        {
+          "path": "src/lab/definition.js",
+          "kind": "import-statement",
+          "original": "../lab/definition.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/oklch/parseOklch.js": {
+      "bytes": 818,
+      "imports": [
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "../parse.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/oklch/definition.js": {
+      "bytes": 906,
+      "imports": [
+        {
+          "path": "src/lch/definition.js",
+          "kind": "import-statement",
+          "original": "../lch/definition.js"
+        },
+        {
+          "path": "src/lch/convertLabToLch.js",
+          "kind": "import-statement",
+          "original": "../lch/convertLabToLch.js"
+        },
+        {
+          "path": "src/lch/convertLchToLab.js",
+          "kind": "import-statement",
+          "original": "../lch/convertLchToLab.js"
+        },
+        {
+          "path": "src/oklab/convertOklabToRgb.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertOklabToRgb.js"
+        },
+        {
+          "path": "src/oklab/convertRgbToOklab.js",
+          "kind": "import-statement",
+          "original": "../oklab/convertRgbToOklab.js"
+        },
+        {
+          "path": "src/oklch/parseOklch.js",
+          "kind": "import-statement",
+          "original": "./parseOklch.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/p3/convertP3ToXyz65.js": {
+      "bytes": 709,
+      "imports": [
+        {
+          "path": "src/lrgb/convertRgbToLrgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertRgbToLrgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/p3/convertXyz65ToP3.js": {
+      "bytes": 812,
+      "imports": [
+        {
+          "path": "src/lrgb/convertLrgbToRgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertLrgbToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/p3/definition.js": {
+      "bytes": 604,
+      "imports": [
+        {
+          "path": "src/rgb/definition.js",
+          "kind": "import-statement",
+          "original": "../rgb/definition.js"
+        },
+        {
+          "path": "src/p3/convertP3ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertP3ToXyz65.js"
+        },
+        {
+          "path": "src/p3/convertXyz65ToP3.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToP3.js"
+        },
+        {
+          "path": "src/xyz65/convertRgbToXyz65.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertRgbToXyz65.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertXyz65ToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/prophoto/convertXyz50ToProphoto.js": {
+      "bytes": 882,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/prophoto/convertProphotoToXyz50.js": {
+      "bytes": 863,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/prophoto/definition.js": {
+      "bytes": 771,
+      "imports": [
+        {
+          "path": "src/rgb/definition.js",
+          "kind": "import-statement",
+          "original": "../rgb/definition.js"
+        },
+        {
+          "path": "src/prophoto/convertXyz50ToProphoto.js",
+          "kind": "import-statement",
+          "original": "./convertXyz50ToProphoto.js"
+        },
+        {
+          "path": "src/prophoto/convertProphotoToXyz50.js",
+          "kind": "import-statement",
+          "original": "./convertProphotoToXyz50.js"
+        },
+        {
+          "path": "src/xyz50/convertXyz50ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz50/convertXyz50ToRgb.js"
+        },
+        {
+          "path": "src/xyz50/convertRgbToXyz50.js",
+          "kind": "import-statement",
+          "original": "../xyz50/convertRgbToXyz50.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/rec2020/convertXyz65ToRec2020.js": {
+      "bytes": 1044,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/rec2020/convertRec2020ToXyz65.js": {
+      "bytes": 1000,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/rec2020/definition.js": {
+      "bytes": 646,
+      "imports": [
+        {
+          "path": "src/rgb/definition.js",
+          "kind": "import-statement",
+          "original": "../rgb/definition.js"
+        },
+        {
+          "path": "src/rec2020/convertXyz65ToRec2020.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToRec2020.js"
+        },
+        {
+          "path": "src/rec2020/convertRec2020ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertRec2020ToXyz65.js"
+        },
+        {
+          "path": "src/xyz65/convertRgbToXyz65.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertRgbToXyz65.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz65ToRgb.js",
+          "kind": "import-statement",
+          "original": "../xyz65/convertXyz65ToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/xyb/constants.js": {
+      "bytes": 86,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/xyb/convertRgbToXyb.js": {
+      "bytes": 733,
+      "imports": [
+        {
+          "path": "src/lrgb/convertRgbToLrgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertRgbToLrgb.js"
+        },
+        {
+          "path": "src/xyb/constants.js",
+          "kind": "import-statement",
+          "original": "./constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/xyb/convertXybToRgb.js": {
+      "bytes": 854,
+      "imports": [
+        {
+          "path": "src/lrgb/convertLrgbToRgb.js",
+          "kind": "import-statement",
+          "original": "../lrgb/convertLrgbToRgb.js"
+        },
+        {
+          "path": "src/xyb/constants.js",
+          "kind": "import-statement",
+          "original": "./constants.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/xyb/definition.js": {
+      "bytes": 783,
+      "imports": [
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        },
+        {
+          "path": "src/xyb/convertRgbToXyb.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToXyb.js"
+        },
+        {
+          "path": "src/xyb/convertXybToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertXybToRgb.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/xyz50/definition.js": {
+      "bytes": 907,
+      "imports": [
+        {
+          "path": "src/xyz50/convertXyz50ToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertXyz50ToRgb.js"
+        },
+        {
+          "path": "src/lab/convertXyz50ToLab.js",
+          "kind": "import-statement",
+          "original": "../lab/convertXyz50ToLab.js"
+        },
+        {
+          "path": "src/xyz50/convertRgbToXyz50.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToXyz50.js"
+        },
+        {
+          "path": "src/lab/convertLabToXyz50.js",
+          "kind": "import-statement",
+          "original": "../lab/convertLabToXyz50.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/xyz65/convertXyz65ToXyz50.js": {
+      "bytes": 799,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/xyz65/convertXyz50ToXyz65.js": {
+      "bytes": 799,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/xyz65/definition.js": {
+      "bytes": 918,
+      "imports": [
+        {
+          "path": "src/xyz65/convertXyz65ToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToRgb.js"
+        },
+        {
+          "path": "src/xyz65/convertRgbToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToXyz65.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz65ToXyz50.js",
+          "kind": "import-statement",
+          "original": "./convertXyz65ToXyz50.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz50ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./convertXyz50ToXyz65.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/yiq/convertRgbToYiq.js": {
+      "bytes": 428,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/yiq/convertYiqToRgb.js": {
+      "bytes": 388,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/yiq/definition.js": {
+      "bytes": 1034,
+      "imports": [
+        {
+          "path": "src/yiq/convertRgbToYiq.js",
+          "kind": "import-statement",
+          "original": "./convertRgbToYiq.js"
+        },
+        {
+          "path": "src/yiq/convertYiqToRgb.js",
+          "kind": "import-statement",
+          "original": "./convertYiqToRgb.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "../interpolate/linear.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "../fixup/alpha.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/round.js": {
+      "bytes": 283,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/formatter.js": {
+      "bytes": 2496,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/round.js",
+          "kind": "import-statement",
+          "original": "./round.js"
+        },
+        {
+          "path": "src/_prepare.js",
+          "kind": "import-statement",
+          "original": "./_prepare.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/blend.js": {
+      "bytes": 2139,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/random.js": {
+      "bytes": 787,
+      "imports": [
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/map.js": {
+      "bytes": 1535,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/_prepare.js",
+          "kind": "import-statement",
+          "original": "./_prepare.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/util/normalizePositions.js": {
+      "bytes": 1342,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/easing/midpoint.js": {
+      "bytes": 179,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/interpolate/interpolate.js": {
+      "bytes": 3916,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "../converter.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "../modes.js"
+        },
+        {
+          "path": "src/util/normalizePositions.js",
+          "kind": "import-statement",
+          "original": "../util/normalizePositions.js"
+        },
+        {
+          "path": "src/easing/midpoint.js",
+          "kind": "import-statement",
+          "original": "../easing/midpoint.js"
+        },
+        {
+          "path": "src/map.js",
+          "kind": "import-statement",
+          "original": "../map.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/interpolate/splineBasis.js": {
+      "bytes": 1305,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/interpolate/splineNatural.js": {
+      "bytes": 748,
+      "imports": [
+        {
+          "path": "src/interpolate/splineBasis.js",
+          "kind": "import-statement",
+          "original": "./splineBasis.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/interpolate/splineMonotone.js": {
+      "bytes": 2923,
+      "imports": [
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "./linear.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/easing/gamma.js": {
+      "bytes": 93,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/samples.js": {
+      "bytes": 273,
+      "imports": [
+        {
+          "path": "src/easing/gamma.js",
+          "kind": "import-statement",
+          "original": "./easing/gamma.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/clamp.js": {
+      "bytes": 7087,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/_prepare.js",
+          "kind": "import-statement",
+          "original": "./_prepare.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "./difference.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/nearest.js": {
+      "bytes": 703,
+      "imports": [
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "./difference.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/filter.js": {
+      "bytes": 3311,
+      "imports": [
+        {
+          "path": "src/map.js",
+          "kind": "import-statement",
+          "original": "./map.js"
+        },
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/_prepare.js",
+          "kind": "import-statement",
+          "original": "./_prepare.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/deficiency.js": {
+      "bytes": 4907,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/_prepare.js",
+          "kind": "import-statement",
+          "original": "./_prepare.js"
+        },
+        {
+          "path": "src/interpolate/lerp.js",
+          "kind": "import-statement",
+          "original": "./interpolate/lerp.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/easing/smoothstep.js": {
+      "bytes": 289,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/easing/smootherstep.js": {
+      "bytes": 205,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/easing/inOutSine.js": {
+      "bytes": 125,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/wcag.js": {
+      "bytes": 485,
+      "imports": [
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/index.js": {
+      "bytes": 11147,
+      "imports": [
+        {
+          "path": "src/a98/definition.js",
+          "kind": "import-statement",
+          "original": "./a98/definition.js"
+        },
+        {
+          "path": "src/cubehelix/definition.js",
+          "kind": "import-statement",
+          "original": "./cubehelix/definition.js"
+        },
+        {
+          "path": "src/dlab/definition.js",
+          "kind": "import-statement",
+          "original": "./dlab/definition.js"
+        },
+        {
+          "path": "src/dlch/definition.js",
+          "kind": "import-statement",
+          "original": "./dlch/definition.js"
+        },
+        {
+          "path": "src/hsi/definition.js",
+          "kind": "import-statement",
+          "original": "./hsi/definition.js"
+        },
+        {
+          "path": "src/hsl/definition.js",
+          "kind": "import-statement",
+          "original": "./hsl/definition.js"
+        },
+        {
+          "path": "src/hsv/definition.js",
+          "kind": "import-statement",
+          "original": "./hsv/definition.js"
+        },
+        {
+          "path": "src/hwb/definition.js",
+          "kind": "import-statement",
+          "original": "./hwb/definition.js"
+        },
+        {
+          "path": "src/itp/definition.js",
+          "kind": "import-statement",
+          "original": "./itp/definition.js"
+        },
+        {
+          "path": "src/jab/definition.js",
+          "kind": "import-statement",
+          "original": "./jab/definition.js"
+        },
+        {
+          "path": "src/jch/definition.js",
+          "kind": "import-statement",
+          "original": "./jch/definition.js"
+        },
+        {
+          "path": "src/lab/definition.js",
+          "kind": "import-statement",
+          "original": "./lab/definition.js"
+        },
+        {
+          "path": "src/lab65/definition.js",
+          "kind": "import-statement",
+          "original": "./lab65/definition.js"
+        },
+        {
+          "path": "src/lch/definition.js",
+          "kind": "import-statement",
+          "original": "./lch/definition.js"
+        },
+        {
+          "path": "src/lch65/definition.js",
+          "kind": "import-statement",
+          "original": "./lch65/definition.js"
+        },
+        {
+          "path": "src/lchuv/definition.js",
+          "kind": "import-statement",
+          "original": "./lchuv/definition.js"
+        },
+        {
+          "path": "src/lrgb/definition.js",
+          "kind": "import-statement",
+          "original": "./lrgb/definition.js"
+        },
+        {
+          "path": "src/luv/definition.js",
+          "kind": "import-statement",
+          "original": "./luv/definition.js"
+        },
+        {
+          "path": "src/okhsl/modeOkhsl.js",
+          "kind": "import-statement",
+          "original": "./okhsl/modeOkhsl.js"
+        },
+        {
+          "path": "src/okhsv/modeOkhsv.js",
+          "kind": "import-statement",
+          "original": "./okhsv/modeOkhsv.js"
+        },
+        {
+          "path": "src/oklab/definition.js",
+          "kind": "import-statement",
+          "original": "./oklab/definition.js"
+        },
+        {
+          "path": "src/oklch/definition.js",
+          "kind": "import-statement",
+          "original": "./oklch/definition.js"
+        },
+        {
+          "path": "src/p3/definition.js",
+          "kind": "import-statement",
+          "original": "./p3/definition.js"
+        },
+        {
+          "path": "src/prophoto/definition.js",
+          "kind": "import-statement",
+          "original": "./prophoto/definition.js"
+        },
+        {
+          "path": "src/rec2020/definition.js",
+          "kind": "import-statement",
+          "original": "./rec2020/definition.js"
+        },
+        {
+          "path": "src/rgb/definition.js",
+          "kind": "import-statement",
+          "original": "./rgb/definition.js"
+        },
+        {
+          "path": "src/xyb/definition.js",
+          "kind": "import-statement",
+          "original": "./xyb/definition.js"
+        },
+        {
+          "path": "src/xyz50/definition.js",
+          "kind": "import-statement",
+          "original": "./xyz50/definition.js"
+        },
+        {
+          "path": "src/xyz65/definition.js",
+          "kind": "import-statement",
+          "original": "./xyz65/definition.js"
+        },
+        {
+          "path": "src/yiq/definition.js",
+          "kind": "import-statement",
+          "original": "./yiq/definition.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        },
+        {
+          "path": "src/converter.js",
+          "kind": "import-statement",
+          "original": "./converter.js"
+        },
+        {
+          "path": "src/formatter.js",
+          "kind": "import-statement",
+          "original": "./formatter.js"
+        },
+        {
+          "path": "src/colors/named.js",
+          "kind": "import-statement",
+          "original": "./colors/named.js"
+        },
+        {
+          "path": "src/blend.js",
+          "kind": "import-statement",
+          "original": "./blend.js"
+        },
+        {
+          "path": "src/random.js",
+          "kind": "import-statement",
+          "original": "./random.js"
+        },
+        {
+          "path": "src/fixup/hue.js",
+          "kind": "import-statement",
+          "original": "./fixup/hue.js"
+        },
+        {
+          "path": "src/fixup/alpha.js",
+          "kind": "import-statement",
+          "original": "./fixup/alpha.js"
+        },
+        {
+          "path": "src/map.js",
+          "kind": "import-statement",
+          "original": "./map.js"
+        },
+        {
+          "path": "src/average.js",
+          "kind": "import-statement",
+          "original": "./average.js"
+        },
+        {
+          "path": "src/round.js",
+          "kind": "import-statement",
+          "original": "./round.js"
+        },
+        {
+          "path": "src/interpolate/interpolate.js",
+          "kind": "import-statement",
+          "original": "./interpolate/interpolate.js"
+        },
+        {
+          "path": "src/interpolate/linear.js",
+          "kind": "import-statement",
+          "original": "./interpolate/linear.js"
+        },
+        {
+          "path": "src/interpolate/piecewise.js",
+          "kind": "import-statement",
+          "original": "./interpolate/piecewise.js"
+        },
+        {
+          "path": "src/interpolate/splineBasis.js",
+          "kind": "import-statement",
+          "original": "./interpolate/splineBasis.js"
+        },
+        {
+          "path": "src/interpolate/splineNatural.js",
+          "kind": "import-statement",
+          "original": "./interpolate/splineNatural.js"
+        },
+        {
+          "path": "src/interpolate/splineMonotone.js",
+          "kind": "import-statement",
+          "original": "./interpolate/splineMonotone.js"
+        },
+        {
+          "path": "src/interpolate/lerp.js",
+          "kind": "import-statement",
+          "original": "./interpolate/lerp.js"
+        },
+        {
+          "path": "src/samples.js",
+          "kind": "import-statement",
+          "original": "./samples.js"
+        },
+        {
+          "path": "src/clamp.js",
+          "kind": "import-statement",
+          "original": "./clamp.js"
+        },
+        {
+          "path": "src/nearest.js",
+          "kind": "import-statement",
+          "original": "./nearest.js"
+        },
+        {
+          "path": "src/modes.js",
+          "kind": "import-statement",
+          "original": "./modes.js"
+        },
+        {
+          "path": "src/parse.js",
+          "kind": "import-statement",
+          "original": "./parse.js"
+        },
+        {
+          "path": "src/difference.js",
+          "kind": "import-statement",
+          "original": "./difference.js"
+        },
+        {
+          "path": "src/filter.js",
+          "kind": "import-statement",
+          "original": "./filter.js"
+        },
+        {
+          "path": "src/deficiency.js",
+          "kind": "import-statement",
+          "original": "./deficiency.js"
+        },
+        {
+          "path": "src/easing/midpoint.js",
+          "kind": "import-statement",
+          "original": "./easing/midpoint.js"
+        },
+        {
+          "path": "src/easing/smoothstep.js",
+          "kind": "import-statement",
+          "original": "./easing/smoothstep.js"
+        },
+        {
+          "path": "src/easing/smootherstep.js",
+          "kind": "import-statement",
+          "original": "./easing/smootherstep.js"
+        },
+        {
+          "path": "src/easing/inOutSine.js",
+          "kind": "import-statement",
+          "original": "./easing/inOutSine.js"
+        },
+        {
+          "path": "src/easing/gamma.js",
+          "kind": "import-statement",
+          "original": "./easing/gamma.js"
+        },
+        {
+          "path": "src/wcag.js",
+          "kind": "import-statement",
+          "original": "./wcag.js"
+        },
+        {
+          "path": "src/hsl/parseHsl.js",
+          "kind": "import-statement",
+          "original": "./hsl/parseHsl.js"
+        },
+        {
+          "path": "src/hwb/parseHwb.js",
+          "kind": "import-statement",
+          "original": "./hwb/parseHwb.js"
+        },
+        {
+          "path": "src/lab/parseLab.js",
+          "kind": "import-statement",
+          "original": "./lab/parseLab.js"
+        },
+        {
+          "path": "src/lch/parseLch.js",
+          "kind": "import-statement",
+          "original": "./lch/parseLch.js"
+        },
+        {
+          "path": "src/rgb/parseNamed.js",
+          "kind": "import-statement",
+          "original": "./rgb/parseNamed.js"
+        },
+        {
+          "path": "src/rgb/parseTransparent.js",
+          "kind": "import-statement",
+          "original": "./rgb/parseTransparent.js"
+        },
+        {
+          "path": "src/rgb/parseHex.js",
+          "kind": "import-statement",
+          "original": "./rgb/parseHex.js"
+        },
+        {
+          "path": "src/rgb/parseRgb.js",
+          "kind": "import-statement",
+          "original": "./rgb/parseRgb.js"
+        },
+        {
+          "path": "src/hsl/parseHslLegacy.js",
+          "kind": "import-statement",
+          "original": "./hsl/parseHslLegacy.js"
+        },
+        {
+          "path": "src/rgb/parseRgbLegacy.js",
+          "kind": "import-statement",
+          "original": "./rgb/parseRgbLegacy.js"
+        },
+        {
+          "path": "src/oklab/parseOklab.js",
+          "kind": "import-statement",
+          "original": "./oklab/parseOklab.js"
+        },
+        {
+          "path": "src/oklch/parseOklch.js",
+          "kind": "import-statement",
+          "original": "./oklch/parseOklch.js"
+        },
+        {
+          "path": "src/a98/convertA98ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./a98/convertA98ToXyz65.js"
+        },
+        {
+          "path": "src/cubehelix/convertCubehelixToRgb.js",
+          "kind": "import-statement",
+          "original": "./cubehelix/convertCubehelixToRgb.js"
+        },
+        {
+          "path": "src/dlch/convertDlchToLab65.js",
+          "kind": "import-statement",
+          "original": "./dlch/convertDlchToLab65.js"
+        },
+        {
+          "path": "src/hsi/convertHsiToRgb.js",
+          "kind": "import-statement",
+          "original": "./hsi/convertHsiToRgb.js"
+        },
+        {
+          "path": "src/hsl/convertHslToRgb.js",
+          "kind": "import-statement",
+          "original": "./hsl/convertHslToRgb.js"
+        },
+        {
+          "path": "src/hsv/convertHsvToRgb.js",
+          "kind": "import-statement",
+          "original": "./hsv/convertHsvToRgb.js"
+        },
+        {
+          "path": "src/hwb/convertHwbToRgb.js",
+          "kind": "import-statement",
+          "original": "./hwb/convertHwbToRgb.js"
+        },
+        {
+          "path": "src/itp/convertItpToXyz65.js",
+          "kind": "import-statement",
+          "original": "./itp/convertItpToXyz65.js"
+        },
+        {
+          "path": "src/jch/convertJabToJch.js",
+          "kind": "import-statement",
+          "original": "./jch/convertJabToJch.js"
+        },
+        {
+          "path": "src/jab/convertJabToRgb.js",
+          "kind": "import-statement",
+          "original": "./jab/convertJabToRgb.js"
+        },
+        {
+          "path": "src/jab/convertJabToXyz65.js",
+          "kind": "import-statement",
+          "original": "./jab/convertJabToXyz65.js"
+        },
+        {
+          "path": "src/jch/convertJchToJab.js",
+          "kind": "import-statement",
+          "original": "./jch/convertJchToJab.js"
+        },
+        {
+          "path": "src/dlch/convertLab65ToDlch.js",
+          "kind": "import-statement",
+          "original": "./dlch/convertLab65ToDlch.js"
+        },
+        {
+          "path": "src/lab65/convertLab65ToRgb.js",
+          "kind": "import-statement",
+          "original": "./lab65/convertLab65ToRgb.js"
+        },
+        {
+          "path": "src/lab65/convertLab65ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./lab65/convertLab65ToXyz65.js"
+        },
+        {
+          "path": "src/lch/convertLabToLch.js",
+          "kind": "import-statement",
+          "original": "./lch/convertLabToLch.js"
+        },
+        {
+          "path": "src/lab/convertLabToRgb.js",
+          "kind": "import-statement",
+          "original": "./lab/convertLabToRgb.js"
+        },
+        {
+          "path": "src/lab/convertLabToXyz50.js",
+          "kind": "import-statement",
+          "original": "./lab/convertLabToXyz50.js"
+        },
+        {
+          "path": "src/lch/convertLchToLab.js",
+          "kind": "import-statement",
+          "original": "./lch/convertLchToLab.js"
+        },
+        {
+          "path": "src/lchuv/convertLchuvToLuv.js",
+          "kind": "import-statement",
+          "original": "./lchuv/convertLchuvToLuv.js"
+        },
+        {
+          "path": "src/oklab/convertLrgbToOklab.js",
+          "kind": "import-statement",
+          "original": "./oklab/convertLrgbToOklab.js"
+        },
+        {
+          "path": "src/lrgb/convertLrgbToRgb.js",
+          "kind": "import-statement",
+          "original": "./lrgb/convertLrgbToRgb.js"
+        },
+        {
+          "path": "src/lchuv/convertLuvToLchuv.js",
+          "kind": "import-statement",
+          "original": "./lchuv/convertLuvToLchuv.js"
+        },
+        {
+          "path": "src/luv/convertLuvToXyz50.js",
+          "kind": "import-statement",
+          "original": "./luv/convertLuvToXyz50.js"
+        },
+        {
+          "path": "src/okhsl/convertOkhslToOklab.js",
+          "kind": "import-statement",
+          "original": "./okhsl/convertOkhslToOklab.js"
+        },
+        {
+          "path": "src/okhsv/convertOkhsvToOklab.js",
+          "kind": "import-statement",
+          "original": "./okhsv/convertOkhsvToOklab.js"
+        },
+        {
+          "path": "src/oklab/convertOklabToLrgb.js",
+          "kind": "import-statement",
+          "original": "./oklab/convertOklabToLrgb.js"
+        },
+        {
+          "path": "src/okhsl/convertOklabToOkhsl.js",
+          "kind": "import-statement",
+          "original": "./okhsl/convertOklabToOkhsl.js"
+        },
+        {
+          "path": "src/okhsv/convertOklabToOkhsv.js",
+          "kind": "import-statement",
+          "original": "./okhsv/convertOklabToOkhsv.js"
+        },
+        {
+          "path": "src/oklab/convertOklabToRgb.js",
+          "kind": "import-statement",
+          "original": "./oklab/convertOklabToRgb.js"
+        },
+        {
+          "path": "src/p3/convertP3ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./p3/convertP3ToXyz65.js"
+        },
+        {
+          "path": "src/prophoto/convertProphotoToXyz50.js",
+          "kind": "import-statement",
+          "original": "./prophoto/convertProphotoToXyz50.js"
+        },
+        {
+          "path": "src/rec2020/convertRec2020ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./rec2020/convertRec2020ToXyz65.js"
+        },
+        {
+          "path": "src/cubehelix/convertRgbToCubehelix.js",
+          "kind": "import-statement",
+          "original": "./cubehelix/convertRgbToCubehelix.js"
+        },
+        {
+          "path": "src/hsi/convertRgbToHsi.js",
+          "kind": "import-statement",
+          "original": "./hsi/convertRgbToHsi.js"
+        },
+        {
+          "path": "src/hsl/convertRgbToHsl.js",
+          "kind": "import-statement",
+          "original": "./hsl/convertRgbToHsl.js"
+        },
+        {
+          "path": "src/hsv/convertRgbToHsv.js",
+          "kind": "import-statement",
+          "original": "./hsv/convertRgbToHsv.js"
+        },
+        {
+          "path": "src/hwb/convertRgbToHwb.js",
+          "kind": "import-statement",
+          "original": "./hwb/convertRgbToHwb.js"
+        },
+        {
+          "path": "src/jab/convertRgbToJab.js",
+          "kind": "import-statement",
+          "original": "./jab/convertRgbToJab.js"
+        },
+        {
+          "path": "src/lab/convertRgbToLab.js",
+          "kind": "import-statement",
+          "original": "./lab/convertRgbToLab.js"
+        },
+        {
+          "path": "src/lab65/convertRgbToLab65.js",
+          "kind": "import-statement",
+          "original": "./lab65/convertRgbToLab65.js"
+        },
+        {
+          "path": "src/lrgb/convertRgbToLrgb.js",
+          "kind": "import-statement",
+          "original": "./lrgb/convertRgbToLrgb.js"
+        },
+        {
+          "path": "src/oklab/convertRgbToOklab.js",
+          "kind": "import-statement",
+          "original": "./oklab/convertRgbToOklab.js"
+        },
+        {
+          "path": "src/xyb/convertRgbToXyb.js",
+          "kind": "import-statement",
+          "original": "./xyb/convertRgbToXyb.js"
+        },
+        {
+          "path": "src/xyz50/convertRgbToXyz50.js",
+          "kind": "import-statement",
+          "original": "./xyz50/convertRgbToXyz50.js"
+        },
+        {
+          "path": "src/xyz65/convertRgbToXyz65.js",
+          "kind": "import-statement",
+          "original": "./xyz65/convertRgbToXyz65.js"
+        },
+        {
+          "path": "src/yiq/convertRgbToYiq.js",
+          "kind": "import-statement",
+          "original": "./yiq/convertRgbToYiq.js"
+        },
+        {
+          "path": "src/xyb/convertXybToRgb.js",
+          "kind": "import-statement",
+          "original": "./xyb/convertXybToRgb.js"
+        },
+        {
+          "path": "src/lab/convertXyz50ToLab.js",
+          "kind": "import-statement",
+          "original": "./lab/convertXyz50ToLab.js"
+        },
+        {
+          "path": "src/luv/convertXyz50ToLuv.js",
+          "kind": "import-statement",
+          "original": "./luv/convertXyz50ToLuv.js"
+        },
+        {
+          "path": "src/prophoto/convertXyz50ToProphoto.js",
+          "kind": "import-statement",
+          "original": "./prophoto/convertXyz50ToProphoto.js"
+        },
+        {
+          "path": "src/xyz50/convertXyz50ToRgb.js",
+          "kind": "import-statement",
+          "original": "./xyz50/convertXyz50ToRgb.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz50ToXyz65.js",
+          "kind": "import-statement",
+          "original": "./xyz65/convertXyz50ToXyz65.js"
+        },
+        {
+          "path": "src/a98/convertXyz65ToA98.js",
+          "kind": "import-statement",
+          "original": "./a98/convertXyz65ToA98.js"
+        },
+        {
+          "path": "src/itp/convertXyz65ToItp.js",
+          "kind": "import-statement",
+          "original": "./itp/convertXyz65ToItp.js"
+        },
+        {
+          "path": "src/jab/convertXyz65ToJab.js",
+          "kind": "import-statement",
+          "original": "./jab/convertXyz65ToJab.js"
+        },
+        {
+          "path": "src/lab65/convertXyz65ToLab65.js",
+          "kind": "import-statement",
+          "original": "./lab65/convertXyz65ToLab65.js"
+        },
+        {
+          "path": "src/p3/convertXyz65ToP3.js",
+          "kind": "import-statement",
+          "original": "./p3/convertXyz65ToP3.js"
+        },
+        {
+          "path": "src/rec2020/convertXyz65ToRec2020.js",
+          "kind": "import-statement",
+          "original": "./rec2020/convertXyz65ToRec2020.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz65ToRgb.js",
+          "kind": "import-statement",
+          "original": "./xyz65/convertXyz65ToRgb.js"
+        },
+        {
+          "path": "src/xyz65/convertXyz65ToXyz50.js",
+          "kind": "import-statement",
+          "original": "./xyz65/convertXyz65ToXyz50.js"
+        },
+        {
+          "path": "src/yiq/convertYiqToRgb.js",
+          "kind": "import-statement",
+          "original": "./yiq/convertYiqToRgb.js"
+        }
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "bundled/culori.mjs": {
+      "imports": [],
+      "exports": [
+        "a98",
+        "average",
+        "averageAngle",
+        "averageNumber",
+        "blend",
+        "blerp",
+        "clampChroma",
+        "clampGamut",
+        "clampRgb",
+        "colorsNamed",
+        "convertA98ToXyz65",
+        "convertCubehelixToRgb",
+        "convertDlchToLab65",
+        "convertHsiToRgb",
+        "convertHslToRgb",
+        "convertHsvToRgb",
+        "convertHwbToRgb",
+        "convertItpToXyz65",
+        "convertJabToJch",
+        "convertJabToRgb",
+        "convertJabToXyz65",
+        "convertJchToJab",
+        "convertLab65ToDlch",
+        "convertLab65ToRgb",
+        "convertLab65ToXyz65",
+        "convertLabToLch",
+        "convertLabToRgb",
+        "convertLabToXyz50",
+        "convertLchToLab",
+        "convertLchuvToLuv",
+        "convertLrgbToOklab",
+        "convertLrgbToRgb",
+        "convertLuvToLchuv",
+        "convertLuvToXyz50",
+        "convertOkhslToOklab",
+        "convertOkhsvToOklab",
+        "convertOklabToLrgb",
+        "convertOklabToOkhsl",
+        "convertOklabToOkhsv",
+        "convertOklabToRgb",
+        "convertP3ToXyz65",
+        "convertProphotoToXyz50",
+        "convertRec2020ToXyz65",
+        "convertRgbToCubehelix",
+        "convertRgbToHsi",
+        "convertRgbToHsl",
+        "convertRgbToHsv",
+        "convertRgbToHwb",
+        "convertRgbToJab",
+        "convertRgbToLab",
+        "convertRgbToLab65",
+        "convertRgbToLrgb",
+        "convertRgbToOklab",
+        "convertRgbToXyb",
+        "convertRgbToXyz50",
+        "convertRgbToXyz65",
+        "convertRgbToYiq",
+        "convertXybToRgb",
+        "convertXyz50ToLab",
+        "convertXyz50ToLuv",
+        "convertXyz50ToProphoto",
+        "convertXyz50ToRgb",
+        "convertXyz50ToXyz65",
+        "convertXyz65ToA98",
+        "convertXyz65ToItp",
+        "convertXyz65ToJab",
+        "convertXyz65ToLab65",
+        "convertXyz65ToP3",
+        "convertXyz65ToRec2020",
+        "convertXyz65ToRgb",
+        "convertXyz65ToXyz50",
+        "convertYiqToRgb",
+        "converter",
+        "cubehelix",
+        "differenceCie76",
+        "differenceCie94",
+        "differenceCiede2000",
+        "differenceCmc",
+        "differenceEuclidean",
+        "differenceHueChroma",
+        "differenceHueNaive",
+        "differenceHueSaturation",
+        "differenceHyab",
+        "differenceItp",
+        "differenceKotsarenkoRamos",
+        "displayable",
+        "dlab",
+        "dlch",
+        "easingGamma",
+        "easingInOutSine",
+        "easingMidpoint",
+        "easingSmootherstep",
+        "easingSmoothstep",
+        "easingSmoothstepInverse",
+        "filterBrightness",
+        "filterContrast",
+        "filterDeficiencyDeuter",
+        "filterDeficiencyProt",
+        "filterDeficiencyTrit",
+        "filterGrayscale",
+        "filterHueRotate",
+        "filterInvert",
+        "filterSaturate",
+        "filterSepia",
+        "fixupAlpha",
+        "fixupHueDecreasing",
+        "fixupHueIncreasing",
+        "fixupHueLonger",
+        "fixupHueShorter",
+        "formatCss",
+        "formatHex",
+        "formatHex8",
+        "formatHsl",
+        "formatRgb",
+        "getMode",
+        "hsi",
+        "hsl",
+        "hsv",
+        "hwb",
+        "inGamut",
+        "interpolate",
+        "interpolateWith",
+        "interpolateWithPremultipliedAlpha",
+        "interpolatorLinear",
+        "interpolatorPiecewise",
+        "interpolatorSplineBasis",
+        "interpolatorSplineBasisClosed",
+        "interpolatorSplineMonotone",
+        "interpolatorSplineMonotone2",
+        "interpolatorSplineMonotoneClosed",
+        "interpolatorSplineNatural",
+        "interpolatorSplineNaturalClosed",
+        "itp",
+        "jab",
+        "jch",
+        "lab",
+        "lab65",
+        "lch",
+        "lch65",
+        "lchuv",
+        "lerp",
+        "lrgb",
+        "luv",
+        "mapAlphaDivide",
+        "mapAlphaMultiply",
+        "mapTransferGamma",
+        "mapTransferLinear",
+        "mapper",
+        "modeA98",
+        "modeCubehelix",
+        "modeDlab",
+        "modeDlch",
+        "modeHsi",
+        "modeHsl",
+        "modeHsv",
+        "modeHwb",
+        "modeItp",
+        "modeJab",
+        "modeJch",
+        "modeLab",
+        "modeLab65",
+        "modeLch",
+        "modeLch65",
+        "modeLchuv",
+        "modeLrgb",
+        "modeLuv",
+        "modeOkhsl",
+        "modeOkhsv",
+        "modeOklab",
+        "modeOklch",
+        "modeP3",
+        "modeProphoto",
+        "modeRec2020",
+        "modeRgb",
+        "modeXyb",
+        "modeXyz50",
+        "modeXyz65",
+        "modeYiq",
+        "nearest",
+        "okhsl",
+        "okhsv",
+        "oklab",
+        "oklch",
+        "p3",
+        "parse",
+        "parseHex",
+        "parseHsl",
+        "parseHslLegacy",
+        "parseHwb",
+        "parseLab",
+        "parseLch",
+        "parseNamed",
+        "parseOklab",
+        "parseOklch",
+        "parseRgb",
+        "parseRgbLegacy",
+        "parseTransparent",
+        "prophoto",
+        "random",
+        "rec2020",
+        "removeParser",
+        "rgb",
+        "round",
+        "samples",
+        "serializeHex",
+        "serializeHex8",
+        "serializeHsl",
+        "serializeRgb",
+        "toGamut",
+        "trilerp",
+        "unlerp",
+        "useMode",
+        "useParser",
+        "wcagContrast",
+        "wcagLuminance",
+        "xyb",
+        "xyz50",
+        "xyz65",
+        "yiq"
+      ],
+      "entryPoint": "src/index.js",
+      "inputs": {
+        "src/rgb/parseNumber.js": {
+          "bytesInOutput": 965
+        },
+        "src/colors/named.js": {
+          "bytesInOutput": 3420
+        },
+        "src/rgb/parseNamed.js": {
+          "bytesInOutput": 139
+        },
+        "src/rgb/parseHex.js": {
+          "bytesInOutput": 254
+        },
+        "src/util/regex.js": {
+          "bytesInOutput": 414
+        },
+        "src/rgb/parseRgbLegacy.js": {
+          "bytesInOutput": 1063
+        },
+        "src/_prepare.js": {
+          "bytesInOutput": 209
+        },
+        "src/converter.js": {
+          "bytesInOutput": 898
+        },
+        "src/modes.js": {
+          "bytesInOutput": 1935
+        },
+        "src/parse.js": {
+          "bytesInOutput": 6753
+        },
+        "src/rgb/parseRgb.js": {
+          "bytesInOutput": 822
+        },
+        "src/rgb/parseTransparent.js": {
+          "bytesInOutput": 157
+        },
+        "src/interpolate/lerp.js": {
+          "bytesInOutput": 390
+        },
+        "src/interpolate/piecewise.js": {
+          "bytesInOutput": 714
+        },
+        "src/interpolate/linear.js": {
+          "bytesInOutput": 54
+        },
+        "src/fixup/alpha.js": {
+          "bytesInOutput": 216
+        },
+        "src/rgb/definition.js": {
+          "bytesInOutput": 523
+        },
+        "src/a98/convertA98ToXyz65.js": {
+          "bytesInOutput": 613
+        },
+        "src/a98/convertXyz65ToA98.js": {
+          "bytesInOutput": 668
+        },
+        "src/lrgb/convertRgbToLrgb.js": {
+          "bytesInOutput": 423
+        },
+        "src/xyz65/convertRgbToXyz65.js": {
+          "bytesInOutput": 500
+        },
+        "src/lrgb/convertLrgbToRgb.js": {
+          "bytesInOutput": 437
+        },
+        "src/xyz65/convertXyz65ToRgb.js": {
+          "bytesInOutput": 551
+        },
+        "src/a98/definition.js": {
+          "bytesInOutput": 419
+        },
+        "src/util/normalizeHue.js": {
+          "bytesInOutput": 115
+        },
+        "src/fixup/hue.js": {
+          "bytesInOutput": 890
+        },
+        "src/cubehelix/constants.js": {
+          "bytesInOutput": 121
+        },
+        "src/cubehelix/convertRgbToCubehelix.js": {
+          "bytesInOutput": 675
+        },
+        "src/cubehelix/convertCubehelixToRgb.js": {
+          "bytesInOutput": 531
+        },
+        "src/difference.js": {
+          "bytesInOutput": 6259
+        },
+        "src/average.js": {
+          "bytesInOutput": 1244
+        },
+        "src/cubehelix/definition.js": {
+          "bytesInOutput": 671
+        },
+        "src/lch/convertLabToLch.js": {
+          "bytesInOutput": 382
+        },
+        "src/lch/convertLchToLab.js": {
+          "bytesInOutput": 343
+        },
+        "src/xyz65/constants.js": {
+          "bytesInOutput": 84
+        },
+        "src/constants.js": {
+          "bytesInOutput": 245
+        },
+        "src/lab65/convertLab65ToXyz65.js": {
+          "bytesInOutput": 531
+        },
+        "src/lab65/convertLab65ToRgb.js": {
+          "bytesInOutput": 147
+        },
+        "src/lab65/convertXyz65ToLab65.js": {
+          "bytesInOutput": 528
+        },
+        "src/lab65/convertRgbToLab65.js": {
+          "bytesInOutput": 253
+        },
+        "src/dlch/constants.js": {
+          "bytesInOutput": 166
+        },
+        "src/dlch/convertDlchToLab65.js": {
+          "bytesInOutput": 616
+        },
+        "src/dlch/convertLab65ToDlch.js": {
+          "bytesInOutput": 630
+        },
+        "src/dlab/definition.js": {
+          "bytesInOutput": 860
+        },
+        "src/dlch/definition.js": {
+          "bytesInOutput": 927
+        },
+        "src/hsi/convertHsiToRgb.js": {
+          "bytesInOutput": 1435
+        },
+        "src/hsi/convertRgbToHsi.js": {
+          "bytesInOutput": 528
+        },
+        "src/hsi/definition.js": {
+          "bytesInOutput": 575
+        },
+        "src/hsl/convertHslToRgb.js": {
+          "bytesInOutput": 882
+        },
+        "src/hsl/convertRgbToHsl.js": {
+          "bytesInOutput": 531
+        },
+        "src/util/hue.js": {
+          "bytesInOutput": 255
+        },
+        "src/hsl/parseHslLegacy.js": {
+          "bytesInOutput": 806
+        },
+        "src/hsl/parseHsl.js": {
+          "bytesInOutput": 773
+        },
+        "src/hsl/definition.js": {
+          "bytesInOutput": 783
+        },
+        "src/hsv/convertHsvToRgb.js": {
+          "bytesInOutput": 907
+        },
+        "src/hsv/convertRgbToHsv.js": {
+          "bytesInOutput": 492
+        },
+        "src/hsv/definition.js": {
+          "bytesInOutput": 575
+        },
+        "src/hwb/convertHwbToRgb.js": {
+          "bytesInOutput": 279
+        },
+        "src/hwb/convertRgbToHwb.js": {
+          "bytesInOutput": 382
+        },
+        "src/hwb/parseHwb.js": {
+          "bytesInOutput": 749
+        },
+        "src/hwb/definition.js": {
+          "bytesInOutput": 754
+        },
+        "src/hdr/constants.js": {
+          "bytesInOutput": 14
+        },
+        "src/hdr/transfer.js": {
+          "bytesInOutput": 421
+        },
+        "src/itp/convertItpToXyz65.js": {
+          "bytesInOutput": 931
+        },
+        "src/itp/convertXyz65ToItp.js": {
+          "bytesInOutput": 878
+        },
+        "src/itp/definition.js": {
+          "bytesInOutput": 679
+        },
+        "src/jab/convertXyz65ToJab.js": {
+          "bytesInOutput": 935
+        },
+        "src/jab/convertJabToXyz65.js": {
+          "bytesInOutput": 1029
+        },
+        "src/jab/convertRgbToJab.js": {
+          "bytesInOutput": 245
+        },
+        "src/jab/convertJabToRgb.js": {
+          "bytesInOutput": 141
+        },
+        "src/jab/definition.js": {
+          "bytesInOutput": 587
+        },
+        "src/jch/convertJabToJch.js": {
+          "bytesInOutput": 401
+        },
+        "src/jch/convertJchToJab.js": {
+          "bytesInOutput": 336
+        },
+        "src/jch/definition.js": {
+          "bytesInOutput": 759
+        },
+        "src/xyz50/constants.js": {
+          "bytesInOutput": 86
+        },
+        "src/lab/convertLabToXyz50.js": {
+          "bytesInOutput": 527
+        },
+        "src/xyz50/convertXyz50ToRgb.js": {
+          "bytesInOutput": 551
+        },
+        "src/lab/convertLabToRgb.js": {
+          "bytesInOutput": 139
+        },
+        "src/xyz50/convertRgbToXyz50.js": {
+          "bytesInOutput": 508
+        },
+        "src/lab/convertXyz50ToLab.js": {
+          "bytesInOutput": 526
+        },
+        "src/lab/convertRgbToLab.js": {
+          "bytesInOutput": 245
+        },
+        "src/lab/parseLab.js": {
+          "bytesInOutput": 774
+        },
+        "src/lab/definition.js": {
+          "bytesInOutput": 731
+        },
+        "src/lab65/definition.js": {
+          "bytesInOutput": 429
+        },
+        "src/lch/parseLch.js": {
+          "bytesInOutput": 790
+        },
+        "src/lch/definition.js": {
+          "bytesInOutput": 910
+        },
+        "src/lch65/definition.js": {
+          "bytesInOutput": 541
+        },
+        "src/lchuv/convertLuvToLchuv.js": {
+          "bytesInOutput": 409
+        },
+        "src/lchuv/convertLchuvToLuv.js": {
+          "bytesInOutput": 348
+        },
+        "src/luv/convertXyz50ToLuv.js": {
+          "bytesInOutput": 781
+        },
+        "src/luv/convertLuvToXyz50.js": {
+          "bytesInOutput": 773
+        },
+        "src/lchuv/definition.js": {
+          "bytesInOutput": 924
+        },
+        "src/lrgb/definition.js": {
+          "bytesInOutput": 263
+        },
+        "src/luv/definition.js": {
+          "bytesInOutput": 675
+        },
+        "src/oklab/convertLrgbToOklab.js": {
+          "bytesInOutput": 790
+        },
+        "src/oklab/convertRgbToOklab.js": {
+          "bytesInOutput": 251
+        },
+        "src/oklab/convertOklabToLrgb.js": {
+          "bytesInOutput": 882
+        },
+        "src/oklab/convertOklabToRgb.js": {
+          "bytesInOutput": 141
+        },
+        "src/okhsl/helpers.js": {
+          "bytesInOutput": 5502
+        },
+        "src/okhsl/convertOklabToOkhsl.js": {
+          "bytesInOutput": 906
+        },
+        "src/okhsl/convertOkhslToOklab.js": {
+          "bytesInOutput": 827
+        },
+        "src/okhsl/modeOkhsl.js": {
+          "bytesInOutput": 418
+        },
+        "src/okhsv/convertOklabToOkhsv.js": {
+          "bytesInOutput": 999
+        },
+        "src/okhsv/convertOkhsvToOklab.js": {
+          "bytesInOutput": 965
+        },
+        "src/okhsv/modeOkhsv.js": {
+          "bytesInOutput": 418
+        },
+        "src/oklab/parseOklab.js": {
+          "bytesInOutput": 840
+        },
+        "src/oklab/definition.js": {
+          "bytesInOutput": 567
+        },
+        "src/oklch/parseOklch.js": {
+          "bytesInOutput": 856
+        },
+        "src/oklch/definition.js": {
+          "bytesInOutput": 691
+        },
+        "src/p3/convertP3ToXyz65.js": {
+          "bytesInOutput": 479
+        },
+        "src/p3/convertXyz65ToP3.js": {
+          "bytesInOutput": 574
+        },
+        "src/p3/definition.js": {
+          "bytesInOutput": 423
+        },
+        "src/prophoto/convertXyz50ToProphoto.js": {
+          "bytesInOutput": 725
+        },
+        "src/prophoto/convertProphotoToXyz50.js": {
+          "bytesInOutput": 703
+        },
+        "src/prophoto/definition.js": {
+          "bytesInOutput": 457
+        },
+        "src/rec2020/convertXyz65ToRec2020.js": {
+          "bytesInOutput": 861
+        },
+        "src/rec2020/convertRec2020ToXyz65.js": {
+          "bytesInOutput": 819
+        },
+        "src/rec2020/definition.js": {
+          "bytesInOutput": 442
+        },
+        "src/xyb/constants.js": {
+          "bytesInOutput": 67
+        },
+        "src/xyb/convertRgbToXyb.js": {
+          "bytesInOutput": 661
+        },
+        "src/xyb/convertXybToRgb.js": {
+          "bytesInOutput": 705
+        },
+        "src/xyb/definition.js": {
+          "bytesInOutput": 509
+        },
+        "src/xyz50/definition.js": {
+          "bytesInOutput": 577
+        },
+        "src/xyz65/convertXyz65ToXyz50.js": {
+          "bytesInOutput": 573
+        },
+        "src/xyz65/convertXyz50ToXyz65.js": {
+          "bytesInOutput": 573
+        },
+        "src/xyz65/definition.js": {
+          "bytesInOutput": 587
+        },
+        "src/yiq/convertRgbToYiq.js": {
+          "bytesInOutput": 468
+        },
+        "src/yiq/convertYiqToRgb.js": {
+          "bytesInOutput": 419
+        },
+        "src/yiq/definition.js": {
+          "bytesInOutput": 486
+        },
+        "src/index.js": {
+          "bytesInOutput": 1251
+        },
+        "src/round.js": {
+          "bytesInOutput": 227
+        },
+        "src/formatter.js": {
+          "bytesInOutput": 2248
+        },
+        "src/blend.js": {
+          "bytesInOutput": 1634
+        },
+        "src/random.js": {
+          "bytesInOutput": 584
+        },
+        "src/map.js": {
+          "bytesInOutput": 1414
+        },
+        "src/util/normalizePositions.js": {
+          "bytesInOutput": 682
+        },
+        "src/easing/midpoint.js": {
+          "bytesInOutput": 136
+        },
+        "src/interpolate/interpolate.js": {
+          "bytesInOutput": 3305
+        },
+        "src/interpolate/splineBasis.js": {
+          "bytesInOutput": 905
+        },
+        "src/interpolate/splineNatural.js": {
+          "bytesInOutput": 662
+        },
+        "src/interpolate/splineMonotone.js": {
+          "bytesInOutput": 2046
+        },
+        "src/easing/gamma.js": {
+          "bytesInOutput": 111
+        },
+        "src/samples.js": {
+          "bytesInOutput": 264
+        },
+        "src/clamp.js": {
+          "bytesInOutput": 4520
+        },
+        "src/nearest.js": {
+          "bytesInOutput": 503
+        },
+        "src/filter.js": {
+          "bytesInOutput": 3209
+        },
+        "src/deficiency.js": {
+          "bytesInOutput": 5177
+        },
+        "src/easing/smoothstep.js": {
+          "bytesInOutput": 130
+        },
+        "src/easing/smootherstep.js": {
+          "bytesInOutput": 104
+        },
+        "src/easing/inOutSine.js": {
+          "bytesInOutput": 91
+        },
+        "src/wcag.js": {
+          "bytesInOutput": 273
+        }
+      },
+      "bytes": 134108
+    }
+  }
+}

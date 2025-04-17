@@ -1,0 +1,48 @@
+{
+  "name": "vite-plugin-svgr",
+  "version": "4.3.0",
+  "description": "Vite plugin to transform SVGs into React components",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./client": {
+      "types": "./client.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc --module commonjs && mv dist/index.js dist/index.cjs && tsc",
+    "prepare": "npm run build"
+  },
+  "repository": "pd4d10/vite-plugin-svgr",
+  "files": [
+    "dist",
+    "client.d.ts",
+    "codemods"
+  ],
+  "keywords": [
+    "vite",
+    "vite-plugin"
+  ],
+  "author": "Rongjian Zhang",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.8.6",
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "vite": ">=2.6.0"
+  },
+  "dependencies": {
+    "@rollup/pluginutils": "^5.1.3",
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0"
+  },
+  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
+}

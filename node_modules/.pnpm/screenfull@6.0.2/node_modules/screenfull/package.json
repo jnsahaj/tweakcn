@@ -1,0 +1,39 @@
+{
+	"name": "screenfull",
+	"version": "6.0.2",
+	"description": "Simple wrapper for cross-browser usage of the JavaScript Fullscreen API, which lets you bring the page or any element into fullscreen.",
+	"license": "MIT",
+	"repository": "sindresorhus/screenfull",
+	"funding": "https://github.com/sponsors/sindresorhus",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "sindresorhus.com"
+	},
+	"type": "module",
+	"exports": "./index.js",
+	"engines": {
+		"node": "^14.13.1 || >=16.0.0"
+	},
+	"scripts": {
+		"test": "xo && tsd"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
+	"keywords": [
+		"browser",
+		"fullscreen"
+	],
+	"devDependencies": {
+		"tsd": "^0.18.0",
+		"xo": "^0.45.0"
+	},
+	"xo": {
+		"envs": [
+			"node",
+			"browser"
+		]
+	}
+}
