@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Label } from "@/components/ui/label";
 import { ColorPickerProps } from "@/types";
 import { debounce } from "@/utils/debounce";
@@ -12,13 +12,9 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
     setLocalColor(color);
   }, [color]);
 
-  // Create debounced onChange handler with useCallback to maintain reference
-  const debouncedOnChange = useCallback(
-    (value: string) => {
-      debounce(() => {
-        onChange(value);
-      }, 10)();
-    },
+  // Create a stable debounced onChange handler
+  const debouncedOnChange = useMemo(
+    () => debounce((value: string) => onChange(value), 20),
     [onChange]
   );
 
@@ -27,6 +23,13 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
     setLocalColor(newColor);
     debouncedOnChange(newColor);
   };
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedOnChange.cancel();
+    };
+  }, [debouncedOnChange]);
 
   return (
     <div className="mb-3">

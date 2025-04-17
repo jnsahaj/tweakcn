@@ -1,10 +1,19 @@
-export function debounce(fn: (...args: any[]) => void, delay: number) {
+export function debounce<T extends (...args: any[]) => void>(
+  fn: T,
+  delay: number
+): T & { cancel: () => void } {
   let timeoutId: NodeJS.Timeout;
-  return function (...args: any[]) {
+
+  const debounced = function (this: unknown, ...args: Parameters<T>) {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
-      // @ts-expect-error: it works
       fn.apply(this, args);
     }, delay);
+  } as T & { cancel: () => void };
+
+  debounced.cancel = () => {
+    clearTimeout(timeoutId);
   };
+
+  return debounced;
 }
