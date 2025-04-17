@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../src/index.ts", "../src/primitive.tsx"],
-  "sourcesContent": ["export { composeEventHandlers } from './primitive';\n", "function composeEventHandlers<E extends { defaultPrevented: boolean }>(\n  originalEventHandler?: (event: E) => void,\n  ourEventHandler?: (event: E) => void,\n  { checkForDefaultPrevented = true } = {}\n) {\n  return function handleEvent(event: E) {\n    originalEventHandler?.(event);\n\n    if (checkForDefaultPrevented === false || !event.defaultPrevented) {\n      return ourEventHandler?.(event);\n    }\n  };\n}\n\nexport { composeEventHandlers };\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;;;ACAA,SAAS,qBACP,sBACA,iBACA,EAAE,2BAA2B,KAAK,IAAI,CAAC,GACvC;AACA,SAAO,SAAS,YAAY,OAAU;AACpC,2BAAuB,KAAK;AAE5B,QAAI,6BAA6B,SAAS,CAAC,MAAM,kBAAkB;AACjE,aAAO,kBAAkB,KAAK;AAAA,IAChC;AAAA,EACF;AACF;",
-  "names": []
-}
