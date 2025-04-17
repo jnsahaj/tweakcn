@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run generate-theme-registry && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-theme-registry": "tsx scripts/generate-theme-registry.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -84,6 +85,7 @@
     "eslint-config-next": "15.3.0",
     "raw-loader": "^4.0.2",
     "tailwindcss": "^4",
+    "tsx": "^4.19.3",
     "typescript": "^5"
   }
 }
