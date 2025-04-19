@@ -31,55 +31,87 @@ const getThemeValue = (
 };
 
 // Convert theme styles to registry format
+// Add color property keys type
+type ColorPropertyKey = keyof Pick<ThemeStyleProps, 
+  | 'background' 
+  | 'foreground'
+  | 'card'
+  | 'card-foreground'
+  | 'popover'
+  | 'popover-foreground'
+  | 'primary'
+  | 'primary-foreground'
+  | 'secondary'
+  | 'secondary-foreground'
+  | 'muted'
+  | 'muted-foreground'
+  | 'accent'
+  | 'accent-foreground'
+  | 'destructive'
+  | 'destructive-foreground'
+  | 'border'
+  | 'input'
+  | 'ring'
+  | 'chart-1'
+  | 'chart-2'
+  | 'chart-3'
+  | 'chart-4'
+  | 'chart-5'
+  | 'sidebar'
+  | 'sidebar-foreground'
+  | 'sidebar-primary'
+  | 'sidebar-primary-foreground'
+  | 'sidebar-accent'
+  | 'sidebar-accent-foreground'
+  | 'sidebar-border'
+  | 'sidebar-ring'
+>;
+
+const COLOR_PROPERTIES: ColorPropertyKey[] = [
+  'background',
+  'foreground',
+  'card',
+  'card-foreground',
+  'popover',
+  'popover-foreground',
+  'primary',
+  'primary-foreground',
+  'secondary',
+  'secondary-foreground',
+  'muted',
+  'muted-foreground',
+  'accent',
+  'accent-foreground',
+  'destructive',
+  'destructive-foreground',
+  'border',
+  'input',
+  'ring',
+  'chart-1',
+  'chart-2',
+  'chart-3',
+  'chart-4',
+  'chart-5',
+  'sidebar',
+  'sidebar-foreground',
+  'sidebar-primary',
+  'sidebar-primary-foreground',
+  'sidebar-accent',
+  'sidebar-accent-foreground',
+  'sidebar-border',
+  'sidebar-ring'
+];
+
 const convertThemeStyles = (styles: ThemeStyles) => {
   const { light, dark } = styles;
 
   const convertTheme = (theme: ThemeStyleProps): ThemeStyleProps => {
-    const result: ThemeStyleProps = theme;
-    const convertColor = (color?: string) =>
-      convertToRegistryColor(color || "");
-
-    // Convert all color values
-    result.background = convertColor(theme.background);
-    result.foreground = convertColor(theme.foreground);
-    result.card = convertColor(theme.card);
-    result["card-foreground"] = convertColor(theme["card-foreground"]);
-    result.popover = convertColor(theme.popover);
-    result["popover-foreground"] = convertColor(theme["popover-foreground"]);
-    result.primary = convertColor(theme.primary);
-    result["primary-foreground"] = convertColor(theme["primary-foreground"]);
-    result.secondary = convertColor(theme.secondary);
-    result["secondary-foreground"] = convertColor(
-      theme["secondary-foreground"]
-    );
-    result.muted = convertColor(theme.muted);
-    result["muted-foreground"] = convertColor(theme["muted-foreground"]);
-    result.accent = convertColor(theme.accent);
-    result["accent-foreground"] = convertColor(theme["accent-foreground"]);
-    result.destructive = convertColor(theme.destructive);
-    result["destructive-foreground"] = convertColor(
-      theme["destructive-foreground"]
-    );
-    result.border = convertColor(theme.border);
-    result.input = convertColor(theme.input);
-    result.ring = convertColor(theme.ring);
-    result["chart-1"] = convertColor(theme["chart-1"]);
-    result["chart-2"] = convertColor(theme["chart-2"]);
-    result["chart-3"] = convertColor(theme["chart-3"]);
-    result["chart-4"] = convertColor(theme["chart-4"]);
-    result["chart-5"] = convertColor(theme["chart-5"]);
-    result.sidebar = convertColor(theme.sidebar);
-    result["sidebar-foreground"] = convertColor(theme["sidebar-foreground"]);
-    result["sidebar-primary"] = convertColor(theme["sidebar-primary"]);
-    result["sidebar-primary-foreground"] = convertColor(
-      theme["sidebar-primary-foreground"]
-    );
-    result["sidebar-accent"] = convertColor(theme["sidebar-accent"]);
-    result["sidebar-accent-foreground"] = convertColor(
-      theme["sidebar-accent-foreground"]
-    );
-    result["sidebar-border"] = convertColor(theme["sidebar-border"]);
-    result["sidebar-ring"] = convertColor(theme["sidebar-ring"]);
+    const result = { ...theme };
+    
+    // Convert all color values in a single loop
+    COLOR_PROPERTIES.forEach(key => {
+      result[key] = convertToRegistryColor(theme[key] || '');
+    });
 
     return result;
   };
