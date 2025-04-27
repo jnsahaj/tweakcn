@@ -35,7 +35,7 @@ export default function Home() {
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
       />
-      <main className="flex-1">
+      <main className="flex-1 w-full">
         <Hero />
         <ThemePresetSelector />
         <Features />

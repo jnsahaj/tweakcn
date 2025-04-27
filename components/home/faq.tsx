@@ -48,7 +48,7 @@ const faqs = [
 export function FAQ() {
   return (
     <section id="faq" className="w-full py-20 md:py-32">
-      <div className="container px-4 md:px-6">
+      <div className="container mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

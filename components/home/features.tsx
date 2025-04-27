@@ -66,9 +66,9 @@ const item = {
 
 export function Features() {
   return (
-    <section id="features" className="w-full py-20 md:py-32 relative">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(var(--primary-rgb),0.03),transparent_70%)]"></div>
-      <div className="container px-4 md:px-6">
+    <section id="features" className="w-full py-20 md:py-32 relative isolate">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(from_var(--primary)_r_g_b_/_0.03),transparent_70%)]"></div>
+      <div className="container mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
