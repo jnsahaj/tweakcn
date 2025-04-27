@@ -8,7 +8,7 @@ const roadmapItems = [
     title: "Global Theme Editor",
     description:
       "Create and manage complete themes with presets for your entire application.",
-    status: "In Progress",
+    status: "Done",
     icon: <Palette className="size-5" />,
   },
   {
@@ -18,17 +18,17 @@ const roadmapItems = [
     icon: <Repeat className="size-5" />,
   },
   {
-    title: "More Controls",
-    description:
-      "Support for more controls, including Spacing, Shadows, Tracking and more",
-    status: "Coming Soon",
-    icon: <Layers className="size-5" />,
-  },
-  {
     title: "Community Themes",
     description: "Allow users to submit themes, vote on the best designs",
-    status: "Planned",
+    status: "Coming Soon",
     icon: <Users className="size-5" />,
+  },
+  {
+    title: "AI Theme Generation",
+    description:
+      "Generate and customize themes with AI assistance, making theme creation faster and more intuitive",
+    status: "Coming Soon",
+    icon: <Layers className="size-5" />,
   },
   {
     title: "Multi-Project Management",
@@ -38,9 +38,9 @@ const roadmapItems = [
     icon: <Folder className="size-5" />,
   },
   {
-    title: "More Presets",
+    title: "Smart Theme Generator",
     description:
-      "Expand the preset library with a wider variety of stunning themes for quick customization.",
+      "Generate beautiful themes from a single color, color pair, or even an image. Expand your customization options with AI-powered theme generation.",
     status: "Planned",
     icon: <Grid className="size-5" />,
   },

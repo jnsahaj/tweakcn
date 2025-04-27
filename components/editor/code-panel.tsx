@@ -39,9 +39,9 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
     (state) => state.setPackageManager
   );
 
-  const isSavedPreset =
-    preset &&
-    useThemePresetStore((state) => state.getPreset(preset)?.source === "SAVED");
+  const isSavedPreset = useThemePresetStore(
+    (state) => preset && state.getPreset(preset)?.source === "SAVED"
+  );
 
   const code = generateThemeCode(
     themeEditorState,
