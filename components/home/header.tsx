@@ -50,7 +50,7 @@ export function Header({
           : "bg-transparent"
       )}
     >
-      <div className="container flex h-16 px-4 min-w-full items-center justify-between">
+      <div className="container flex h-16 px-4 md:px-6 min-w-full items-center justify-between">
         <Link href="/">
           <div className="flex items-center gap-2 font-bold">
             <Logo className="size-6" />
