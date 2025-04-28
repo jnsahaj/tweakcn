@@ -33,6 +33,8 @@ You can find the updated roadmap here: https://tweakcn.com/#roadmap
 
 ## Run Locally
 
+**IMPORTANT: For contributions, please see [CONTRIBUTING.md](CONTRIBUTING.md).**
+
 ### Prerequisites
 
 - Node.js 18+
