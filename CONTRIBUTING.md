@@ -92,6 +92,10 @@ Even if you don't plan to write code, there are many ways to contribute:
     DATABASE_URL="postgresql://neondb_owner:[YOUR_NEON_PASSWORD]@[YOUR_NEON_HOST]/neondb?sslmode=require"
 
     ###### AUTH ######
+    # Generate your own Secret Key for encryption. If ommited, the default will be used:
+    # https://www.better-auth.com/docs/installation#set-environment-variables
+    BETTER_AUTH_SECRET="YOUR_BETTER_AUTH_SECRET"
+
     # Create GitHub OAuth App: https://www.better-auth.com/docs/authentication/github
     GITHUB_CLIENT_ID="YOUR_GITHUB_CLIENT_ID"
     GITHUB_CLIENT_SECRET="YOUR_GITHUB_CLIENT_SECRET"
@@ -101,7 +105,7 @@ Even if you don't plan to write code, there are many ways to contribute:
     GOOGLE_CLIENT_SECRET="YOUR_GOOGLE_CLIENT_SECRET"
     ```
 
-    - Make sure to replace the placeholder values with your actual credentials obtained from Neon, GitHub, and Google Cloud Platform.
+    - Make sure to replace the placeholder values with your actual credentials obtained from Neon, BetterAuth, GitHub, and Google Cloud Platform.
 
 2.  **Apply Database Schema:** Push the database schema defined in `db/schema.ts` to your Neon database using Drizzle Kit:
 
