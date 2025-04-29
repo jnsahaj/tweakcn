@@ -4,15 +4,6 @@ import { colorFormatter } from "@/utils/color-converter";
 import { getShadowMap } from "@/utils/shadows";
 import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
 
-// READ THIS <=======
-// you could just import these functions into `scripts/generate-theme-registry.ts`
-// this functions were moved here to have a single source of truth for the theme registry item generation
-// none of the underlying logic was changed, exept for:
-// - `generateThemeRegistryFromPreset` works exactly the same as "generateThemeRegistry" from `scripts/generate-theme-registry.ts`
-// and now the underlying logic lived in `generateThemeRegistryItemFromStyles`
-// - `generateThemeRegistryItemFromStyles` is a new function that takes a name and theme styles as arguments,
-// and generates a theme registry item
-
 // Convert HSL color to the format expected by shadcn registry
 const convertToRegistryColor = (color: string): string => {
   return colorFormatter(color, "oklch");
@@ -80,8 +71,7 @@ const convertThemeStyles = (styles: ThemeStyles) => {
 
 // This method will do the same as "generateThemeRegistry" from `scripts/generate-theme-registry.ts`
 export const generateThemeRegistryFromPreset = (name: string) => {
-  const styles = convertThemeStyles(getPresetThemeStyles(name));
-
+  const styles = getPresetThemeStyles(name);
   const registryItem = generateThemeRegistryItemFromStyles(name, styles);
   return registryItem;
 };
