@@ -6,6 +6,7 @@ import { Header } from "../../../../components/editor/header";
 import { getTheme } from "@/actions/themes";
 import { Suspense } from "react";
 import { Loading } from "@/components/loading";
+import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 
 export const metadata: Metadata = {
   title: "tweakcn — Theme Generator for shadcn/ui",
@@ -29,6 +30,7 @@ export default async function Component({
           "h-screen flex flex-col text-foreground bg-background transition-colors"
         )}
       >
+        <AuthDialogWrapper />
         <Header />
         <main className="flex-1 overflow-hidden">
           <Suspense fallback={<Loading />}>

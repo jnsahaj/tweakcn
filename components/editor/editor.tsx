@@ -46,7 +46,6 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
 
   useEffect(() => {
     if (session?.user) {
-      console.log("EXXX");
       loadSavedPresets();
     }
   }, [loadSavedPresets, session?.user]);

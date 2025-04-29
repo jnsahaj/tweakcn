@@ -31,7 +31,6 @@ export function usePostLoginAction(
 
 // This function should be called when a user successfully logs in
 export async function executePostLoginAction(action: PostLoginAction) {
-  console.log("Executing post-login action:", action);
   if (!action) return;
 
   const actionHandlers = handlers.get(action);

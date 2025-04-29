@@ -6,8 +6,8 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="w-full py-20 md:py-32 lg:py-40 relative">
-      <div className="container px-4 md:px-6 z-10 relative">
+    <section className="container mx-auto w-full py-20 md:py-32 lg:py-40 relative isolate">
+      <div className="px-4 md:px-6 z-10 relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Text Content */}
           <div className="text-left max-w-2xl mx-auto lg:mx-0">

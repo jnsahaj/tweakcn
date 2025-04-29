@@ -50,12 +50,11 @@ export function Roadmap() {
   return (
     <section
       id="roadmap"
-      className="w-full py-20 md:py-32 bg-muted/30 relative overflow-hidden"
+      className="w-full py-20 md:py-32 bg-linear-180 from-muted/30 from-50% to-transparent relative overflow-hidden isolate"
     >
-      <div className="absolute inset-0 -z-10 h-full w-full bg-background/20"></div>
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(var(--secondary-rgb),0.05),transparent_50%)]"></div>
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(from_var(--secondary)_r_g_b_/0.05),transparent_50%)]"></div>
 
-      <div className="container px-4 md:px-6 relative">
+      <div className="container mx-auto px-4 md:px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

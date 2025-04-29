@@ -24,12 +24,11 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="w-full py-20 md:py-32 bg-muted/30 relative overflow-hidden"
+      className="w-full py-20 md:py-32 bg-muted/30 relative overflow-hidden isolate"
     >
-      <div className="absolute inset-0 -z-10 h-full w-full bg-background"></div>
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(var(--muted-rgb),0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(var(--muted-rgb),0.05)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(from_var(--muted-foreground)_r_g_b_/_0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(from_var(--muted-foreground)_r_g_b_/_0.05)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
 
-      <div className="container px-4 md:px-6 relative">
+      <div className="container mx-auto px-4 md:px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

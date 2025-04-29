@@ -40,11 +40,10 @@ export function AuthDialog({
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const data = await authClient.signIn.social({
+      await authClient.signIn.social({
         provider: "google",
         callbackURL: "/editor/theme",
       });
-      console.log(data);
     } catch (error) {
       console.error("Google Sign In Error:", error);
       // Handle error appropriately (e.g., show a toast notification)
@@ -54,11 +53,10 @@ export function AuthDialog({
   const handleGithubSignIn = async () => {
     setIsGithubLoading(true);
     try {
-      const data = await authClient.signIn.social({
+      await authClient.signIn.social({
         provider: "github",
         callbackURL: "/editor/theme",
       });
-      console.log(data);
     } catch (error) {
       console.error("GitHub Sign In Error:", error);
       // Handle error appropriately

@@ -15,10 +15,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
+import { usePostHog } from "posthog-js/react";
 
 export function UserProfileDropdown() {
   const { data: session, isPending } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
+  const posthog = usePostHog();
 
   return (
     <AnimatePresence mode="wait">
@@ -91,6 +93,7 @@ export function UserProfileDropdown() {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={async () => {
+                  posthog.reset();
                   await authClient.signOut();
                 }}
               >
