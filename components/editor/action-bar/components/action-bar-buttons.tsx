@@ -8,6 +8,7 @@ import ContrastChecker from "@/components/editor/contrast-checker";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { EditButton } from "./edit-button";
+import { MoreOptions } from "./more-options";
 
 interface ActionBarButtonsProps {
   onImportClick: () => void;
@@ -31,6 +32,8 @@ export function ActionBarButtons({
 
   return (
     <div className="flex items-center gap-1">
+      <MoreOptions />
+      <Separator orientation="vertical" className="h-8 mx-1" />
       <ThemeToggle />
       <Separator orientation="vertical" className="h-8 mx-1" />
       <ContrastChecker
