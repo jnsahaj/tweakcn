@@ -194,7 +194,7 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
           <span className="text-sm hidden md:block">Contrast</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh] p-0 py-6 overflow-hidden rounded-lg border shadow-lg gap-6">
+      <DialogContent className="max-w-4xl max-h-[80vh] p-0 py-6 overflow-hidden rounded-lg border shadow-lg gap-6 flex flex-col">
         <div className="flex justify-between items-end px-6 sm:flex-row flex-col gap-4">
           <DialogHeader>
             <DialogTitle>Contrast Checker</DialogTitle>
@@ -248,7 +248,7 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
           </div>
         </div>
 
-        <ScrollArea className="h-[calc(90vh-12rem)]">
+        <ScrollArea className="flex-1 relative flex flex-col">
           <div className="space-y-6 px-6">
             {groupedPairs.map((group) => (
               <div key={group.category} className="space-y-4">
