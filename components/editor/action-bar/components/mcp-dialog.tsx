@@ -6,8 +6,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CopyIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { Check, Copy } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
 import TabsTriggerPill from "../../theme-preview/tabs-trigger-pill";
 
 interface MCPDialogProps {
@@ -27,21 +29,13 @@ const mcpConfig = {
   },
 };
 
-const windsurfConfig = {
-  mcpServers: {
-    shadcn: {
-      command: "npx",
-      args: ["-y", "shadcn@canary", "registry:mcp"],
-      env: {
-        REGISTRY_URL: "https://tweakcn.com/r/themes/registry.json",
-      },
-    },
-  },
-};
-
 export function MCPDialog({ open, onOpenChange }: MCPDialogProps) {
-  const handleCopy = (config: typeof mcpConfig) => {
-    navigator.clipboard.writeText(JSON.stringify(config, null, 2));
+  const { hasCopied, copyToClipboard } = useCopyToClipboard();
+  const posthog = usePostHog();
+
+  const handleCopy = async (config: typeof mcpConfig) => {
+    copyToClipboard(JSON.stringify(config, null, 2));
+    posthog.capture("COPY_MCP_SETUP");
   };
 
   return (
@@ -55,60 +49,55 @@ export function MCPDialog({ open, onOpenChange }: MCPDialogProps) {
         </DialogHeader>
         <div className="px-6">
           <Tabs defaultValue="cursor" className="w-full">
-            <TabsList className="inline-flex w-fit items-center justify-center rounded-full bg-background px-0 text-muted-foreground">
+            <TabsList className="inline-flex w-fit items-center justify-center rounded-full bg-background px-0 mb-2 text-muted-foreground">
               <TabsTriggerPill value="cursor">Cursor</TabsTriggerPill>
               <TabsTriggerPill value="windsurf">Windsurf</TabsTriggerPill>
             </TabsList>
-            <TabsContent value="cursor">
-              <div className="space-y-2">
-                <p className="text-sm font-medium">
-                  Copy and paste the code into{" "}
-                  <span className="bg-muted rounded-md px-1">
-                    .cursor/mcp.json
-                  </span>
-                </p>
-                <div className="relative">
-                  <pre className="p-4 rounded-lg bg-muted overflow-x-auto max-w-full">
-                    <code className="block whitespace-pre-wrap break-all">
-                      {JSON.stringify(mcpConfig, null, 2)}
-                    </code>
-                  </pre>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="absolute top-2 right-2"
-                    onClick={() => handleCopy(mcpConfig)}
-                  >
-                    <CopyIcon className="h-4 w-4" />
-                  </Button>
-                </div>
+
+            <div className="flex-1 min-h-0 flex flex-col rounded-lg border overflow-hidden">
+              <div className="flex-none flex justify-between items-center px-4 py-2 border-b bg-muted/50">
+                <TabsContent value="cursor" className="contents">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Copy and paste the code into{" "}
+                    <span className="bg-muted rounded-md px-1 text-foreground">
+                      .cursor/mcp.json
+                    </span>
+                  </p>
+                </TabsContent>
+                <TabsContent value="windsurf" className="contents">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Copy and paste the code into{" "}
+                    <span className="bg-muted rounded-md px-1 text-foreground">
+                      .codeium/windsurf/mcp_config.json
+                    </span>
+                  </p>
+                </TabsContent>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleCopy(mcpConfig)}
+                  className="h-8"
+                  aria-label={hasCopied ? "Copied to clipboard" : "Copy to clipboard"}
+                >
+                  {hasCopied ? (
+                    <>
+                      <Check className="size-4" />
+                      <span className="sr-only md:not-sr-only">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="size-4" />
+                      <span className="sr-only md:not-sr-only">Copy</span>
+                    </>
+                  )}
+                </Button>
               </div>
-            </TabsContent>
-            <TabsContent value="windsurf">
-              <div className="space-y-2">
-                <p className="text-sm font-medium">
-                  Copy and paste the code into{" "}
-                  <span className="bg-muted rounded-md px-1">
-                    .codeium/windsurf/mcp_config.json
-                  </span>
-                </p>
-                <div className="relative">
-                  <pre className="p-4 rounded-lg bg-muted overflow-x-auto max-w-full">
-                    <code className="block whitespace-pre-wrap break-all">
-                      {JSON.stringify(windsurfConfig, null, 2)}
-                    </code>
-                  </pre>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="absolute top-2 right-2"
-                    onClick={() => handleCopy(windsurfConfig)}
-                  >
-                    <CopyIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
+
+              <pre className="h-full p-4 text-sm">
+                <code>{JSON.stringify(mcpConfig, null, 2)}</code>
+              </pre>
+            </div>
           </Tabs>
         </div>
       </DialogContent>
