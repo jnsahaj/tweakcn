@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Sparkles, Loader2 } from "lucide-react";
 import type { JSONContent } from "@tiptap/react";
@@ -46,14 +48,15 @@ export function AIGenerateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden rounded-lg border shadow-lg">
-        <DialogHeader className="px-6 pt-6 mb-1 w-full">
-          <div className="text-center text-2xl font-bold">
-            How can I help you theme?
-          </div>
+      <DialogContent className="sm:max-w-[550px] p-0 pt-6 overflow-hidden rounded-lg border shadow-lg gap-6">
+        <DialogHeader className="px-6">
+          <DialogTitle>What can I do for your theme?</DialogTitle>
+          <DialogDescription>
+            Ask for anything in plain english, I'll make it happen.
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="px-6 pb-6">
+        <div className="px-6">
           <div className="bg-muted/40 rounded-lg p-1">
             <Suspense fallback={<Loading className="min-h-[80px]" />}>
               <CustomTextarea

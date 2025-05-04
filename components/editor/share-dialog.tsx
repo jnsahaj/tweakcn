@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -27,11 +28,14 @@ export function ShareDialog({ open, onOpenChange, url }: ShareDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[550px] p-0 py-6 overflow-hidden rounded-lg border shadow-lg gap-6">
+        <DialogHeader className="px-6">
           <DialogTitle>Share Theme</DialogTitle>
+          <DialogDescription>
+            Anyone with this URL will be able to view this theme.
+          </DialogDescription>
         </DialogHeader>
-        <div className="mt-4 flex items-center space-x-2">
+        <div className="flex items-center space-x-2 px-6">
           <Input
             readOnly
             value={url}
@@ -51,9 +55,6 @@ export function ShareDialog({ open, onOpenChange, url }: ShareDialogProps) {
             )}
           </Button>
         </div>
-        <p className="text-sm text-muted-foreground mt-2">
-          Anyone with this URL will be able to view this theme.
-        </p>
       </DialogContent>
     </Dialog>
   );

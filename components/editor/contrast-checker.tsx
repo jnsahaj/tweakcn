@@ -194,66 +194,62 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
           <span className="text-sm hidden md:block">Contrast</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-screen-lg max-h-[90vh]">
-        <DialogHeader className="mb-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <DialogTitle className="text-xl font-bold">
-                Contrast Checker
-              </DialogTitle>
-              <DialogDescription className="text-sm mt-1">
-                WCAG 2.0 AA requires a contrast ratio of at least{" "}
-                {MIN_CONTRAST_RATIO}:1{" • "}
-                <a
-                  href="https://www.w3.org/TR/WCAG21/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary underline hover:text-primary/80 transition-colors"
+      <DialogContent className="max-w-4xl max-h-[80vh] p-0 py-6 overflow-hidden rounded-lg border shadow-lg gap-6">
+        <div className="flex justify-between items-end px-6 sm:flex-row flex-col gap-4">
+          <DialogHeader>
+            <DialogTitle>Contrast Checker</DialogTitle>
+            <DialogDescription>
+              WCAG 2.0 AA requires a contrast ratio of at least {MIN_CONTRAST_RATIO}:1{" • "}
+              <a
+                href="https://www.w3.org/TR/WCAG21/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline hover:text-primary/80 transition-colors"
+              >
+                Learn more
+              </a>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="items-center gap-2 hidden md:flex">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => toggleTheme({ x: e.clientX, y: e.clientY })}
                 >
-                  Learn more
-                </a>
-              </DialogDescription>
-            </div>
-            <div className="items-center gap-2 hidden md:flex">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => toggleTheme({ x: e.clientX, y: e.clientY })}
-                  >
-                    {theme === "light" ? (
-                      <Sun className="h-3.5 w-3.5" />
-                    ) : (
-                      <Moon className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <p className="text-xs">Toggle theme</p>
-                </TooltipContent>
-              </Tooltip>
-              <Button
-                variant={filter === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilter("all")}
-              >
-                All
-              </Button>
-              <Button
-                variant={filter === "issues" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilter("issues")}
-              >
-                <AlertTriangle className={cn("h-3 w-3 mr-1")} />
-                Issues ({totalIssues})
-              </Button>
-            </div>
+                  {theme === "light" ? (
+                    <Sun className="h-3.5 w-3.5" />
+                  ) : (
+                    <Moon className="h-3.5 w-3.5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p className="text-xs">Toggle theme</p>
+              </TooltipContent>
+            </Tooltip>
+            <Button
+              variant={filter === "all" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilter("all")}
+            >
+              All
+            </Button>
+            <Button
+              variant={filter === "issues" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilter("issues")}
+            >
+              <AlertTriangle className={cn("h-3 w-3 mr-1")} />
+              Issues ({totalIssues})
+            </Button>
           </div>
-        </DialogHeader>
+        </div>
 
         <ScrollArea className="h-[calc(90vh-12rem)]">
-          <div className="space-y-6">
+          <div className="space-y-6 px-6">
             {groupedPairs.map((group) => (
               <div key={group.category} className="space-y-4">
                 <div className="flex items-center gap-2">

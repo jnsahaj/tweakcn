@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -45,14 +46,14 @@ export function MCPDialog({ open, onOpenChange }: MCPDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-4xl p-0 py-6 overflow-hidden rounded-lg border shadow-lg gap-6">
+        <DialogHeader className="px-6">
           <DialogTitle>Setup MCP</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+          <DialogDescription>
             Use the code below to configure the registry in your IDE.
-          </p>
+          </DialogDescription>
+        </DialogHeader>
+        <div className="px-6">
           <Tabs defaultValue="cursor" className="w-full">
             <TabsList className="inline-flex w-fit items-center justify-center rounded-full bg-background px-0 text-muted-foreground">
               <TabsTriggerPill value="cursor">Cursor</TabsTriggerPill>
