@@ -7,6 +7,9 @@ import { ComponentProps } from "react";
 
 // TODO: Define how to implement this feature since the useAIThemeGeneration hook
 // expects a prompt and jsonPrompt (specific editor format) as parameters.
+// - Each Button should apply the prompt directly, it should not update the TextArea
+// since the user may want to keep the original prompt.
+// - Apparently the JSON prompt is required to use @Current Theme mentions.
 
 const PROMPTS = {
   flatDesign: {

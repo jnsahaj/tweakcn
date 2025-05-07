@@ -26,6 +26,8 @@ import React, { useCallback, useMemo, useState } from "react";
 
 // This file is a temporary component: It's basically a copy of the ThemePresetSelect component in the editor
 // but with a few adjustments to change its behavior and appearance.
+// - This behaves exactly like the ThemePresetSelect component in the editor, but it's not used in the editor.
+// - Allows the developer to override the default classes when using in different places.
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
   presets: Record<string, ThemePreset>;

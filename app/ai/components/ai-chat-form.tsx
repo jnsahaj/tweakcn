@@ -12,8 +12,6 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ThemePresetSelect from "./temp-theme-preset-select";
-import { authClient } from "@/lib/auth-client";
-import { useAuthStore } from "@/store/auth-store";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -32,8 +30,7 @@ export function AiChatForm() {
     hasThemeChangedFromCheckpoint,
   } = useEditorStore();
   const presets = useThemePresetStore((state) => state.getAllPresets());
-  const { data: session } = authClient.useSession();
-  const { openAuthDialog } = useAuthStore();
+
   const router = useRouter();
 
   const handlePresetChange = (preset: string) => {
