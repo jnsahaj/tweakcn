@@ -12,6 +12,10 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ThemePresetSelect from "./temp-theme-preset-select";
+import { useAuthStore } from "@/store/auth-store";
+import { authClient } from "@/lib/auth-client";
+import { usePostLoginAction } from "@/hooks/use-post-login-action";
+import { toast } from "@/hooks/use-toast";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -30,6 +34,21 @@ export function AiChatForm() {
     hasThemeChangedFromCheckpoint,
   } = useEditorStore();
   const presets = useThemePresetStore((state) => state.getAllPresets());
+
+  const { data: session } = authClient.useSession();
+  const { openAuthDialog } = useAuthStore();
+
+  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ prompt, jsonPrompt }) => {
+    if (!prompt || !jsonPrompt) {
+      toast({
+        title: "Error",
+        description: "Failed to generate theme. Please try again.",
+      });
+      return;
+    }
+
+    generateTheme(prompt, jsonPrompt);
+  });
 
   const router = useRouter();
 
@@ -64,6 +83,11 @@ export function AiChatForm() {
   };
 
   const handleGenerate = () => {
+    if (!session) {
+      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { prompt, jsonPrompt });
+      return;
+    }
+
     generateTheme(prompt, jsonPrompt);
   };
 
