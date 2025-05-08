@@ -19,12 +19,8 @@ import { ShareDialog } from "@/components/editor/share-dialog";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 
 export function ActionBar() {
-  const {
-    themeState,
-    setThemeState,
-    applyThemePreset,
-    hasThemeChangedFromCheckpoint,
-  } = useEditorStore();
+  const { themeState, setThemeState, applyThemePreset, hasThemeChangedFromCheckpoint } =
+    useEditorStore();
   const [cssImportOpen, setCssImportOpen] = useState(false);
   const [codePanelOpen, setCodePanelOpen] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -50,7 +46,7 @@ export function ActionBar() {
     setSaveDialogOpen(true);
   });
 
-  usePostLoginAction("AI_GENERATE", () => {
+  usePostLoginAction("AI_GENERATE_FROM_DIALOG", () => {
     setAiGenerateOpen(true);
   });
 
@@ -59,10 +55,7 @@ export function ActionBar() {
     setShareAfterSave(true);
   });
 
-  const handleGenerateTheme = async (
-    promptText: string,
-    jsonPromptText: string
-  ) => {
+  const handleGenerateTheme = async (promptText: string, jsonPromptText: string) => {
     if (!promptText.trim()) return;
     await generateTheme(promptText, jsonPromptText);
 
@@ -73,7 +66,7 @@ export function ActionBar() {
 
   const handleAiGenerateClick = () => {
     if (!session) {
-      openAuthDialog("signin", "AI_GENERATE");
+      openAuthDialog("signin", "AI_GENERATE_FROM_DIALOG");
       return;
     }
 
@@ -101,10 +94,7 @@ export function ActionBar() {
 
   const handleSaveClick = (options?: { shareAfterSave?: boolean }) => {
     if (!session) {
-      openAuthDialog(
-        "signin",
-        options?.shareAfterSave ? "SAVE_THEME_FOR_SHARE" : "SAVE_THEME"
-      );
+      openAuthDialog("signin", options?.shareAfterSave ? "SAVE_THEME_FOR_SHARE" : "SAVE_THEME");
       return;
     }
 
@@ -136,10 +126,7 @@ export function ActionBar() {
         setSaveDialogOpen(false);
       }, 50);
     } catch (error) {
-      console.error(
-        "Save operation failed (error likely handled by hook):",
-        error
-      );
+      console.error("Save operation failed (error likely handled by hook):", error);
     }
   };
 
@@ -210,11 +197,7 @@ export function ActionBar() {
         loading={aiGenerateLoading}
         onGenerate={handleGenerateTheme}
       />
-      <ShareDialog
-        open={shareDialogOpen}
-        onOpenChange={setShareDialogOpen}
-        url={shareUrl}
-      />
+      <ShareDialog open={shareDialogOpen} onOpenChange={setShareDialogOpen} url={shareUrl} />
     </div>
   );
 }
