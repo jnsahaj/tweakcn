@@ -6,18 +6,9 @@ import { db } from "@/db";
 import { theme as themeTable } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import cuid from "cuid";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers"; // Keep for session, but actions handle auth differently
 import { themeStylesSchema, type ThemeStyles } from "@/types/theme";
 import { cache } from "react";
-
-// Helper to get user ID (Consider centralizing auth checks)
-async function getCurrentUserId(): Promise<string | null> {
-  const session = await auth.api.getSession({
-    headers: await headers(), // you need to pass the headers object.
-  });
-  return session?.user?.id ?? null;
-}
+import { getCurrentUserId } from "@/lib/auth";
 
 const createThemeSchema = z.object({
   name: z.string().min(1, "Theme name cannot be empty"),
@@ -36,10 +27,7 @@ export async function getThemes() {
     throw new Error("Unauthorized");
   }
   try {
-    const userThemes = await db
-      .select()
-      .from(themeTable)
-      .where(eq(themeTable.userId, userId));
+    const userThemes = await db.select().from(themeTable).where(eq(themeTable.userId, userId));
     return userThemes;
   } catch (error) {
     console.error("Error fetching themes:", error);
@@ -50,11 +38,7 @@ export async function getThemes() {
 // Wrap getTheme with React.cache
 export const getTheme = cache(async (themeId: string) => {
   try {
-    const [theme] = await db
-      .select()
-      .from(themeTable)
-      .where(eq(themeTable.id, themeId))
-      .limit(1);
+    const [theme] = await db.select().from(themeTable).where(eq(themeTable.id, themeId)).limit(1);
 
     return theme;
   } catch (error) {
@@ -64,10 +48,7 @@ export const getTheme = cache(async (themeId: string) => {
 });
 
 // Action to create a new theme
-export async function createTheme(formData: {
-  name: string;
-  styles: ThemeStyles;
-}) {
+export async function createTheme(formData: { name: string; styles: ThemeStyles }) {
   const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -84,10 +65,7 @@ export async function createTheme(formData: {
   }
 
   // Check if user already has 10 themes
-  const userThemes = await db
-    .select()
-    .from(themeTable)
-    .where(eq(themeTable.userId, userId));
+  const userThemes = await db.select().from(themeTable).where(eq(themeTable.userId, userId));
 
   if (userThemes.length >= 10) {
     return {
@@ -126,11 +104,7 @@ export async function createTheme(formData: {
 }
 
 // Action to update an existing theme
-export async function updateTheme(formData: {
-  id: string;
-  name?: string;
-  styles?: ThemeStyles;
-}) {
+export async function updateTheme(formData: { id: string; name?: string; styles?: ThemeStyles }) {
   const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");

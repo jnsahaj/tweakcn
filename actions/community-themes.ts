@@ -3,21 +3,12 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { community_themes, theme_likes, theme_moderation, community_profiles } from "@/db/schema";
+import { community_theme, theme_like, theme_moderation, community_profile } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import cuid from "cuid";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { themeStylesSchema, type ThemeStyles } from "@/types/theme";
 import { cache } from "react";
-
-// Helper to get user ID
-async function getCurrentUserId(): Promise<string | null> {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  return session?.user?.id ?? null;
-}
+import { getCurrentUserId } from "@/lib/auth";
 
 // Zod schemas
 const createCommunityThemeSchema = z.object({
@@ -39,9 +30,9 @@ export async function getCommunityThemes({
   try {
     let themes;
     if (status) {
-      themes = await db.select().from(community_themes).where(eq(community_themes.status, status));
+      themes = await db.select().from(community_theme).where(eq(community_theme.status, status));
     } else {
-      themes = await db.select().from(community_themes);
+      themes = await db.select().from(community_theme);
     }
     return themes;
   } catch (error) {
@@ -55,8 +46,8 @@ export const getCommunityTheme = cache(async (themeId: string) => {
   try {
     const [theme] = await db
       .select()
-      .from(community_themes)
-      .where(eq(community_themes.id, themeId))
+      .from(community_theme)
+      .where(eq(community_theme.id, themeId))
       .limit(1);
     return theme;
   } catch (error) {
@@ -78,11 +69,11 @@ export async function createCommunityTheme(formData: {
   // Check if user owns the community profile
   const profile = await db
     .select()
-    .from(community_profiles)
+    .from(community_profile)
     .where(
       and(
-        eq(community_profiles.id, formData.community_profile_id),
-        eq(community_profiles.user_id, userId)
+        eq(community_profile.id, formData.community_profile_id),
+        eq(community_profile.user_id, userId)
       )
     )
     .limit(1);
@@ -102,7 +93,7 @@ export async function createCommunityTheme(formData: {
   const now = new Date();
   try {
     const [insertedTheme] = await db
-      .insert(community_themes)
+      .insert(community_theme)
       .values({
         id: newThemeId,
         community_profile_id,
@@ -134,16 +125,16 @@ export async function updateCommunityTheme(formData: {
   // Check ownership
   const [theme] = await db
     .select()
-    .from(community_themes)
-    .where(eq(community_themes.id, formData.id));
+    .from(community_theme)
+    .where(eq(community_theme.id, formData.id));
   if (!theme) return { success: false, error: "Theme not found" };
   const [profile] = await db
     .select()
-    .from(community_profiles)
+    .from(community_profile)
     .where(
       and(
-        eq(community_profiles.id, theme.community_profile_id),
-        eq(community_profiles.user_id, userId)
+        eq(community_profile.id, theme.community_profile_id),
+        eq(community_profile.user_id, userId)
       )
     );
   if (!profile) return { success: false, error: "Not owner of community profile" };
@@ -164,9 +155,9 @@ export async function updateCommunityTheme(formData: {
   if (styles) updateData.styles = styles;
   try {
     const [updatedTheme] = await db
-      .update(community_themes)
+      .update(community_theme)
       .set(updateData)
-      .where(eq(community_themes.id, id))
+      .where(eq(community_theme.id, id))
       .returning();
     revalidatePath("/community");
     return { success: true, theme: updatedTheme };
@@ -183,23 +174,23 @@ export async function deleteCommunityTheme(themeId: string) {
     throw new Error("Unauthorized");
   }
   // Check ownership
-  const [theme] = await db.select().from(community_themes).where(eq(community_themes.id, themeId));
+  const [theme] = await db.select().from(community_theme).where(eq(community_theme.id, themeId));
   if (!theme) return { success: false, error: "Theme not found" };
   const [profile] = await db
     .select()
-    .from(community_profiles)
+    .from(community_profile)
     .where(
       and(
-        eq(community_profiles.id, theme.community_profile_id),
-        eq(community_profiles.user_id, userId)
+        eq(community_profile.id, theme.community_profile_id),
+        eq(community_profile.user_id, userId)
       )
     );
   if (!profile) return { success: false, error: "Not owner of community profile" };
   try {
     const [deletedInfo] = await db
-      .delete(community_themes)
-      .where(eq(community_themes.id, themeId))
-      .returning({ id: community_themes.id });
+      .delete(community_theme)
+      .where(eq(community_theme.id, themeId))
+      .returning({ id: community_theme.id });
     revalidatePath("/community");
     return { success: true, deletedId: themeId };
   } catch (error) {
@@ -213,21 +204,18 @@ export async function likeCommunityTheme(themeId: string) {
   const userId = await getCurrentUserId();
   if (!userId) throw new Error("Unauthorized");
   try {
-    await db.insert(theme_likes).values({
+    await db.insert(theme_like).values({
       user_id: userId,
       community_theme_id: themeId,
       created_at: new Date(),
     });
     // Increment likes_count safely
-    const [theme] = await db
-      .select()
-      .from(community_themes)
-      .where(eq(community_themes.id, themeId));
+    const [theme] = await db.select().from(community_theme).where(eq(community_theme.id, themeId));
     if (theme) {
       await db
-        .update(community_themes)
+        .update(community_theme)
         .set({ likes_count: (theme.likes_count || 0) + 1 })
-        .where(eq(community_themes.id, themeId));
+        .where(eq(community_theme.id, themeId));
     }
     revalidatePath("/community");
     return { success: true };
@@ -243,18 +231,15 @@ export async function unlikeCommunityTheme(themeId: string) {
   if (!userId) throw new Error("Unauthorized");
   try {
     await db
-      .delete(theme_likes)
-      .where(and(eq(theme_likes.user_id, userId), eq(theme_likes.community_theme_id, themeId)));
+      .delete(theme_like)
+      .where(and(eq(theme_like.user_id, userId), eq(theme_like.community_theme_id, themeId)));
     // Decrement likes_count safely
-    const [theme] = await db
-      .select()
-      .from(community_themes)
-      .where(eq(community_themes.id, themeId));
+    const [theme] = await db.select().from(community_theme).where(eq(community_theme.id, themeId));
     if (theme && theme.likes_count > 0) {
       await db
-        .update(community_themes)
+        .update(community_theme)
         .set({ likes_count: theme.likes_count - 1 })
-        .where(eq(community_themes.id, themeId));
+        .where(eq(community_theme.id, themeId));
     }
     revalidatePath("/community");
     return { success: true };
@@ -291,7 +276,7 @@ export async function moderateCommunityTheme({
         moderated_at: new Date(),
       })
       .returning();
-    await db.update(community_themes).set({ status }).where(eq(community_themes.id, themeId));
+    await db.update(community_theme).set({ status }).where(eq(community_theme.id, themeId));
     revalidatePath("/community");
     return { success: true, moderation };
   } catch (error) {

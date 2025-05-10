@@ -78,7 +78,7 @@ export interface SocialLinks {
   website?: string;
 }
 
-export const community_profiles = pgTable("community_profiles", {
+export const community_profile = pgTable("community_profiles", {
   id: text("id").primaryKey(),
   display_name: text("display_name").notNull(),
   user_id: text("user_id").references(() => user.id, { onDelete: "set null" }), // Nullable, set null on user delete
@@ -88,11 +88,11 @@ export const community_profiles = pgTable("community_profiles", {
   social_links: json("social_links").$type<SocialLinks>(),
 });
 
-export const community_themes = pgTable("community_themes", {
+export const community_theme = pgTable("community_themes", {
   id: text("id").primaryKey(),
   community_profile_id: text("community_profile_id")
     .notNull()
-    .references(() => community_profiles.id, { onDelete: "cascade" }),
+    .references(() => community_profile.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   styles: json("styles").$type<ThemeStyles>().notNull(),
   created_at: timestamp("created_at").notNull().defaultNow(),
@@ -100,7 +100,7 @@ export const community_themes = pgTable("community_themes", {
   likes_count: integer("likes_count").notNull().default(0),
 });
 
-export const theme_likes = pgTable(
+export const theme_like = pgTable(
   "theme_likes",
   {
     user_id: text("user_id")
@@ -108,7 +108,7 @@ export const theme_likes = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     community_theme_id: text("community_theme_id")
       .notNull()
-      .references(() => community_themes.id, { onDelete: "cascade" }),
+      .references(() => community_theme.id, { onDelete: "cascade" }),
     created_at: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => {
@@ -120,7 +120,7 @@ export const theme_moderation = pgTable("theme_moderation", {
   id: text("id").primaryKey(),
   community_theme_id: text("community_theme_id")
     .notNull()
-    .references(() => community_themes.id, { onDelete: "cascade" }),
+    .references(() => community_theme.id, { onDelete: "cascade" }),
   admin_user_id: text("admin_user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }), // Assuming admin is also a user

@@ -3,20 +3,11 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { community_profiles } from "@/db/schema";
+import { community_profile } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import cuid from "cuid";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { cache } from "react";
-
-// Helper to get user ID
-async function getCurrentUserId(): Promise<string | null> {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  return session?.user?.id ?? null;
-}
+import { getCurrentUserId } from "@/lib/auth";
 
 // Zod schemas
 const createCommunityProfileSchema = z.object({
@@ -46,7 +37,7 @@ const updateCommunityProfileSchema = z.object({
 // Get all community profiles
 export async function getCommunityProfiles() {
   try {
-    const profiles = await db.select().from(community_profiles);
+    const profiles = await db.select().from(community_profile);
     return profiles;
   } catch (error) {
     console.error("Error fetching community profiles:", error);
@@ -59,8 +50,8 @@ export const getCommunityProfile = cache(async (profileId: string) => {
   try {
     const [profile] = await db
       .select()
-      .from(community_profiles)
-      .where(eq(community_profiles.id, profileId))
+      .from(community_profile)
+      .where(eq(community_profile.id, profileId))
       .limit(1);
     return profile;
   } catch (error) {
@@ -95,7 +86,7 @@ export async function createCommunityProfile(formData: {
   const now = new Date();
   try {
     const [insertedProfile] = await db
-      .insert(community_profiles)
+      .insert(community_profile)
       .values({
         id: newProfileId,
         display_name,
@@ -131,8 +122,8 @@ export async function updateCommunityProfile(formData: {
   // Check ownership
   const [profile] = await db
     .select()
-    .from(community_profiles)
-    .where(eq(community_profiles.id, formData.id));
+    .from(community_profile)
+    .where(eq(community_profile.id, formData.id));
   if (!profile) return { success: false, error: "Profile not found" };
   if (profile.user_id !== userId)
     return { success: false, error: "Not owner of community profile" };
@@ -154,9 +145,9 @@ export async function updateCommunityProfile(formData: {
   if (typeof is_active !== "undefined") updateData.is_active = is_active;
   try {
     const [updatedProfile] = await db
-      .update(community_profiles)
+      .update(community_profile)
       .set(updateData)
-      .where(eq(community_profiles.id, id))
+      .where(eq(community_profile.id, id))
       .returning();
     revalidatePath("/community");
     return { success: true, profile: updatedProfile };
@@ -175,16 +166,16 @@ export async function deleteCommunityProfile(profileId: string) {
   // Check ownership
   const [profile] = await db
     .select()
-    .from(community_profiles)
-    .where(eq(community_profiles.id, profileId));
+    .from(community_profile)
+    .where(eq(community_profile.id, profileId));
   if (!profile) return { success: false, error: "Profile not found" };
   if (profile.user_id !== userId)
     return { success: false, error: "Not owner of community profile" };
   try {
     const [deletedInfo] = await db
-      .delete(community_profiles)
-      .where(eq(community_profiles.id, profileId))
-      .returning({ id: community_profiles.id });
+      .delete(community_profile)
+      .where(eq(community_profile.id, profileId))
+      .returning({ id: community_profile.id });
     revalidatePath("/community");
     return { success: true, deletedId: profileId };
   } catch (error) {
@@ -202,15 +193,15 @@ export async function claimCommunityProfile(profileId: string) {
   // Check if already claimed
   const [profile] = await db
     .select()
-    .from(community_profiles)
-    .where(eq(community_profiles.id, profileId));
+    .from(community_profile)
+    .where(eq(community_profile.id, profileId));
   if (!profile) return { success: false, error: "Profile not found" };
   if (profile.user_id) return { success: false, error: "Profile already claimed" };
   try {
     const [updatedProfile] = await db
-      .update(community_profiles)
+      .update(community_profile)
       .set({ user_id: userId, claimed_at: new Date() })
-      .where(eq(community_profiles.id, profileId))
+      .where(eq(community_profile.id, profileId))
       .returning();
     revalidatePath("/community");
     return { success: true, profile: updatedProfile };
