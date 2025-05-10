@@ -48,7 +48,7 @@ const ThemePreviewPanel = ({
           isFullscreen && "fixed inset-0 z-50 bg-background"
         )}
       >
-        <Tabs defaultValue="cards" className="flex flex-col overflow-hidden">
+        <Tabs defaultValue="cards" className="flex flex-col overflow-hidden flex-1" >
           <div className="flex items-center justify-between px-4 mt-2">
             <TabsList className="inline-flex w-fit items-center justify-center rounded-full bg-background px-0 text-muted-foreground">
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
@@ -103,7 +103,7 @@ const ThemePreviewPanel = ({
             </div>
           </div>
 
-          <ScrollArea className="rounded-lg flex flex-col flex-1 border m-4 mt-2 overflow-hidden">
+          <ScrollArea className="rounded-lg flex flex-col flex-1 border m-4 mt-2 overflow-hidden relative">
             <div className="flex flex-col flex-1 h-full">
               <TabsContent value="cards" className="space-y-6 my-4 px-4 h-full">
                 <ExamplesPreviewContainer>
@@ -140,7 +140,7 @@ const ThemePreviewPanel = ({
 
               <TabsContent
                 value="dashboard"
-                className="space-y-6 mt-0 h-full @container relative"
+                className="space-y-6 mt-0 h-full @container"
               >
                 <ExamplesPreviewContainer className="min-w-[1400px]">
                   <DemoDashboard />
