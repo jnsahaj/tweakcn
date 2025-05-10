@@ -1,5 +1,5 @@
 import { getThemes } from "@/actions/themes";
-import { Header } from "@/components/editor/header";
+import { Header } from "@/components/header";
 import { Palette, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";

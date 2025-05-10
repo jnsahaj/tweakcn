@@ -14,7 +14,7 @@ import {
 import { useEditorStore } from "@/store/editor-store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Header } from "./editor/header";
+import { Header } from "./header";
 import { Footer } from "@/components/home/footer";
 import { toast } from "@/components/ui/use-toast";
 

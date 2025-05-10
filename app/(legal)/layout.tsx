@@ -1,5 +1,5 @@
 import React from "react";
-import { Header } from "@/components/editor/header";
+import { Header } from "@/components/header";
 
 interface LegalLayoutProps {
   children: React.ReactNode;
