@@ -1,5 +1,14 @@
 import { ThemeStyles } from "@/types/theme";
-import { pgTable, json, timestamp, boolean, text } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  json,
+  timestamp,
+  boolean,
+  text,
+  pgEnum,
+  primaryKey,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -60,4 +69,62 @@ export const theme = pgTable("theme", {
   styles: json("styles").$type<ThemeStyles>().notNull(),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
+});
+
+export const statusEnum = pgEnum("status", ["pending_review", "approved", "rejected"]);
+export interface SocialLinks {
+  github?: string;
+  twitter?: string;
+  website?: string;
+}
+
+export const community_profiles = pgTable("community_profiles", {
+  id: text("id").primaryKey(),
+  display_name: text("display_name").notNull(),
+  user_id: text("user_id").references(() => user.id, { onDelete: "set null" }), // Nullable, set null on user delete
+  created_at: timestamp("created_at").notNull().defaultNow(),
+  claimed_at: timestamp("claimed_at"),
+  is_active: boolean("is_active").notNull().default(true),
+  social_links: json("social_links").$type<SocialLinks>(),
+});
+
+export const community_themes = pgTable("community_themes", {
+  id: text("id").primaryKey(),
+  community_profile_id: text("community_profile_id")
+    .notNull()
+    .references(() => community_profiles.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  styles: json("styles").$type<ThemeStyles>().notNull(),
+  created_at: timestamp("created_at").notNull().defaultNow(),
+  status: statusEnum("status").notNull().default("pending_review"),
+  likes_count: integer("likes_count").notNull().default(0),
+});
+
+export const theme_likes = pgTable(
+  "theme_likes",
+  {
+    user_id: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    community_theme_id: text("community_theme_id")
+      .notNull()
+      .references(() => community_themes.id, { onDelete: "cascade" }),
+    created_at: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => {
+    return [primaryKey({ columns: [table.user_id, table.community_theme_id] })];
+  }
+);
+
+export const theme_moderation = pgTable("theme_moderation", {
+  id: text("id").primaryKey(),
+  community_theme_id: text("community_theme_id")
+    .notNull()
+    .references(() => community_themes.id, { onDelete: "cascade" }),
+  admin_user_id: text("admin_user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }), // Assuming admin is also a user
+  status: statusEnum("status").notNull(),
+  feedback: text("feedback"),
+  moderated_at: timestamp("moderated_at").notNull().defaultNow(),
 });
