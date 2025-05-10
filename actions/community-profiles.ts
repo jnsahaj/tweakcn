@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { community_profile } from "@/db/schema";
+import { community_profile, user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import cuid from "cuid";
 import { cache } from "react";
@@ -12,6 +12,8 @@ import { getCurrentUserId } from "@/lib/auth";
 // Zod schemas
 const createCommunityProfileSchema = z.object({
   display_name: z.string().min(1, "Display name cannot be empty"),
+  bio: z.string().optional(),
+  image: z.string().optional(),
   social_links: z
     .object({
       github: z.string().url().optional(),
@@ -24,6 +26,8 @@ const createCommunityProfileSchema = z.object({
 const updateCommunityProfileSchema = z.object({
   id: z.string(),
   display_name: z.string().min(1, "Display name cannot be empty").optional(),
+  bio: z.string().optional(),
+  image: z.string().optional(),
   social_links: z
     .object({
       github: z.string().url().optional(),
@@ -49,7 +53,6 @@ export const getCommunityProfile = cache(async (profileId: string) => {
   }
 });
 
-// Get the current user's community profile
 export const getMyCommunityProfile = cache(async () => {
   const userId = await getCurrentUserId();
   if (!userId) {
@@ -61,7 +64,31 @@ export const getMyCommunityProfile = cache(async () => {
       .from(community_profile)
       .where(eq(community_profile.user_id, userId))
       .limit(1);
-    return profile || null;
+
+    // If profile doesn't exist, create a new one
+    if (!profile) {
+      // First fetch the user details
+      const [userData] = await db.select().from(user).where(eq(user.id, userId)).limit(1);
+
+      if (!userData) {
+        throw new Error("User not found");
+      }
+
+      const result = await createCommunityProfile({
+        display_name: userData.name || `User-${userId.substring(0, 6)}`,
+        image: userData.image || null,
+        bio: null,
+        social_links: {},
+      });
+
+      if (!result.success || !result.profile) {
+        throw new Error("Failed to create community profile");
+      }
+
+      return result.profile;
+    }
+
+    return profile;
   } catch (error) {
     console.error("Error fetching community profile for user:", error);
     throw new Error("Failed to fetch community profile for user.");
@@ -71,6 +98,8 @@ export const getMyCommunityProfile = cache(async () => {
 // Create a new community profile
 export async function createCommunityProfile(formData: {
   display_name: string;
+  bio: string | null;
+  image: string | null;
   social_links?: {
     github?: string;
     twitter?: string;
@@ -89,7 +118,7 @@ export async function createCommunityProfile(formData: {
       details: validation.error.format(),
     };
   }
-  const { display_name, social_links } = validation.data;
+  const { display_name, social_links, bio, image } = validation.data;
   const newProfileId = cuid();
   const now = new Date();
   try {
@@ -99,6 +128,8 @@ export async function createCommunityProfile(formData: {
         id: newProfileId,
         display_name,
         user_id: userId,
+        bio,
+        image,
         created_at: now,
         is_active: true,
         social_links: social_links || {},

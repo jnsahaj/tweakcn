@@ -81,6 +81,8 @@ export interface SocialLinks {
 export const community_profile = pgTable("community_profiles", {
   id: text("id").primaryKey(),
   display_name: text("display_name").notNull(),
+  bio: text("bio"),
+  image: text("image"),
   user_id: text("user_id").references(() => user.id, { onDelete: "set null" }), // Nullable, set null on user delete
   created_at: timestamp("created_at").notNull().defaultNow(),
   claimed_at: timestamp("claimed_at"),
