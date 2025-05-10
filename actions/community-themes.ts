@@ -3,8 +3,14 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { community_theme, theme_like, theme_moderation, community_profile } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import {
+  community_theme,
+  theme_like,
+  theme_moderation,
+  community_profile,
+  user,
+} from "@/db/schema";
+import { eq, and, desc, asc, sql, count } from "drizzle-orm";
 import cuid from "cuid";
 import { themeStylesSchema, type ThemeStyles } from "@/types/theme";
 import { cache } from "react";
@@ -23,18 +29,88 @@ const updateCommunityThemeSchema = z.object({
   styles: themeStylesSchema.optional(),
 });
 
-// Get all community themes (optionally filter by status)
+// Get all community themes with pagination, sorting, and filtering options
 export async function getCommunityThemes({
   status,
-}: { status?: "pending_review" | "approved" | "rejected" } = {}) {
+  page = 1,
+  limit = 10,
+  sortBy = "created_at",
+  sortDirection = "desc",
+  communityProfileId,
+}: {
+  status?: "pending_review" | "approved" | "rejected";
+  page?: number;
+  limit?: number;
+  sortBy?: "created_at" | "likes_count";
+  sortDirection?: "asc" | "desc";
+  communityProfileId?: string;
+} = {}) {
   try {
-    let themes;
+    // Calculate offset for pagination
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    const whereConditions = [];
     if (status) {
-      themes = await db.select().from(community_theme).where(eq(community_theme.status, status));
-    } else {
-      themes = await db.select().from(community_theme);
+      whereConditions.push(eq(community_theme.status, status));
     }
-    return themes;
+    if (communityProfileId) {
+      whereConditions.push(eq(community_theme.community_profile_id, communityProfileId));
+    }
+
+    // Build final where clause if needed
+    const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    const selectFields = {
+      id: community_theme.id,
+      name: community_theme.name,
+      styles: community_theme.styles,
+      created_at: community_theme.created_at,
+      likes_count: community_theme.likes_count,
+      community_profile: {
+        id: community_profile.id,
+        name: community_profile.display_name,
+        image: user.image,
+      },
+    };
+
+    const themesWithProfiles = await db
+      .select(selectFields)
+      .from(community_theme)
+      .leftJoin(community_profile, eq(community_theme.community_profile_id, community_profile.id))
+      .leftJoin(user, eq(community_profile.user_id, user.id))
+      .where(whereClause)
+      .orderBy(
+        sortDirection === "desc"
+          ? desc(
+              sortBy === "likes_count" ? community_theme.likes_count : community_theme.created_at
+            )
+          : asc(sortBy === "likes_count" ? community_theme.likes_count : community_theme.created_at)
+      )
+      .limit(limit)
+      .offset(offset);
+
+    // Get total count with same filters
+    const [countResult] = await db
+      .select({
+        total: count(),
+      })
+      .from(community_theme)
+      .where(whereClause);
+
+    const totalCount = countResult?.total || 0;
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      themes: themesWithProfiles,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCount,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    };
   } catch (error) {
     console.error("Error fetching community themes:", error);
     throw new Error("Failed to fetch community themes.");

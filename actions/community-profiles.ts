@@ -34,17 +34,6 @@ const updateCommunityProfileSchema = z.object({
   is_active: z.boolean().optional(),
 });
 
-// Get all community profiles
-export async function getCommunityProfiles() {
-  try {
-    const profiles = await db.select().from(community_profile);
-    return profiles;
-  } catch (error) {
-    console.error("Error fetching community profiles:", error);
-    throw new Error("Failed to fetch community profiles.");
-  }
-}
-
 // Get a single community profile by ID
 export const getCommunityProfile = cache(async (profileId: string) => {
   try {
@@ -57,6 +46,25 @@ export const getCommunityProfile = cache(async (profileId: string) => {
   } catch (error) {
     console.error("Error fetching community profile:", error);
     throw new Error("Failed to fetch community profile.");
+  }
+});
+
+// Get the current user's community profile
+export const getMyCommunityProfile = cache(async () => {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+  try {
+    const [profile] = await db
+      .select()
+      .from(community_profile)
+      .where(eq(community_profile.user_id, userId))
+      .limit(1);
+    return profile || null;
+  } catch (error) {
+    console.error("Error fetching community profile for user:", error);
+    throw new Error("Failed to fetch community profile for user.");
   }
 });
 
@@ -125,6 +133,7 @@ export async function updateCommunityProfile(formData: {
     .from(community_profile)
     .where(eq(community_profile.id, formData.id));
   if (!profile) return { success: false, error: "Profile not found" };
+
   if (profile.user_id !== userId)
     return { success: false, error: "Not owner of community profile" };
   const validation = updateCommunityProfileSchema.safeParse(formData);
@@ -180,33 +189,6 @@ export async function deleteCommunityProfile(profileId: string) {
     return { success: true, deletedId: profileId };
   } catch (error) {
     console.error(`Error deleting community profile ${profileId}:`, error);
-    return { success: false, error: "Internal Server Error" };
-  }
-}
-
-// Claim a community profile (set claimed_at and user_id if not already claimed)
-export async function claimCommunityProfile(profileId: string) {
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-  // Check if already claimed
-  const [profile] = await db
-    .select()
-    .from(community_profile)
-    .where(eq(community_profile.id, profileId));
-  if (!profile) return { success: false, error: "Profile not found" };
-  if (profile.user_id) return { success: false, error: "Profile already claimed" };
-  try {
-    const [updatedProfile] = await db
-      .update(community_profile)
-      .set({ user_id: userId, claimed_at: new Date() })
-      .where(eq(community_profile.id, profileId))
-      .returning();
-    revalidatePath("/community");
-    return { success: true, profile: updatedProfile };
-  } catch (error) {
-    console.error(`Error claiming community profile ${profileId}:`, error);
     return { success: false, error: "Internal Server Error" };
   }
 }
