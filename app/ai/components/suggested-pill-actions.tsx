@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 import { ComponentProps } from "react";
@@ -48,8 +49,15 @@ export function SuggestedPillActions() {
 interface PillButtonProps extends ComponentProps<typeof Button> {}
 
 function PillButton({ className, children, ...props }: PillButtonProps) {
+  const { loading: aiGenerateLoading } = useAIThemeGeneration();
+
   return (
-    <div className="group/pill relative active:scale-95">
+    <div
+      className={cn(
+        "group/pill relative active:scale-95",
+        aiGenerateLoading && "pointer-events-none"
+      )}
+    >
       <div className="from-primary to-background absolute inset-0 z-[-1] rounded-full bg-gradient-to-br opacity-0 transition-all duration-150 ease-in group-hover/pill:opacity-50" />
       <Button
         variant="outline"
@@ -60,6 +68,7 @@ function PillButton({ className, children, ...props }: PillButtonProps) {
           className
         )}
         {...props}
+        disabled={aiGenerateLoading}
       >
         {children}
       </Button>

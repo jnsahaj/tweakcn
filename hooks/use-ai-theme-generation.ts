@@ -1,55 +1,62 @@
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { generateThemeWithReferences } from "@/lib/ai-theme-generator";
+import { toast } from "@/components/ui/use-toast";
+import { GenerateThemeOptions, useAIThemeGenerationStore } from "@/store/ai-theme-generation-store";
 
-interface UseAIThemeGenerationProps {
-  onSuccess?: () => void;
-  onError?: (error: Error) => void;
-}
+// Hook for components that only need generation functionality
+export function useAIThemeGeneration() {
+  const _generateTheme = useAIThemeGenerationStore((state) => state.generateTheme);
+  const loading = useAIThemeGenerationStore((state) => state.loading);
 
-export function useAIThemeGeneration(props?: UseAIThemeGenerationProps) {
-  const { onSuccess, onError } = props || {};
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-
-  const generateTheme = async (prompt: string, jsonPrompt: string) => {
-    if (!prompt.trim()) return;
-
-    setLoading(true);
-    try {
-      const themeStyles = await generateThemeWithReferences(
-        prompt,
-        jsonPrompt,
-        {
-          onSuccess: () => {
-            toast({
-              title: "Theme generated",
-              description: "Your AI-generated theme has been applied",
-            });
-            onSuccess?.();
-          },
-          onError: (error) => {
-            toast({
-              title: "Error",
-              description: "Failed to generate theme. Please try again.",
-              variant: "destructive",
-            });
-            onError?.(error);
-          },
-        }
-      );
-
-      return themeStyles;
-    } catch (error) {
-      // Error is already handled by the utility function
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+  const generateTheme = async (options?: GenerateThemeOptions) => {
+    return _generateTheme({
+      ...options,
+      onSuccess: () => {
+        toast({
+          title: "Theme generated",
+          description: "Your AI-generated theme has been applied",
+        });
+        options?.onSuccess?.();
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: "Failed to generate theme. Please try again.",
+          variant: "destructive",
+        });
+        options?.onError?.(error);
+      },
+    });
   };
 
   return {
     generateTheme,
     loading,
+  };
+}
+
+// Hook for components that only need prompt-related state and actions
+export function useAIThemeGenerationPrompts() {
+  const prompt = useAIThemeGenerationStore((state) => state.prompt);
+  const jsonPrompt = useAIThemeGenerationStore((state) => state.jsonPrompt);
+  const setPrompt = useAIThemeGenerationStore((state) => state.setPrompt);
+  const setJsonPrompt = useAIThemeGenerationStore((state) => state.setJsonPrompt);
+  const resetPrompts = useAIThemeGenerationStore((state) => state.resetPrompts);
+
+  return {
+    prompt,
+    jsonPrompt,
+    setPrompt,
+    setJsonPrompt,
+    resetPrompts,
+  };
+}
+
+// Hook for components that need to know about the last generated theme
+export function useAIThemeGenerationResult() {
+  const lastGeneratedTheme = useAIThemeGenerationStore((state) => state.lastGeneratedTheme);
+  const hasPrompted = useAIThemeGenerationStore((state) => state.hasPrompted);
+
+  return {
+    lastGeneratedTheme,
+    hasPrompted,
   };
 }

@@ -1,7 +1,8 @@
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 import { Metadata } from "next";
-import { AiInterface } from "./components/ai-interface";
+import { AIInterface } from "./components/ai-interface";
 import { Toolbar } from "./components/toolbar";
+import { PreviewPanelProvider } from "./hooks/use-preview-panel";
 
 export const metadata: Metadata = {
   title: "AI Editor — tweakcn",
@@ -10,12 +11,12 @@ export const metadata: Metadata = {
 
 export default function AiPage() {
   return (
-    <>
+    <PreviewPanelProvider>
+      <Toolbar />
       <AuthDialogWrapper />
       <div className="relative isolate flex flex-1 items-center justify-center overflow-hidden">
-        <AiInterface />
+        <AIInterface />
       </div>
-      <Toolbar />
-    </>
+    </PreviewPanelProvider>
   );
 }
