@@ -1,50 +1,32 @@
 "use client";
 
-import ThemePreviewPanel from "@/components/editor/theme-preview-panel";
-import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { useEditorStore } from "@/store/editor-store";
-import { ChevronsLeft, ChevronsRight, ChevronsUp } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import { usePreviewPanel } from "../hooks/use-preview-panel";
 
-export function PreviewPanel() {
-  const { themeState } = useEditorStore();
-  const { theme: mode } = useTheme();
-
-  return (
-    <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <ThemePreviewPanel styles={themeState.styles} currentMode={mode} />
-      </div>
-    </div>
-  );
-}
-
-interface TogglePreviewPanelButtonProps extends React.ComponentProps<typeof Button> {
-  isOpen: boolean;
-  handleTogglePreviewPanel: () => void;
-}
+interface TogglePreviewPanelButtonProps extends React.ComponentProps<typeof Button> {}
 
 export function TogglePreviewPanelButton({
-  isOpen,
-  handleTogglePreviewPanel,
   className,
   onClick,
   ...props
 }: TogglePreviewPanelButtonProps) {
+  const { isPreviewPanelOpen, togglePreviewPanel } = usePreviewPanel();
+
   const isMobile = useIsMobile();
 
-  if (isMobile && !isOpen) {
+  if (isMobile && !isPreviewPanelOpen) {
     return (
       <Button
         className={cn(className)}
         variant="ghost"
         size="icon"
-        onClick={handleTogglePreviewPanel}
+        onClick={togglePreviewPanel}
         {...props}
       >
-        <ChevronsUp />
+        <Eye />
       </Button>
     );
   }
@@ -54,10 +36,10 @@ export function TogglePreviewPanelButton({
       className={cn(className)}
       variant="ghost"
       size="icon"
-      onClick={handleTogglePreviewPanel}
+      onClick={togglePreviewPanel}
       {...props}
     >
-      {!isOpen ? <ChevronsLeft /> : <ChevronsRight />}
+      {!isPreviewPanelOpen ? <Eye /> : <EyeOff />}
     </Button>
   );
 }

@@ -1,21 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
 import { suggestion } from "@/components/editor/mention-suggestion"; // We'll create this next
+import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 
 interface CustomTextareaProps {
   onContentChange: (textContent: string, jsonContent: JSONContent) => void;
   onGenerate?: () => void;
 }
 
-const CustomTextarea: React.FC<CustomTextareaProps> = ({
-  onContentChange,
-  onGenerate,
-}) => {
+const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGenerate }) => {
+  const { loading: aiGenerateLoading } = useAIThemeGeneration();
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -31,7 +31,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
           "cursor-text before:content-[attr(data-placeholder)] before:absolute before:top-2 before:left-3 before:text-mauve-11 before:opacity-50 before-pointer-events-none",
       }),
     ],
-    autofocus: true,
+    autofocus: !aiGenerateLoading,
     editorProps: {
       attributes: {
         class:
@@ -68,6 +68,13 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
       onContentChange(editor.getText(), editor.getJSON());
     },
   });
+
+  useEffect(() => {
+    if (editor) {
+      editor.setEditable(!aiGenerateLoading);
+      editor.commands.blur();
+    }
+  }, [aiGenerateLoading, editor]);
 
   if (!editor) {
     return null;
