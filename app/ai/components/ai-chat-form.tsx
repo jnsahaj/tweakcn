@@ -8,8 +8,6 @@ import { toast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
-import { useEditorStore } from "@/store/editor-store";
-import { useThemePresetStore } from "@/store/theme-preset-store";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -25,9 +23,6 @@ const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea
 export function AIChatForm() {
   const { prompt, jsonPrompt, setPrompt, setJsonPrompt } = useAIThemeGenerationPrompts();
   const { generateTheme, loading: aiGenerateLoading } = useAIThemeGeneration();
-
-  const { themeState, applyThemePreset } = useEditorStore();
-  const presets = useThemePresetStore((state) => state.getAllPresets());
 
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
@@ -56,11 +51,6 @@ export function AIChatForm() {
       onSuccess: handleSuccessfulThemeGeneration,
     });
   });
-
-  const handlePresetChange = (preset: string) => {
-    // Handle preset change logic here
-    applyThemePreset(preset);
-  };
 
   const handleContentChange = (textContent: string, jsonContent: JSONContent) => {
     setJsonPrompt(JSON.stringify(jsonContent));
@@ -94,14 +84,7 @@ export function AIChatForm() {
 
         <div className="flex items-center justify-between gap-2 p-2">
           <div className="flex items-center gap-2">
-            <ThemePresetSelect
-              disabled={aiGenerateLoading}
-              presets={presets}
-              currentPreset={themeState.preset || null}
-              onPresetChange={handlePresetChange}
-              className="min-h-0 rounded-lg bg-transparent"
-              withCycleThemes={false}
-            />
+            <ThemePresetSelect disabled={aiGenerateLoading} withCycleThemes={false} />
           </div>
 
           <div className="flex items-center gap-2">

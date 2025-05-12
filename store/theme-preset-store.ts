@@ -11,6 +11,7 @@ interface ThemePresetStore {
   getPreset: (name: string) => ThemePreset | undefined;
   getAllPresets: () => Record<string, ThemePreset>;
   loadSavedPresets: () => Promise<void>;
+  unloadSavedPresets: () => void;
 }
 
 export const useThemePresetStore = create<ThemePresetStore>()((set, get) => ({
@@ -52,6 +53,9 @@ export const useThemePresetStore = create<ThemePresetStore>()((set, get) => ({
     } catch (error) {
       console.error("Failed to load saved presets:", error);
     }
+  },
+  unloadSavedPresets: () => {
+    set({ presets: defaultPresets });
   },
   updatePreset: (name: string, preset: ThemePreset) => {
     set((state) => ({
