@@ -1,16 +1,3 @@
-import { useTheme } from "@/components/theme-provider";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { useEditorStore } from "@/store/editor-store";
-import { ThemePreset } from "@/types/theme";
-import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
 import {
   ArrowLeft,
   ArrowRight,
@@ -22,17 +9,31 @@ import {
   Shuffle,
   Sun,
 } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-// This file is a temporary component: It's basically a copy of the ThemePresetSelect component in the editor
-// but with a few adjustments to change its behavior and appearance.
+import { useTheme } from "@/components/theme-provider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Command, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+import { useEditorStore } from "@/store/editor-store";
+import { useThemePresetStore } from "@/store/theme-preset-store";
+import { ThemePreset } from "@/types/theme";
+import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
+
+// This file is a temporary component:
 // - This behaves exactly like the ThemePresetSelect component in the editor, but it's not used in the editor.
 // - Allows the developer to override the default classes when using in different places.
+// - This is a temporary component and will be removed in the future and
+// will be replaced with the ThemePresetSelect component in the editor with this implementation.
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
-  presets: Record<string, ThemePreset>;
-  currentPreset: string | null;
-  onPresetChange: (preset: string) => void;
   withCycleThemes?: boolean;
 }
 
@@ -69,37 +70,49 @@ const isThemeNew = (preset: ThemePreset) => {
   return createdAt > timePeriod;
 };
 
-interface ThemeControlsProps {
-  onRandomize: () => void;
-  onThemeToggle: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  theme: string;
-}
+const ThemeControls = () => {
+  const applyThemePreset = useEditorStore((store) => store.applyThemePreset);
+  const presets = useThemePresetStore((store) => store.getAllPresets());
 
-const ThemeControls: React.FC<ThemeControlsProps> = ({ onRandomize, onThemeToggle, theme }) => (
-  <div className="flex gap-1">
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={onThemeToggle}>
-          {theme === "light" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">
-        <p className="text-xs">Toggle theme</p>
-      </TooltipContent>
-    </Tooltip>
+  const presetNames = useMemo(() => ["default", ...Object.keys(presets)], [presets]);
 
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={onRandomize}>
-          <Shuffle className="h-3.5 w-3.5" />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">
-        <p className="text-xs">Random theme</p>
-      </TooltipContent>
-    </Tooltip>
-  </div>
-);
+  const randomize = useCallback(() => {
+    const random = Math.floor(Math.random() * presetNames.length);
+    applyThemePreset(presetNames[random]);
+  }, [presetNames]);
+
+  const { theme, toggleTheme } = useTheme();
+  const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { clientX: x, clientY: y } = event;
+    toggleTheme({ x, y });
+  };
+
+  return (
+    <div className="flex gap-1">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={handleThemeToggle}>
+            {theme === "light" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p className="text-xs">Toggle theme</p>
+        </TooltipContent>
+      </Tooltip>
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={randomize}>
+            <Shuffle className="h-3.5 w-3.5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p className="text-xs">Random theme</p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  );
+};
 
 interface ThemeCycleButtonProps extends React.ComponentProps<typeof Button> {
   direction: "prev" | "next";
@@ -116,7 +129,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
       <Button
         variant="ghost"
         size="icon"
-        className={cn("bg-muted/10 size-14 shrink-0 rounded-none", className)}
+        className={cn("aspect-square h-full shrink-0", className)}
         onClick={onClick}
         {...props}
       >
@@ -131,42 +144,87 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
   </Tooltip>
 );
 
-const ThemePresetCycleControls: React.FC<{
-  cycleTheme: (direction: "prev" | "next") => void;
-}> = ({ cycleTheme: onCycleTheme }) => {
+interface ThemePresetCycleControlsProps extends React.ComponentProps<typeof Button> {
+  filteredPresets: string[];
+  currentPresetName: string;
+  className?: string;
+}
+
+const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
+  filteredPresets,
+  currentPresetName,
+  className,
+  ...props
+}) => {
+  const applyThemePreset = useEditorStore((store) => store.applyThemePreset);
+
+  const currentIndex =
+    useMemo(
+      () => filteredPresets.indexOf(currentPresetName || "default"),
+      [filteredPresets, currentPresetName]
+    ) ?? 0;
+
+  const cycleTheme = useCallback(
+    (direction: "prev" | "next") => {
+      const newIndex =
+        direction === "next"
+          ? (currentIndex + 1) % filteredPresets.length
+          : (currentIndex - 1 + filteredPresets.length) % filteredPresets.length;
+      applyThemePreset(filteredPresets[newIndex]);
+    },
+    [currentIndex, filteredPresets]
+  );
   return (
     <>
       <Separator orientation="vertical" className="min-h-8" />
 
       <ThemeCycleButton
         direction="prev"
-        onClick={() => onCycleTheme("prev")}
-        className="size-8 rounded-lg bg-transparent"
+        size="icon"
+        className={cn("aspect-square min-h-8 w-auto", className)}
+        onClick={() => cycleTheme("prev")}
+        {...props}
       />
 
       <Separator orientation="vertical" className="min-h-8" />
 
       <ThemeCycleButton
         direction="next"
-        onClick={() => onCycleTheme("next")}
-        className="size-8 rounded-lg bg-transparent"
+        size="icon"
+        className={cn("aspect-square min-h-8 w-auto", className)}
+        onClick={() => cycleTheme("next")}
+        {...props}
       />
     </>
   );
 };
 
 const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
-  presets,
-  currentPreset,
-  onPresetChange,
   withCycleThemes = true,
   className,
   ...props
 }) => {
-  const { themeState, hasUnsavedChanges } = useEditorStore();
-  const { theme, toggleTheme } = useTheme();
+  const themeState = useEditorStore((store) => store.themeState);
+  const applyThemePreset = useEditorStore((store) => store.applyThemePreset);
+  const hasUnsavedChanges = useEditorStore((store) => store.hasUnsavedChanges);
+  const currentPreset = themeState.preset;
   const mode = themeState.currentMode;
+
+  const presets = useThemePresetStore((store) => store.getAllPresets());
+  const loadSavedPresets = useThemePresetStore((store) => store.loadSavedPresets);
+  const unloadSavedPresets = useThemePresetStore((store) => store.unloadSavedPresets);
+
   const [search, setSearch] = useState("");
+
+  const { data: session } = authClient.useSession();
+
+  useEffect(() => {
+    if (session?.user) {
+      loadSavedPresets();
+    } else {
+      unloadSavedPresets();
+    }
+  }, [loadSavedPresets, session?.user]);
 
   const isSavedTheme = useCallback(
     (presetId: string) => {
@@ -176,7 +234,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   );
 
   const presetNames = useMemo(() => ["default", ...Object.keys(presets)], [presets]);
-  const value = presetNames?.find((name) => name === currentPreset);
+  const currentPresetName = presetNames?.find((name) => name === currentPreset);
 
   const filteredPresets = useMemo(() => {
     const filteredList =
@@ -202,30 +260,6 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
     return [...sortThemes(savedThemesList), ...sortThemes(defaultThemesList)];
   }, [presetNames, search, presets, isSavedTheme]);
 
-  const currentIndex =
-    useMemo(() => filteredPresets.indexOf(value || "default"), [filteredPresets, value]) ?? 0;
-
-  const randomize = useCallback(() => {
-    const random = Math.floor(Math.random() * filteredPresets.length);
-    onPresetChange(filteredPresets[random]);
-  }, [onPresetChange, filteredPresets]);
-
-  const cycleTheme = useCallback(
-    (direction: "prev" | "next") => {
-      const newIndex =
-        direction === "next"
-          ? (currentIndex + 1) % filteredPresets.length
-          : (currentIndex - 1 + filteredPresets.length) % filteredPresets.length;
-      onPresetChange(filteredPresets[newIndex]);
-    },
-    [currentIndex, filteredPresets, onPresetChange]
-  );
-
-  const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { clientX: x, clientY: y } = event;
-    toggleTheme({ x, y });
-  };
-
   const filteredSavedThemes = useMemo(() => {
     return filteredPresets.filter((name) => name !== "default" && isSavedTheme(name));
   }, [filteredPresets, isSavedTheme]);
@@ -235,16 +269,12 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   }, [filteredPresets, isSavedTheme]);
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center">
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
-            className={cn(
-              "group relative w-full justify-between rounded-none md:min-w-56",
-              "bg-muted/10 min-h-14",
-              className
-            )}
+            className={cn("group relative w-full justify-between md:min-w-56", className)}
             {...props}
           >
             <div className="flex items-center gap-3">
@@ -254,16 +284,23 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 <ColorBox color={themeState.styles[mode].secondary} />
                 <ColorBox color={themeState.styles[mode].border} />
               </div>
-              {value !== "default" && value && isSavedTheme(value) && !hasUnsavedChanges() && (
-                <div className="bg-muted rounded-full p-1">
-                  <Heart className="size-1" stroke="var(--muted)" fill="var(--muted-foreground)" />
-                </div>
-              )}
+              {currentPresetName !== "default" &&
+                currentPresetName &&
+                isSavedTheme(currentPresetName) &&
+                !hasUnsavedChanges() && (
+                  <div className="bg-muted rounded-full p-1">
+                    <Heart
+                      className="size-1"
+                      stroke="var(--muted)"
+                      fill="var(--muted-foreground)"
+                    />
+                  </div>
+                )}
               <span className="font-medium capitalize">
                 {hasUnsavedChanges() ? (
                   <>Custom (Unsaved)</>
                 ) : (
-                  presets[value || "default"]?.label || "default"
+                  presets[currentPresetName || "default"]?.label || "default"
                 )}
               </span>
             </div>
@@ -271,7 +308,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0" align="center">
-          <Command className="h-96 w-full rounded-lg border shadow-md">
+          <Command className="h-100 w-full rounded-lg border shadow-md">
             <div className="flex w-full items-center">
               <div className="flex w-full items-center border-b px-3 py-1">
                 <Search className="size-4 shrink-0 opacity-50" />
@@ -288,11 +325,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 {filteredPresets.length} theme
                 {filteredPresets.length !== 1 ? "s" : ""}
               </div>
-              <ThemeControls
-                onRandomize={randomize}
-                onThemeToggle={handleThemeToggle}
-                theme={theme}
-              />
+              <ThemeControls />
             </div>
             <Separator />
             <ScrollArea className="h-[500px] max-h-[70vh]">
@@ -310,7 +343,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                             key={`${presetName}-${index}`}
                             value={`${presetName}-${index}`}
                             onSelect={() => {
-                              onPresetChange(presetName);
+                              applyThemePreset(presetName);
                               setSearch("");
                             }}
                             className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
@@ -326,7 +359,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                                 </Badge>
                               )}
                             </div>
-                            {presetName === value && (
+                            {presetName === currentPresetName && (
                               <Check className="h-4 w-4 shrink-0 opacity-70" />
                             )}
                           </CommandItem>
@@ -358,7 +391,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                       key={`${presetName}-${index}`}
                       value={`${presetName}-${index}`}
                       onSelect={() => {
-                        onPresetChange(presetName);
+                        applyThemePreset(presetName);
                         setSearch("");
                       }}
                       className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
@@ -374,7 +407,9 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                           </Badge>
                         )}
                       </div>
-                      {presetName === value && <Check className="h-4 w-4 shrink-0 opacity-70" />}
+                      {presetName === currentPresetName && (
+                        <Check className="h-4 w-4 shrink-0 opacity-70" />
+                      )}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -384,7 +419,13 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
         </PopoverContent>
       </Popover>
 
-      {withCycleThemes && <ThemePresetCycleControls cycleTheme={cycleTheme} />}
+      {withCycleThemes && (
+        <ThemePresetCycleControls
+          filteredPresets={filteredPresets}
+          currentPresetName={currentPresetName || "default"}
+          className={className}
+        />
+      )}
     </div>
   );
 };
