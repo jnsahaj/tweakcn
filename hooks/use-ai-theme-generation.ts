@@ -5,9 +5,10 @@ import { GenerateThemeOptions, useAIThemeGenerationStore } from "@/store/ai-them
 export function useAIThemeGeneration() {
   const _generateTheme = useAIThemeGenerationStore((state) => state.generateTheme);
   const loading = useAIThemeGenerationStore((state) => state.loading);
+  const cancelThemeGeneration = useAIThemeGenerationStore((state) => state.cancelThemeGeneration);
 
   const generateTheme = async (options?: GenerateThemeOptions) => {
-    return _generateTheme({
+    return await _generateTheme({
       ...options,
       onSuccess: () => {
         toast({
@@ -17,6 +18,14 @@ export function useAIThemeGeneration() {
         options?.onSuccess?.();
       },
       onError: (error) => {
+        if (error instanceof Error && error.name === "AbortError") {
+          toast({
+            title: "Theme generation cancelled",
+            description: "The theme generation was cancelled, no changes were made.",
+          });
+          return;
+        }
+
         toast({
           title: "Error",
           description: "Failed to generate theme. Please try again.",
@@ -30,6 +39,7 @@ export function useAIThemeGeneration() {
   return {
     generateTheme,
     loading,
+    cancelThemeGeneration,
   };
 }
 

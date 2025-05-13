@@ -6,6 +6,7 @@ export interface GenerateThemeOptions {
   jsonPrompt?: string;
   onSuccess?: () => void;
   onError?: (error: Error) => void;
+  signal?: AbortSignal;
 }
 
 interface AIThemeGenerationStore {
@@ -14,6 +15,7 @@ interface AIThemeGenerationStore {
   jsonPrompt: string;
   hasPrompted: boolean;
   lastGeneratedTheme: any | null;
+  abortController: AbortController | null;
 
   // State setters
   setLoading: (loading: boolean) => void;
@@ -22,6 +24,7 @@ interface AIThemeGenerationStore {
 
   // Actions
   generateTheme: (options?: GenerateThemeOptions) => Promise<any>;
+  cancelThemeGeneration: () => void;
 
   // Utility methods
   resetPrompts: () => void;
@@ -35,6 +38,7 @@ const initialState = {
   jsonPrompt: "",
   hasPrompted: false,
   lastGeneratedTheme: null,
+  abortController: null,
 };
 
 export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, get) => ({
@@ -50,6 +54,15 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
   resetState: () => set(initialState),
   updateLastGeneratedTheme: (theme: any) => set({ lastGeneratedTheme: theme }),
 
+  // Cancel ongoing theme generation
+  cancelThemeGeneration: () => {
+    const { abortController } = get();
+    if (abortController) {
+      abortController.abort();
+      set({ loading: false, abortController: null });
+    }
+  },
+
   generateTheme: async (options?: GenerateThemeOptions) => {
     const state = get();
     const finalPrompt = options?.prompt || state.prompt;
@@ -57,12 +70,20 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
 
     if (!finalPrompt.trim()) return;
 
-    set({ loading: true });
+    // Cancel any ongoing requests
+    if (state.abortController) {
+      state.abortController.abort();
+    }
+
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    set({ loading: true, abortController });
 
     try {
       const themeStyles = await generateThemeWithReferences(finalPrompt, finalJsonPrompt, {
         onSuccess: options?.onSuccess,
         onError: options?.onError,
+        signal: abortController.signal,
       });
 
       set({
@@ -74,7 +95,7 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     } catch (error) {
       console.error(error);
     } finally {
-      set({ loading: false });
+      set({ loading: false, abortController: null });
     }
   },
 }));

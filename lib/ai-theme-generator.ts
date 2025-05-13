@@ -6,6 +6,7 @@ import { Theme } from "@/types/theme";
 interface GenerateThemeOptions {
   onSuccess?: (themeStyles: Theme["styles"]) => void;
   onError?: (error: Error) => void;
+  signal?: AbortSignal;
 }
 
 /**
@@ -24,6 +25,7 @@ export async function generateThemeWithAI(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ prompt }),
+      signal: options?.signal,
     });
 
     if (!response.ok) {
