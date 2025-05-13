@@ -2,50 +2,52 @@
 
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/auth-store";
+import { createCurrentThemePromptJson, PROMPTS } from "@/utils/prompts";
 import { Sparkles } from "lucide-react";
 import { ComponentProps } from "react";
-
-// TODO: Define how to implement this feature since the useAIThemeGeneration hook
-// expects a prompt and jsonPrompt (specific editor format) as parameters.
-// - Each Button should apply the prompt directly, it should not update the TextArea
-// since the user may want to keep the original prompt.
-// - Apparently the JSON prompt is required to use @Current Theme mentions.
-
-const PROMPTS = {
-  flatDesign: {
-    label: "Flat Design",
-    prompt:
-      "I want a flat design. Use the @Current Theme and make the 'background', 'card', 'popover', and 'sidebar' tokens use the same color value. Remove shadows completely, for example by setting 'shadow-opacity' to '0%' or 'shadow-blur' and 'shadow-spread' to '0px'. Default 'border' styles are okay.",
-  },
-  minimalStyle: {
-    label: "Minimal Style",
-    prompt:
-      "I want a minimal style. Use the @Current Theme and make it minimalist. This means simplifying the color palette, possibly using more muted tones. Reduce or remove 'border' and shadows, or make them very subtle. Focus on clean typography and generous 'spacing' and 'letter-spacing'.",
-  },
-  brutalist: {
-    label: "Make it Brutalist",
-    prompt:
-      "Make it brutalist style. Use the @Current Theme and set 'radius' to '0px'. The 'border' color should strongly contrast with the 'background' color. For shadows, use a 'shadow-color' that also contrasts sharply with the 'background', set 'shadow-blur' to '0px', 'shadow-opacity' to '100%', and use 'shadow-offset-x', 'shadow-offset-y', and 'shadow-spread' to create a hard, offset shadow effect.",
-  },
-};
+import { usePreviewPanel } from "../hooks/use-preview-panel";
 
 export function SuggestedPillActions() {
-  const setPrompt = (prompt: string) => {
-    // TODO: Use the prompt to generate a theme.
-    navigator.clipboard.writeText(prompt);
+  const { generateTheme } = useAIThemeGeneration();
+  const { setIsPreviewPanelOpen } = usePreviewPanel();
+  const { openAuthDialog } = useAuthStore();
+  const { data: session } = authClient.useSession();
+
+  const handleSetPrompt = async (prompt: string) => {
+    const jsonPrompt = createCurrentThemePromptJson({ prompt });
+    const stringifiedJsonPrompt = JSON.stringify(jsonPrompt);
+
+    if (!session) {
+      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", {
+        prompt,
+        jsonPrompt: stringifiedJsonPrompt,
+      });
+      return;
+    }
+
+    await generateTheme({
+      prompt,
+      jsonPrompt: stringifiedJsonPrompt,
+      onSuccess: () => {
+        setIsPreviewPanelOpen(true);
+      },
+    });
   };
 
   return (
     <div className="mx-auto flex w-full max-w-[49rem] flex-wrap items-center justify-center gap-2">
       {Object.entries(PROMPTS).map(([key, { label, prompt }]) => (
-        <PillButton key={key} onClick={() => setPrompt(prompt)}>
+        <PillButton key={key} onClick={() => handleSetPrompt(prompt)}>
           <Sparkles className="size-3.5" /> {label}
         </PillButton>
       ))}
     </div>
   );
 }
+
 interface PillButtonProps extends ComponentProps<typeof Button> {}
 
 function PillButton({ className, children, ...props }: PillButtonProps) {
