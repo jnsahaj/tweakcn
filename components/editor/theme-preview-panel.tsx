@@ -8,26 +8,22 @@ import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
 import { lazy } from "react";
 import { Button } from "@/components/ui/button";
-import { Maximize, Minimize, Moon, Sun } from "lucide-react";
+import { Maximize, Minimize, Moon, Sun, ExternalLink } from "lucide-react";
 import { useFullscreen } from "@/hooks/use-fullscreen";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme-provider";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import Link from "next/link";
+import ShadcnBlocksLogo from "@/assets/shadcnblocks.svg";
 
 const DemoCards = lazy(() => import("@/components/examples/demo-cards"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoTasks = lazy(() => import("@/components/examples/tasks"));
 const DemoMusic = lazy(() => import("@/components/examples/music"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
+const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
 
-const ThemePreviewPanel = ({
-  styles,
-  currentMode,
-}: ThemeEditorPreviewProps) => {
+const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const { theme, toggleTheme } = useTheme();
 
@@ -44,19 +40,20 @@ const ThemePreviewPanel = ({
     <>
       <div
         className={cn(
-          "min-h-0 flex flex-col flex-1",
-          isFullscreen && "fixed inset-0 z-50 bg-background"
+          "flex min-h-0 flex-1 flex-col",
+          isFullscreen && "bg-background fixed inset-0 z-50"
         )}
       >
-        <Tabs defaultValue="cards" className="flex flex-col overflow-hidden flex-1" >
-          <div className="flex items-center justify-between px-4 mt-2">
-            <TabsList className="inline-flex w-fit items-center justify-center rounded-full bg-background px-0 text-muted-foreground">
+        <Tabs defaultValue="cards" className="flex flex-1 flex-col overflow-hidden">
+          <div className="mt-2 flex items-center justify-between px-4">
+            <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
               <div className="hidden md:flex">
+                <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
+                <TabsTriggerPill value="pricing">Pricing</TabsTriggerPill>
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
                 <TabsTriggerPill value="tasks">Tasks</TabsTriggerPill>
                 <TabsTriggerPill value="music">Music</TabsTriggerPill>
-                <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
               </div>
               <TabsTriggerPill value="colors">Color Palette</TabsTriggerPill>
             </TabsList>
@@ -69,12 +66,12 @@ const ThemePreviewPanel = ({
                       variant="ghost"
                       size="icon"
                       onClick={handleThemeToggle}
-                      className="h-8 group"
+                      className="group h-8"
                     >
                       {theme === "light" ? (
-                        <Sun className="size-4 group-hover:scale-120 transition-all" />
+                        <Sun className="size-4 transition-all group-hover:scale-120" />
                       ) : (
-                        <Moon className="size-4 group-hover:scale-120 transition-all" />
+                        <Moon className="size-4 transition-all group-hover:scale-120" />
                       )}
                     </Button>
                   </TooltipTrigger>
@@ -87,67 +84,80 @@ const ThemePreviewPanel = ({
                     variant="ghost"
                     size="icon"
                     onClick={toggleFullscreen}
-                    className="h-8 group"
+                    className="group h-8"
                   >
                     {isFullscreen ? (
-                      <Minimize className="size-4 group-hover:scale-120 transition-all" />
+                      <Minimize className="size-4 transition-all group-hover:scale-120" />
                     ) : (
-                      <Maximize className="size-4 group-hover:scale-120 transition-all" />
+                      <Maximize className="size-4 transition-all group-hover:scale-120" />
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
-                  {isFullscreen ? "Exit full screen" : "Full screen"}
-                </TooltipContent>
+                <TooltipContent>{isFullscreen ? "Exit full screen" : "Full screen"}</TooltipContent>
               </Tooltip>
             </div>
           </div>
 
-          <ScrollArea className="rounded-lg flex flex-col flex-1 border m-4 mt-2 overflow-hidden relative">
-            <div className="flex flex-col flex-1 h-full">
-              <TabsContent value="cards" className="space-y-6 my-4 px-4 h-full">
+          <ScrollArea className="relative m-4 mt-2 flex flex-1 flex-col overflow-hidden rounded-lg border">
+            <div className="flex h-full flex-1 flex-col">
+              <TabsContent value="cards" className="my-4 h-full space-y-6 px-4">
                 <ExamplesPreviewContainer>
                   <DemoCards />
                 </ExamplesPreviewContainer>
               </TabsContent>
 
-              <TabsContent
-                value="mail"
-                className="space-y-6 mt-0 h-full @container"
-              >
-                <ExamplesPreviewContainer className="min-w-[1300px]">
-                  <DemoMail />
-                </ExamplesPreviewContainer>
-              </TabsContent>
-
-              <TabsContent
-                value="tasks"
-                className="space-y-6 mt-0 h-full @container"
-              >
-                <ExamplesPreviewContainer className="min-w-[1300px] ">
-                  <DemoTasks />
-                </ExamplesPreviewContainer>
-              </TabsContent>
-
-              <TabsContent
-                value="music"
-                className="space-y-6 mt-0 h-full @container"
-              >
-                <ExamplesPreviewContainer className="min-w-[1300px]">
-                  <DemoMusic />
-                </ExamplesPreviewContainer>
-              </TabsContent>
-
-              <TabsContent
-                value="dashboard"
-                className="space-y-6 mt-0 h-full @container"
-              >
+              <TabsContent value="dashboard" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1400px]">
                   <DemoDashboard />
                 </ExamplesPreviewContainer>
               </TabsContent>
 
-              <TabsContent value="colors" className="p-4 space-y-6">
+              <TabsContent value="pricing" className="@container mt-0 h-full space-y-6">
+                <ExamplesPreviewContainer>
+                  <div className="absolute top-4 right-4 z-10">
+                    <Link
+                      href="https://shadcnblocks.com?utm_source=tweakcn&utm_medium=theme-editor-preview"
+                      target="_blank"
+                    >
+                      <Button variant="outline" className="group h-12 shadow-sm">
+                        <div className="flex items-center gap-2">
+                          <ShadcnBlocksLogo
+                            className="shrink-0"
+                            style={{ width: "24px", height: "24px" }}
+                          />
+                          <div className="text-left">
+                            <div className="font-bold">Shadcnblocks.com</div>
+                            <div className="text-muted-foreground group-hover:text-accent-foreground text-xs transition-colors">
+                              600+ extra shadcn blocks
+                            </div>
+                          </div>
+                        </div>
+                      </Button>
+                    </Link>
+                  </div>
+                  <DemoPricing />
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="mail" className="@container mt-0 h-full space-y-6">
+                <ExamplesPreviewContainer className="min-w-[1300px]">
+                  <DemoMail />
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="tasks" className="@container mt-0 h-full space-y-6">
+                <ExamplesPreviewContainer className="min-w-[1300px]">
+                  <DemoTasks />
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="music" className="@container mt-0 h-full space-y-6">
+                <ExamplesPreviewContainer className="min-w-[1300px]">
+                  <DemoMusic />
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="colors" className="space-y-6 p-4">
                 <ColorPreview styles={styles} currentMode={currentMode} />
               </TabsContent>
 
