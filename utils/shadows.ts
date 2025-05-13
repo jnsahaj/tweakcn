@@ -1,6 +1,6 @@
 import { colorFormatter } from "./color-converter";
 import { applyStyleToElement } from "./apply-style-to-element";
-import { ThemeEditorState } from "../types/theme";
+import { ThemeEditorState } from "../types/editor";
 import { defaultThemeState } from "../config/theme";
 
 export const getShadowMap = (themeEditorState: ThemeEditorState) => {
@@ -28,8 +28,7 @@ export const getShadowMap = (themeEditorState: ThemeEditorState) => {
     // Use the fixed blur specific to the shadow size
     const blur2 = fixedBlur;
     // Calculate spread relative to the first layer's spread variable
-    const spread2 =
-      (parseFloat(spread?.replace("px", "") ?? "0") - 1).toString() + "px";
+    const spread2 = (parseFloat(spread?.replace("px", "") ?? "0") - 1).toString() + "px";
     // Use the same color function (opacity can still be overridden by --shadow-opacity)
     const color2 = color(1.0); // Default opacity for second layer is 0.1 in examples
 
@@ -47,9 +46,7 @@ export const getShadowMap = (themeEditorState: ThemeEditorState) => {
     "shadow-sm": `${offsetX} ${offsetY} ${blur} ${spread} ${color(
       1.0
     )}, ${secondLayer("1px", "2px")}`,
-    shadow: `${offsetX} ${offsetY} ${blur} ${spread} ${color(
-      1.0
-    )}, ${secondLayer("1px", "2px")}`, // Alias for the 'shadow:' example line
+    shadow: `${offsetX} ${offsetY} ${blur} ${spread} ${color(1.0)}, ${secondLayer("1px", "2px")}`, // Alias for the 'shadow:' example line
 
     "shadow-md": `${offsetX} ${offsetY} ${blur} ${spread} ${color(
       1.0

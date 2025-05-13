@@ -1,4 +1,4 @@
-import { ThemeEditorState, ThemeStyleProps } from "../types/theme";
+import { ThemeEditorState } from "../types/editor";
 
 const sansSerifFontNames = [
   "Inter",
@@ -11,6 +11,7 @@ const sansSerifFontNames = [
   "DM Sans",
   "Geist",
   "Oxanium",
+  "Architects Daughter",
 ];
 
 const serifFontNames = [
@@ -45,6 +46,7 @@ export const fonts: Record<string, string> = {
   "IBM Plex Sans": "IBM Plex Sans, sans-serif",
   Geist: "Geist, sans-serif",
   Oxanium: "Oxanium, sans-serif",
+  "Architects Daughter": "Architects Daughter, sans-serif",
 
   // Serif fonts
   Merriweather: "Merriweather, serif",

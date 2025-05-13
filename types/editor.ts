@@ -19,6 +19,11 @@ export interface ThemeEditorState extends BaseEditorState {
   preset?: string;
   styles: ThemeStyles;
   currentMode: "light" | "dark";
+  hslAdjustments?: {
+    hueShift: number;
+    saturationScale: number;
+    lightnessScale: number;
+  };
 }
 
 // Type for available editors

@@ -12,6 +12,7 @@ interface EditorStore {
   applyThemePreset: (preset: string) => void;
   saveThemeCheckpoint: () => void;
   restoreThemeCheckpoint: () => void;
+  resetToCurrentPreset: () => void;
   hasThemeChangedFromCheckpoint: () => boolean;
   hasUnsavedChanges: () => boolean;
 }
@@ -31,12 +32,12 @@ export const useEditorStore = create<EditorStore>()(
           ...themeState,
           preset,
           styles: newStyles,
+          hslAdjustments: defaultThemeState.hslAdjustments,
         };
-        const updates: Partial<EditorStore> & { themeState: ThemeEditorState } =
-          {
-            themeState: newThemeState,
-            themeCheckpoint: newThemeState,
-          };
+        const updates: Partial<EditorStore> & { themeState: ThemeEditorState } = {
+          themeState: newThemeState,
+          themeCheckpoint: newThemeState,
+        };
         set(updates);
       },
       saveThemeCheckpoint: () => {
@@ -61,10 +62,27 @@ export const useEditorStore = create<EditorStore>()(
       },
       hasUnsavedChanges: () => {
         const themeState = get().themeState;
-        const presetThemeStyles = getPresetThemeStyles(
-          themeState.preset ?? "default"
+        const presetThemeStyles = getPresetThemeStyles(themeState.preset ?? "default");
+        const stylesChanged = !isDeepEqual(themeState.styles, presetThemeStyles);
+        const hslChanged = !isDeepEqual(
+          themeState.hslAdjustments,
+          defaultThemeState.hslAdjustments
         );
-        return !isDeepEqual(themeState.styles, presetThemeStyles);
+        return stylesChanged || hslChanged;
+      },
+      resetToCurrentPreset: () => {
+        const themeState = get().themeState;
+        const presetThemeStyles = getPresetThemeStyles(themeState.preset ?? "default");
+        const newThemeState: ThemeEditorState = {
+          ...themeState,
+          styles: presetThemeStyles,
+          preset: themeState.preset,
+          hslAdjustments: defaultThemeState.hslAdjustments,
+        };
+        set({
+          themeState: newThemeState,
+          themeCheckpoint: newThemeState,
+        });
       },
     }),
     {

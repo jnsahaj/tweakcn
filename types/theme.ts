@@ -57,11 +57,6 @@ export const themeStylesSchema = z.object({
 export type ThemeStyleProps = z.infer<typeof themeStylePropsSchema>;
 export type ThemeStyles = z.infer<typeof themeStylesSchema>;
 
-export interface ThemeEditorState {
-  styles: ThemeStyles;
-  currentMode: "light" | "dark";
-}
-
 export interface ThemeEditorPreviewProps {
   styles: ThemeStyles;
   currentMode: "light" | "dark";

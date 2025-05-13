@@ -28,28 +28,22 @@ export function ActionBarButtons({
   onShareClick,
   isSaving,
 }: ActionBarButtonsProps) {
-  const { themeState, restoreThemeCheckpoint, hasThemeChangedFromCheckpoint } =
-    useEditorStore();
+  const { themeState, resetToCurrentPreset, hasThemeChangedFromCheckpoint } = useEditorStore();
 
   const { getPreset } = useThemePresetStore();
-  const currentPreset = themeState?.preset
-    ? getPreset(themeState?.preset)
-    : undefined;
+  const currentPreset = themeState?.preset ? getPreset(themeState?.preset) : undefined;
   const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";
 
   return (
     <div className="flex items-center gap-1">
       <MoreOptions />
-      <Separator orientation="vertical" className="h-8 mx-1" />
+      <Separator orientation="vertical" className="mx-1 h-8" />
       <ThemeToggle />
-      <Separator orientation="vertical" className="h-8 mx-1" />
-      <ResetButton
-        onReset={restoreThemeCheckpoint}
-        isDisabled={!hasThemeChangedFromCheckpoint()}
-      />
+      <Separator orientation="vertical" className="mx-1 h-8" />
+      <ResetButton onReset={resetToCurrentPreset} isDisabled={!hasThemeChangedFromCheckpoint()} />
       <ImportButton onImportClick={onImportClick} />
       <AIGenerateButton onClick={onAiGenerateClick} />
-      <Separator orientation="vertical" className="h-8 mx-1" />
+      <Separator orientation="vertical" className="mx-1 h-8" />
       {isSavedPreset && <EditButton themeId={themeState.preset as string} />}
       <ShareButton onShareClick={() => onShareClick(themeState.preset)} />
       <SaveButton onSaveClick={onSaveClick} isSaving={isSaving} />

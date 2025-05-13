@@ -30,6 +30,7 @@ import ShadowControl from "./shadow-control";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 import ThemeEditActions from "./theme-edit-actions";
 import { useThemePresetStore } from "@/store/theme-preset-store";
+import HslAdjustmentControls from "./hsl-adjustment-controls";
 
 const ThemeControlPanel = ({
   styles,
@@ -49,10 +50,7 @@ const ThemeControlPanel = ({
   );
 
   const updateStyle = React.useCallback(
-    <K extends keyof typeof currentStyles>(
-      key: K,
-      value: (typeof currentStyles)[K]
-    ) => {
+    <K extends keyof typeof currentStyles>(key: K, value: (typeof currentStyles)[K]) => {
       // apply common styles to both light and dark modes
       if (COMMON_STYLES.includes(key)) {
         onChange({
@@ -96,26 +94,19 @@ const ThemeControlPanel = ({
           <ThemeEditActions theme={theme} />
         )}
       </div>
-      <div className="space-y-4 min-h-0 flex-1 flex flex-col">
-        <Tabs
-          defaultValue="colors"
-          className="w-full flex-1 flex flex-col min-h-0"
-        >
-          <div className="px-4 mt-2">
-            <TabsList className="inline-flex w-fit items-center justify-center rounded-full bg-background px-0 text-muted-foreground">
+      <div className="flex min-h-0 flex-1 flex-col space-y-4">
+        <Tabs defaultValue="colors" className="flex min-h-0 w-full flex-1 flex-col">
+          <div className="mt-2 px-4">
+            <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
               <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
               <TabsTriggerPill value="other">Other</TabsTriggerPill>
             </TabsList>
           </div>
 
-          <ScrollArea className="h-full pb-40 p-4 pt-0 flex-1">
+          <ScrollArea className="h-full flex-1 p-4 pt-0">
             <TabsContent value="colors">
-              <ControlSection
-                title="Primary Colors"
-                id="primary-colors"
-                expanded
-              >
+              <ControlSection title="Primary Colors" id="primary-colors" expanded>
                 <ColorPicker
                   color={currentStyles.primary}
                   onChange={(color) => updateStyle("primary", color)}
@@ -136,9 +127,7 @@ const ThemeControlPanel = ({
                 />
                 <ColorPicker
                   color={currentStyles["secondary-foreground"]}
-                  onChange={(color) =>
-                    updateStyle("secondary-foreground", color)
-                  }
+                  onChange={(color) => updateStyle("secondary-foreground", color)}
                   label="Secondary Foreground"
                 />
               </ControlSection>
@@ -216,9 +205,7 @@ const ThemeControlPanel = ({
                 />
                 <ColorPicker
                   color={currentStyles["destructive-foreground"]}
-                  onChange={(color) =>
-                    updateStyle("destructive-foreground", color)
-                  }
+                  onChange={(color) => updateStyle("destructive-foreground", color)}
                   label="Destructive Foreground"
                 />
               </ControlSection>
@@ -287,9 +274,7 @@ const ThemeControlPanel = ({
                 />
                 <ColorPicker
                   color={currentStyles["sidebar-primary-foreground"]}
-                  onChange={(color) =>
-                    updateStyle("sidebar-primary-foreground", color)
-                  }
+                  onChange={(color) => updateStyle("sidebar-primary-foreground", color)}
                   label="Sidebar Primary Foreground"
                 />
                 <ColorPicker
@@ -299,9 +284,7 @@ const ThemeControlPanel = ({
                 />
                 <ColorPicker
                   color={currentStyles["sidebar-accent-foreground"]}
-                  onChange={(color) =>
-                    updateStyle("sidebar-accent-foreground", color)
-                  }
+                  onChange={(color) => updateStyle("sidebar-accent-foreground", color)}
                   label="Sidebar Accent Foreground"
                 />
                 <ColorPicker
@@ -318,16 +301,16 @@ const ThemeControlPanel = ({
             </TabsContent>
 
             <TabsContent value="typography" className="flex flex-col gap-4">
-              <div className="p-3 bg-muted/50 rounded-md border mb-2 flex items-start gap-2.5">
-                <AlertCircle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                <div className="text-sm text-muted-foreground">
+              <div className="bg-muted/50 mb-2 flex items-start gap-2.5 rounded-md border p-3">
+                <AlertCircle className="text-muted-foreground mt-0.5 h-5 w-5 shrink-0" />
+                <div className="text-muted-foreground text-sm">
                   <p>
                     To use custom fonts, embed them in your project. <br />
                     See{" "}
                     <a
                       href="https://tailwindcss.com/docs/font-family"
                       target="_blank"
-                      className="underline underline-offset-2 hover:text-muted-foreground/90"
+                      className="hover:text-muted-foreground/90 underline underline-offset-2"
                     >
                       Tailwind docs
                     </a>{" "}
@@ -338,7 +321,7 @@ const ThemeControlPanel = ({
 
               <ControlSection title="Font Family" expanded>
                 <div className="mb-4">
-                  <Label htmlFor="font-sans" className="text-xs mb-1.5 block">
+                  <Label htmlFor="font-sans" className="mb-1.5 block text-xs">
                     Sans-Serif Font
                   </Label>
                   <ThemeFontSelect
@@ -352,7 +335,7 @@ const ThemeControlPanel = ({
                 <Separator className="my-4" />
 
                 <div className="mb-4">
-                  <Label htmlFor="font-serif" className="text-xs mb-1.5 block">
+                  <Label htmlFor="font-serif" className="mb-1.5 block text-xs">
                     Serif Font
                   </Label>
                   <ThemeFontSelect
@@ -365,7 +348,7 @@ const ThemeControlPanel = ({
 
                 <Separator className="my-4" />
                 <div>
-                  <Label htmlFor="font-mono" className="text-xs mb-1.5 block">
+                  <Label htmlFor="font-mono" className="mb-1.5 block text-xs">
                     Monospace Font
                   </Label>
                   <ThemeFontSelect
@@ -379,12 +362,8 @@ const ThemeControlPanel = ({
 
               <ControlSection title="Letter Spacing" expanded>
                 <SliderWithInput
-                  value={parseFloat(
-                    currentStyles["letter-spacing"]?.replace("em", "")
-                  )}
-                  onChange={(value) =>
-                    updateStyle("letter-spacing", `${value}em`)
-                  }
+                  value={parseFloat(currentStyles["letter-spacing"]?.replace("em", ""))}
+                  onChange={(value) => updateStyle("letter-spacing", `${value}em`)}
                   min={-0.5}
                   max={0.5}
                   step={0.025}
@@ -395,6 +374,10 @@ const ThemeControlPanel = ({
             </TabsContent>
 
             <TabsContent value="other">
+              <ControlSection title="HSL Adjustments" expanded>
+                <HslAdjustmentControls />
+              </ControlSection>
+
               <ControlSection title="Radius" expanded>
                 <SliderWithInput
                   value={radius}
@@ -407,7 +390,7 @@ const ThemeControlPanel = ({
                 />
               </ControlSection>
 
-              <ControlSection title="Spacing" expanded>
+              <ControlSection title="Spacing">
                 <SliderWithInput
                   value={parseFloat(currentStyles.spacing?.replace("rem", ""))}
                   onChange={(value) => updateStyle("spacing", `${value}rem`)}
@@ -418,22 +401,15 @@ const ThemeControlPanel = ({
                   label="Spacing"
                 />
               </ControlSection>
-              <div className="mt-6">
+
+              <ControlSection title="Shadow">
                 <ShadowControl
                   shadowColor={currentStyles["shadow-color"]}
                   shadowOpacity={parseFloat(currentStyles["shadow-opacity"])}
-                  shadowBlur={parseFloat(
-                    currentStyles["shadow-blur"]?.replace("px", "")
-                  )}
-                  shadowSpread={parseFloat(
-                    currentStyles["shadow-spread"]?.replace("px", "")
-                  )}
-                  shadowOffsetX={parseFloat(
-                    currentStyles["shadow-offset-x"]?.replace("px", "")
-                  )}
-                  shadowOffsetY={parseFloat(
-                    currentStyles["shadow-offset-y"]?.replace("px", "")
-                  )}
+                  shadowBlur={parseFloat(currentStyles["shadow-blur"]?.replace("px", ""))}
+                  shadowSpread={parseFloat(currentStyles["shadow-spread"]?.replace("px", ""))}
+                  shadowOffsetX={parseFloat(currentStyles["shadow-offset-x"]?.replace("px", ""))}
+                  shadowOffsetY={parseFloat(currentStyles["shadow-offset-y"]?.replace("px", ""))}
                   onChange={(key, value) => {
                     if (key === "shadow-color") {
                       updateStyle(key, value as string);
@@ -444,7 +420,7 @@ const ThemeControlPanel = ({
                     }
                   }}
                 />
-              </div>
+              </ControlSection>
             </TabsContent>
           </ScrollArea>
         </Tabs>

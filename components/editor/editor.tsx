@@ -1,11 +1,7 @@
 "use client";
 
 import React, { useEffect, use } from "react";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EditorConfig } from "@/types/editor";
 import { Theme, ThemeStyles } from "@/types/theme";
@@ -33,15 +29,10 @@ const isThemeStyles = (styles: unknown): styles is ThemeStyles => {
 const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
   const themeState = useEditorStore((state) => state.themeState);
   const setThemeState = useEditorStore((state) => state.setThemeState);
-  const saveThemeCheckpoint = useEditorStore(
-    (state) => state.saveThemeCheckpoint
-  );
   const Controls = config.controls;
   const Preview = config.preview;
 
-  const loadSavedPresets = useThemePresetStore(
-    (state) => state.loadSavedPresets
-  );
+  const loadSavedPresets = useThemePresetStore((state) => state.loadSavedPresets);
 
   const { data: session } = authClient.useSession();
 
@@ -64,14 +55,17 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
   useEffect(() => {
     if (initialTheme && isThemeStyles(initialTheme.styles)) {
       const prev = useEditorStore.getState().themeState;
-      setThemeState({ ...prev, styles: initialTheme.styles });
-      saveThemeCheckpoint();
+      setThemeState({
+        ...prev,
+        styles: initialTheme.styles,
+        preset: initialTheme.id,
+      });
     }
-  }, [initialTheme, setThemeState, saveThemeCheckpoint]);
+  }, [initialTheme, setThemeState]);
 
   if (initialTheme && !isThemeStyles(initialTheme.styles)) {
     return (
-      <div className="flex justify-center items-center h-full text-destructive">
+      <div className="text-destructive flex h-full items-center justify-center">
         Fetched theme data is invalid.
       </div>
     );
@@ -82,10 +76,10 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
   return (
     <div className="h-full overflow-hidden">
       {/* Desktop Layout */}
-      <div className="h-full hidden md:block">
+      <div className="hidden h-full md:block">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={30} minSize={20} maxSize={40}>
-            <div className="h-full flex flex-col">
+            <div className="flex h-full flex-col">
               <Controls
                 styles={styles}
                 onChange={handleStyleChange}
@@ -96,8 +90,8 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={70} minSize={20}>
-            <div className="h-full flex flex-col">
-              <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex h-full flex-col">
+              <div className="flex min-h-0 flex-1 flex-col">
                 <ActionBar />
                 <Preview styles={styles} currentMode={themeState.currentMode} />
               </div>
@@ -111,15 +105,15 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
         <Tabs defaultValue="controls" className="h-full">
           <TabsList className="w-full rounded-none">
             <TabsTrigger value="controls" className="flex-1">
-              <Sliders className="h-4 w-4 mr-2" />
+              <Sliders className="mr-2 h-4 w-4" />
               Controls
             </TabsTrigger>
             <TabsTrigger value="preview" className="flex-1">
               Preview
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="controls" className="h-[calc(100%-2.5rem)] mt-0">
-            <div className="h-full flex flex-col">
+          <TabsContent value="controls" className="mt-0 h-[calc(100%-2.5rem)]">
+            <div className="flex h-full flex-col">
               <Controls
                 styles={styles}
                 onChange={handleStyleChange}
@@ -128,8 +122,8 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
               />
             </div>
           </TabsContent>
-          <TabsContent value="preview" className="h-[calc(100%-2.5rem)] mt-0">
-            <div className="h-full flex flex-col">
+          <TabsContent value="preview" className="mt-0 h-[calc(100%-2.5rem)]">
+            <div className="flex h-full flex-col">
               <ActionBar />
               <Preview styles={styles} currentMode={themeState.currentMode} />
             </div>

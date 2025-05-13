@@ -1,9 +1,14 @@
 import * as culori from "culori";
 import { ColorFormat } from "../types";
+import { Hsl } from "culori";
 
-const formatNumber = (num?: number) => {
+export const formatNumber = (num?: number) => {
   if (!num) return "0";
   return num % 1 === 0 ? num : num.toFixed(2);
+};
+
+export const formatHsl = (hsl: Hsl) => {
+  return `hsl(${formatNumber(hsl.h)} ${formatNumber(hsl.s * 100)}% ${formatNumber(hsl.l * 100)}%)`;
 };
 
 export const colorFormatter = (
@@ -19,7 +24,7 @@ export const colorFormatter = (
       case "hsl": {
         const hsl = culori.converter("hsl")(color);
         if (tailwindVersion === "4") {
-          return `hsl(${formatNumber(hsl.h)} ${formatNumber(hsl.s * 100)}% ${formatNumber(hsl.l * 100)}%)`;
+          return formatHsl(hsl);
         }
         return `${formatNumber(hsl.h)} ${formatNumber(hsl.s * 100)}% ${formatNumber(hsl.l * 100)}%`;
       }
@@ -40,5 +45,4 @@ export const colorFormatter = (
   }
 };
 
-export const convertToHSL = (colorValue: string): string =>
-  colorFormatter(colorValue, "hsl");
+export const convertToHSL = (colorValue: string): string => colorFormatter(colorValue, "hsl");
