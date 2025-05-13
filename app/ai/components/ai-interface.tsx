@@ -3,6 +3,7 @@
 import ThemePreviewPanel from "@/components/editor/theme-preview-panel";
 import { useTheme } from "@/components/theme-provider";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
+import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
@@ -15,11 +16,22 @@ export function AIInterface() {
   const isMobile = useIsMobile();
   const { themeState } = useEditorStore();
   const { theme: mode } = useTheme();
+  const { loading: aiGenerateLoading } = useAIThemeGeneration();
 
   return (
     <>
       <section className="@container relative isolate z-1 mx-auto flex max-w-[49rem] min-w-[max(30%,22rem)] flex-[30_1_0px] flex-col gap-4 p-4">
-        <h1 className="animate-text from-foreground via-muted-foreground to-foreground bg-gradient-to-r bg-[200%_auto] bg-clip-text text-center text-[clamp(24px,7cqw,46px)] font-semibold tracking-tighter text-pretty text-transparent">
+        <h1
+          style={
+            {
+              "--gradient-accent": aiGenerateLoading ? "var(--foreground)" : "var(--foreground)",
+              "--gradient-base": aiGenerateLoading
+                ? "var(--muted-foreground)"
+                : "var(--foreground)",
+            } as React.CSSProperties
+          }
+          className="animate-text bg-gradient-to-r from-(--gradient-base) via-(--gradient-accent) to-(--gradient-base) bg-[200%_auto] bg-clip-text text-center text-[clamp(24px,7cqw,46px)] font-semibold tracking-tighter text-pretty text-transparent"
+        >
           What can I help you theme?
         </h1>
         <div className="relative mx-auto w-full content-center">

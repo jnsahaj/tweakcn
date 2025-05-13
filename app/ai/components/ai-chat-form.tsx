@@ -9,7 +9,7 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { JSONContent } from "@tiptap/react";
-import { ArrowUp, Loader } from "lucide-react";
+import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { usePreviewPanel } from "../hooks/use-preview-panel";
 import { LoadingLogo } from "./loading-logo";
@@ -21,8 +21,13 @@ const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea
 });
 
 export function AIChatForm() {
-  const { prompt, jsonPrompt, setPrompt, setJsonPrompt } = useAIThemeGenerationPrompts();
-  const { generateTheme, loading: aiGenerateLoading } = useAIThemeGeneration();
+  const { prompt, jsonPrompt, setPrompt, setJsonPrompt, resetPrompts } =
+    useAIThemeGenerationPrompts();
+  const {
+    generateTheme,
+    loading: aiGenerateLoading,
+    cancelThemeGeneration,
+  } = useAIThemeGeneration();
 
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
@@ -57,25 +62,20 @@ export function AIChatForm() {
     setPrompt(textContent);
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!session) {
       openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { prompt, jsonPrompt });
       return;
     }
 
-    generateTheme({ prompt, jsonPrompt, onSuccess: handleSuccessfulThemeGeneration });
+    await generateTheme({ prompt, jsonPrompt, onSuccess: handleSuccessfulThemeGeneration });
   };
 
   return (
-    <div
-      className={cn(
-        "bg-background rounded-xl border shadow transition-all",
-        aiGenerateLoading && "pointer-events-none"
-      )}
-    >
+    <div className="bg-background @container/form rounded-xl border shadow transition-all">
       <div className="bg-background relative z-10 flex size-full min-h-[100px] flex-1 flex-col overflow-hidden rounded-xl">
         <label className="sr-only">Chat Input</label>
-        <div className="min-h-[80px] p-2 pb-0">
+        <div className={cn("min-h-[80px] p-2 pb-0", aiGenerateLoading && "pointer-events-none")}>
           <div className="relative isolate" aria-disabled={aiGenerateLoading}>
             <AIChatFormGeneratingFallback aiGenerateLoading={aiGenerateLoading} />
             <CustomTextarea onContentChange={handleContentChange} onGenerate={handleGenerate} />
@@ -89,14 +89,26 @@ export function AIChatForm() {
 
           <div className="flex items-center gap-2">
             {/* TODO: Add image upload */}
-            <Button
-              size="icon"
-              className="size-8"
-              onClick={handleGenerate}
-              disabled={!prompt || aiGenerateLoading}
-            >
-              {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
-            </Button>
+            {aiGenerateLoading ? (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={cancelThemeGeneration}
+                className={cn("flex items-center gap-1", "@max-[350px]/form:w-8")}
+              >
+                <StopCircle />
+                <span className="hidden @[350px]/form:inline-flex">Stop</span>
+              </Button>
+            ) : (
+              <Button
+                size="icon"
+                className="size-8"
+                onClick={handleGenerate}
+                disabled={!prompt || aiGenerateLoading}
+              >
+                {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
+              </Button>
+            )}
           </div>
         </div>
       </div>
