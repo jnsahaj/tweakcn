@@ -83,7 +83,7 @@ export function AIChatForm() {
         </div>
 
         <div className="flex items-center justify-between gap-2 p-2">
-          <div className="flex items-center gap-2">
+          <div className="flex w-full max-w-68 items-center gap-2 overflow-hidden">
             <ThemePresetSelect disabled={aiGenerateLoading} withCycleThemes={false} />
           </div>
 

@@ -269,7 +269,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   }, [filteredPresets, isSavedTheme]);
 
   return (
-    <div className="flex items-center">
+    <div className="flex w-full items-center">
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -277,7 +277,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
             className={cn("group relative w-full justify-between md:min-w-56", className)}
             {...props}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex w-full items-center gap-3 overflow-hidden">
               <div className="flex gap-0.5">
                 <ColorBox color={themeState.styles[mode].primary} />
                 <ColorBox color={themeState.styles[mode].accent} />
@@ -296,7 +296,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                     />
                   </div>
                 )}
-              <span className="font-medium capitalize">
+              <span className="truncate text-left font-medium capitalize">
                 {hasUnsavedChanges() ? (
                   <>Custom (Unsaved)</>
                 ) : (
@@ -350,7 +350,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                           >
                             <ThemeColors presetName={presetName} mode={mode} />
                             <div className="flex flex-1 items-center gap-2">
-                              <span className="text-sm font-medium capitalize">
+                              <span className="line-clamp-1 text-sm font-medium capitalize">
                                 {presets[presetName]?.label || presetName}
                               </span>
                               {presets[presetName] && isThemeNew(presets[presetName]) && (
