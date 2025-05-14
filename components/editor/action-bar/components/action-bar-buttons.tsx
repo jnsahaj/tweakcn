@@ -43,8 +43,10 @@ export function ActionBarButtons({
       <Separator orientation="vertical" className="mx-1 h-8" />
       <UndoRedoButtons />
       <Separator orientation="vertical" className="mx-1 h-8" />
-      <ResetButton onReset={resetToCurrentPreset} isDisabled={!hasUnsavedChanges()} />
-      <ImportButton onImportClick={onImportClick} />
+      <div className="hidden items-center gap-1 md:flex">
+        <ResetButton onReset={resetToCurrentPreset} isDisabled={!hasUnsavedChanges()} />
+        <ImportButton onImportClick={onImportClick} />
+      </div>
       <AIGenerateButton onClick={onAiGenerateClick} />
       <Separator orientation="vertical" className="mx-1 h-8" />
       {isSavedPreset && <EditButton themeId={themeState.preset as string} />}
