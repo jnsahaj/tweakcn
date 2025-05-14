@@ -42,6 +42,10 @@ interface DialogActionsContextType {
   handleGenerateTheme: (promptText: string, jsonPromptText: string) => Promise<void>;
   handleShareClick: (id?: string) => Promise<void>;
   saveTheme: (themeName: string) => Promise<void>;
+  handleUndo: () => void;
+  handleRedo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
 }
 
 function useDialogActionsStore(): DialogActionsContextType {
@@ -54,8 +58,16 @@ function useDialogActionsStore(): DialogActionsContextType {
   const [shareUrl, setShareUrl] = useState("");
   const [dialogKey, setDialogKey] = useState(0);
 
-  const { themeState, setThemeState, applyThemePreset, hasThemeChangedFromCheckpoint } =
-    useEditorStore();
+  const {
+    themeState,
+    setThemeState,
+    applyThemePreset,
+    hasThemeChangedFromCheckpoint,
+    undo,
+    redo,
+    canUndo: editorCanUndo,
+    canRedo: editorCanRedo,
+  } = useEditorStore();
   const { getPreset } = useThemePresetStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
@@ -75,6 +87,14 @@ function useDialogActionsStore(): DialogActionsContextType {
     setSaveDialogOpen(true);
     setShareAfterSave(true);
   });
+
+  const handleUndo = () => {
+    undo();
+  };
+
+  const handleRedo = () => {
+    redo();
+  };
 
   const handleGenerateTheme = async (promptText: string, jsonPromptText: string) => {
     if (!promptText.trim()) return;
@@ -215,6 +235,10 @@ function useDialogActionsStore(): DialogActionsContextType {
     handleGenerateTheme,
     handleShareClick,
     saveTheme,
+    handleUndo,
+    handleRedo,
+    canUndo: editorCanUndo(),
+    canRedo: editorCanRedo(),
   };
 
   return value;

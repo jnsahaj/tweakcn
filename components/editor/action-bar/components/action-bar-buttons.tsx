@@ -10,6 +10,7 @@ import { EditButton } from "./edit-button";
 import { MoreOptions } from "./more-options";
 import { AIGenerateButton } from "./ai-generate-button";
 import { ShareButton } from "./share-button";
+import { UndoRedoButtons } from "./undo-redo-buttons";
 
 interface ActionBarButtonsProps {
   onImportClick: () => void;
@@ -28,7 +29,7 @@ export function ActionBarButtons({
   onShareClick,
   isSaving,
 }: ActionBarButtonsProps) {
-  const { themeState, resetToCurrentPreset, hasThemeChangedFromCheckpoint } = useEditorStore();
+  const { themeState, resetToCurrentPreset, hasUnsavedChanges } = useEditorStore();
 
   const { getPreset } = useThemePresetStore();
   const currentPreset = themeState?.preset ? getPreset(themeState?.preset) : undefined;
@@ -40,7 +41,9 @@ export function ActionBarButtons({
       <Separator orientation="vertical" className="mx-1 h-8" />
       <ThemeToggle />
       <Separator orientation="vertical" className="mx-1 h-8" />
-      <ResetButton onReset={resetToCurrentPreset} isDisabled={!hasThemeChangedFromCheckpoint()} />
+      <UndoRedoButtons />
+      <Separator orientation="vertical" className="mx-1 h-8" />
+      <ResetButton onReset={resetToCurrentPreset} isDisabled={!hasUnsavedChanges()} />
       <ImportButton onImportClick={onImportClick} />
       <AIGenerateButton onClick={onAiGenerateClick} />
       <Separator orientation="vertical" className="mx-1 h-8" />
