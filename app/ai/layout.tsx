@@ -1,4 +1,4 @@
-import { Header } from "@/components/editor/header";
+import { Header } from "@/components/header";
 
 export default function AiLayout({ children }: { children: React.ReactNode }) {
   return (
