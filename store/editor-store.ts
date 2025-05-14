@@ -81,10 +81,6 @@ export const useEditorStore = create<EditorStore>()(
           currentHistory.shift(); // Remove the oldest entry
         }
 
-        console.log(
-          "currentHistory",
-          currentHistory?.map((h) => h.timestamp)
-        );
         set({
           themeState: newState,
           history: currentHistory,
@@ -104,7 +100,7 @@ export const useEditorStore = create<EditorStore>()(
           hslAdjustments: defaultThemeState.hslAdjustments,
         };
 
-        const newHistoryEntry = { state: currentThemeState, timestamp: currentTime };
+        const newHistoryEntry = { state: newThemeState, timestamp: currentTime };
         let updatedHistory = [...oldHistory, newHistoryEntry];
         if (updatedHistory.length > MAX_HISTORY_COUNT) {
           updatedHistory.shift();
