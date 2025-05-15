@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useDialogActions } from "@/hooks/use-dialog-actions";
+import { useEditorStore } from "@/store/editor-store";
 import { Redo, Undo } from "lucide-react";
 
 export function UndoRedoButtons() {
-  const { handleUndo, handleRedo, canUndo, canRedo } = useDialogActions();
+  const { undo, redo, canUndo, canRedo } = useEditorStore();
 
   return (
     <TooltipProvider>
       <div className="flex items-center gap-1">
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={handleUndo} disabled={!canUndo}>
+            <Button variant="ghost" size="icon" onClick={undo} disabled={!canUndo()}>
               <Undo className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
@@ -21,7 +21,7 @@ export function UndoRedoButtons() {
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={handleRedo} disabled={!canRedo}>
+            <Button variant="ghost" size="icon" onClick={redo} disabled={!canRedo()}>
               <Redo className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
