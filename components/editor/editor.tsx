@@ -7,8 +7,6 @@ import { EditorConfig } from "@/types/editor";
 import { Theme, ThemeStyles } from "@/types/theme";
 import { Sliders } from "lucide-react";
 import { useEditorStore } from "@/store/editor-store";
-import { useThemePresetStore } from "@/store/theme-preset-store";
-import { authClient } from "@/lib/auth-client";
 import { ActionBar } from "./action-bar/action-bar";
 
 interface EditorProps {
@@ -31,16 +29,6 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
   const setThemeState = useEditorStore((state) => state.setThemeState);
   const Controls = config.controls;
   const Preview = config.preview;
-
-  const loadSavedPresets = useThemePresetStore((state) => state.loadSavedPresets);
-
-  const { data: session } = authClient.useSession();
-
-  useEffect(() => {
-    if (session?.user) {
-      loadSavedPresets();
-    }
-  }, [loadSavedPresets, session?.user]);
 
   const initialTheme = themePromise ? use(themePromise) : null;
 
