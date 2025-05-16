@@ -1,13 +1,14 @@
 import { getCommunityThemes } from "@/actions/community-themes";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ThemeCard } from "@/app/(community)/themes/components/theme-card";
+import { SortBySelector } from "@/app/(community)/themes/components/sort-by-selector";
 
 export default async function CommunityThemesPage({
   searchParams,
 }: {
   searchParams: Promise<{ sort?: string }>;
 }) {
-  const sortBy = (await searchParams).sort === "likes" ? "likes_count" : "created_at";
+  const sortBy = (await searchParams).sort === "popular" ? "likes_count" : "created_at";
 
   const { themes, pagination } = await getCommunityThemes({
     status: "approved", // Only show approved themes
@@ -25,19 +26,7 @@ export default async function CommunityThemesPage({
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Sort by:</span>
-          {/* <ToggleGroup type="single" defaultValue={sortBy === "likes_count" ? "likes" : "newest"}>
-            <Link href="/community/themes" legacyBehavior passHref>
-              <ToggleGroupItem value="newest" aria-label="Sort by newest">
-                Newest
-              </ToggleGroupItem>
-            </Link>
-            <Link href="/community/themes?sort=likes" legacyBehavior passHref>
-              <ToggleGroupItem value="likes" aria-label="Sort by most liked">
-                Most Liked
-              </ToggleGroupItem>
-            </Link>
-          </ToggleGroup> */}
+          <SortBySelector />
         </div>
       </div>
 
@@ -46,7 +35,7 @@ export default async function CommunityThemesPage({
           <p className="text-muted-foreground">No themes found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {themes.map((theme) => (
             <ThemeCard theme={theme} key={theme.id} />
           ))}
