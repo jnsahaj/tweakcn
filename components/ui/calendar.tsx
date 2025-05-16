@@ -4,6 +4,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { DayPicker } from 'react-day-picker'
 
+export type CalendarProps = ComponentProps<typeof DayPicker>
+
 function Calendar({
   className,
   classNames,
