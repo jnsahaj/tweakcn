@@ -75,17 +75,15 @@ export const getMyCommunityProfile = cache(async () => {
       }
 
       const result = await createCommunityProfile({
-        display_name: userData.name || `User-${userId.substring(0, 6)}`,
-        image: userData.image || null,
-        bio: null,
-        social_links: {},
+        display_name: userData.name,
+        image: userData.image || undefined,
       });
 
-      if (!result.success || !result.profile) {
+      if (!result) {
         throw new Error("Failed to create community profile");
       }
 
-      return result.profile;
+      return result;
     }
 
     return profile;
@@ -98,8 +96,8 @@ export const getMyCommunityProfile = cache(async () => {
 // Create a new community profile
 export async function createCommunityProfile(formData: {
   display_name: string;
-  bio: string | null;
-  image: string | null;
+  bio?: string;
+  image?: string;
   social_links?: {
     github?: string;
     twitter?: string;
@@ -112,11 +110,7 @@ export async function createCommunityProfile(formData: {
   }
   const validation = createCommunityProfileSchema.safeParse(formData);
   if (!validation.success) {
-    return {
-      success: false,
-      error: "Invalid input",
-      details: validation.error.format(),
-    };
+    throw new Error("Invalid input");
   }
   const { display_name, social_links, bio, image } = validation.data;
   const newProfileId = cuid();
@@ -136,10 +130,10 @@ export async function createCommunityProfile(formData: {
       })
       .returning();
     revalidatePath("/community");
-    return { success: true, profile: insertedProfile };
+    return insertedProfile;
   } catch (error) {
     console.error("Error creating community profile:", error);
-    return { success: false, error: "Internal Server Error" };
+    throw new Error("Internal Server Error");
   }
 }
 

@@ -49,6 +49,9 @@ export async function getCommunityThemes({
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
 
+    // Get current user ID
+    const currentUserId = await getCurrentUserId();
+
     // Build where conditions
     const whereConditions = [];
     if (status) {
@@ -72,9 +75,14 @@ export async function getCommunityThemes({
         name: community_profile.display_name,
         image: user.image,
       },
+      is_liked: currentUserId
+        ? sql<boolean>`EXISTS (SELECT 1 FROM ${theme_like} WHERE ${theme_like.community_theme_id} = ${community_theme.id} AND ${theme_like.user_id} = ${currentUserId})`.as(
+            "is_liked"
+          )
+        : sql<boolean>`FALSE`.as("is_liked"),
     };
 
-    const themesWithProfiles = await db
+    const themesWithProfilesAndLikes = await db
       .select(selectFields)
       .from(community_theme)
       .leftJoin(community_profile, eq(community_theme.community_profile_id, community_profile.id))
@@ -102,7 +110,11 @@ export async function getCommunityThemes({
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-      themes: themesWithProfiles,
+      themes: themesWithProfilesAndLikes.map((theme) => ({
+        ...theme,
+        // Ensure is_liked is a boolean, even if the SQL returns 0/1 in some DBs or null if no user
+        is_liked: !!theme.is_liked,
+      })),
       pagination: {
         currentPage: page,
         totalPages,
