@@ -78,13 +78,7 @@ export function Toolbar() {
 }
 
 function ToolbarActions() {
-  const {
-    themeState,
-    setThemeState,
-    saveThemeCheckpoint,
-    restoreThemeCheckpoint,
-    hasThemeChangedFromCheckpoint,
-  } = useEditorStore();
+  const { hasUnsavedChanges, resetToCurrentPreset } = useEditorStore();
 
   const isMobile = useIsMobile();
   const router = useRouter();
@@ -95,14 +89,6 @@ function ToolbarActions() {
   const { handleSaveClick, setCodePanelOpen } = useDialogActions();
 
   const handleOpenInEditor = () => {
-    // Check this implementation once the AI flow works
-    if (hasThemeChangedFromCheckpoint()) {
-      setThemeState({
-        ...themeState,
-        preset: undefined,
-      });
-    }
-    saveThemeCheckpoint();
     router.push("/editor/theme");
   };
 
@@ -140,8 +126,8 @@ function ToolbarActions() {
           variant="ghost"
           size={isMobile ? "icon" : "default"}
           className="bg-background border"
-          onClick={restoreThemeCheckpoint}
-          disabled={!hasThemeChangedFromCheckpoint() || aiGenerateLoading}
+          onClick={resetToCurrentPreset}
+          disabled={!hasUnsavedChanges() || aiGenerateLoading}
         >
           <RefreshCw className="size-3" /> <span className="hidden md:block">Reset</span>
         </Button>
