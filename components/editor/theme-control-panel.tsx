@@ -29,7 +29,6 @@ import { AlertCircle } from "lucide-react";
 import ShadowControl from "./shadow-control";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 import ThemeEditActions from "./theme-edit-actions";
-import { useThemePresetStore } from "@/store/theme-preset-store";
 import HslAdjustmentControls from "./hsl-adjustment-controls";
 
 const ThemeControlPanel = ({
@@ -38,8 +37,7 @@ const ThemeControlPanel = ({
   onChange,
   themePromise,
 }: ThemeEditorControlsProps) => {
-  const { applyThemePreset, themeState } = useEditorStore();
-  const presets = useThemePresetStore((state) => state.getAllPresets());
+  const { themeState } = useEditorStore();
 
   const currentStyles = React.useMemo(
     () => ({
@@ -85,11 +83,7 @@ const ThemeControlPanel = ({
     <>
       <div className="border-b">
         {!theme ? (
-          <ThemePresetSelect
-            presets={presets}
-            currentPreset={themeState.preset || null}
-            onPresetChange={applyThemePreset}
-          />
+          <ThemePresetSelect className="h-14 rounded-none" />
         ) : (
           <ThemeEditActions theme={theme} />
         )}
