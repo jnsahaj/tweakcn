@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { getTheme } from "@/actions/themes";
 import ThemeView from "@/components/theme-view";
 import { Metadata } from "next";
-import { Header } from "@/components/editor/header";
+import { Header } from "@/components/header";
 import { Loading } from "@/components/loading";
 
 interface ThemePageProps {

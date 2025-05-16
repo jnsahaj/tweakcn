@@ -1,10 +1,6 @@
 import { Heart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SaveButtonProps {
   onSaveClick: () => void;
@@ -18,7 +14,7 @@ export function SaveButton({ onSaveClick, isSaving }: SaveButtonProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 px-2 gap-1.5 text-muted-foreground hover:text-foreground hover:bg-accent/50"
+          className="text-muted-foreground hover:text-foreground hover:bg-accent/50 h-8 gap-1.5 px-2"
           onClick={onSaveClick}
           disabled={isSaving}
         >
@@ -27,7 +23,7 @@ export function SaveButton({ onSaveClick, isSaving }: SaveButtonProps) {
           ) : (
             <Heart className="size-3.5" />
           )}
-          <span className="text-sm">Save</span>
+          <span className="hidden text-sm md:block">Save</span>
         </Button>
       </TooltipTrigger>
       <TooltipContent>Save theme</TooltipContent>

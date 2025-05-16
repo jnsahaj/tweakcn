@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,7 @@ export function AuthDialog({
   initialMode = "signin",
   trigger,
 }: AuthDialogProps) {
+  const pathname = usePathname();
   const [isSignIn, setIsSignIn] = useState(initialMode === "signin");
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
@@ -42,7 +44,7 @@ export function AuthDialog({
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/editor/theme",
+        callbackURL: pathname || "/editor/theme",
       });
     } catch (error) {
       console.error("Google Sign In Error:", error);
@@ -55,7 +57,7 @@ export function AuthDialog({
     try {
       await authClient.signIn.social({
         provider: "github",
-        callbackURL: "/editor/theme",
+        callbackURL: pathname || "/editor/theme",
       });
     } catch (error) {
       console.error("GitHub Sign In Error:", error);
@@ -70,25 +72,25 @@ export function AuthDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden rounded-2xl border-none">
-        <DialogHeader className="pt-8 px-6">
+      <DialogContent className="overflow-hidden rounded-2xl border-none p-0 sm:max-w-[400px]">
+        <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
             {isSignIn ? "Welcome back" : "Create account"}
           </DialogTitle>
-          <p className="text-center text-muted-foreground">
+          <p className="text-muted-foreground text-center">
             {isSignIn
               ? "Sign in to your account to continue"
               : "Sign up to get started with tweakcn"}
           </p>
         </DialogHeader>
 
-        <div className="p-6 pt-2 space-y-6">
+        <div className="space-y-6 p-6 pt-2">
           <div className="space-y-3">
             <Button
               variant="outline"
               onClick={handleGoogleSignIn}
               size="lg"
-              className="w-full hover:bg-primary/10 hover:text-foreground flex items-center justify-center gap-2"
+              className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
               disabled={isGoogleLoading || isGithubLoading}
             >
               <Google className="h-5 w-5" />
@@ -100,7 +102,7 @@ export function AuthDialog({
               variant="outline"
               onClick={handleGithubSignIn}
               size="lg"
-              className="w-full hover:bg-primary/10 hover:text-foreground flex items-center justify-center gap-2"
+              className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
               disabled={isGoogleLoading || isGithubLoading}
             >
               <Github className="h-5 w-5" />
@@ -115,7 +117,7 @@ export function AuthDialog({
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-muted px-2 text-muted-foreground">
+                <span className="bg-muted text-muted-foreground px-2">
                   {isSignIn ? "New to tweakcn?" : "Already have an account?"}
                 </span>
               </div>
@@ -124,7 +126,7 @@ export function AuthDialog({
             <div className="mt-6 text-center">
               <button
                 onClick={toggleMode}
-                className="text-sm font-medium text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="text-primary focus:ring-primary text-sm font-medium hover:underline focus:ring-2 focus:ring-offset-2 focus:outline-none"
               >
                 {isSignIn ? "Create an account" : "Sign in to your account"}
               </button>

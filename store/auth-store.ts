@@ -1,14 +1,15 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { PostLoginAction } from "@/hooks/use-post-login-action";
+import { PostLoginActionType, StoredPostLoginAction } from "@/hooks/use-post-login-action";
 
 interface AuthStore {
   isOpen: boolean;
   mode: "signin" | "signup";
-  postLoginAction: PostLoginAction;
+  postLoginAction: StoredPostLoginAction;
   openAuthDialog: (
     mode?: "signin" | "signup",
-    postLoginAction?: PostLoginAction
+    postLoginActionType?: PostLoginActionType,
+    postLoginActionData?: any
   ) => void;
   closeAuthDialog: () => void;
   clearPostLoginAction: () => void;
@@ -22,12 +23,15 @@ export const useAuthStore = create<AuthStore>()(
       postLoginAction: null,
       openAuthDialog: (
         newMode?: "signin" | "signup",
-        postLoginAction?: PostLoginAction
+        postLoginActionType?: PostLoginActionType,
+        postLoginActionData?: any
       ) => {
         set((state) => ({
           isOpen: true,
           mode: newMode || state.mode,
-          postLoginAction: postLoginAction || null,
+          postLoginAction: postLoginActionType
+            ? { type: postLoginActionType, data: postLoginActionData }
+            : null,
         }));
       },
       closeAuthDialog: () => {
