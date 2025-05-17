@@ -305,7 +305,7 @@ export async function likeCommunityTheme(themeId: string) {
         .set({ likes_count: (theme.likes_count || 0) + 1 })
         .where(eq(community_theme.id, themeId));
     }
-    revalidatePath("/community");
+    revalidatePath("/themes");
     return { success: true };
   } catch (error) {
     console.error("Error liking community theme:", error);
@@ -329,7 +329,7 @@ export async function unlikeCommunityTheme(themeId: string) {
         .set({ likes_count: theme.likes_count - 1 })
         .where(eq(community_theme.id, themeId));
     }
-    revalidatePath("/community");
+    revalidatePath("/themes");
     return { success: true };
   } catch (error) {
     console.error("Error unliking community theme:", error);

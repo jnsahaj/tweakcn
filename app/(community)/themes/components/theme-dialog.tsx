@@ -1,21 +1,17 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Share, Sun, Moon, MoreVertical, Edit } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Share, Sun, Moon, Edit, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import ThemePreviewPanel from "@/components/editor/theme-preview-panel";
 import { useEditorStore } from "@/store/editor-store";
 import { ThemeStyles } from "@/types/theme";
 import { applyThemeToElement } from "@/utils/apply-theme";
+import { defaultThemeState } from "@/config/theme";
+import { useOptimisticLike } from "../hooks/use-optimistic-like";
 
 // Define the community theme structure
 interface CommunityTheme {
@@ -41,13 +37,24 @@ export function ThemeDialog({ theme, open, onOpenChange }: ThemeDialogProps) {
   const { themeState, setThemeState, saveThemeCheckpoint } = useEditorStore();
   const [currentMode, setCurrentMode] = useState<"light" | "dark">("light");
 
+  // Ensure theme is not null before calling the hook
+  const { optimisticIsLiked, optimisticLikesCount, handleLikeToggle } = useOptimisticLike({
+    themeId: theme?.id || "",
+    initialIsLiked: theme?.is_liked || false,
+    initialLikesCount: theme?.likes_count || 0,
+  });
+
+  console.log("optimisticIsLiked", optimisticIsLiked);
+  console.log("optimisticLikesCount", optimisticLikesCount);
+
   const applyThemeRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (node && theme) {
-        applyThemeToElement({ ...themeState, styles: theme.styles }, node);
+        const styles = { ...defaultThemeState.styles[currentMode], ...theme.styles };
+        applyThemeToElement({ ...themeState, styles, currentMode }, node);
       }
     },
-    [theme, open, themeState]
+    [theme, themeState, currentMode]
   );
 
   if (!theme) {
@@ -82,37 +89,61 @@ export function ThemeDialog({ theme, open, onOpenChange }: ThemeDialogProps) {
     });
   };
 
+  const handleOptimisticLike = async () => {
+    if (!theme) return; // Guard clause if theme is null
+    await handleLikeToggle();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         ref={applyThemeRef}
-        className="flex max-h-[90vh] max-w-4xl flex-col overflow-hidden"
+        className="text-foreground flex max-h-[90vh] max-w-5xl flex-col overflow-hidden"
       >
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">{theme.name}</DialogTitle>
-          <div className="mt-2 flex items-center gap-2">
+        <div className="flex items-center justify-between border-b pb-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-muted relative h-12 w-12 overflow-hidden rounded-full">
+              {theme.community_profile.image ? (
+                <img
+                  src={theme.community_profile.image}
+                  alt={theme.community_profile.name || "User"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="bg-primary/10 text-primary flex h-full w-full items-center justify-center text-lg font-semibold">
+                  {theme.community_profile.name?.[0]?.toUpperCase() || "A"}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col">
+              <h2 className="text-xl font-semibold">{theme.name}</h2>
+              <p className="text-muted-foreground text-sm">
+                {theme.community_profile.name || "Anonymous"}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              onClick={handleOptimisticLike}
+              className={optimisticIsLiked ? "text-red-500" : ""}
+            >
+              <Heart className="size-4" fill={optimisticIsLiked ? "currentColor" : "none"} />
+              <span className="ml-1">{optimisticLikesCount}</span>
+            </Button>
             <Button variant="outline" size="icon" onClick={toggleTheme}>
               {currentMode === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </Button>
-            <Button variant="outline" size="default" onClick={handleShare}>
+            <Button variant="outline" size="sm" onClick={handleShare}>
               <Share className="mr-2 size-4" />
               Share
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreVertical className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem className="gap-2" onClick={handleOpenInEditor}>
-                  <Edit className="size-4" />
-                  Open in Editor
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant="default" size="sm" onClick={handleOpenInEditor}>
+              <Edit className="mr-2 size-4" />
+              Open in Editor
+            </Button>
           </div>
-        </DialogHeader>
+        </div>
 
         <div className="-mx-4 mt-6 -mb-4 flex flex-1 flex-col overflow-hidden">
           <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />

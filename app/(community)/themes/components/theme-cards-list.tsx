@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ThemeCard } from "./theme-card";
 import { ThemeDialog } from "./theme-dialog";
 import { ThemeStyles } from "@/types/theme";
@@ -22,12 +22,33 @@ interface ThemeCardsListProps {
 }
 
 export function ThemeCardsList({ themes }: ThemeCardsListProps) {
-  const [selectedTheme, setSelectedTheme] = useState<CommunityTheme | null>(null);
+  const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const currentThemeForDialog = useMemo(() => {
+    if (!selectedThemeId) {
+      return null;
+    }
+    return themes.find((theme) => theme.id === selectedThemeId) || null;
+  }, [themes, selectedThemeId]);
+
+  useEffect(() => {
+    if (dialogOpen && selectedThemeId && !currentThemeForDialog) {
+      setDialogOpen(false);
+      setSelectedThemeId(null);
+    }
+  }, [dialogOpen, selectedThemeId, currentThemeForDialog]);
+
   const handleThemeClick = (theme: CommunityTheme) => {
-    setSelectedTheme(theme);
+    setSelectedThemeId(theme.id);
     setDialogOpen(true);
+  };
+
+  const handleDialogStateChange = (open: boolean) => {
+    setDialogOpen(open);
+    if (!open) {
+      setSelectedThemeId(null);
+    }
   };
 
   return (
@@ -38,7 +59,11 @@ export function ThemeCardsList({ themes }: ThemeCardsListProps) {
         ))}
       </div>
 
-      <ThemeDialog theme={selectedTheme} open={dialogOpen} onOpenChange={setDialogOpen} />
+      <ThemeDialog
+        theme={currentThemeForDialog}
+        open={dialogOpen}
+        onOpenChange={handleDialogStateChange}
+      />
     </>
   );
 }
