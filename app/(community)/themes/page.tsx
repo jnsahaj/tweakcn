@@ -1,7 +1,7 @@
 import { getCommunityThemes } from "@/actions/community-themes";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ThemeCard } from "@/app/(community)/themes/components/theme-card";
 import { SortBySelector } from "@/app/(community)/themes/components/sort-by-selector";
+import { ThemeCardsList } from "@/app/(community)/themes/components/theme-cards-list";
 
 export default async function CommunityThemesPage({
   searchParams,
@@ -35,11 +35,7 @@ export default async function CommunityThemesPage({
           <p className="text-muted-foreground">No themes found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {themes.map((theme) => (
-            <ThemeCard theme={theme} key={theme.id} />
-          ))}
-        </div>
+        <ThemeCardsList themes={themes} />
       )}
     </div>
   );

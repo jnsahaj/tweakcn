@@ -41,6 +41,7 @@ interface CommunityTheme {
 // Define the props for the ThemeCard component
 interface ThemeCardProps {
   theme: CommunityTheme;
+  onClick?: (theme: CommunityTheme) => void;
 }
 
 // Define swatch definitions, similar to the dashboard card
@@ -58,7 +59,7 @@ const swatchDefinitions: SwatchDefinition[] = [
   { name: "Background", bgKey: "background", fgKey: "foreground" },
 ];
 
-export const ThemeCard: React.FC<ThemeCardProps> = ({ theme }) => {
+export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onClick }) => {
   // Assuming 'light' mode for community themes, or this could be a prop/context based
   const mode = "light";
 
@@ -73,9 +74,15 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme }) => {
     }));
   }, [theme.styles]); // Mode is hardcoded, so only theme.styles is a dependency
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick(theme);
+    }
+  };
+
   return (
     <div>
-      <Link href={`/community/themes/${theme.id}`} key={theme.id} className="block h-full">
+      <div className="block h-full cursor-pointer" onClick={handleClick}>
         <Card
           className={cn(
             "group flex h-full min-h-24 overflow-hidden border shadow-sm transition-all duration-300 hover:shadow-md"
@@ -109,7 +116,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme }) => {
 
           {/* Content Section: Avatar, Theme Name, and Like Button */}
         </Card>
-      </Link>
+      </div>
       <div className="bg-background mt-2 flex items-center justify-between py-2">
         {/* Left Side: Avatar and Theme Name */}
         <div className="flex items-center space-x-3">
