@@ -13,10 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-import {
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -27,13 +24,14 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail } from "@/components/examples/mail/data";
+import { useState } from "react";
 
 interface MailDisplayProps {
   mail: Mail | null;
 }
 
 export function MailDisplay({ mail }: MailDisplayProps) {
-  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   return (
     <div className="flex h-full flex-col">
@@ -59,38 +57,44 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <span className="sr-only">Snooze</span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="flex w-[535px] p-0">
+            <PopoverContent className="flex w-auto p-0">
               <div className="flex flex-col gap-2 border-r px-2 py-4">
                 <div className="px-4 text-sm font-medium">Snooze until</div>
                 <div className="grid min-w-[250px] gap-1">
                   <Button variant="ghost" className="justify-start font-normal">
                     Later today{" "}
-                    <span className="ml-auto text-muted-foreground">
-                      {format(addHours(today, 4), "E, h:m b")}
+                    <span className="text-muted-foreground ml-auto">
+                      {format(addHours(selectedDate, 4), "E, h:mm b")}
                     </span>
                   </Button>
                   <Button variant="ghost" className="justify-start font-normal">
                     Tomorrow
-                    <span className="ml-auto text-muted-foreground">
-                      {format(addDays(today, 1), "E, h:m b")}
+                    <span className="text-muted-foreground ml-auto">
+                      {format(addDays(selectedDate, 1), "E, h:mm b")}
                     </span>
                   </Button>
                   <Button variant="ghost" className="justify-start font-normal">
                     This weekend
-                    <span className="ml-auto text-muted-foreground">
-                      {format(nextSaturday(today), "E, h:m b")}
+                    <span className="text-muted-foreground ml-auto">
+                      {format(nextSaturday(selectedDate), "E, h:mm b")}
                     </span>
                   </Button>
                   <Button variant="ghost" className="justify-start font-normal">
                     Next week
-                    <span className="ml-auto text-muted-foreground">
-                      {format(addDays(today, 7), "E, h:m b")}
+                    <span className="text-muted-foreground ml-auto">
+                      {format(addDays(selectedDate, 7), "E, h:mm b")}
                     </span>
                   </Button>
                 </div>
               </div>
               <div className="p-2">
-                <Calendar />
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  classNames={{ today: "bg-none" }}
+                  required
+                />
               </div>
             </PopoverContent>
           </Popover>
@@ -148,30 +152,23 @@ export function MailDisplay({ mail }: MailDisplayProps) {
               </div>
             </div>
             {mail.date && (
-              <div className="ml-auto text-xs text-muted-foreground">
+              <div className="text-muted-foreground ml-auto text-xs">
                 {format(new Date(mail.date), "PPpp")}
               </div>
             )}
           </div>
           <Separator />
-          <div className="flex-1 whitespace-pre-wrap p-4 text-sm">{mail.text}</div>
+          <div className="flex-1 p-4 text-sm whitespace-pre-wrap">{mail.text}</div>
           <Separator className="mt-auto" />
           <div className="p-4">
             <form>
               <div className="grid gap-4">
                 <Textarea className="p-4" placeholder={`Reply ${mail.name}...`} />
                 <div className="flex items-center">
-                  <Label
-                    htmlFor="mute"
-                    className="flex items-center gap-2 text-xs font-normal"
-                  >
+                  <Label htmlFor="mute" className="flex items-center gap-2 text-xs font-normal">
                     <Switch id="mute" aria-label="Mute thread" /> Mute this thread
                   </Label>
-                  <Button
-                    onClick={(e) => e.preventDefault()}
-                    size="sm"
-                    className="ml-auto"
-                  >
+                  <Button onClick={(e) => e.preventDefault()} size="sm" className="ml-auto">
                     Send
                   </Button>
                 </div>
@@ -180,9 +177,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
           </div>
         </div>
       ) : (
-        <div className="p-8 text-center text-muted-foreground">
-          No message selected
-        </div>
+        <div className="text-muted-foreground p-8 text-center">No message selected</div>
       )}
     </div>
   );
