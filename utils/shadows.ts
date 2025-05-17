@@ -65,9 +65,7 @@ export const getShadowMap = (themeEditorState: ThemeEditorState) => {
 };
 
 // Function to set shadow CSS variables
-export function setShadowVariables(themeEditorState: ThemeEditorState) {
-  const root = document.documentElement;
-
+export function applyShadowStylesToElement(root: HTMLElement, themeEditorState: ThemeEditorState) {
   const shadows = getShadowMap(themeEditorState);
   Object.entries(shadows).forEach(([name, value]) => {
     applyStyleToElement(root, name, value);
