@@ -18,6 +18,16 @@ const updateThemeClass = (root: HTMLElement, mode: Theme) => {
   }
 };
 
+const applyBorderColorFix = (root: HTMLElement) => {
+  const styleTag = document.createElement("style");
+  styleTag.innerHTML = `
+    * {
+      border-color: var(--border);
+    }
+  `;
+  root.appendChild(styleTag);
+};
+
 const applyCommonStyles = (root: HTMLElement, themeStyles: ThemeStyleProps) => {
   Object.entries(themeStyles)
     .filter(([key]) =>
@@ -47,6 +57,8 @@ export const applyThemeToElement = (themeState: ThemeEditorState, rootElement: H
   const { currentMode: mode, styles: themeStyles } = themeState;
 
   if (!rootElement) return;
+
+  applyBorderColorFix(rootElement);
 
   updateThemeClass(rootElement, mode);
   // Apply common styles (like border-radius) based on the 'light' mode definition

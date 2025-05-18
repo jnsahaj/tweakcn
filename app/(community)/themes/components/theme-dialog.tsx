@@ -98,7 +98,7 @@ export function ThemeDialog({ theme, open, onOpenChange }: ThemeDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         ref={applyThemeRef}
-        className="text-foreground flex max-h-[90vh] max-w-5xl flex-col overflow-hidden"
+        className="text-foreground flex max-w-5xl flex-col overflow-hidden md:h-[90vh]"
       >
         <div className="flex items-center justify-between border-b pb-4">
           <div className="flex items-center gap-3">
