@@ -175,6 +175,8 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             setTailwindVersion(value);
             if (value === "4" && colorFormat === "hsl") {
               setColorFormat("oklch");
+            else if (value === "3" && colorFormat === "oklch") {
+              setColorFormat("hsl");
             }
           }}
         >
@@ -195,7 +197,9 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="hsl">hsl</SelectItem>
-            <SelectItem value="oklch">oklch</SelectItem>
+            <SelectItem value="oklch" disabled={tailwindVersion === "3"}>
+              oklch{tailwindVersion === "3" ? " (not supported in Tailwind v3)" : ""}
+            </SelectItem>
             <SelectItem value="rgb">rgb</SelectItem>
             <SelectItem value="hex">hex</SelectItem>
           </SelectContent>
