@@ -18,7 +18,7 @@ export default function AiPage() {
     <PreviewPanelProvider>
       <Toolbar />
       <AuthDialogWrapper />
-      <div className="relative isolate flex flex-1 items-center justify-center overflow-hidden">
+      <div className="relative isolate flex flex-1 flex-col overflow-hidden">
         <AIInterface />
       </div>
     </PreviewPanelProvider>
