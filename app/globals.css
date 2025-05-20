@@ -117,7 +117,7 @@ body {
 
 /* Mention styles */
 .mention {
-  @apply bg-primary/10 text-primary px-1 rounded-md;
+  @apply bg-primary/10 text-primary rounded-md px-1;
 }
 
 @keyframes text {
@@ -131,4 +131,13 @@ body {
 
 .animate-text {
   animation: text 3s linear infinite;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
 }
