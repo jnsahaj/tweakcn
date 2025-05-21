@@ -195,7 +195,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="hsl">hsl</SelectItem>
-            <SelectItem value="oklch">oklch</SelectItem>
+            {tailwindVersion === "4" && <SelectItem value="oklch">oklch</SelectItem>}
             <SelectItem value="rgb">rgb</SelectItem>
             <SelectItem value="hex">hex</SelectItem>
           </SelectContent>
