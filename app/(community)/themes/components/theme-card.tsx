@@ -81,11 +81,11 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onClick }) => {
   };
 
   return (
-    <div>
-      <div className="block h-full cursor-pointer" onClick={handleClick}>
+    <div className="flex flex-col">
+      <div className="block cursor-pointer" onClick={handleClick}>
         <Card
           className={cn(
-            "group flex h-full min-h-24 overflow-hidden border shadow-sm transition-all duration-300 hover:shadow-md"
+            "group flex h-full min-h-48 overflow-hidden border shadow-sm transition-all duration-300 hover:shadow-md"
           )}
         >
           {/* Color Swatches Display */}
