@@ -10,20 +10,15 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import {
-  MoreVertical,
-  Trash2,
-  Edit,
-  Loader2,
-  Zap,
-  ExternalLink,
-  Copy,
-} from "lucide-react";
+import { MoreVertical, Trash2, Edit, Loader2, Zap, ExternalLink, Copy, Upload } from "lucide-react";
 import { useMemo } from "react";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemeActions } from "@/hooks/use-theme-actions";
 import Link from "next/link";
 import { toast } from "@/components/ui/use-toast";
+import { useSubmitCommunityThemeForm } from "../hooks/use-submit-community-theme-form";
+import { SubmitCommunityThemeForm } from "./submit-community-theme-form";
+
 interface ThemeCardProps {
   theme: Theme;
   className?: string;
@@ -47,6 +42,7 @@ const swatchDefinitions: SwatchDefinition[] = [
 export function ThemeCard({ theme, className }: ThemeCardProps) {
   const { themeState, setThemeState } = useEditorStore();
   const { deleteTheme, isDeletingTheme } = useThemeActions();
+  const formControl = useSubmitCommunityThemeForm();
   const mode = themeState.currentMode;
 
   const handleDelete = () => {
@@ -74,102 +70,104 @@ export function ThemeCard({ theme, className }: ThemeCardProps) {
       // Get background color, fallback to a default if necessary (e.g., white)
       bg: theme.styles[mode][def.bgKey] || "#ffffff",
       // Get foreground color, fallback to main foreground or a default (e.g., black)
-      fg:
-        theme.styles[mode][def.fgKey] ||
-        theme.styles[mode].foreground ||
-        "#000000",
+      fg: theme.styles[mode][def.fgKey] || theme.styles[mode].foreground || "#000000",
     }));
   }, [mode, theme.styles]);
 
   return (
-    <Card
-      className={cn(
-        "group overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300",
-        className
-      )}
-    >
-      <div className="flex h-36 relative">
-        {colorSwatches.map((swatch) => (
-          <div
-            // Use a combination for a more robust key
-            key={swatch.name + swatch.bg}
-            className={cn(
-              "group/swatch relative flex-1 h-full transition-all duration-300 ease-in-out",
-              "hover:flex-grow-[1.5]"
-            )}
-            style={{ backgroundColor: swatch.bg }}
-          >
+    <>
+      <Card
+        className={cn(
+          "group overflow-hidden border shadow-sm transition-all duration-300 hover:shadow-md",
+          className
+        )}
+      >
+        <div className="relative flex h-36">
+          {colorSwatches.map((swatch) => (
             <div
+              // Use a combination for a more robust key
+              key={swatch.name + swatch.bg}
               className={cn(
-                "absolute inset-0 flex items-center justify-center",
-                "opacity-0 group-hover/swatch:opacity-100",
-                "transition-opacity duration-300 ease-in-out",
-                "text-xs font-medium pointer-events-none"
+                "group/swatch relative h-full flex-1 transition-all duration-300 ease-in-out",
+                "hover:flex-grow-[1.5]"
               )}
-              style={{ color: swatch.fg }}
+              style={{ backgroundColor: swatch.bg }}
             >
-              {swatch.name}
+              <div
+                className={cn(
+                  "absolute inset-0 flex items-center justify-center",
+                  "opacity-0 group-hover/swatch:opacity-100",
+                  "transition-opacity duration-300 ease-in-out",
+                  "pointer-events-none text-xs font-medium"
+                )}
+                style={{ color: swatch.fg }}
+              >
+                {swatch.name}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="p-4 flex items-center justify-between bg-background">
-        <div>
-          <h3 className={cn("text-sm font-medium text-foreground")}>
-            {theme.name}
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            {new Date(theme.createdAt).toLocaleDateString("en-US", {
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-            })}
-          </p>
+          ))}
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <div className="p-2 hover:bg-accent rounded-md">
-              <MoreVertical className="h-4 w-4 text-muted-foreground" />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 bg-popover">
-            <DropdownMenuItem onClick={handleQuickApply} className="gap-2">
-              <Zap className="h-4 w-4" />
-              Quick Apply
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="gap-2">
-              <Link href={`/themes/${theme.id}`} target="_blank">
-                <ExternalLink className="h-4 w-4" />
-                Open Theme
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="gap-2">
-              <Link href={`/editor/theme/${theme.id}`}>
-                <Edit className="h-4 w-4" />
-                Edit Theme
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleShare} className="gap-2">
-              <Copy className="h-4 w-4" />
-              Copy URL
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="mx-2" />
-            <DropdownMenuItem
-              onClick={handleDelete}
-              className="text-destructive gap-2 focus:text-destructive"
-              disabled={isDeletingTheme}
-            >
-              {isDeletingTheme ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Trash2 className="h-4 w-4" />
-              )}
-              Delete Theme
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </Card>
+
+        <div className="bg-background flex items-center justify-between p-4">
+          <div>
+            <h3 className={cn("text-foreground text-sm font-medium")}>{theme.name}</h3>
+            <p className="text-muted-foreground text-xs">
+              {new Date(theme.createdAt).toLocaleDateString("en-US", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+            </p>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <div className="hover:bg-accent rounded-md p-2">
+                <MoreVertical className="text-muted-foreground h-4 w-4" />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-popover w-48">
+              <DropdownMenuItem onClick={handleQuickApply} className="gap-2">
+                <Zap className="h-4 w-4" />
+                Quick Apply
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild className="gap-2">
+                <Link href={`/themes/${theme.id}`} target="_blank">
+                  <ExternalLink className="h-4 w-4" />
+                  Open Theme
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild className="gap-2">
+                <Link href={`/editor/theme/${theme.id}`}>
+                  <Edit className="h-4 w-4" />
+                  Edit Theme
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleShare} className="gap-2">
+                <Copy className="h-4 w-4" />
+                Copy URL
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={formControl.actions.open} className="gap-2">
+                <Upload className="h-4 w-4" />
+                Publish
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="mx-2" />
+              <DropdownMenuItem
+                onClick={handleDelete}
+                className="text-destructive focus:text-destructive gap-2"
+                disabled={isDeletingTheme}
+              >
+                {isDeletingTheme ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+                Delete Theme
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </Card>
+      <SubmitCommunityThemeForm control={formControl} initialThemeName={theme.name} />
+    </>
   );
 }
