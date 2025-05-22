@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { getTheme } from "@/actions/themes";
+import { getCommunityThemeByThemeId } from "@/actions/community-themes";
 import ThemeView from "@/components/theme-view";
 import { Metadata } from "next";
 import { Header } from "@/components/header";
@@ -40,6 +41,8 @@ export async function generateMetadata({
 export default async function ThemePage({ params }: ThemePageProps) {
   const { themeId } = await params;
   const theme = await getTheme(themeId);
+  
+  const communityTheme = theme ? await getCommunityThemeByThemeId(theme.id) : null;
 
   return (
     <Suspense
@@ -50,7 +53,7 @@ export default async function ThemePage({ params }: ThemePageProps) {
         </>
       }
     >
-      <ThemeView theme={theme} />
+      <ThemeView theme={theme} communityTheme={communityTheme} />
     </Suspense>
   );
 }
