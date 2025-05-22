@@ -1,7 +1,7 @@
 import { getCommunityThemes } from "@/actions/community-themes";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SortBySelector } from "@/app/(community)/themes/components/sort-by-selector";
-import { ThemeCardsList } from "@/app/(community)/themes/components/theme-cards-list";
+import { CommunityThemesList } from "@/app/(community)/themes/components/community-themes-list";
 
 export default async function CommunityThemesPage({
   searchParams,
@@ -35,7 +35,7 @@ export default async function CommunityThemesPage({
           <p className="text-muted-foreground">No themes found</p>
         </div>
       ) : (
-        <ThemeCardsList themes={themes} />
+        <CommunityThemesList themes={themes} />
       )}
     </div>
   );

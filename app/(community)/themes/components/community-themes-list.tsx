@@ -1,27 +1,15 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ThemeCard } from "./theme-card";
-import { ThemeDialog } from "./theme-dialog";
-import { ThemeStyles } from "@/types/theme";
+import { CommunityThemeCard } from "./community-theme-card";
+import { CommunityThemePreviewDialog } from "./community-theme-preview-dialog";
+import { type CommunityTheme } from "@/types/theme";
 
-interface CommunityTheme {
-  id: string;
-  name: string;
-  community_profile: {
-    name?: string | null;
-    image?: string | null;
-  };
-  likes_count: number;
-  is_liked: boolean;
-  styles: ThemeStyles;
-}
-
-interface ThemeCardsListProps {
+interface CommunityThemesListProps {
   themes: CommunityTheme[];
 }
 
-export function ThemeCardsList({ themes }: ThemeCardsListProps) {
+export function CommunityThemesList({ themes }: CommunityThemesListProps) {
   const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -55,15 +43,21 @@ export function ThemeCardsList({ themes }: ThemeCardsListProps) {
     <>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {themes.map((theme) => (
-          <ThemeCard theme={theme} key={theme.id} onClick={() => handleThemeClick(theme)} />
+          <CommunityThemeCard
+            theme={theme}
+            key={theme.id}
+            onClick={() => handleThemeClick(theme)}
+          />
         ))}
       </div>
 
-      <ThemeDialog
-        theme={currentThemeForDialog}
-        open={dialogOpen}
-        onOpenChange={handleDialogStateChange}
-      />
+      {currentThemeForDialog && (
+        <CommunityThemePreviewDialog
+          communityTheme={currentThemeForDialog}
+          open={dialogOpen}
+          onOpenChange={handleDialogStateChange}
+        />
+      )}
     </>
   );
 }

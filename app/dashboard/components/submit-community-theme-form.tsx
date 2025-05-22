@@ -54,6 +54,7 @@ export function SubmitCommunityThemeForm({
   }, [isOpen, initialThemeName, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    actions.setThemeName(values.themeName);
     actions.submit();
   };
 

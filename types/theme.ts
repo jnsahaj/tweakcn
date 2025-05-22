@@ -80,3 +80,20 @@ export type ThemePreset = {
 };
 
 export type Theme = InferSelectModel<typeof theme>;
+
+export interface CommunityTheme {
+  id: string;
+  theme: {
+    id: string;
+    name: string;
+    styles: ThemeStyles;
+  };
+  created_at: Date;
+  likes_count: number;
+  is_liked: boolean;
+  community_profile: {
+    id: string;
+    name?: string | null;
+    image?: string | null;
+  };
+}

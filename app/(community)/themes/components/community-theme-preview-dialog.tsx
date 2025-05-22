@@ -9,54 +9,47 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import ThemePreviewPanel from "@/components/editor/theme-preview-panel";
 import { useEditorStore } from "@/store/editor-store";
-import { ThemeStyles } from "@/types/theme";
+import { type CommunityTheme } from "@/types/theme";
 import { applyThemeToElement } from "@/utils/apply-theme";
 import { defaultThemeState } from "@/config/theme";
 import { useOptimisticLike } from "../hooks/use-optimistic-like";
 import { cn } from "@/lib/utils";
 
-// Define the community theme structure
-interface CommunityTheme {
-  id: string;
-  name: string;
-  community_profile: {
-    name?: string | null;
-    image?: string | null;
-  };
-  likes_count: number;
-  is_liked: boolean;
-  styles: ThemeStyles; // Using imported ThemeStyles
-}
-
-interface ThemeDialogProps {
-  theme: CommunityTheme | null;
+interface CommunityThemePreviewDialogProps {
+  communityTheme: CommunityTheme;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function ThemeDialog({ theme, open, onOpenChange }: ThemeDialogProps) {
+export function CommunityThemePreviewDialog({
+  communityTheme,
+  open,
+  onOpenChange,
+}: CommunityThemePreviewDialogProps) {
   const router = useRouter();
-  const { themeState, setThemeState, saveThemeCheckpoint } = useEditorStore();
+  const { themeState, setThemeState } = useEditorStore();
   const [currentMode, setCurrentMode] = useState<"light" | "dark">("light");
 
-  // Ensure theme is not null before calling the hook
   const { optimisticIsLiked, optimisticLikesCount, handleLikeToggle } = useOptimisticLike({
-    themeId: theme?.id || "",
-    initialIsLiked: theme?.is_liked || false,
-    initialLikesCount: theme?.likes_count || 0,
+    themeId: communityTheme.id,
+    initialIsLiked: communityTheme.is_liked,
+    initialLikesCount: communityTheme.likes_count,
   });
 
   const applyThemeRef = useCallback(
     (node: HTMLDivElement | null) => {
-      if (node && theme) {
-        const styles = { ...defaultThemeState.styles[currentMode], ...theme.styles };
+      if (node && communityTheme) {
+        const styles = {
+          ...defaultThemeState.styles[currentMode],
+          ...communityTheme.theme.styles,
+        };
         applyThemeToElement({ ...themeState, styles, currentMode }, node);
       }
     },
-    [theme, themeState, currentMode]
+    [communityTheme, themeState, currentMode]
   );
 
-  if (!theme) {
+  if (!communityTheme) {
     return null;
   }
 
@@ -69,22 +62,17 @@ export function ThemeDialog({ theme, open, onOpenChange }: ThemeDialogProps) {
     onOpenChange(false);
     setThemeState({
       ...themeState,
-      styles: theme.styles,
+      styles: communityTheme.theme.styles,
       preset: undefined,
     });
   };
 
   const handleShare = () => {
-    const url = `${window.location.origin}/community/themes/${theme.id}`;
+    const url = `${window.location.origin}/community/themes/${communityTheme.id}`;
     navigator.clipboard.writeText(url);
     toast({
       title: "Theme URL copied to clipboard!",
     });
-  };
-
-  const handleOptimisticLike = async () => {
-    if (!theme) return; // Guard clause if theme is null
-    await handleLikeToggle();
   };
 
   return (
@@ -101,29 +89,29 @@ export function ThemeDialog({ theme, open, onOpenChange }: ThemeDialogProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-muted relative h-12 w-12 overflow-hidden rounded-full">
-                {theme.community_profile.image ? (
+                {communityTheme.community_profile.image ? (
                   <img
-                    src={theme.community_profile.image}
-                    alt={theme.community_profile.name || "User"}
+                    src={communityTheme.community_profile.image}
+                    alt={communityTheme.community_profile.name || "User"}
                     className="h-full w-full object-cover"
                   />
                 ) : (
                   <div className="bg-primary/10 text-primary flex h-full w-full items-center justify-center text-lg font-semibold">
-                    {theme.community_profile.name?.[0]?.toUpperCase() || "A"}
+                    {communityTheme.community_profile.name?.[0]?.toUpperCase() || "A"}
                   </div>
                 )}
               </div>
               <div className="flex flex-col">
-                <h2 className="text-xl font-semibold">{theme.name}</h2>
+                <h2 className="text-xl font-semibold">{communityTheme.theme.name}</h2>
                 <p className="text-muted-foreground text-sm">
-                  {theme.community_profile.name || "Anonymous"}
+                  {communityTheme.community_profile.name || "Anonymous"}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
-                onClick={handleOptimisticLike}
+                onClick={handleLikeToggle}
                 className={optimisticIsLiked ? "text-red-500" : ""}
               >
                 <Heart className="size-4" fill={optimisticIsLiked ? "currentColor" : "none"} />
@@ -144,7 +132,7 @@ export function ThemeDialog({ theme, open, onOpenChange }: ThemeDialogProps) {
           </div>
 
           <div className="-mx-4 mt-6 -mb-4 flex flex-1 flex-col overflow-hidden">
-            <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
+            <ThemePreviewPanel styles={communityTheme.theme.styles} currentMode={currentMode} />
           </div>
         </DialogPrimitiveContent>
       </DialogPortal>

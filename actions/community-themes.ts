@@ -9,6 +9,7 @@ import {
   theme_moderation,
   community_profile,
   user,
+  theme,
 } from "@/db/schema";
 import { eq, and, desc, asc, sql, count } from "drizzle-orm";
 import cuid from "cuid";
@@ -66,8 +67,11 @@ export async function getCommunityThemes({
 
     const selectFields = {
       id: community_theme.id,
-      name: community_theme.name,
-      styles: community_theme.styles,
+      theme: {
+        id: theme.id,
+        name: theme.name,
+        styles: theme.styles,
+      },
       created_at: community_theme.created_at,
       likes_count: community_theme.likes_count,
       community_profile: {
@@ -85,6 +89,7 @@ export async function getCommunityThemes({
     const themesWithProfilesAndLikes = await db
       .select(selectFields)
       .from(community_theme)
+      .leftJoin(theme, eq(community_theme.theme_id, theme.id))
       .leftJoin(community_profile, eq(community_theme.community_profile_id, community_profile.id))
       .leftJoin(user, eq(community_profile.user_id, user.id))
       .where(whereClause)
@@ -154,6 +159,7 @@ export async function createCommunityTheme(formData: {
   if (!userId) {
     throw new Error("Unauthorized");
   }
+
   // Check if user owns the community profile
   const profile = await db
     .select()
@@ -168,6 +174,7 @@ export async function createCommunityTheme(formData: {
   if (!profile.length) {
     return { success: false, error: "Not owner of community profile" };
   }
+
   const validation = createCommunityThemeSchema.safeParse(formData);
   if (!validation.success) {
     return {
@@ -176,24 +183,44 @@ export async function createCommunityTheme(formData: {
       details: validation.error.format(),
     };
   }
+
   const { community_profile_id, name, styles } = validation.data;
-  const newThemeId = cuid();
   const now = new Date();
+
   try {
-    const [insertedTheme] = await db
-      .insert(community_theme)
+    // First, create a new theme (without userId)
+    const newThemeId = cuid();
+    const [createdTheme] = await db
+      .insert(theme)
       .values({
         id: newThemeId,
-        community_profile_id,
         name,
         styles,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+
+    // Create the community theme entry
+    const newCommunityThemeId = cuid();
+    const [insertedCommunityTheme] = await db
+      .insert(community_theme)
+      .values({
+        id: newCommunityThemeId,
+        community_profile_id,
+        theme_id: newThemeId,
         created_at: now,
         status: "pending_review",
         likes_count: 0,
       })
       .returning();
+
     revalidatePath("/community");
-    return { success: true, theme: insertedTheme };
+    return {
+      success: true,
+      theme: createdTheme,
+      communityTheme: insertedCommunityTheme,
+    };
   } catch (error) {
     console.error("Error creating community theme:", error);
     return { success: false, error: "Internal Server Error" };

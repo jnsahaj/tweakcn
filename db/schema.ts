@@ -62,9 +62,7 @@ export const verification = pgTable("verification", {
 
 export const theme = pgTable("theme", {
   id: text("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+  userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   styles: json("styles").$type<ThemeStyles>().notNull(),
   createdAt: timestamp("created_at").notNull(),
@@ -95,8 +93,9 @@ export const community_theme = pgTable("community_themes", {
   community_profile_id: text("community_profile_id")
     .notNull()
     .references(() => community_profile.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  styles: json("styles").$type<ThemeStyles>().notNull(),
+  theme_id: text("theme_id")
+    .notNull()
+    .references(() => theme.id, { onDelete: "cascade" }),
   created_at: timestamp("created_at").notNull().defaultNow(),
   status: statusEnum("status").notNull().default("pending_review"),
   likes_count: integer("likes_count").notNull().default(0),

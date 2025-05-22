@@ -1,54 +1,14 @@
-import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { LikeButton } from "./like-button";
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { type CommunityTheme, type ThemeStyleProps } from "@/types/theme";
 
-// Define the color palette structure
-interface ThemeColorPalette {
-  primary: string;
-  "primary-foreground": string;
-  secondary: string;
-  "secondary-foreground": string;
-  accent: string;
-  "accent-foreground": string;
-  muted: string;
-  "muted-foreground": string;
-  background: string;
-  foreground: string;
-  [key: string]: string; // For flexibility with other theme colors
-}
-
-// Define the styles structure for light and dark modes
-interface ThemeStyles {
-  light: Partial<ThemeColorPalette>; // Use Partial if not all colors are guaranteed
-  dark: Partial<ThemeColorPalette>;
-}
-
-// Update the theme structure for ThemeCardProps
-interface CommunityTheme {
-  id: string;
-  name: string;
-  community_profile: {
-    name?: string | null;
-    image?: string | null;
-  };
-  likes_count: number;
-  is_liked: boolean;
-  styles: ThemeStyles; // Added styles object
-}
-
-// Define the props for the ThemeCard component
-interface ThemeCardProps {
-  theme: CommunityTheme;
-  onClick?: (theme: CommunityTheme) => void;
-}
-
-// Define swatch definitions, similar to the dashboard card
+// Define swatch definitions
 type SwatchDefinition = {
   name: string;
-  bgKey: keyof ThemeColorPalette;
-  fgKey: keyof ThemeColorPalette;
+  bgKey: keyof ThemeStyleProps;
+  fgKey: keyof ThemeStyleProps;
 };
 
 const swatchDefinitions: SwatchDefinition[] = [
@@ -59,12 +19,18 @@ const swatchDefinitions: SwatchDefinition[] = [
   { name: "Background", bgKey: "background", fgKey: "foreground" },
 ];
 
-export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onClick }) => {
+// Define the props for the ThemeCard component
+interface CommunityThemeCardProps {
+  theme: CommunityTheme;
+  onClick?: (theme: CommunityTheme) => void;
+}
+
+export const CommunityThemeCard: React.FC<CommunityThemeCardProps> = ({ theme, onClick }) => {
   // Assuming 'light' mode for community themes, or this could be a prop/context based
   const mode = "light";
 
   const colorSwatches = useMemo(() => {
-    const currentStyles = theme.styles[mode] || {};
+    const currentStyles = theme.theme.styles[mode] || {};
     const fallbackForeground = currentStyles.foreground || "#000000";
 
     return swatchDefinitions.map((def) => ({
@@ -72,7 +38,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onClick }) => {
       bg: currentStyles[def.bgKey] || "#ffffff",
       fg: currentStyles[def.fgKey] || fallbackForeground,
     }));
-  }, [theme.styles]); // Mode is hardcoded, so only theme.styles is a dependency
+  }, [theme.theme.styles]); // Mode is hardcoded, so only theme.styles is a dependency
 
   const handleClick = () => {
     if (onClick) {
@@ -123,7 +89,7 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onClick }) => {
           {theme.community_profile.image ? (
             <img
               src={theme.community_profile.image}
-              alt={theme.community_profile.name || theme.name || "Avatar"}
+              alt={theme.community_profile.name || "Avatar"}
               width={32}
               height={32}
               className="h-8 w-8 rounded-full object-cover"
@@ -131,11 +97,13 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({ theme, onClick }) => {
           ) : (
             <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
               <span className="text-muted-foreground text-xs">
-                {(theme.community_profile.name || theme.name || "U").substring(0, 1).toUpperCase()}
+                {(theme.community_profile.name || "U").substring(0, 1).toUpperCase()}
               </span>
             </div>
           )}
-          <h3 className={cn("text-foreground line-clamp-1 text-sm font-medium")}>{theme.name}</h3>
+          <h3 className={cn("text-foreground line-clamp-1 text-sm font-medium")}>
+            {theme.theme.name}
+          </h3>
         </div>
 
         {/* Right Side: Like Button */}
