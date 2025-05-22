@@ -1,29 +1,24 @@
 import { useState } from "react";
 import { createCommunityTheme } from "@/actions/community-themes";
 import { getMyCommunityProfile } from "@/actions/community-profiles";
-import { useEditorStore } from "@/store/editor-store";
 import { toast } from "@/components/ui/use-toast";
-import { ThemeStyles } from "@/types/theme";
+import { Theme, ThemeStyles } from "@/types/theme";
 
 export interface SubmitCommunityThemeFormControl {
   isOpen: boolean;
   isLoading: boolean;
-  themeName: string;
   actions: {
     open: () => void;
     close: () => void;
-    setThemeName: (name: string) => void;
-    submit: () => Promise<void>;
+    submit: (themeName: string) => Promise<void>;
   };
 }
 
-export function useSubmitCommunityThemeForm(): SubmitCommunityThemeFormControl {
+export function useSubmitCommunityThemeForm(theme: Theme): SubmitCommunityThemeFormControl {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [themeName, setThemeName] = useState("");
-  const { themeState } = useEditorStore();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (themeName: string) => {
     if (!themeName.trim()) {
       toast({
         title: "Error",
@@ -48,7 +43,7 @@ export function useSubmitCommunityThemeForm(): SubmitCommunityThemeFormControl {
       const result = await createCommunityTheme({
         community_profile_id: profile.id,
         name: themeName.trim(),
-        styles: themeState.styles as ThemeStyles,
+        styles: theme.styles as ThemeStyles,
       });
 
       if (!result.success) {
@@ -60,7 +55,6 @@ export function useSubmitCommunityThemeForm(): SubmitCommunityThemeFormControl {
         description: "Your theme has been submitted for review",
       });
       setIsOpen(false);
-      setThemeName("");
     } catch (error) {
       toast({
         title: "Error",
@@ -75,11 +69,9 @@ export function useSubmitCommunityThemeForm(): SubmitCommunityThemeFormControl {
   return {
     isOpen,
     isLoading,
-    themeName,
     actions: {
       open: () => setIsOpen(true),
       close: () => setIsOpen(false),
-      setThemeName,
       submit: handleSubmit,
     },
   };

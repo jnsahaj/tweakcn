@@ -42,7 +42,7 @@ const swatchDefinitions: SwatchDefinition[] = [
 export function ThemeCard({ theme, className }: ThemeCardProps) {
   const { themeState, setThemeState } = useEditorStore();
   const { deleteTheme, isDeletingTheme } = useThemeActions();
-  const formControl = useSubmitCommunityThemeForm();
+  const formControl = useSubmitCommunityThemeForm(theme);
   const mode = themeState.currentMode;
 
   const handleDelete = () => {

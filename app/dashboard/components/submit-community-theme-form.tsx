@@ -38,7 +38,7 @@ export function SubmitCommunityThemeForm({
   control,
   initialThemeName = "",
 }: SubmitCommunityThemeFormProps) {
-  const { isOpen, isLoading, themeName, actions } = control;
+  const { isOpen, isLoading, actions } = control;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,8 +54,7 @@ export function SubmitCommunityThemeForm({
   }, [isOpen, initialThemeName, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    actions.setThemeName(values.themeName);
-    actions.submit();
+    actions.submit(values.themeName);
   };
 
   return (
