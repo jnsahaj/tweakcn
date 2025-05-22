@@ -47,6 +47,77 @@ export const getTheme = cache(async (themeId: string) => {
   }
 });
 
+export const getThemeWithCommunity = cache(async (themeId: string) => {
+  try {
+    const currentUserId = await getCurrentUserId();
+    
+    const { community_theme, community_profile, theme_like, user } = await import("@/db/schema");
+    const { sql, and, eq } = await import("drizzle-orm");
+    
+    const [result] = await db
+      .select({
+        theme: themeTable,
+        communityThemeId: community_theme.id,
+        communityThemeCreatedAt: community_theme.created_at,
+        communityThemeLikesCount: community_theme.likes_count,
+        communityProfileId: community_profile.id,
+        communityProfileName: community_profile.display_name,
+        communityProfileImage: user.image,
+        isLiked: currentUserId
+          ? sql<boolean>`EXISTS (
+              SELECT 1 FROM ${theme_like} 
+              WHERE ${theme_like.community_theme_id} = ${community_theme.id} 
+              AND ${theme_like.user_id} = ${currentUserId}
+            )`.as("is_liked")
+          : sql<boolean>`FALSE`.as("is_liked"),
+      })
+      .from(themeTable)
+      .leftJoin(
+        community_theme,
+        eq(themeTable.id, community_theme.theme_id)
+      )
+      .leftJoin(
+        community_profile,
+        eq(community_theme.community_profile_id, community_profile.id)
+      )
+      .leftJoin(
+        user,
+        eq(community_profile.user_id, user.id)
+      )
+      .where(eq(themeTable.id, themeId))
+      .limit(1);
+
+    if (!result) return null;
+    
+    const communityTheme = result.communityThemeId 
+      ? {
+          id: result.communityThemeId,
+          created_at: result.communityThemeCreatedAt || new Date(),
+          likes_count: result.communityThemeLikesCount || 0,
+          is_liked: !!result.isLiked,
+          community_profile: {
+            id: result.communityProfileId || "",
+            name: result.communityProfileName,
+            image: result.communityProfileImage,
+          },
+          theme: {
+            id: result.theme.id,
+            name: result.theme.name,
+            styles: result.theme.styles,
+          }
+        }
+      : null;
+    
+    return {
+      theme: result.theme,
+      communityTheme
+    };
+  } catch (error) {
+    console.error("Error fetching theme with community data:", error);
+    return null;
+  }
+});
+
 // Action to create a new theme
 export async function createTheme(formData: { name: string; styles: ThemeStyles }) {
   const userId = await getCurrentUserId();
