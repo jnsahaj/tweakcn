@@ -20,21 +20,16 @@ import { useEffect } from "react";
 import { Header } from "./header";
 import { Footer } from "@/components/home/footer";
 import { toast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
 
-export default function ThemeView({ 
-  theme, 
-  communityTheme 
-}: { 
-  theme: Theme; 
-  communityTheme?: CommunityTheme | null 
+export default function ThemeView({
+  theme,
+  communityTheme,
+}: {
+  theme: Theme;
+  communityTheme?: CommunityTheme | null;
 }) {
-  const {
-    themeState,
-    setThemeState,
-    saveThemeCheckpoint,
-    restoreThemeCheckpoint,
-  } = useEditorStore();
+  const { themeState, setThemeState, saveThemeCheckpoint, restoreThemeCheckpoint } =
+    useEditorStore();
   const router = useRouter();
   const currentMode = themeState.currentMode;
 
@@ -79,10 +74,10 @@ export default function ThemeView({
     });
   };
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen flex-col">
       <Header />
-      <main className="flex-1 bg-background text-foreground">
-        <div className="container mx-auto py-8 px-4">
+      <main className="bg-background text-foreground flex-1">
+        <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between">
             {communityTheme ? (
               <div className="flex items-center gap-3">
@@ -111,7 +106,7 @@ export default function ThemeView({
             )}
             <div className="flex items-center gap-2">
               {communityTheme && (
-                <LikeButton 
+                <LikeButton
                   themeId={communityTheme.id}
                   initialIsLiked={communityTheme.is_liked}
                   initialLikesCount={communityTheme.likes_count}
@@ -119,11 +114,7 @@ export default function ThemeView({
                 />
               )}
               <Button variant="outline" size="icon" onClick={toggleTheme}>
-                {currentMode === "dark" ? (
-                  <Sun className="size-4" />
-                ) : (
-                  <Moon className="size-4" />
-                )}
+                {currentMode === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
               </Button>
               <Button variant="outline" size="default" onClick={handleShare}>
                 <Share className="size-4" />
@@ -136,10 +127,7 @@ export default function ThemeView({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    className="gap-2"
-                    onClick={handleOpenInEditor}
-                  >
+                  <DropdownMenuItem className="gap-2" onClick={handleOpenInEditor}>
                     <Edit className="size-4" />
                     Open in Editor
                   </DropdownMenuItem>
@@ -148,11 +136,8 @@ export default function ThemeView({
             </div>
           </div>
 
-          <div className="mt-6 -m-4 max-h-240 flex flex-col">
-            <ThemePreviewPanel
-              styles={theme.styles}
-              currentMode={currentMode}
-            />
+          <div className="-m-4 mt-6 flex max-h-240 flex-col">
+            <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
           </div>
         </div>
       </main>

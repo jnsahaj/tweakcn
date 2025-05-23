@@ -50,10 +50,10 @@ export const getTheme = cache(async (themeId: string) => {
 export const getThemeWithCommunity = cache(async (themeId: string) => {
   try {
     const currentUserId = await getCurrentUserId();
-    
+
     const { community_theme, community_profile, theme_like, user } = await import("@/db/schema");
-    const { sql, and, eq } = await import("drizzle-orm");
-    
+    const { sql } = await import("drizzle-orm");
+
     const [result] = await db
       .select({
         theme: themeTable,
@@ -72,24 +72,15 @@ export const getThemeWithCommunity = cache(async (themeId: string) => {
           : sql<boolean>`FALSE`.as("is_liked"),
       })
       .from(themeTable)
-      .leftJoin(
-        community_theme,
-        eq(themeTable.id, community_theme.theme_id)
-      )
-      .leftJoin(
-        community_profile,
-        eq(community_theme.community_profile_id, community_profile.id)
-      )
-      .leftJoin(
-        user,
-        eq(community_profile.user_id, user.id)
-      )
+      .leftJoin(community_theme, eq(themeTable.id, community_theme.theme_id))
+      .leftJoin(community_profile, eq(community_theme.community_profile_id, community_profile.id))
+      .leftJoin(user, eq(community_profile.user_id, user.id))
       .where(eq(themeTable.id, themeId))
       .limit(1);
 
     if (!result) return null;
-    
-    const communityTheme = result.communityThemeId 
+
+    const communityTheme = result.communityThemeId
       ? {
           id: result.communityThemeId,
           created_at: result.communityThemeCreatedAt || new Date(),
@@ -104,13 +95,13 @@ export const getThemeWithCommunity = cache(async (themeId: string) => {
             id: result.theme.id,
             name: result.theme.name,
             styles: result.theme.styles,
-          }
+          },
         }
       : null;
-    
+
     return {
       theme: result.theme,
-      communityTheme
+      communityTheme,
     };
   } catch (error) {
     console.error("Error fetching theme with community data:", error);

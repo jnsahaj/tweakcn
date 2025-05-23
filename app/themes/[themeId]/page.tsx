@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getTheme, getThemeWithCommunity } from "@/actions/themes";
+import { getThemeWithCommunity } from "@/actions/themes";
 import ThemeView from "@/components/theme-view";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,13 +12,11 @@ interface ThemePageProps {
   }>;
 }
 
-export async function generateMetadata({
-  params,
-}: ThemePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ThemePageProps): Promise<Metadata> {
   const { themeId } = await params;
   const result = await getThemeWithCommunity(themeId);
   const theme = result?.theme;
-  
+
   if (!theme) {
     return {
       title: "Theme Not Found - tweakcn",
@@ -52,14 +50,14 @@ export async function generateMetadata({
 
 export default async function ThemePage({ params }: ThemePageProps) {
   const { themeId } = await params;
-  
+
   const result = await getThemeWithCommunity(themeId);
   const theme = result?.theme;
-  
+
   if (!theme) {
     notFound();
   }
-  
+
   const communityTheme = result?.communityTheme;
 
   return (
