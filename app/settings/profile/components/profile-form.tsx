@@ -12,12 +12,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-type SocialLinks = {
-  github?: string;
-  twitter?: string;
-  website?: string;
-};
-
 const MAX_BIO_LENGTH = 180;
 
 const formSchema = z.object({
@@ -33,7 +27,17 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function ProfileForm({ profile }: { profile: any }) {
+export function ProfileForm({ profile }: { profile: {
+  id: string;
+  display_name: string;
+  bio?: string;
+  image?: string;
+  social_links?: {
+    github?: string;
+    twitter?: string;
+    website?: string;
+  };
+} }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<FormValues>({

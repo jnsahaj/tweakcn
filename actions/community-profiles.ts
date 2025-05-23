@@ -169,12 +169,13 @@ export async function updateCommunityProfile(formData: {
       details: validation.error.format(),
     };
   }
-  const { id, display_name, social_links, is_active } = validation.data;
-  if (!display_name && !social_links && typeof is_active === "undefined") {
+  const { id, display_name, bio, social_links, is_active } = validation.data;
+  if (!display_name && !bio && !social_links && typeof is_active === "undefined") {
     return { success: false, error: "No update data provided" };
   }
   const updateData: any = {};
   if (display_name) updateData.display_name = display_name;
+  if (bio) updateData.bio = bio;
   if (social_links) updateData.social_links = social_links;
   if (typeof is_active !== "undefined") updateData.is_active = is_active;
   try {
