@@ -42,17 +42,21 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function ProfileForm({ profile }: { profile: {
-  id: string;
-  display_name: string;
-  bio?: string;
-  image?: string;
-  social_links?: {
-    github?: string;
-    twitter?: string;
-    website?: string;
+export function ProfileForm({
+  profile,
+}: {
+  profile: {
+    id: string;
+    display_name: string;
+    bio: string | null;
+    image: string | null;
+    social_links: {
+      github?: string;
+      twitter?: string;
+      website?: string;
+    } | null;
   };
-} }) {
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isHoveringAvatar, setIsHoveringAvatar] = useState(false);
 
@@ -101,10 +105,7 @@ export function ProfileForm({ profile }: { profile: {
 
   const handleAvatarClick = () => {
     // This would typically open a file picker
-    toast({
-      title: "Avatar update",
-      description: "Avatar upload functionality would be implemented here.",
-    });
+    throw new Error("Image Update not implemented");
   };
 
   return (
@@ -119,7 +120,8 @@ export function ProfileForm({ profile }: { profile: {
             <div className="space-y-6">
               <div className="flex items-center gap-4 md:gap-8">
                 <div
-                  className="group relative cursor-pointer"
+                  className="group pointer-events-none relative cursor-not-allowed"
+                  aria-disabled={true}
                   onMouseEnter={() => setIsHoveringAvatar(true)}
                   onMouseLeave={() => setIsHoveringAvatar(false)}
                   onClick={handleAvatarClick}
@@ -129,22 +131,22 @@ export function ProfileForm({ profile }: { profile: {
                       src={profile.image || ""}
                       alt={profile.display_name || "User"}
                       className={cn(
-                        "transition-all duration-300",
-                        isHoveringAvatar ? "opacity-50" : "opacity-100"
+                        "transition-all duration-300"
+                        // isHoveringAvatar ? "opacity-50" : "opacity-100"
                       )}
                     />
                     <AvatarFallback className="text-2xl">
                       {profile.display_name?.[0] || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <div
+                  {/* <div
                     className={cn(
                       "absolute inset-0 flex items-center justify-center rounded-full bg-black/30 transition-opacity duration-300",
                       isHoveringAvatar ? "opacity-100" : "opacity-0"
                     )}
                   >
                     <Camera className="h-6 w-6 text-white" />
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="w-full flex-1">
