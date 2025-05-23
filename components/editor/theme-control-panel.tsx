@@ -14,6 +14,7 @@ import {
   DEFAULT_FONT_SERIF,
   defaultThemeState,
 } from "@/config/theme";
+import { useControlsTabFromUrl } from "@/hooks/use-controls-tab-from-url";
 import { useEditorStore } from "@/store/editor-store";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
 import { getAppliedThemeFont, monoFonts, sansSerifFonts, serifFonts } from "@/utils/theme-fonts";
@@ -35,6 +36,7 @@ const ThemeControlPanel = ({
   themePromise,
 }: ThemeEditorControlsProps) => {
   const { themeState } = useEditorStore();
+  const { tab, handleSetTab } = useControlsTabFromUrl();
 
   const currentStyles = React.useMemo(
     () => ({
@@ -86,12 +88,18 @@ const ThemeControlPanel = ({
         )}
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
-        <Tabs defaultValue="colors" className="flex min-h-0 w-full flex-1 flex-col">
+        <Tabs defaultValue={tab} className="flex min-h-0 w-full flex-1 flex-col">
           <HorizontalScrollArea className="mt-2 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
-              <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
-              <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
-              <TabsTriggerPill value="other">Other</TabsTriggerPill>
+              <TabsTriggerPill value="colors" onClick={() => handleSetTab("colors")}>
+                Colors
+              </TabsTriggerPill>
+              <TabsTriggerPill value="typography" onClick={() => handleSetTab("typography")}>
+                Typography
+              </TabsTriggerPill>
+              <TabsTriggerPill value="other" onClick={() => handleSetTab("other")}>
+                Other
+              </TabsTriggerPill>
             </TabsList>
           </HorizontalScrollArea>
 
