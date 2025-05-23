@@ -4,7 +4,17 @@ import * as React from "react";
 import { Header } from "@/components/header";
 import { ProfileForm } from "./profile-form";
 
-export function ProfileClient({ profile }: { profile: any }) {
+export function ProfileClient({ profile }: { profile: {
+  id: string;
+  display_name: string;
+  bio?: string;
+  image?: string;
+  social_links?: {
+    github?: string;
+    twitter?: string;
+    website?: string;
+  };
+} }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
       <Header />
