@@ -1,35 +1,32 @@
 "use client";
 
+import { AlertCircle } from "lucide-react";
 import React, { use } from "react";
-import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
-import ControlSection from "./control-section";
-import ColorPicker from "./color-picker";
-import { ScrollArea } from "../ui/scroll-area";
-import ThemePresetSelect from "./theme-preset-select";
-import {
-  getAppliedThemeFont,
-  monoFonts,
-  sansSerifFonts,
-  serifFonts,
-} from "../../utils/theme-fonts";
-import { useEditorStore } from "../../store/editor-store";
-import { Label } from "../ui/label";
-import { SliderWithInput } from "./slider-with-input";
-import { Tabs, TabsList, TabsContent } from "../ui/tabs";
-import ThemeFontSelect from "./theme-font-select";
+
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import {
   COMMON_STYLES,
   DEFAULT_FONT_MONO,
   DEFAULT_FONT_SANS,
   DEFAULT_FONT_SERIF,
   defaultThemeState,
-} from "../../config/theme";
-import { Separator } from "../ui/separator";
-import { AlertCircle } from "lucide-react";
-import ShadowControl from "./shadow-control";
-import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
-import ThemeEditActions from "./theme-edit-actions";
+} from "@/config/theme";
+import { useEditorStore } from "@/store/editor-store";
+import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
+import { getAppliedThemeFont, monoFonts, sansSerifFonts, serifFonts } from "@/utils/theme-fonts";
+import { HorizontalScrollArea } from "../horizontal-scroll-area";
+import ColorPicker from "./color-picker";
+import ControlSection from "./control-section";
 import HslAdjustmentControls from "./hsl-adjustment-controls";
+import ShadowControl from "./shadow-control";
+import { SliderWithInput } from "./slider-with-input";
+import ThemeEditActions from "./theme-edit-actions";
+import ThemeFontSelect from "./theme-font-select";
+import ThemePresetSelect from "./theme-preset-select";
+import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 
 const ThemeControlPanel = ({
   styles,
@@ -90,16 +87,16 @@ const ThemeControlPanel = ({
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
         <Tabs defaultValue="colors" className="flex min-h-0 w-full flex-1 flex-col">
-          <div className="mt-2 px-4">
+          <HorizontalScrollArea className="mt-2 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
               <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
               <TabsTriggerPill value="other">Other</TabsTriggerPill>
             </TabsList>
-          </div>
+          </HorizontalScrollArea>
 
-          <ScrollArea className="h-full flex-1 p-4 pt-0">
-            <TabsContent value="colors">
+          <TabsContent value="colors" className="size-full overflow-hidden">
+            <ScrollArea className="h-full flex-1 p-4 py-0">
               <ControlSection title="Primary Colors" id="primary-colors" expanded>
                 <ColorPicker
                   color={currentStyles.primary}
@@ -292,9 +289,11 @@ const ThemeControlPanel = ({
                   label="Sidebar Ring"
                 />
               </ControlSection>
-            </TabsContent>
+            </ScrollArea>
+          </TabsContent>
 
-            <TabsContent value="typography" className="flex flex-col gap-4">
+          <TabsContent value="typography" className="flex size-full flex-col gap-4 overflow-hidden">
+            <ScrollArea className="h-full flex-1 p-4 py-0">
               <div className="bg-muted/50 mb-2 flex items-start gap-2.5 rounded-md border p-3">
                 <AlertCircle className="text-muted-foreground mt-0.5 h-5 w-5 shrink-0" />
                 <div className="text-muted-foreground text-sm">
@@ -365,9 +364,11 @@ const ThemeControlPanel = ({
                   label="Letter Spacing"
                 />
               </ControlSection>
-            </TabsContent>
+            </ScrollArea>
+          </TabsContent>
 
-            <TabsContent value="other">
+          <TabsContent value="other" className="size-full overflow-hidden">
+            <ScrollArea className="h-full flex-1 p-4 py-0">
               <ControlSection title="HSL Adjustments" expanded>
                 <HslAdjustmentControls />
               </ControlSection>
@@ -415,8 +416,8 @@ const ThemeControlPanel = ({
                   }}
                 />
               </ControlSection>
-            </TabsContent>
-          </ScrollArea>
+            </ScrollArea>
+          </TabsContent>
         </Tabs>
       </div>
     </>

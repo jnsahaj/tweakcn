@@ -62,12 +62,17 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
   const styles = themeState.styles;
 
   return (
-    <div className="h-full overflow-hidden">
+    <div className="relative isolate flex flex-1 overflow-hidden">
       {/* Desktop Layout */}
-      <div className="hidden h-full md:block">
-        <ResizablePanelGroup direction="horizontal" className="h-full">
-          <ResizablePanel defaultSize={30} minSize={20} maxSize={40}>
-            <div className="flex h-full flex-col">
+      <div className="hidden size-full md:block">
+        <ResizablePanelGroup direction="horizontal" className="isolate">
+          <ResizablePanel
+            defaultSize={30}
+            minSize={20}
+            maxSize={50}
+            className="z-1 min-w-[max(20%,22rem)]"
+          >
+            <div className="relative isolate flex h-full flex-1 flex-col">
               <Controls
                 styles={styles}
                 onChange={handleStyleChange}
@@ -77,7 +82,7 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
             </div>
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel defaultSize={70} minSize={20}>
+          <ResizablePanel defaultSize={70} minSize={50}>
             <div className="flex h-full flex-col">
               <div className="flex min-h-0 flex-1 flex-col">
                 <ActionBar />
@@ -87,9 +92,8 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-
       {/* Mobile Layout */}
-      <div className="h-full md:hidden">
+      <div className="h-full w-full flex-1 overflow-hidden md:hidden">
         <Tabs defaultValue="controls" className="h-full">
           <TabsList className="w-full rounded-none">
             <TabsTrigger value="controls" className="flex-1">
