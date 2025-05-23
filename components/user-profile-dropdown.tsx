@@ -89,7 +89,7 @@ export function UserProfileDropdown() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/profile">Profile</Link>
+                <Link href="/settings/profile">Profile</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard">Dashboard</Link>
