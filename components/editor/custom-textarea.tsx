@@ -35,7 +35,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGene
     editorProps: {
       attributes: {
         class:
-          "min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50",
+          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full rounded-md bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50",
       },
       handleKeyDown: (view, event) => {
         if (event.key === "Enter" && !event.shiftKey) {

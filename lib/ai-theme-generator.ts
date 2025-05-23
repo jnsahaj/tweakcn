@@ -12,10 +12,7 @@ interface GenerateThemeOptions {
 /**
  * Generate a theme with AI using a text prompt
  */
-export async function generateThemeWithAI(
-  prompt: string,
-  options?: GenerateThemeOptions
-) {
+export async function generateThemeWithAI(prompt: string, options?: GenerateThemeOptions) {
   if (!prompt.trim()) return null;
 
   try {
@@ -74,7 +71,6 @@ export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
   if (!document.startViewTransition) {
     setThemeState({
       ...themeState,
-      preset: undefined,
       styles: {
         ...themeState.styles,
         light: { ...defaultThemeState.styles.light, ...themeStyles.light },
@@ -85,7 +81,6 @@ export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
     document.startViewTransition(() => {
       setThemeState({
         ...themeState,
-        preset: undefined,
         styles: {
           ...themeState.styles,
           light: {

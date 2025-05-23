@@ -4,6 +4,8 @@ import { DataTable } from "@/components/examples/dashboard/components/data-table
 import { SectionCards } from "@/components/examples/dashboard/components/section-cards";
 import { SiteHeader } from "@/components/examples/dashboard/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ChartPieDonut } from "./components/chart-pie-donut";
+import { ChartBarMixed } from "./components/chart-bar-mixed";
 
 import data from "./data.json";
 
@@ -19,6 +21,14 @@ export default function Page() {
               <SectionCards />
               <div className="px-4 lg:px-6">
                 <ChartAreaInteractive />
+              </div>
+              <div className="flex gap-4 px-4 lg:px-6">
+                <div className="basis-1/2">
+                  <ChartPieDonut />
+                </div>
+                <div className="basis-1/2">
+                  <ChartBarMixed />
+                </div>
               </div>
               <DataTable data={data} />
             </div>

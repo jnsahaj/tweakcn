@@ -1,5 +1,6 @@
 "use client";
 
+import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration, useAIThemeGenerationPrompts } from "@/hooks/use-ai-theme-generation";
@@ -13,11 +14,10 @@ import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { usePreviewPanel } from "../hooks/use-preview-panel";
 import { LoadingLogo } from "./loading-logo";
-import ThemePresetSelect from "./temp-theme-preset-select";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
-  loading: () => <Loading className="min-h-[80px] w-full rounded-lg" />,
+  loading: () => <Loading className="min-h-[60px] w-full rounded-lg" />,
 });
 
 export function AIChatForm() {
@@ -68,11 +68,14 @@ export function AIChatForm() {
   };
 
   return (
-    <div className="bg-background @container/form rounded-xl border shadow transition-all">
-      <div className="bg-background relative z-10 flex size-full min-h-[100px] flex-1 flex-col overflow-hidden rounded-xl">
+    <div className="@container/form relative transition-all">
+      <div className="bg-background relative z-10 flex size-full min-h-[100px] flex-1 flex-col overflow-hidden rounded-lg border shadow-xs">
         <label className="sr-only">Chat Input</label>
         <div className={cn("min-h-[80px] p-2 pb-0", aiGenerateLoading && "pointer-events-none")}>
-          <div className="relative isolate" aria-disabled={aiGenerateLoading}>
+          <div
+            className="bg-muted/40 relative isolate rounded-lg"
+            aria-disabled={aiGenerateLoading}
+          >
             <AIChatFormGeneratingFallback aiGenerateLoading={aiGenerateLoading} />
             <CustomTextarea onContentChange={handleContentChange} onGenerate={handleGenerate} />
           </div>

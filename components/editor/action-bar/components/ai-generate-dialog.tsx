@@ -59,7 +59,7 @@ export function AIGenerateDialog({
 
         <div className="px-6">
           <div className="bg-muted/40 rounded-lg p-1 max-w-[500px]">
-            <Suspense fallback={<Loading className="min-h-[80px]" />}>
+            <Suspense fallback={<Loading className="min-h-[60px]" />}>
               <CustomTextarea
                 onContentChange={handleContentChange}
                 onGenerate={handleGenerate}

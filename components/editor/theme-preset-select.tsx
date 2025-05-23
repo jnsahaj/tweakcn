@@ -73,7 +73,7 @@ const ThemeControls = () => {
   const randomize = useCallback(() => {
     const random = Math.floor(Math.random() * presetNames.length);
     applyThemePreset(presetNames[random]);
-  }, [presetNames]);
+  }, [presetNames, applyThemePreset]);
 
   const { theme, toggleTheme } = useTheme();
   const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -166,7 +166,7 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
           : (currentIndex - 1 + filteredPresets.length) % filteredPresets.length;
       applyThemePreset(filteredPresets[newIndex]);
     },
-    [currentIndex, filteredPresets]
+    [currentIndex, filteredPresets, applyThemePreset]
   );
   return (
     <>
@@ -218,7 +218,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
     } else {
       unloadSavedPresets();
     }
-  }, [loadSavedPresets, session?.user]);
+  }, [loadSavedPresets, unloadSavedPresets, session?.user]);
 
   const isSavedTheme = useCallback(
     (presetId: string) => {
@@ -332,32 +332,30 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                     {filteredSavedThemes
                       .filter((name) => name !== "default" && isSavedTheme(name))
                       .map((presetName, index) => (
-                        <>
-                          <CommandItem
-                            key={`${presetName}-${index}`}
-                            value={`${presetName}-${index}`}
-                            onSelect={() => {
-                              applyThemePreset(presetName);
-                              setSearch("");
-                            }}
-                            className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
-                          >
-                            <ThemeColors presetName={presetName} mode={mode} />
-                            <div className="flex flex-1 items-center gap-2">
-                              <span className="line-clamp-1 text-sm font-medium capitalize">
-                                {presets[presetName]?.label || presetName}
-                              </span>
-                              {presets[presetName] && isThemeNew(presets[presetName]) && (
-                                <Badge variant="secondary" className="rounded-full text-xs">
-                                  New
-                                </Badge>
-                              )}
-                            </div>
-                            {presetName === currentPresetName && (
-                              <Check className="h-4 w-4 shrink-0 opacity-70" />
+                        <CommandItem
+                          key={`${presetName}-${index}`}
+                          value={`${presetName}-${index}`}
+                          onSelect={() => {
+                            applyThemePreset(presetName);
+                            setSearch("");
+                          }}
+                          className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
+                        >
+                          <ThemeColors presetName={presetName} mode={mode} />
+                          <div className="flex flex-1 items-center gap-2">
+                            <span className="line-clamp-1 text-sm font-medium capitalize">
+                              {presets[presetName]?.label || presetName}
+                            </span>
+                            {presets[presetName] && isThemeNew(presets[presetName]) && (
+                              <Badge variant="secondary" className="rounded-full text-xs">
+                                New
+                              </Badge>
                             )}
-                          </CommandItem>
-                        </>
+                          </div>
+                          {presetName === currentPresetName && (
+                            <Check className="h-4 w-4 shrink-0 opacity-70" />
+                          )}
+                        </CommandItem>
                       ))}
                   </CommandGroup>
                   <Separator className="my-2" />

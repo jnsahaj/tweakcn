@@ -4,7 +4,7 @@ import { Hsl } from "culori";
 
 export const formatNumber = (num?: number) => {
   if (!num) return "0";
-  return num % 1 === 0 ? num : num.toFixed(2);
+  return num % 1 === 0 ? num : num.toFixed(4);
 };
 
 export const formatHsl = (hsl: Hsl) => {

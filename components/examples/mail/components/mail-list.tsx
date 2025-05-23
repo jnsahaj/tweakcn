@@ -6,22 +6,23 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Mail } from "@/components/examples/mail/data";
 import { useMail } from "@/components/examples/mail/use-mail";
-
+import { useFullscreen } from "@/hooks/use-fullscreen";
 interface MailListProps {
   items: Mail[];
 }
 
 export function MailList({ items }: MailListProps) {
   const [mail, setMail] = useMail();
+  const { isFullscreen } = useFullscreen();
 
   return (
-    <ScrollArea className="h-screen">
+    <ScrollArea className={cn("h-screen", isFullscreen && "h-[75%]")}>
       <div className="flex flex-col gap-2 p-4 pt-0">
         {items.map((item) => (
           <button
             key={item.id}
             className={cn(
-              "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent hover:text-accent-foreground",
+              "hover:bg-accent hover:text-accent-foreground flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all",
               mail.selected === item.id && "bg-muted"
             )}
             onClick={() =>
@@ -35,16 +36,12 @@ export function MailList({ items }: MailListProps) {
               <div className="flex items-center">
                 <div className="flex items-center gap-2">
                   <div className="font-semibold">{item.name}</div>
-                  {!item.read && (
-                    <span className="flex h-2 w-2 rounded-full bg-blue-600" />
-                  )}
+                  {!item.read && <span className="flex h-2 w-2 rounded-full bg-blue-600" />}
                 </div>
                 <div
                   className={cn(
                     "ml-auto text-xs",
-                    mail.selected === item.id
-                      ? "text-foreground"
-                      : "text-muted-foreground"
+                    mail.selected === item.id ? "text-foreground" : "text-muted-foreground"
                   )}
                 >
                   {formatDistanceToNow(new Date(item.date), {
@@ -54,7 +51,7 @@ export function MailList({ items }: MailListProps) {
               </div>
               <div className="text-xs font-medium">{item.subject}</div>
             </div>
-            <div className="line-clamp-2 text-xs text-muted-foreground">
+            <div className="text-muted-foreground line-clamp-2 text-xs">
               {item.text.substring(0, 300)}
             </div>
             {item.labels.length ? (
@@ -73,9 +70,7 @@ export function MailList({ items }: MailListProps) {
   );
 }
 
-function getBadgeVariantFromLabel(
-  label: string
-): ComponentProps<typeof Badge>["variant"] {
+function getBadgeVariantFromLabel(label: string): ComponentProps<typeof Badge>["variant"] {
   if (["work"].includes(label.toLowerCase())) {
     return "default";
   }

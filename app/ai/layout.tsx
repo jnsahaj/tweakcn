@@ -6,7 +6,7 @@ export default function AiLayout({ children }: { children: React.ReactNode }) {
       <div className="z-1">
         <Header />
       </div>
-      <main className="z-2 flex flex-1 flex-col overflow-hidden">{children}</main>
+      <main className="isolate z-2 flex flex-1 flex-col overflow-hidden">{children}</main>
     </div>
   );
 }
