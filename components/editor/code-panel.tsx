@@ -43,6 +43,9 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   const isSavedPreset = useThemePresetStore(
     (state) => preset && state.getPreset(preset)?.source === "SAVED"
   );
+  const getAvailableColorFormats = usePreferencesStore(
+    (state) => state.getAvailableColorFormats
+  );
 
   const code = generateThemeCode(
     themeEditorState,
@@ -194,10 +197,11 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             <SelectValue className="focus:ring-transparent" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="hsl">hsl</SelectItem>
-            <SelectItem value="oklch">oklch</SelectItem>
-            <SelectItem value="rgb">rgb</SelectItem>
-            <SelectItem value="hex">hex</SelectItem>
+            {getAvailableColorFormats().map((colorFormat) => (
+              <SelectItem key={colorFormat} value={colorFormat}>
+                {colorFormat}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

@@ -60,7 +60,6 @@ export default function ThemeView({
     setThemeState({
       ...themeState,
       styles: theme.styles,
-      preset: undefined,
     });
     saveThemeCheckpoint();
     router.push("/editor/theme");
