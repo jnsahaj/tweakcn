@@ -68,7 +68,7 @@ export function CommunityThemePreviewDialog({
   };
 
   const handleShare = () => {
-    const url = `${window.location.origin}/community/themes/${communityTheme.id}`;
+    const url = `${window.location.origin}/themes/${communityTheme.theme.id}`;
     navigator.clipboard.writeText(url);
     toast({
       title: "Theme URL copied to clipboard!",
