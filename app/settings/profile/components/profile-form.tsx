@@ -11,7 +11,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SocialLinks } from "@/db/schema";
+
+type SocialLinks = {
+  github?: string;
+  twitter?: string;
+  website?: string;
+};
 
 const MAX_BIO_LENGTH = 180;
 
