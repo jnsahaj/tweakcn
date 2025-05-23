@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/header";
 import { Loading } from "@/components/loading";
+import { ThemeLikeHandler } from "@/app/(community)/themes/components/theme-like-handler";
 
 interface ThemePageProps {
   params: Promise<{
@@ -61,15 +62,18 @@ export default async function ThemePage({ params }: ThemePageProps) {
   const communityTheme = result?.communityTheme;
 
   return (
-    <Suspense
-      fallback={
-        <>
-          <Header />
-          <Loading />
-        </>
-      }
-    >
-      <ThemeView theme={theme} communityTheme={communityTheme} />
-    </Suspense>
+    <>
+      <ThemeLikeHandler />
+      <Suspense
+        fallback={
+          <>
+            <Header />
+            <Loading />
+          </>
+        }
+      >
+        <ThemeView theme={theme} communityTheme={communityTheme} />
+      </Suspense>
+    </>
   );
 }

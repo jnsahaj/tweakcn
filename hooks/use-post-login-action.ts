@@ -12,7 +12,8 @@ export type PostLoginActionType =
   | "SAVE_THEME"
   | "AI_GENERATE_FROM_DIALOG"
   | "AI_GENERATE_FROM_CHAT"
-  | "SAVE_THEME_FOR_SHARE";
+  | "SAVE_THEME_FOR_SHARE"
+  | "LIKE_THEME";
 
 export interface PostLoginActionPayload<T = any> {
   type: PostLoginActionType;

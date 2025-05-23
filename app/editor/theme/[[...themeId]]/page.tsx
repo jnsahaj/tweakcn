@@ -6,7 +6,6 @@ import { Header } from "@/components/header";
 import { getTheme } from "@/actions/themes";
 import { Suspense } from "react";
 import { Loading } from "@/components/loading";
-import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 
 export const metadata: Metadata = {
   title: "tweakcn — Theme Generator for shadcn/ui",
@@ -14,30 +13,17 @@ export const metadata: Metadata = {
     "Easily customize and preview your shadcn/ui theme with tweakcn. Modify colors, fonts, and styles in real-time.",
 };
 
-export default async function Component({
-  params,
-}: {
-  params: Promise<{ themeId: string[] }>;
-}) {
+export default async function Component({ params }: { params: Promise<{ themeId: string[] }> }) {
   const { themeId } = await params;
-  const themePromise =
-    themeId?.length > 0 ? getTheme(themeId?.[0]) : Promise.resolve(null);
+  const themePromise = themeId?.length > 0 ? getTheme(themeId?.[0]) : Promise.resolve(null);
 
   return (
     <>
-      <div
-        className={cn(
-          "h-screen flex flex-col text-foreground bg-background transition-colors"
-        )}
-      >
-        <AuthDialogWrapper />
+      <div className={cn("text-foreground bg-background flex h-screen flex-col transition-colors")}>
         <Header />
         <main className="flex-1 overflow-hidden">
           <Suspense fallback={<Loading />}>
-            <Editor
-              config={getEditorConfig("theme")}
-              themePromise={themePromise}
-            />
+            <Editor config={getEditorConfig("theme")} themePromise={themePromise} />
           </Suspense>
         </main>
       </div>

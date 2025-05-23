@@ -2,6 +2,8 @@
 
 import { useOptimistic, startTransition } from "react";
 import { likeCommunityTheme, unlikeCommunityTheme } from "@/actions/community-themes";
+import { authClient } from "@/lib/auth-client";
+import { useAuthStore } from "@/store/auth-store";
 
 interface UseOptimisticLikeProps {
   themeId: string;
@@ -18,8 +20,15 @@ export function useOptimisticLike({
     isLiked: initialIsLiked,
     likesCount: initialLikesCount,
   });
+  const { data: session } = authClient.useSession();
+  const { openAuthDialog } = useAuthStore();
 
   const handleLikeToggle = async () => {
+    if (!session) {
+      openAuthDialog("signin", "LIKE_THEME", { themeId });
+      return;
+    }
+
     const newIsLiked = !optimisticState.isLiked;
     const newLikesCount = newIsLiked
       ? optimisticState.likesCount + 1

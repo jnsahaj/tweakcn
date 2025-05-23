@@ -1,4 +1,3 @@
-import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 import { Metadata } from "next";
 import { AIInterface } from "./components/ai-interface";
 import { Toolbar } from "./components/toolbar";
@@ -17,7 +16,6 @@ export default function AiPage() {
   return (
     <PreviewPanelProvider>
       <Toolbar />
-      <AuthDialogWrapper />
       <div className="relative isolate flex flex-1 flex-col overflow-hidden">
         <AIInterface />
       </div>
