@@ -26,7 +26,7 @@ const createCommunityProfileSchema = z.object({
 const updateCommunityProfileSchema = z.object({
   id: z.string(),
   display_name: z.string().min(1, "Display name cannot be empty").optional(),
-  bio: z.string().optional(),
+  bio: z.string().optional().nullable(),
   image: z.string().optional(),
   social_links: z
     .object({
@@ -141,6 +141,7 @@ export async function createCommunityProfile(formData: {
 export async function updateCommunityProfile(formData: {
   id: string;
   display_name?: string;
+  bio?: string | null;
   social_links?: {
     github?: string;
     twitter?: string;
@@ -169,12 +170,13 @@ export async function updateCommunityProfile(formData: {
       details: validation.error.format(),
     };
   }
-  const { id, display_name, social_links, is_active } = validation.data;
-  if (!display_name && !social_links && typeof is_active === "undefined") {
+  const { id, display_name, bio, social_links, is_active } = validation.data;
+  if (!display_name && !bio && !social_links && typeof is_active === "undefined") {
     return { success: false, error: "No update data provided" };
   }
   const updateData: any = {};
   if (display_name) updateData.display_name = display_name;
+  if (!!bio) updateData.bio = bio;
   if (social_links) updateData.social_links = social_links;
   if (typeof is_active !== "undefined") updateData.is_active = is_active;
   try {
@@ -183,7 +185,7 @@ export async function updateCommunityProfile(formData: {
       .set(updateData)
       .where(eq(community_profile.id, id))
       .returning();
-    revalidatePath("/community");
+    revalidatePath("/settings");
     return { success: true, profile: updatedProfile };
   } catch (error) {
     console.error(`Error updating community profile ${id}:`, error);
