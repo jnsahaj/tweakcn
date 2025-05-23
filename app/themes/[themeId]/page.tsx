@@ -1,7 +1,8 @@
 import { Suspense } from "react";
-import { getTheme } from "@/actions/themes";
+import { getTheme, getThemeWithCommunity } from "@/actions/themes";
 import ThemeView from "@/components/theme-view";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Header } from "@/components/header";
 import { Loading } from "@/components/loading";
 
@@ -15,20 +16,32 @@ export async function generateMetadata({
   params,
 }: ThemePageProps): Promise<Metadata> {
   const { themeId } = await params;
-  const theme = await getTheme(themeId);
+  const result = await getThemeWithCommunity(themeId);
+  const theme = result?.theme;
+  
+  if (!theme) {
+    return {
+      title: "Theme Not Found - tweakcn",
+      description: "The requested theme could not be found",
+      robots: {
+        index: false,
+        follow: true,
+      },
+    };
+  }
 
   return {
-    title: theme?.name + " - tweakcn",
-    description: `Discover shadcn/ui themes - ${theme?.name} theme`,
+    title: theme.name + " - tweakcn",
+    description: `Discover shadcn/ui themes - ${theme.name} theme`,
     openGraph: {
-      title: `${theme?.name} - tweakcn`,
-      description: `Discover shadcn/ui themes - ${theme?.name} theme`,
+      title: `${theme.name} - tweakcn`,
+      description: `Discover shadcn/ui themes - ${theme.name} theme`,
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${theme?.name} - tweakcn`,
-      description: `Discover shadcn/ui themes - ${theme?.name} theme`,
+      title: `${theme.name} - tweakcn`,
+      description: `Discover shadcn/ui themes - ${theme.name} theme`,
     },
     robots: {
       index: false,
@@ -39,7 +52,15 @@ export async function generateMetadata({
 
 export default async function ThemePage({ params }: ThemePageProps) {
   const { themeId } = await params;
-  const theme = await getTheme(themeId);
+  
+  const result = await getThemeWithCommunity(themeId);
+  const theme = result?.theme;
+  
+  if (!theme) {
+    notFound();
+  }
+  
+  const communityTheme = result?.communityTheme;
 
   return (
     <Suspense
@@ -50,7 +71,7 @@ export default async function ThemePage({ params }: ThemePageProps) {
         </>
       }
     >
-      <ThemeView theme={theme} />
+      <ThemeView theme={theme} communityTheme={communityTheme} />
     </Suspense>
   );
 }

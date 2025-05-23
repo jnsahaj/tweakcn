@@ -2,9 +2,12 @@
 
 import { notFound } from "next/navigation";
 import type { Theme } from "@/types/theme";
+import type { CommunityTheme } from "@/types/theme";
 import ThemePreviewPanel from "./editor/theme-preview-panel";
 import { Button } from "@/components/ui/button";
-import { Share, Sun, Moon, MoreVertical, Edit } from "lucide-react";
+import { Share, Sun, Moon, MoreVertical, Edit, Heart } from "lucide-react";
+import { LikeButton } from "@/app/(community)/themes/components/like-button";
+import { useOptimisticLike } from "@/app/(community)/themes/hooks/use-optimistic-like";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,8 +20,15 @@ import { useEffect } from "react";
 import { Header } from "./header";
 import { Footer } from "@/components/home/footer";
 import { toast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
-export default function ThemeView({ theme }: { theme: Theme }) {
+export default function ThemeView({ 
+  theme, 
+  communityTheme 
+}: { 
+  theme: Theme; 
+  communityTheme?: CommunityTheme | null 
+}) {
   const {
     themeState,
     setThemeState,
@@ -74,8 +84,40 @@ export default function ThemeView({ theme }: { theme: Theme }) {
       <main className="flex-1 bg-background text-foreground">
         <div className="container mx-auto py-8 px-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold">{theme.name}</h1>
+            {communityTheme ? (
+              <div className="flex items-center gap-3">
+                <div className="bg-muted relative h-12 w-12 overflow-hidden rounded-full">
+                  {communityTheme.community_profile.image ? (
+                    <img
+                      src={communityTheme.community_profile.image}
+                      alt={communityTheme.community_profile.name || "User"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="bg-primary/10 text-primary flex h-full w-full items-center justify-center text-lg font-semibold">
+                      {communityTheme.community_profile.name?.[0]?.toUpperCase() || "A"}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <h1 className="text-2xl font-bold">{theme.name}</h1>
+                  <p className="text-muted-foreground text-sm">
+                    {communityTheme.community_profile.name || "Anonymous"}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <h1 className="text-3xl font-bold">{theme.name}</h1>
+            )}
             <div className="flex items-center gap-2">
+              {communityTheme && (
+                <LikeButton 
+                  themeId={communityTheme.id}
+                  initialIsLiked={communityTheme.is_liked}
+                  initialLikesCount={communityTheme.likes_count}
+                  className="mr-2"
+                />
+              )}
               <Button variant="outline" size="icon" onClick={toggleTheme}>
                 {currentMode === "dark" ? (
                   <Sun className="size-4" />
