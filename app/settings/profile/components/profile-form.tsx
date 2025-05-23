@@ -42,7 +42,17 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function ProfileForm({ profile }: { profile: any }) {
+export function ProfileForm({ profile }: { profile: {
+  id: string;
+  display_name: string;
+  bio?: string;
+  image?: string;
+  social_links?: {
+    github?: string;
+    twitter?: string;
+    website?: string;
+  };
+} }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isHoveringAvatar, setIsHoveringAvatar] = useState(false);
 
