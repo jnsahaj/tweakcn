@@ -1,5 +1,6 @@
 "use client";
 
+import ShadcnBlocksLogo from "@/assets/shadcnblocks.svg";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -8,6 +9,7 @@ import { useFullscreen } from "@/hooks/use-fullscreen";
 import { cn } from "@/lib/utils";
 import { ThemeEditorPreviewProps } from "@/types/theme";
 import { Maximize, Minimize, Moon, Sun } from "lucide-react";
+import Link from "next/link";
 import { lazy } from "react";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
 import { TooltipWrapper } from "../tooltip-wrapper";
@@ -20,6 +22,7 @@ const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoTasks = lazy(() => import("@/components/examples/tasks"));
 const DemoMusic = lazy(() => import("@/components/examples/music"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
+const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
 
 const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
@@ -47,10 +50,11 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
               <div className="hidden md:flex">
+                <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
+                <TabsTriggerPill value="pricing">Pricing</TabsTriggerPill>
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
                 <TabsTriggerPill value="tasks">Tasks</TabsTriggerPill>
                 <TabsTriggerPill value="music">Music</TabsTriggerPill>
-                <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
               </div>
               <TabsTriggerPill value="colors">Color Palette</TabsTriggerPill>
             </TabsList>
@@ -100,6 +104,39 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                 </ExamplesPreviewContainer>
               </TabsContent>
 
+              <TabsContent value="dashboard" className="@container mt-0 h-full space-y-6">
+                <ExamplesPreviewContainer className="min-w-[1400px]">
+                  <DemoDashboard />
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="pricing" className="@container mt-0 h-full space-y-6">
+                <ExamplesPreviewContainer>
+                  <div className="absolute top-4 right-4 z-10">
+                    <Link
+                      href="https://shadcnblocks.com?utm_source=tweakcn&utm_medium=theme-editor-preview"
+                      target="_blank"
+                    >
+                      <Button variant="outline" className="group h-12 shadow-sm">
+                        <div className="flex items-center gap-2">
+                          <ShadcnBlocksLogo
+                            className="shrink-0"
+                            style={{ width: "24px", height: "24px" }}
+                          />
+                          <div className="text-left">
+                            <div className="font-bold">Shadcnblocks.com</div>
+                            <div className="text-muted-foreground group-hover:text-accent-foreground text-xs transition-colors">
+                              600+ extra shadcn blocks
+                            </div>
+                          </div>
+                        </div>
+                      </Button>
+                    </Link>
+                  </div>
+                  <DemoPricing />
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
               <TabsContent value="mail" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMail />
@@ -115,12 +152,6 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               <TabsContent value="music" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMusic />
-                </ExamplesPreviewContainer>
-              </TabsContent>
-
-              <TabsContent value="dashboard" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer className="min-w-[1400px]">
-                  <DemoDashboard />
                 </ExamplesPreviewContainer>
               </TabsContent>
 
