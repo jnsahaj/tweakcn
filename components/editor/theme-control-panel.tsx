@@ -89,7 +89,7 @@ const ThemeControlPanel = ({
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
         <Tabs defaultValue={tab} className="flex min-h-0 w-full flex-1 flex-col">
-          <HorizontalScrollArea className="mt-2 px-4">
+          <HorizontalScrollArea className="mt-2 mb-1 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="colors" onClick={() => handleSetTab("colors")}>
                 Colors
@@ -103,8 +103,8 @@ const ThemeControlPanel = ({
             </TabsList>
           </HorizontalScrollArea>
 
-          <TabsContent value="colors" className="size-full overflow-hidden">
-            <ScrollArea className="h-full flex-1 p-4 py-0">
+          <TabsContent value="colors" className="mt-1 size-full overflow-hidden">
+            <ScrollArea className="h-full px-4">
               <ControlSection title="Primary Colors" id="primary-colors" expanded>
                 <ColorPicker
                   color={currentStyles.primary}
@@ -300,9 +300,9 @@ const ThemeControlPanel = ({
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="typography" className="flex size-full flex-col gap-4 overflow-hidden">
-            <ScrollArea className="h-full flex-1 p-4 py-0">
-              <div className="bg-muted/50 mb-2 flex items-start gap-2.5 rounded-md border p-3">
+          <TabsContent value="typography" className="mt-1 size-full overflow-hidden">
+            <ScrollArea className="h-full px-4">
+              <div className="bg-muted/50 mb-4 flex items-start gap-2.5 rounded-md border p-3">
                 <AlertCircle className="text-muted-foreground mt-0.5 h-5 w-5 shrink-0" />
                 <div className="text-muted-foreground text-sm">
                   <p>
@@ -375,8 +375,8 @@ const ThemeControlPanel = ({
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="other" className="size-full overflow-hidden">
-            <ScrollArea className="h-full flex-1 p-4 py-0">
+          <TabsContent value="other" className="mt-1 size-full overflow-hidden">
+            <ScrollArea className="h-full px-4">
               <ControlSection title="HSL Adjustments" expanded>
                 <HslAdjustmentControls />
               </ControlSection>

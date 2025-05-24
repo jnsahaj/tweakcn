@@ -43,7 +43,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
         )}
       >
         <Tabs defaultValue="cards" className="flex flex-1 flex-col overflow-hidden">
-          <HorizontalScrollArea className="mt-2 flex w-full items-center justify-between px-4">
+          <HorizontalScrollArea className="mt-2 mb-1 flex w-full items-center justify-between px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
               <div className="hidden md:flex">
@@ -62,12 +62,12 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                     variant="ghost"
                     size="icon"
                     onClick={handleThemeToggle}
-                    className="group h-8"
+                    className="group size-8"
                   >
                     {theme === "light" ? (
-                      <Sun className="size-4 transition-all group-hover:scale-120" />
+                      <Sun className="transition-all group-hover:scale-120" />
                     ) : (
-                      <Moon className="size-4 transition-all group-hover:scale-120" />
+                      <Moon className="transition-all group-hover:scale-120" />
                     )}
                   </Button>
                 </TooltipWrapper>
@@ -80,21 +80,21 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                   variant="ghost"
                   size="icon"
                   onClick={toggleFullscreen}
-                  className="group h-8"
+                  className="group size-8"
                 >
                   {isFullscreen ? (
-                    <Minimize className="size-4 transition-all group-hover:scale-120" />
+                    <Minimize className="transition-all group-hover:scale-120" />
                   ) : (
-                    <Maximize className="size-4 transition-all group-hover:scale-120" />
+                    <Maximize className="transition-all group-hover:scale-120" />
                   )}
                 </Button>
               </TooltipWrapper>
             </div>
           </HorizontalScrollArea>
 
-          <ScrollArea className="relative m-4 mt-2 flex flex-1 flex-col overflow-hidden rounded-lg border">
+          <ScrollArea className="relative m-4 mt-1 flex flex-1 flex-col overflow-hidden rounded-lg border">
             <div className="flex h-full flex-1 flex-col">
-              <TabsContent value="cards" className="my-4 h-full space-y-6 px-4">
+              <TabsContent value="cards" className="m-0 h-full space-y-6 p-2 md:p-4">
                 <ExamplesPreviewContainer>
                   <DemoCards />
                 </ExamplesPreviewContainer>
