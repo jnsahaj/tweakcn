@@ -9,7 +9,7 @@ export const PROMPTS = {
   minimalStyle: {
     label: "Minimal Style",
     prompt:
-      "Generate a minimalist theme palette. Use a very limited set of harmonious colors. All surfaces (background, card, popover, sidebar) should use subtle variations of the same base color, with enough contrast to distinguish them when they are next to each other. For brand colors (primary, secondary, muted, accent, ring) keep original color palette. Minimize borders and shadows. For shadows, you can set 'shadow-opacity' to 0% or near 0% or make them barely visible. For borders, use a subtle grayscale color. Typography should be clean, modern, and easy to read, with no decorative fonts. The overall look should be calm, simple, and highly functional.",
+      "Generate a minimalist theme palette. All surfaces (background, card, popover, sidebar) should use subtle variations of the same base color, with enough contrast to distinguish them when they are next to each other. For brand colors (primary, secondary, muted, accent, ring) keep original color palette. Minimize borders and shadows. For shadows, you can set opacity to near 0% or make them barely visible. For borders, use a subtle grayscale color. Typography should be clean, modern, and easy to read.",
   },
   brutalist: {
     label: "Make it Brutalist",

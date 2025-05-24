@@ -1,12 +1,13 @@
-import { getEditorConfig } from "@/config/editors";
-import { cn } from "@/lib/utils";
-import Editor from "@/components/editor/editor";
-import { Metadata } from "next";
-import { Header } from "@/components/header";
 import { getTheme } from "@/actions/themes";
-import { Suspense } from "react";
-import { Loading } from "@/components/loading";
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
+import Editor from "@/components/editor/editor";
+import { Header } from "@/components/header";
+import { Loading } from "@/components/loading";
+import { getEditorConfig } from "@/config/editors";
+import { AIChatProvider } from "@/hooks/use-ai-chat";
+import { cn } from "@/lib/utils";
+import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "tweakcn — Theme Generator for shadcn/ui",
@@ -29,7 +30,9 @@ export default async function Component({ params }: { params: Promise<{ themeId:
         <Header />
         <main className="flex flex-1 flex-col overflow-hidden">
           <Suspense fallback={<Loading />}>
-            <Editor config={getEditorConfig("theme")} themePromise={themePromise} />
+            <AIChatProvider>
+              <Editor config={getEditorConfig("theme")} themePromise={themePromise} />
+            </AIChatProvider>
           </Suspense>
         </main>
       </div>

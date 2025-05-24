@@ -1,6 +1,6 @@
 import { useQueryState } from "nuqs";
 
-const TABS = ["colors", "typography", "other"] as const;
+const TABS = ["colors", "typography", "other", "ai"] as const;
 type ControlTab = (typeof TABS)[number];
 
 export const useControlsTabFromUrl = () => {

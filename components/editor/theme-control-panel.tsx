@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Sparkles } from "lucide-react";
 import React, { use } from "react";
 
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ import { useEditorStore } from "@/store/editor-store";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
 import { getAppliedThemeFont, monoFonts, sansSerifFonts, serifFonts } from "@/utils/theme-fonts";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
+import { AIInterface } from "./ai/ai-interface";
 import ColorPicker from "./color-picker";
 import ControlSection from "./control-section";
 import HslAdjustmentControls from "./hsl-adjustment-controls";
@@ -78,6 +79,8 @@ const ThemeControlPanel = ({
 
   const theme = use(themePromise);
 
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   return (
     <>
       <div className="border-b">
@@ -100,6 +103,18 @@ const ThemeControlPanel = ({
               <TabsTriggerPill value="other" onClick={() => handleSetTab("other")}>
                 Other
               </TabsTriggerPill>
+              {isDevelopment && (
+                <TabsTriggerPill
+                  value="ai"
+                  onClick={() => handleSetTab("ai")}
+                  className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
+                >
+                  <Sparkles className="mr-1 size-3.5 text-current" />
+                  <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-gradient-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
+                    Generate
+                  </span>
+                </TabsTriggerPill>
+              )}
             </TabsList>
           </HorizontalScrollArea>
 
@@ -426,6 +441,12 @@ const ThemeControlPanel = ({
               </ControlSection>
             </ScrollArea>
           </TabsContent>
+
+          {isDevelopment && (
+            <TabsContent value="ai" className="mt-1 size-full overflow-hidden px-4">
+              <AIInterface />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </>

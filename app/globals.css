@@ -133,11 +133,19 @@ body {
   animation: text 3s linear infinite;
 }
 
-.scrollbar-thin {
+@utility scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
 
   &::-webkit-scrollbar {
     width: 8px;
   }
+}
+
+@utility scrollbar-gutter-stable {
+  scrollbar-gutter: stable;
+}
+
+@utility scrollbar-gutter-both {
+  scrollbar-gutter: stable both-edges;
 }
