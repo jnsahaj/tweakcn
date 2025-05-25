@@ -1,8 +1,8 @@
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 import { Metadata } from "next";
-import { AIInterface } from "./components/ai-interface";
-import { Toolbar } from "./components/toolbar";
-import { PreviewPanelProvider } from "./hooks/use-preview-panel";
+import { AIAnnouncement } from "./components/ai-announcement";
+import { AIChatHero } from "./components/ai-chat-hero";
+import { CommunityThemes } from "./components/community-themes";
 
 export const metadata: Metadata = {
   title: "AI Theme Editor for shadcn/ui — tweakcn",
@@ -15,12 +15,20 @@ export const metadata: Metadata = {
 
 export default function AiPage() {
   return (
-    <PreviewPanelProvider>
-      <Toolbar />
+    <>
       <AuthDialogWrapper />
-      <div className="relative isolate flex flex-1 flex-col overflow-hidden">
-        <AIInterface />
+      <div className="relative isolate container mx-auto flex flex-1 flex-col gap-24 overflow-x-visible overflow-y-auto px-4 md:px-6">
+        {/* AI Chat entry point section */}
+        <section className="flex flex-col gap-4 pt-32 lg:pt-48">
+          <AIAnnouncement />
+          <AIChatHero />
+        </section>
+
+        {/* Community section */}
+        <section className="relative isolate mb-24 flex w-full flex-col gap-4 lg:mb-32">
+          <CommunityThemes />
+        </section>
       </div>
-    </PreviewPanelProvider>
+    </>
   );
 }
