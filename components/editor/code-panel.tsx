@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check, Heart } from "lucide-react";
 import { ThemeEditorState } from "@/types/editor";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { ColorFormat } from "../../types";
 import {
   Select,
@@ -205,10 +206,13 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           </SelectContent>
         </Select>
       </div>
-
-      <div className="flex-1 min-h-0 flex flex-col rounded-lg border overflow-hidden">
-        <div className="flex-none flex justify-between items-center px-4 py-2 border-b bg-muted/50">
-          <span className="text-sm font-medium">index.css</span>
+      <Tabs defaultValue="index.css" className="flex-1 min-h-0 flex flex-col rounded-lg border overflow-hidden">
+        <div className="bg-muted/50 flex flex-none items-center justify-between border-b px-4 py-2">
+          <TabsList className="h-8 bg-transparent p-0">
+            <TabsTrigger value="index.css" className="h-7 px-3 text-sm font-medium">
+              index.css
+            </TabsTrigger>
+          </TabsList>
 
           <div className="flex items-center gap-2">
             <Button
@@ -233,13 +237,18 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           </div>
         </div>
 
-        <ScrollArea className="flex-1 relative">
-          <pre className="h-full p-4 text-sm">
-            <code>{code}</code>
-          </pre>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      </div>
+        <TabsContent
+          value="index.css"
+          className="overflow-hidden"
+        >
+          <ScrollArea className="relative h-full">
+            <pre className="h-full p-4 text-sm">
+              <code>{code}</code>
+            </pre>
+            <ScrollBar />
+          </ScrollArea>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
