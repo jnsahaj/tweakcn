@@ -6,46 +6,16 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { PROMPTS } from "@/utils/prompts";
-import { Sparkles, X } from "lucide-react";
-import { ComponentProps, useState } from "react";
-import { usePreviewPanel } from "../hooks/use-preview-panel";
-import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { createCurrentThemePromptJson } from "@/utils/tiptap-json-content";
-
-export function ClosableSuggestedPillActions() {
-  const [hasClosedSuggestions, setHasClosedSuggestions] = useState(false);
-
-  if (hasClosedSuggestions) return null;
-
-  return (
-    <div className="relative flex flex-col items-center justify-center">
-      {/* Fade out effect when scrolling */}
-      <div className="via-background/50 from-background pointer-events-none absolute -top-8 right-4 left-0 z-20 h-8 bg-gradient-to-t to-transparent opacity-100 transition-opacity ease-out" />
-
-      <div className="flex w-full items-center justify-between gap-4">
-        <h3 className="text-muted-foreground text-xs">Suggestions</h3>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-6 [&>svg]:size-3"
-          onClick={() => setHasClosedSuggestions(true)}
-        >
-          <X />
-        </Button>
-      </div>
-
-      <HorizontalScrollArea className="py-2">
-        <SuggestedPillActions />
-      </HorizontalScrollArea>
-    </div>
-  );
-}
+import { Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ComponentProps } from "react";
 
 export function SuggestedPillActions() {
   const { generateTheme } = useAIThemeGeneration();
-  const { setIsPreviewPanelOpen } = usePreviewPanel();
   const { openAuthDialog } = useAuthStore();
   const { data: session } = authClient.useSession();
+  const router = useRouter();
 
   const handleSetPrompt = async (prompt: string) => {
     const jsonContent = createCurrentThemePromptJson({ prompt });
@@ -55,12 +25,8 @@ export function SuggestedPillActions() {
       return;
     }
 
-    await generateTheme({
-      jsonContent,
-      onSuccess: () => {
-        setIsPreviewPanelOpen(true);
-      },
-    });
+    generateTheme({ jsonContent });
+    router.push("/editor/theme?tab=ai");
   };
 
   return (
@@ -76,7 +42,7 @@ export function SuggestedPillActions() {
 
 interface PillButtonProps extends ComponentProps<typeof Button> {}
 
-function PillButton({ className, children, ...props }: PillButtonProps) {
+function PillButton({ className, children, disabled, ...props }: PillButtonProps) {
   const { loading: aiGenerateLoading } = useAIThemeGeneration();
 
   return (
@@ -95,8 +61,8 @@ function PillButton({ className, children, ...props }: PillButtonProps) {
           "group-hover/pill:inset-shadow-primary/50 h-7 inset-shadow-2xs inset-shadow-transparent [&>svg]:size-3",
           className
         )}
+        disabled={aiGenerateLoading || disabled}
         {...props}
-        disabled={aiGenerateLoading}
       >
         {children}
       </Button>
