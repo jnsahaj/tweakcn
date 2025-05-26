@@ -416,6 +416,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
           filteredPresets={filteredPresets}
           currentPresetName={currentPresetName || "default"}
           className={className}
+          disabled={props.disabled}
         />
       )}
     </div>

@@ -1,36 +1,39 @@
-import { Loader2, Share2 } from "lucide-react";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { Loader2, Share2 } from "lucide-react";
 
-interface ShareButtonProps {
-  onShareClick: () => void;
+interface ShareButtonProps extends React.ComponentProps<typeof Button> {
   isSharing?: boolean;
 }
 
-export function ShareButton({ onShareClick, isSharing }: ShareButtonProps) {
+export function ShareButton({
+  onClick,
+  isSharing,
+  disabled,
+  className,
+  ...props
+}: ShareButtonProps) {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 px-2 gap-1.5 text-muted-foreground hover:text-foreground hover:bg-accent/50"
-          onClick={onShareClick}
-          disabled={isSharing}
-        >
-          {isSharing ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <Share2 className="size-3.5" />
-          )}
-          <span className="text-sm hidden md:block">Share</span>
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>Share theme</TooltipContent>
-    </Tooltip>
+    <TooltipWrapper label="Share theme" asChild>
+      <Button
+        variant="ghost"
+        size="sm"
+        className={cn(
+          "text-muted-foreground hover:text-foreground hover:bg-accent/50 h-8 gap-1.5 px-2",
+          className
+        )}
+        onClick={onClick}
+        disabled={isSharing || disabled}
+        {...props}
+      >
+        {isSharing ? (
+          <Loader2 className="size-3.5 animate-spin" />
+        ) : (
+          <Share2 className="size-3.5" />
+        )}
+        <span className="hidden text-sm md:block">Share</span>
+      </Button>
+    </TooltipWrapper>
   );
 }
