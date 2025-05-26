@@ -26,18 +26,21 @@ const getInitialMessage = (): ChatMessage[] => {
 };
 
 export function AIChatProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<ChatMessage[]>(getInitialMessage());
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   // Load messages from localStorage on mount
   useEffect(() => {
     const storedMessages = localStorage.getItem(CHAT_MESSAGES_KEY);
-    if (storedMessages) {
+    const parsedMessages = JSON.parse(storedMessages || "[]");
+
+    if (parsedMessages.length > 0) {
       try {
-        setMessages(JSON.parse(storedMessages));
+        setMessages(parsedMessages);
       } catch (error) {
         console.error("Failed to parse stored messages:", error);
-        localStorage.removeItem(CHAT_MESSAGES_KEY);
       }
+    } else {
+      setMessages(getInitialMessage());
     }
   }, []);
 
