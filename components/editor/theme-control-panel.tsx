@@ -14,7 +14,7 @@ import {
   DEFAULT_FONT_SERIF,
   defaultThemeState,
 } from "@/config/theme";
-import { useControlsTabFromUrl } from "@/hooks/use-controls-tab-from-url";
+import { useControlsTabFromUrl, type ControlTab } from "@/hooks/use-controls-tab-from-url";
 import { useEditorStore } from "@/store/editor-store";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
 import { getAppliedThemeFont, monoFonts, sansSerifFonts, serifFonts } from "@/utils/theme-fonts";
@@ -91,22 +91,19 @@ const ThemeControlPanel = ({
         )}
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
-        <Tabs defaultValue={tab} className="flex min-h-0 w-full flex-1 flex-col">
+        <Tabs
+          defaultValue={tab}
+          onValueChange={(v) => handleSetTab(v as ControlTab)}
+          className="flex min-h-0 w-full flex-1 flex-col"
+        >
           <HorizontalScrollArea className="mt-2 mb-1 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
-              <TabsTriggerPill value="colors" onClick={() => handleSetTab("colors")}>
-                Colors
-              </TabsTriggerPill>
-              <TabsTriggerPill value="typography" onClick={() => handleSetTab("typography")}>
-                Typography
-              </TabsTriggerPill>
-              <TabsTriggerPill value="other" onClick={() => handleSetTab("other")}>
-                Other
-              </TabsTriggerPill>
+              <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
+              <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
+              <TabsTriggerPill value="other">Other</TabsTriggerPill>
               {isDevelopment && (
                 <TabsTriggerPill
                   value="ai"
-                  onClick={() => handleSetTab("ai")}
                   className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
                 >
                   <Sparkles className="mr-1 size-3.5 text-current" />
