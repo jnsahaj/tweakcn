@@ -23,7 +23,7 @@ export function CopyButton({ textToCopy, successMessage, className, ...props }: 
       <Button
         size="icon"
         variant="ghost"
-        className={cn("size-6 [&>svg]:size-3.5", props)}
+        className={cn("size-6 [&>svg]:size-3.5", className)}
         onClick={() => copyToClipboard(textToCopy, successMessage)}
         {...props}
       >
