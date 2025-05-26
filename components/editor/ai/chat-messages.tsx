@@ -9,7 +9,7 @@ import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
-import { type ChatMessage } from "@/types/ai";
+import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { ThemeStyles } from "@/types/theme";
 import { RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -19,11 +19,17 @@ import { ChatThemePreview } from "./chat-theme-preview";
 export function ChatMessages() {
   const [isScrollTop, setIsScrollTop] = useState(true);
   const { messages } = useAIChat();
+  const previousMessages = useRef<ChatMessageType[]>(messages);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      // When switching tabs, messages do not change, so we don't need to animate the scroll
+      const didMessagesChange = previousMessages.current.length !== messages.length;
+      messagesEndRef.current.scrollIntoView({ behavior: didMessagesChange ? "smooth" : "auto" });
+
+      // Update the previous messages ref
+      previousMessages.current = messages;
     }
   }, [messages]);
 
@@ -63,7 +69,7 @@ export function ChatMessages() {
 }
 
 type ChatMessageProps = {
-  message: ChatMessage;
+  message: ChatMessageType;
 };
 
 export default function ChatMessage({ message }: ChatMessageProps) {
@@ -115,10 +121,6 @@ export default function ChatMessage({ message }: ChatMessageProps) {
               <ChatThemePreview themeStyles={message.themeStyles} className="p-0">
                 <ScrollArea className="h-48">
                   <div className="p-2">
-                    <ColorPreview
-                      styles={message.themeStyles}
-                      currentMode={themeState.currentMode}
-                    />
                     <ColorPreview
                       styles={message.themeStyles}
                       currentMode={themeState.currentMode}
