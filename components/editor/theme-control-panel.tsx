@@ -29,6 +29,7 @@ import ThemeEditActions from "./theme-edit-actions";
 import ThemeFontSelect from "./theme-font-select";
 import ThemePresetSelect from "./theme-preset-select";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
+import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 
 const ThemeControlPanel = ({
   styles,
@@ -38,6 +39,7 @@ const ThemeControlPanel = ({
 }: ThemeEditorControlsProps) => {
   const { themeState } = useEditorStore();
   const { tab, handleSetTab } = useControlsTabFromUrl();
+  const { loading: aiGenerationLoading } = useAIThemeGeneration();
 
   const currentStyles = React.useMemo(
     () => ({
@@ -85,9 +87,9 @@ const ThemeControlPanel = ({
     <>
       <div className="border-b">
         {!theme ? (
-          <ThemePresetSelect className="h-14 rounded-none" />
+          <ThemePresetSelect className="h-14 rounded-none" disabled={aiGenerationLoading} />
         ) : (
-          <ThemeEditActions theme={theme} />
+          <ThemeEditActions theme={theme} disabled={aiGenerationLoading} />
         )}
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">

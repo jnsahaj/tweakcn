@@ -1,24 +1,20 @@
-import { Button } from "../ui/button";
-import { X, Check } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
-import { Separator } from "../ui/separator";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useThemeActions } from "@/hooks/use-theme-actions";
 import { useEditorStore } from "@/store/editor-store";
 import { Theme } from "@/types/theme";
-import { ThemeSaveDialog } from "./theme-save-dialog";
+import { Check, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ThemeSaveDialog } from "./theme-save-dialog";
 
 interface ThemeEditActionsProps {
   theme: Theme;
+  disabled?: boolean;
 }
 
-const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme }) => {
+const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme, disabled = false }) => {
   const router = useRouter();
   const { updateTheme } = useThemeActions();
   const { themeState, applyThemePreset } = useEditorStore();
@@ -74,20 +70,16 @@ const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme }) => {
 
   return (
     <>
-      <div className="flex items-center bg-card/80 text-card-foreground">
-        <div className="flex flex-1 items-center gap-2 min-h-14 px-4">
-          <div className="flex items-center gap-2 animate-pulse">
+      <div className="bg-card/80 text-card-foreground flex items-center">
+        <div className="flex min-h-14 flex-1 items-center gap-2 px-4">
+          <div className="flex animate-pulse items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-blue-500" />
-            <span className="text-sm font-medium text-card-foreground/60">
-              Editing
-            </span>
+            <span className="text-card-foreground/60 text-sm font-medium">Editing</span>
           </div>
-          <span className="text-sm font-semibold px-2 truncate max-w-56">
-            {theme.name}
-          </span>
+          <span className="max-w-56 truncate px-2 text-sm font-semibold">{theme.name}</span>
         </div>
 
-        <Separator orientation="vertical" className="h-8 bg-border" />
+        <Separator orientation="vertical" className="bg-border h-8" />
 
         <TooltipProvider>
           <Tooltip>
@@ -97,6 +89,7 @@ const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme }) => {
                 size="icon"
                 className="size-14 shrink-0 rounded-none"
                 onClick={handleThemeEditCancel}
+                disabled={disabled}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -105,7 +98,7 @@ const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme }) => {
           </Tooltip>
         </TooltipProvider>
 
-        <Separator orientation="vertical" className="h-8 bg-border" />
+        <Separator orientation="vertical" className="bg-border h-8" />
 
         <TooltipProvider>
           <Tooltip>
@@ -115,6 +108,7 @@ const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme }) => {
                 size="icon"
                 className="size-14 shrink-0 rounded-none"
                 onClick={handleThemeEditSave}
+                disabled={disabled}
               >
                 <Check className="h-4 w-4" />
               </Button>
