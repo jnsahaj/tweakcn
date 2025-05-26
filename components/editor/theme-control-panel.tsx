@@ -94,7 +94,7 @@ const ThemeControlPanel = ({
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
         <Tabs
-          defaultValue={tab}
+          value={tab}
           onValueChange={(v) => handleSetTab(v as ControlTab)}
           className="flex min-h-0 w-full flex-1 flex-col"
         >
