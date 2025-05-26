@@ -1,3 +1,5 @@
+import { CopyButton } from "@/components/copy-button";
+import { Separator } from "@/components/ui/separator";
 import { ThemeEditorPreviewProps } from "@/types/theme";
 
 interface ColorPreviewProps {
@@ -5,18 +7,21 @@ interface ColorPreviewProps {
   currentMode: ThemeEditorPreviewProps["currentMode"];
 }
 
-const renderColorPreview = (label: string, color: string) => (
-  <div className="flex items-center gap-4">
-    <div
-      className="w-12 h-12 rounded-md border"
-      style={{ backgroundColor: color }}
-    />
-    <div className="flex-1">
-      <p className="text-sm font-medium">{label}</p>
-      <p className="text-xs text-muted-foreground">{color}</p>
+function ColorPreviewItem({ label, color }: { label: string; color: string }) {
+  return (
+    <div className="group/color-preview hover:bg-muted relative flex items-center gap-4 rounded-md transition-colors">
+      <div className="h-12 w-12 rounded-md border" style={{ backgroundColor: color }} />
+      <div className="flex-1">
+        <p className="text-sm font-medium @max-3xl:text-xs">{label}</p>
+        <p className="text-muted-foreground text-xs">{color}</p>
+      </div>
+
+      <div className="absolute right-1 rounded-md opacity-0 transition-opacity group-hover/color-preview:opacity-100">
+        <CopyButton textToCopy={color} />
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
 const ColorPreview = ({ styles, currentMode }: ColorPreviewProps) => {
   if (!styles || !styles[currentMode]) {
@@ -24,133 +29,139 @@ const ColorPreview = ({ styles, currentMode }: ColorPreviewProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-8">
+    <div className="@container grid grid-cols-1 gap-4 md:gap-8">
       {/* Primary Colors */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium border-b pb-2">Primary Theme Colors</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {renderColorPreview("Background", styles[currentMode].background)}
-          {renderColorPreview("Foreground", styles[currentMode].foreground)}
-          {renderColorPreview("Primary", styles[currentMode].primary)}
-          {renderColorPreview(
-            "Primary Foreground",
-            styles[currentMode]["primary-foreground"]
-          )}
+        <h3 className="text-muted-foreground pb-2 text-sm font-semibold">Primary Theme Colors</h3>
+        <div className="@6xl grid grid-cols-1 gap-4 @sm:grid-cols-2 @2xl:grid-cols-3 @4xl:grid-cols-4">
+          <ColorPreviewItem label="Background" color={styles[currentMode].background} />
+          <ColorPreviewItem label="Foreground" color={styles[currentMode].foreground} />
+          <ColorPreviewItem label="Primary" color={styles[currentMode].primary} />
+          <ColorPreviewItem
+            label="Primary Foreground"
+            color={styles[currentMode]["primary-foreground"]}
+          />
         </div>
       </div>
+
+      <Separator />
 
       {/* Secondary & Accent Colors */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium border-b pb-2">
+        <h3 className="text-muted-foreground pb-2 text-sm font-semibold">
           Secondary & Accent Colors
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {renderColorPreview("Secondary", styles[currentMode].secondary)}
-          {renderColorPreview(
-            "Secondary Foreground",
-            styles[currentMode]["secondary-foreground"]
-          )}
-          {renderColorPreview("Accent", styles[currentMode].accent)}
-          {renderColorPreview(
-            "Accent Foreground",
-            styles[currentMode]["accent-foreground"]
-          )}
+        <div className="@6xl grid grid-cols-1 gap-4 @sm:grid-cols-2 @2xl:grid-cols-3 @4xl:grid-cols-4">
+          <ColorPreviewItem label="Secondary" color={styles[currentMode].secondary} />
+          <ColorPreviewItem
+            label="Secondary Foreground"
+            color={styles[currentMode]["secondary-foreground"]}
+          />
+          <ColorPreviewItem label="Accent" color={styles[currentMode].accent} />
+          <ColorPreviewItem
+            label="Accent Foreground"
+            color={styles[currentMode]["accent-foreground"]}
+          />
         </div>
       </div>
+
+      <Separator />
 
       {/* UI Component Colors */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium border-b pb-2">UI Component Colors</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {renderColorPreview("Card", styles[currentMode].card)}
-          {renderColorPreview(
-            "Card Foreground",
-            styles[currentMode]["card-foreground"]
-          )}
-          {renderColorPreview("Popover", styles[currentMode].popover)}
-          {renderColorPreview(
-            "Popover Foreground",
-            styles[currentMode]["popover-foreground"]
-          )}
-          {renderColorPreview("Muted", styles[currentMode].muted)}
-          {renderColorPreview(
-            "Muted Foreground",
-            styles[currentMode]["muted-foreground"]
-          )}
+        <h3 className="text-muted-foreground pb-2 text-sm font-semibold">UI Component Colors</h3>
+        <div className="grid grid-cols-1 gap-4 @sm:grid-cols-2 @2xl:grid-cols-3 @4xl:grid-cols-4">
+          <ColorPreviewItem label="Card" color={styles[currentMode].card} />
+          <ColorPreviewItem
+            label="Card Foreground"
+            color={styles[currentMode]["card-foreground"]}
+          />
+          <ColorPreviewItem label="Popover" color={styles[currentMode].popover} />
+          <ColorPreviewItem
+            label="Popover Foreground"
+            color={styles[currentMode]["popover-foreground"]}
+          />
+          <ColorPreviewItem label="Muted" color={styles[currentMode].muted} />
+          <ColorPreviewItem
+            label="Muted Foreground"
+            color={styles[currentMode]["muted-foreground"]}
+          />
         </div>
       </div>
+
+      <Separator />
 
       {/* Utility & Form Colors */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium border-b pb-2">Utility & Form Colors</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {renderColorPreview("Border", styles[currentMode].border)}
-          {renderColorPreview("Input", styles[currentMode].input)}
-          {renderColorPreview("Ring", styles[currentMode].ring)}
-          {renderColorPreview("Radius", styles[currentMode].radius)}
+        <h3 className="text-muted-foreground pb-2 text-sm font-semibold">Utility & Form Colors</h3>
+        <div className="grid grid-cols-1 gap-4 @sm:grid-cols-2 @2xl:grid-cols-3 @4xl:grid-cols-4">
+          <ColorPreviewItem label="Border" color={styles[currentMode].border} />
+          <ColorPreviewItem label="Input" color={styles[currentMode].input} />
+          <ColorPreviewItem label="Ring" color={styles[currentMode].ring} />
+          <ColorPreviewItem label="Radius" color={styles[currentMode].radius} />
         </div>
       </div>
+
+      <Separator />
 
       {/* Status & Feedback Colors */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium border-b pb-2">
+        <h3 className="text-muted-foreground pb-2 text-sm font-semibold">
           Status & Feedback Colors
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {renderColorPreview("Destructive", styles[currentMode].destructive)}
-          {renderColorPreview(
-            "Destructive Foreground",
-            styles[currentMode]["destructive-foreground"]
-          )}
+        <div className="grid grid-cols-1 gap-4 @sm:grid-cols-2 @2xl:grid-cols-3 @4xl:grid-cols-4">
+          <ColorPreviewItem label="Destructive" color={styles[currentMode].destructive} />
+          <ColorPreviewItem
+            label="Destructive Foreground"
+            color={styles[currentMode]["destructive-foreground"]}
+          />
         </div>
       </div>
+
+      <Separator />
 
       {/* Chart & Data Visualization Colors */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium border-b pb-2">
+        <h3 className="text-muted-foreground pb-2 text-sm font-semibold">
           Chart & Visualization Colors
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {renderColorPreview("Chart 1", styles[currentMode]["chart-1"])}
-          {renderColorPreview("Chart 2", styles[currentMode]["chart-2"])}
-          {renderColorPreview("Chart 3", styles[currentMode]["chart-3"])}
-          {renderColorPreview("Chart 4", styles[currentMode]["chart-4"])}
-          {renderColorPreview("Chart 5", styles[currentMode]["chart-5"])}
+        <div className="grid grid-cols-1 gap-4 @sm:grid-cols-2 @2xl:grid-cols-3 @4xl:grid-cols-4">
+          <ColorPreviewItem label="Chart 1" color={styles[currentMode]["chart-1"]} />
+          <ColorPreviewItem label="Chart 2" color={styles[currentMode]["chart-2"]} />
+          <ColorPreviewItem label="Chart 3" color={styles[currentMode]["chart-3"]} />
+          <ColorPreviewItem label="Chart 4" color={styles[currentMode]["chart-4"]} />
+          <ColorPreviewItem label="Chart 5" color={styles[currentMode]["chart-5"]} />
         </div>
       </div>
 
+      <Separator />
+
       {/* Sidebar Colors */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium border-b pb-2">
+        <h3 className="text-muted-foreground pb-2 text-sm font-semibold">
           Sidebar & Navigation Colors
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {renderColorPreview("Sidebar Background", styles[currentMode].sidebar)}
-          {renderColorPreview(
-            "Sidebar Foreground",
-            styles[currentMode]["sidebar-foreground"]
-          )}
-          {renderColorPreview(
-            "Sidebar Primary",
-            styles[currentMode]["sidebar-primary"]
-          )}
-          {renderColorPreview(
-            "Sidebar Primary Foreground",
-            styles[currentMode]["sidebar-primary-foreground"]
-          )}
-          {renderColorPreview(
-            "Sidebar Accent",
-            styles[currentMode]["sidebar-accent"]
-          )}
-          {renderColorPreview(
-            "Sidebar Accent Foreground",
-            styles[currentMode]["sidebar-accent-foreground"]
-          )}
-          {renderColorPreview(
-            "Sidebar Border",
-            styles[currentMode]["sidebar-border"]
-          )}
-          {renderColorPreview("Sidebar Ring", styles[currentMode]["sidebar-ring"])}
+        <div className="grid grid-cols-1 gap-4 @sm:grid-cols-2 @2xl:grid-cols-3 @4xl:grid-cols-4">
+          <ColorPreviewItem label="Sidebar Background" color={styles[currentMode].sidebar} />
+          <ColorPreviewItem
+            label="Sidebar Foreground"
+            color={styles[currentMode]["sidebar-foreground"]}
+          />
+          <ColorPreviewItem
+            label="Sidebar Primary"
+            color={styles[currentMode]["sidebar-primary"]}
+          />
+          <ColorPreviewItem
+            label="Sidebar Primary Foreground"
+            color={styles[currentMode]["sidebar-primary-foreground"]}
+          />
+          <ColorPreviewItem label="Sidebar Accent" color={styles[currentMode]["sidebar-accent"]} />
+          <ColorPreviewItem
+            label="Sidebar Accent Foreground"
+            color={styles[currentMode]["sidebar-accent-foreground"]}
+          />
+          <ColorPreviewItem label="Sidebar Border" color={styles[currentMode]["sidebar-border"]} />
+          <ColorPreviewItem label="Sidebar Ring" color={styles[currentMode]["sidebar-ring"]} />
         </div>
       </div>
     </div>

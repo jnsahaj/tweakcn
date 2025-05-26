@@ -1,32 +1,29 @@
 import { Heart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
-interface SaveButtonProps {
-  onSaveClick: () => void;
+interface SaveButtonProps extends React.ComponentProps<typeof Button> {
   isSaving: boolean;
 }
 
-export function SaveButton({ onSaveClick, isSaving }: SaveButtonProps) {
+export function SaveButton({ isSaving, disabled, className, ...props }: SaveButtonProps) {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground hover:text-foreground hover:bg-accent/50 h-8 gap-1.5 px-2"
-          onClick={onSaveClick}
-          disabled={isSaving}
-        >
-          {isSaving ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <Heart className="size-3.5" />
-          )}
-          <span className="hidden text-sm md:block">Save</span>
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>Save theme</TooltipContent>
-    </Tooltip>
+    <TooltipWrapper label="Save theme" asChild>
+      <Button
+        variant="ghost"
+        size="sm"
+        className={cn(
+          "text-muted-foreground hover:text-foreground hover:bg-accent/50 h-8 gap-1.5 px-2",
+          className
+        )}
+        disabled={isSaving || disabled}
+        {...props}
+      >
+        {isSaving ? <Loader2 className="size-3.5 animate-spin" /> : <Heart className="size-3.5" />}
+        <span className="hidden text-sm md:block">Save</span>
+      </Button>
+    </TooltipWrapper>
   );
 }
