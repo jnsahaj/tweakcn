@@ -14,8 +14,19 @@ interface AIChatContextType {
 const AIChatContext = createContext<AIChatContextType | undefined>(undefined);
 const CHAT_MESSAGES_KEY = "ai-chat-messages";
 
+const getInitialMessage = (): ChatMessage[] => {
+  return [
+    {
+      id: crypto.randomUUID(),
+      content: "How can I help you theme?",
+      role: "assistant",
+      timestamp: Date.now(),
+    },
+  ];
+};
+
 export function AIChatProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(getInitialMessage());
 
   // Load messages from localStorage on mount
   useEffect(() => {
@@ -65,8 +76,7 @@ export function AIChatProvider({ children }: { children: ReactNode }) {
   };
 
   const clearMessages = () => {
-    setMessages([]);
-    localStorage.removeItem(CHAT_MESSAGES_KEY);
+    setMessages(getInitialMessage());
   };
 
   const chat = {
