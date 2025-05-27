@@ -1,8 +1,7 @@
-import { Braces } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Braces } from "lucide-react";
 
 interface CodeButtonProps extends React.ComponentProps<typeof Button> {}
 
