@@ -12,9 +12,9 @@ import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { LoadingLogo } from "./loading-logo";
-import { useAIChat } from "@/hooks/use-ai-chat";
 import { ThemeStyles } from "@/types/theme";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { useAIChatStore } from "@/store/ai-chat-store";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -31,7 +31,28 @@ export function AIChatForm() {
 
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
-  const { messages, addUserMessage, addAssistantMessage, clearMessages } = useAIChat();
+  const { messages, addUserMessage, addAssistantMessage, clearMessages } = useAIChatStore();
+
+  const handleThemeGeneration = async (prompt: string, jsonPrompt: string) => {
+    const parsedJsonPrompt = JSON.parse(jsonPrompt);
+
+    addUserMessage({
+      content: prompt,
+      jsonContent: parsedJsonPrompt,
+    });
+
+    const theme: ThemeStyles = await generateTheme({
+      prompt,
+      jsonPrompt,
+      onSuccess: () => {},
+    });
+
+    addAssistantMessage({
+      content: theme ? "Here's the theme I generated for you." : "Failed to generate theme.",
+      jsonContent: parsedJsonPrompt,
+      themeStyles: theme,
+    });
+  };
 
   usePostLoginAction("AI_GENERATE_FROM_CHAT", async ({ prompt, jsonPrompt }) => {
     if (!prompt || !jsonPrompt) {
@@ -42,17 +63,7 @@ export function AIChatForm() {
       return;
     }
 
-    const theme: ThemeStyles = await generateTheme({
-      prompt,
-      jsonPrompt,
-      onSuccess: () => {},
-    });
-
-    addAssistantMessage({
-      content: theme ? "Here's the theme I generated for you." : "Failed to generate theme.", // A generic message for now
-      jsonContent: jsonPrompt,
-      themeStyles: theme, // Will be used as a checkpoint
-    });
+    await handleThemeGeneration(prompt, jsonPrompt);
   });
 
   const handleContentChange = (textContent: string, jsonContent: JSONContent) => {
@@ -66,20 +77,7 @@ export function AIChatForm() {
       return;
     }
 
-    const parsedJsonPrompt = JSON.parse(jsonPrompt);
-
-    addUserMessage({
-      content: prompt,
-      jsonContent: parsedJsonPrompt,
-    });
-
-    const theme: ThemeStyles = await generateTheme({ prompt, jsonPrompt, onSuccess: () => {} });
-
-    addAssistantMessage({
-      content: theme ? "Here's the theme I generated for you." : "Failed to generate theme.", // A generic message for now
-      jsonContent: parsedJsonPrompt,
-      themeStyles: theme, // Will be used as a checkpoint
-    });
+    await handleThemeGeneration(prompt, jsonPrompt);
   };
 
   return (
