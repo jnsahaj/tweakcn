@@ -16,7 +16,7 @@ import { ChatThemePreview } from "./chat-theme-preview";
 
 export function ChatMessages() {
   const [isScrollTop, setIsScrollTop] = useState(true);
-  const { messages } = useAIChat();
+  const { messages, getDefaultMessage } = useAIChat();
   const previousMessages = useRef<ChatMessageType[]>(messages);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -56,6 +56,9 @@ export function ChatMessages() {
         className="scrollbar-thin scrollbar-gutter-both relative size-full flex-1 overflow-y-auto py-8 pr-1"
       >
         <div className="flex flex-col gap-8 text-pretty wrap-anywhere">
+          {/* Default message: "How can I help you theme?" */}
+          <ChatMessage message={getDefaultMessage()} />
+
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
