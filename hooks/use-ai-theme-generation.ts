@@ -45,18 +45,14 @@ export function useAIThemeGeneration() {
 
 // Hook for components that only need prompt-related state and actions
 export function useAIThemeGenerationPrompts() {
-  const prompt = useAIThemeGenerationStore((state) => state.prompt);
-  const jsonPrompt = useAIThemeGenerationStore((state) => state.jsonPrompt);
-  const setPrompt = useAIThemeGenerationStore((state) => state.setPrompt);
-  const setJsonPrompt = useAIThemeGenerationStore((state) => state.setJsonPrompt);
-  const resetPrompts = useAIThemeGenerationStore((state) => state.resetPrompts);
+  const jsonContent = useAIThemeGenerationStore((state) => state.jsonContent);
+  const setJsonContent = useAIThemeGenerationStore((state) => state.setJsonContent);
+  const resetContent = useAIThemeGenerationStore((state) => state.resetContent);
 
   return {
-    prompt,
-    jsonPrompt,
-    setPrompt,
-    setJsonPrompt,
-    resetPrompts,
+    jsonContent,
+    setJsonContent,
+    resetContent,
   };
 }
 

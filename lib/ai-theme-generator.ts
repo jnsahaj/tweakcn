@@ -3,6 +3,7 @@ import { useThemePresetStore } from "@/store/theme-preset-store";
 import { defaultThemeState } from "@/config/theme";
 import { JSONContent } from "@tiptap/react";
 import { Theme } from "@/types/theme";
+import { getTextContent } from "@/utils/tiptap-json-content";
 interface GenerateThemeOptions {
   onSuccess?: (themeStyles: Theme["styles"]) => void;
   onError?: (error: Error) => void;
@@ -52,14 +53,13 @@ export async function generateThemeWithAI(prompt: string, options?: GenerateThem
  * with references to existing themes/presets
  */
 export async function generateThemeWithReferences(
-  textPrompt: string,
-  jsonPrompt: string,
+  jsonContent: JSONContent,
   options?: GenerateThemeOptions
 ) {
-  if (!textPrompt.trim()) return null;
+  if (!jsonContent) return null;
 
-  const transformedPrompt = transformPrompt(textPrompt, jsonPrompt);
-  return generateThemeWithAI(transformedPrompt, options);
+  const prompt = buildPrompt(jsonContent);
+  return generateThemeWithAI(prompt, options);
 }
 
 /**
@@ -94,14 +94,17 @@ export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
   }
 }
 
+function buildPrompt(jsonContent: JSONContent) {
+  const mentionedReferences = getTransformedMentionedReferences(jsonContent);
+  const textContent = getTextContent(jsonContent);
+  return `${textContent}\n\n${mentionedReferences}`;
+}
+
 /**
  * Transform a prompt to include references to other themes
  */
-function transformPrompt(prompt: string, jsonPrompt: string) {
-  const parsedJsonPrompt = JSON.parse(jsonPrompt) as JSONContent;
-  const mentions = parsedJsonPrompt.content?.[0]?.content?.filter(
-    (item) => item.type === "mention"
-  );
+function getTransformedMentionedReferences(jsonContent: JSONContent) {
+  const mentions = jsonContent.content?.[0]?.content?.filter((item) => item.type === "mention");
 
   const getMentionContent = (id: string) => {
     if (id === "editor:current-changes") {
@@ -116,5 +119,5 @@ function transformPrompt(prompt: string, jsonPrompt: string) {
   ${JSON.stringify(getMentionContent(mention.attrs?.id))}`
   );
 
-  return prompt + "\n\n" + (mentionReferences?.join("\n") || "");
+  return mentionReferences?.join("\n") || "";
 }

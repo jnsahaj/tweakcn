@@ -1,41 +1,36 @@
+import { JSONContent } from "@tiptap/react";
 import { generateThemeWithReferences } from "@/lib/ai-theme-generator";
 import { create } from "zustand";
 
 export interface GenerateThemeOptions {
-  prompt?: string;
-  jsonPrompt?: string;
+  jsonContent?: JSONContent;
   onSuccess?: () => void;
   onError?: (error: Error) => void;
-  signal?: AbortSignal;
 }
 
 interface AIThemeGenerationStore {
   loading: boolean;
-  prompt: string;
-  jsonPrompt: string;
+  jsonContent: JSONContent | null;
   hasPrompted: boolean;
   lastGeneratedTheme: any | null;
   abortController: AbortController | null;
 
   // State setters
   setLoading: (loading: boolean) => void;
-  setPrompt: (prompt: string) => void;
-  setJsonPrompt: (jsonPrompt: string) => void;
+  setJsonContent: (jsonContent: JSONContent) => void;
 
   // Actions
   generateTheme: (options?: GenerateThemeOptions) => Promise<any>;
   cancelThemeGeneration: () => void;
 
-  // Utility methods
-  resetPrompts: () => void;
+  resetContent: () => void;
   resetState: () => void;
   updateLastGeneratedTheme: (theme: any) => void;
 }
 
 const initialState = {
   loading: false,
-  prompt: "",
-  jsonPrompt: "",
+  jsonContent: null as JSONContent | null,
   hasPrompted: false,
   lastGeneratedTheme: null,
   abortController: null,
@@ -46,11 +41,10 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
 
   // State setters
   setLoading: (loading: boolean) => set({ loading }),
-  setPrompt: (prompt: string) => set({ prompt }),
-  setJsonPrompt: (jsonPrompt: string) => set({ jsonPrompt }),
+  setJsonContent: (jsonContent: JSONContent) => set({ jsonContent }),
 
   // Utility methods
-  resetPrompts: () => set({ prompt: "", jsonPrompt: "" }),
+  resetContent: () => set({ jsonContent: null }),
   resetState: () => set(initialState),
   updateLastGeneratedTheme: (theme: any) => set({ lastGeneratedTheme: theme }),
 
@@ -65,10 +59,9 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
 
   generateTheme: async (options?: GenerateThemeOptions) => {
     const state = get();
-    const finalPrompt = options?.prompt || state.prompt;
-    const finalJsonPrompt = options?.jsonPrompt || state.jsonPrompt;
+    const jsonContent = options?.jsonContent || state.jsonContent;
 
-    if (!finalPrompt.trim()) return;
+    if (!jsonContent) return;
 
     // Cancel any ongoing requests
     if (state.abortController) {
@@ -80,7 +73,7 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     set({ loading: true, abortController });
 
     try {
-      const themeStyles = await generateThemeWithReferences(finalPrompt, finalJsonPrompt, {
+      const themeStyles = await generateThemeWithReferences(jsonContent, {
         onSuccess: options?.onSuccess,
         onError: options?.onError,
         signal: abortController.signal,

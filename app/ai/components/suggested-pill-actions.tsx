@@ -47,20 +47,15 @@ export function SuggestedPillActions() {
   const { data: session } = authClient.useSession();
 
   const handleSetPrompt = async (prompt: string) => {
-    const jsonPrompt = createCurrentThemePromptJson({ prompt });
-    const stringifiedJsonPrompt = JSON.stringify(jsonPrompt);
+    const jsonContent = createCurrentThemePromptJson({ prompt });
 
     if (!session) {
-      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", {
-        prompt,
-        jsonPrompt: stringifiedJsonPrompt,
-      });
+      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { jsonContent });
       return;
     }
 
     await generateTheme({
-      prompt,
-      jsonPrompt: stringifiedJsonPrompt,
+      jsonContent,
       onSuccess: () => {
         setIsPreviewPanelOpen(true);
       },

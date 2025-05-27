@@ -21,7 +21,7 @@ const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea
 });
 
 export function AIChatForm() {
-  const { prompt, jsonPrompt, setPrompt, setJsonPrompt } = useAIThemeGenerationPrompts();
+  const { jsonContent, setJsonContent } = useAIThemeGenerationPrompts();
   const {
     generateTheme,
     loading: aiGenerateLoading,
@@ -30,15 +30,14 @@ export function AIChatForm() {
 
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
-
   const { setIsPreviewPanelOpen } = usePreviewPanel();
+
   const handleSuccessfulThemeGeneration = () => {
     setIsPreviewPanelOpen(true);
-    // TODO: reset prompts
   };
 
-  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ prompt, jsonPrompt }) => {
-    if (!prompt || !jsonPrompt) {
+  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ jsonContent }) => {
+    if (!jsonContent) {
       toast({
         title: "Error",
         description: "Failed to generate theme. Please try again.",
@@ -47,24 +46,29 @@ export function AIChatForm() {
     }
 
     generateTheme({
-      prompt,
-      jsonPrompt,
+      jsonContent,
       onSuccess: handleSuccessfulThemeGeneration,
     });
   });
 
-  const handleContentChange = (textContent: string, jsonContent: JSONContent) => {
-    setJsonPrompt(JSON.stringify(jsonContent));
-    setPrompt(textContent);
+  const handleContentChange = (content: JSONContent) => {
+    setJsonContent(content);
   };
 
   const handleGenerate = async () => {
     if (!session) {
-      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { prompt, jsonPrompt });
+      if (jsonContent) {
+        openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { jsonContent });
+      }
       return;
     }
 
-    await generateTheme({ prompt, jsonPrompt, onSuccess: handleSuccessfulThemeGeneration });
+    if (jsonContent) {
+      await generateTheme({
+        jsonContent,
+        onSuccess: handleSuccessfulThemeGeneration,
+      });
+    }
   };
 
   return (
@@ -87,7 +91,6 @@ export function AIChatForm() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* TODO: Add image upload */}
             {aiGenerateLoading ? (
               <Button
                 variant="destructive"
@@ -103,7 +106,7 @@ export function AIChatForm() {
                 size="icon"
                 className="size-8"
                 onClick={handleGenerate}
-                disabled={!prompt || aiGenerateLoading}
+                disabled={!jsonContent || aiGenerateLoading}
               >
                 {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
               </Button>

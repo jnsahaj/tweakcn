@@ -9,7 +9,7 @@ import { suggestion } from "@/components/editor/mention-suggestion"; // We'll cr
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 
 interface CustomTextareaProps {
-  onContentChange: (textContent: string, jsonContent: JSONContent) => void;
+  onContentChange: (jsonContent: JSONContent) => void;
   onGenerate?: () => void;
 }
 
@@ -65,7 +65,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGene
       },
     },
     onUpdate: ({ editor }) => {
-      onContentChange(editor.getText(), editor.getJSON());
+      onContentChange(editor.getJSON());
     },
   });
 
