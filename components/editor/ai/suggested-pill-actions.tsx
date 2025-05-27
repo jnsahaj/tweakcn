@@ -8,7 +8,8 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { ThemeStyles } from "@/types/theme";
-import { createCurrentThemePromptJson, PROMPTS } from "@/utils/prompts";
+import { PROMPTS } from "@/utils/prompts";
+import { createCurrentThemePromptJson } from "@/utils/tiptap-json-content";
 import { Sparkles, X } from "lucide-react";
 import { ComponentProps, useState } from "react";
 

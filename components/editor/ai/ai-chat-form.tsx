@@ -14,8 +14,12 @@ import dynamic from "next/dynamic";
 import { LoadingLogo } from "./loading-logo";
 import { ThemeStyles } from "@/types/theme";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { useAIChatStore } from "@/store/ai-chat-store";
-import { getTextContent } from "@/utils/tiptap-json-content";
+import { getUserMessagesCount, useAIChatStore } from "@/store/ai-chat-store";
+import {
+  createCurrentThemePromptJson,
+  getTextContent,
+  mentionsCount,
+} from "@/utils/tiptap-json-content";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -47,8 +51,17 @@ export function AIChatForm() {
       content: getTextContent(jsonContent),
     });
 
+    let transformedJsonContent = jsonContent;
+
+    // if it's not the first message and the jsonContent does not have a mention, add the current theme to the jsonContent
+    if (getUserMessagesCount(messages) > 0 && mentionsCount(jsonContent) === 0) {
+      transformedJsonContent = createCurrentThemePromptJson({
+        prompt: getTextContent(jsonContent),
+      });
+    }
+
     const theme: ThemeStyles = await generateTheme({
-      jsonContent,
+      jsonContent: transformedJsonContent,
       onSuccess: () => {},
     });
 

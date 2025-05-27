@@ -58,3 +58,7 @@ export const useAIChatStore = create<AIChatStore>()(
     }
   )
 );
+
+export const getUserMessagesCount = (messages: ChatMessage[]) => {
+  return messages.filter((message) => message.role === "user").length;
+};

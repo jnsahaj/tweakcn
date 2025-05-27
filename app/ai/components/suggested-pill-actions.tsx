@@ -5,11 +5,12 @@ import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
-import { createCurrentThemePromptJson, PROMPTS } from "@/utils/prompts";
+import { PROMPTS } from "@/utils/prompts";
 import { Sparkles, X } from "lucide-react";
 import { ComponentProps, useState } from "react";
 import { usePreviewPanel } from "../hooks/use-preview-panel";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
+import { createCurrentThemePromptJson } from "@/utils/tiptap-json-content";
 
 export function ClosableSuggestedPillActions() {
   const [hasClosedSuggestions, setHasClosedSuggestions] = useState(false);
