@@ -17,7 +17,7 @@ export const useAIChatStore = create<AIChatStore>()(
       messages: [],
       getDefaultMessage: () => {
         const defaultMessage: ChatMessage = {
-          id: crypto.randomUUID(),
+          id: "default-message",
           content: "How can I help you theme?",
           role: "assistant",
           timestamp: Date.now(),
