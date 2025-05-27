@@ -32,7 +32,6 @@ export const useAIChatStore = create<AIChatStore>()(
         const userMessage: ChatMessage = {
           id: crypto.randomUUID(),
           content: message.content,
-          jsonContent: message.jsonContent,
           role: "user",
           timestamp: Date.now(),
         };
@@ -43,7 +42,6 @@ export const useAIChatStore = create<AIChatStore>()(
         const assistantMessage: ChatMessage = {
           id: crypto.randomUUID(),
           content: message.content,
-          jsonContent: message.jsonContent,
           themeStyles: message.themeStyles,
           role: "assistant",
           timestamp: Date.now(),

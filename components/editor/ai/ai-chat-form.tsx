@@ -15,6 +15,7 @@ import { LoadingLogo } from "./loading-logo";
 import { ThemeStyles } from "@/types/theme";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useAIChatStore } from "@/store/ai-chat-store";
+import { getTextContent } from "@/utils/tiptap-json-content";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -22,7 +23,7 @@ const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea
 });
 
 export function AIChatForm() {
-  const { prompt, jsonPrompt, setPrompt, setJsonPrompt } = useAIThemeGenerationPrompts();
+  const { jsonContent, setJsonContent } = useAIThemeGenerationPrompts();
   const {
     generateTheme,
     loading: aiGenerateLoading,
@@ -33,29 +34,8 @@ export function AIChatForm() {
   const { openAuthDialog } = useAuthStore();
   const { messages, addUserMessage, addAssistantMessage, clearMessages } = useAIChatStore();
 
-  const handleThemeGeneration = async (prompt: string, jsonPrompt: string) => {
-    const parsedJsonPrompt = JSON.parse(jsonPrompt);
-
-    addUserMessage({
-      content: prompt,
-      jsonContent: parsedJsonPrompt,
-    });
-
-    const theme: ThemeStyles = await generateTheme({
-      prompt,
-      jsonPrompt,
-      onSuccess: () => {},
-    });
-
-    addAssistantMessage({
-      content: theme ? "Here's the theme I generated for you." : "Failed to generate theme.",
-      jsonContent: parsedJsonPrompt,
-      themeStyles: theme,
-    });
-  };
-
-  usePostLoginAction("AI_GENERATE_FROM_CHAT", async ({ prompt, jsonPrompt }) => {
-    if (!prompt || !jsonPrompt) {
+  const handleThemeGeneration = async (jsonContent: JSONContent | null) => {
+    if (!jsonContent) {
       toast({
         title: "Error",
         description: "Failed to generate theme. Please try again.",
@@ -63,21 +43,36 @@ export function AIChatForm() {
       return;
     }
 
-    await handleThemeGeneration(prompt, jsonPrompt);
+    addUserMessage({
+      content: getTextContent(jsonContent),
+    });
+
+    const theme: ThemeStyles = await generateTheme({
+      jsonContent,
+      onSuccess: () => {},
+    });
+
+    addAssistantMessage({
+      content: theme ? "Here's the theme I generated for you." : "Failed to generate theme.",
+      themeStyles: theme,
+    });
+  };
+
+  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ jsonContent }) => {
+    handleThemeGeneration(jsonContent);
   });
 
-  const handleContentChange = (textContent: string, jsonContent: JSONContent) => {
-    setJsonPrompt(JSON.stringify(jsonContent));
-    setPrompt(textContent);
+  const handleContentChange = (jsonContent: JSONContent) => {
+    setJsonContent(jsonContent);
   };
 
   const handleGenerate = async () => {
     if (!session) {
-      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { prompt, jsonPrompt });
+      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { jsonContent });
       return;
     }
 
-    await handleThemeGeneration(prompt, jsonPrompt);
+    await handleThemeGeneration(jsonContent);
   };
 
   return (
