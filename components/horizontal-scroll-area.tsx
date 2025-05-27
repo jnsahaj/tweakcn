@@ -17,8 +17,6 @@ export function HorizontalScrollArea({ className, children, ...props }: Horizont
     const leftMarker = leftMarkerRef.current;
     const rightMarker = rightMarkerRef.current;
 
-    console.log(leftMarker, rightMarker);
-
     if (!leftMarker || !rightMarker) return;
 
     const observerOptions = {
