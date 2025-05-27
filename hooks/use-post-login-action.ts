@@ -23,7 +23,7 @@ export type StoredPostLoginAction = PostLoginActionPayload | null;
 
 type PostLoginHandler<T = any> = (data?: T) => void | Promise<void>;
 
-const handlers: Map<PostLoginActionType, PostLoginHandler[]> = new Map();
+const handlers: Map<PostLoginActionType, PostLoginHandler> = new Map();
 const readyActions: Set<PostLoginActionType> = new Set();
 let pendingAction: StoredPostLoginAction = null;
 
@@ -34,12 +34,7 @@ export function usePostLoginAction<T = any>(
   useEffect(() => {
     if (!actionType) return;
 
-    if (!handlers.has(actionType)) {
-      handlers.set(actionType, []);
-    }
-    handlers.get(actionType)!.push(handler as PostLoginHandler); // Cast for simplicity, ensure T matches
-
-    // Signal this action type is ready to be executed if needed
+    handlers.set(actionType, handler as PostLoginHandler);
     readyActions.add(actionType);
 
     // If there's a pending action that matches this one, execute it
@@ -49,17 +44,10 @@ export function usePostLoginAction<T = any>(
     }
 
     return () => {
-      const actionHandlers = handlers.get(actionType);
-      if (actionHandlers) {
-        const index = actionHandlers.indexOf(handler as PostLoginHandler);
-        if (index > -1) {
-          actionHandlers.splice(index, 1);
-        }
-
-        // If no more handlers for this action, remove from ready set
-        if (actionHandlers.length === 0) {
-          readyActions.delete(actionType);
-        }
+      const handler = handlers.get(actionType);
+      if (handler) {
+        handlers.delete(actionType);
+        readyActions.delete(actionType);
       }
     };
   }, [actionType, handler]);
@@ -71,12 +59,10 @@ async function executePostLoginActionInternal(actionPayload: StoredPostLoginActi
 
   const actionType = actionPayload.type;
   const actionData = actionPayload.data;
-  const actionHandlers = handlers.get(actionType);
+  const handler = handlers.get(actionType);
 
-  if (actionHandlers && actionHandlers.length > 0) {
-    for (const handler of actionHandlers) {
-      await handler(actionData);
-    }
+  if (handler) {
+    await handler(actionData);
   }
 }
 
