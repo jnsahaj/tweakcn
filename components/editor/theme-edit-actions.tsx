@@ -5,7 +5,7 @@ import { useThemeActions } from "@/hooks/use-theme-actions";
 import { useEditorStore } from "@/store/editor-store";
 import { Theme } from "@/types/theme";
 import { Check, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { ThemeSaveDialog } from "./theme-save-dialog";
 
@@ -16,13 +16,17 @@ interface ThemeEditActionsProps {
 
 const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme, disabled = false }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { updateTheme } = useThemeActions();
   const { themeState, applyThemePreset } = useEditorStore();
   const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  const mainEditorUrl = `/editor/theme?${searchParams}`;
+
   const handleThemeEditCancel = () => {
-    router.push("/editor/theme");
+    // Keep the current search params for tab persistence
+    router.push(mainEditorUrl);
     applyThemePreset(themeState?.preset || "default");
   };
 
@@ -57,7 +61,7 @@ const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme, disabled = f
 
     if (result) {
       setIsNameDialogOpen(false);
-      router.push("/editor/theme");
+      router.push(mainEditorUrl);
       applyThemePreset(result?.id || themeState?.preset || "default");
     } else {
       console.error("Failed to update theme");
