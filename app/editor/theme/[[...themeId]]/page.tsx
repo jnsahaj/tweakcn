@@ -4,7 +4,6 @@ import Editor from "@/components/editor/editor";
 import { Header } from "@/components/header";
 import { Loading } from "@/components/loading";
 import { getEditorConfig } from "@/config/editors";
-import { AIChatProvider } from "@/hooks/use-ai-chat";
 import { cn } from "@/lib/utils";
 import { Metadata } from "next";
 import { Suspense } from "react";
@@ -30,9 +29,7 @@ export default async function Component({ params }: { params: Promise<{ themeId:
         <Header />
         <main className="flex flex-1 flex-col overflow-hidden">
           <Suspense fallback={<Loading />}>
-            <AIChatProvider>
-              <Editor config={getEditorConfig("theme")} themePromise={themePromise} />
-            </AIChatProvider>
+            <Editor config={getEditorConfig("theme")} themePromise={themePromise} />
           </Suspense>
         </main>
       </div>
