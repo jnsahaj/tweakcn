@@ -29,7 +29,7 @@ export default async function Component({ params }: { params: Promise<{ themeId:
         <Header />
         <main className="flex flex-1 flex-col overflow-hidden">
           <Suspense fallback={<Loading />}>
-            <Editor config={getEditorConfig("theme")} themePromise={themePromise} />
+            <Editor themePromise={themePromise} />
           </Suspense>
         </main>
       </div>
