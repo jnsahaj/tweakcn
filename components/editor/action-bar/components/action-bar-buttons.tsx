@@ -11,6 +11,7 @@ import { SaveButton } from "./save-button";
 import { ShareButton } from "./share-button";
 import { ThemeToggle } from "./theme-toggle";
 import { UndoRedoButtons } from "./undo-redo-buttons";
+import { useAIChatStore } from "@/store/ai-chat-store";
 
 interface ActionBarButtonsProps {
   onImportClick: () => void;
@@ -33,6 +34,12 @@ export function ActionBarButtons({
   const { getPreset } = useThemePresetStore();
   const currentPreset = themeState?.preset ? getPreset(themeState?.preset) : undefined;
   const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";
+  const { clearMessages } = useAIChatStore();
+
+  const handleReset = () => {
+    resetToCurrentPreset();
+    clearMessages();
+  };
 
   return (
     <div className="flex items-center gap-1">
@@ -43,10 +50,7 @@ export function ActionBarButtons({
       <UndoRedoButtons disabled={aiGenerationLoading} />
       <Separator orientation="vertical" className="mx-1 h-8" />
       <div className="hidden items-center gap-1 md:flex">
-        <ResetButton
-          onClick={resetToCurrentPreset}
-          disabled={!hasUnsavedChanges() || aiGenerationLoading}
-        />
+        <ResetButton onClick={handleReset} disabled={!hasUnsavedChanges() || aiGenerationLoading} />
         <ImportButton onClick={onImportClick} disabled={aiGenerationLoading} />
       </div>
       <Separator orientation="vertical" className="mx-1 h-8" />
