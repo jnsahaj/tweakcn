@@ -1,12 +1,10 @@
 import Logo from "@/assets/logo.svg";
 import { CopyButton } from "@/components/copy-button";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAIChat } from "@/hooks/use-ai-chat";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
@@ -55,14 +53,14 @@ export function ChatMessages() {
       />
       <div
         id="scroll-inner-container"
-        className="scrollbar-thin scrollbar-gutter-both relative size-full flex-1 overflow-y-auto py-2 pr-1"
+        className="scrollbar-thin scrollbar-gutter-both relative size-full flex-1 overflow-y-auto py-8 pr-1"
       >
         <div className="flex flex-col gap-8 text-pretty wrap-anywhere">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
         </div>
-        <div ref={messagesEndRef} className="mt-4" />
+        <div ref={messagesEndRef} />
       </div>
     </>
   );
@@ -73,8 +71,8 @@ type ChatMessageProps = {
 };
 
 export default function ChatMessage({ message }: ChatMessageProps) {
-  const { data: session } = authClient.useSession();
   const isUser = message.role === "user";
+  const isAssistant = message.role === "assistant";
 
   const { themeState, setThemeState } = useEditorStore();
   const { loading: isAIGenerating } = useAIThemeGeneration();
@@ -93,30 +91,26 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       <div
         className={cn("flex w-full max-w-[90%] items-start gap-1.5", isUser && "flex-row-reverse")}
       >
-        <div className="relative flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-lg border select-none">
-          {isUser ? (
-            <Avatar className="size-full rounded-lg">
-              <AvatarImage src={session?.user.image || ""} alt={session?.user.name || ""} />
-              <AvatarFallback>{session?.user.name?.[0] || "U"}</AvatarFallback>
-            </Avatar>
-          ) : (
-            <div className="bg-muted p-0.5">
-              <Logo className="size-full" />
+        <div className="border-border/50! relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border select-none">
+          {isAssistant ? (
+            <div className="bg-foreground size-6 p-0.5">
+              <Logo className="text-background size-full" />
             </div>
-          )}
+          ) : null}
+          {/* Add component for user avatar if needed */}
         </div>
 
-        <div className={cn("group/message relative", message.role === "assistant" && "w-full")}>
+        <div className={cn("group/message relative", isAssistant && "w-full")}>
           <p
             className={cn(
               "w-fit rounded-lg text-sm",
-              isUser ? "bg-muted/80 text-foreground/80 border-border/50! rounded-lg border p-4" : ""
+              isUser && "bg-muted/80 text-foreground/80 border-border/50! rounded-lg border p-4"
             )}
           >
             {message.content}
           </p>
 
-          {message.role === "assistant" && message.themeStyles && (
+          {isAssistant && message.themeStyles && (
             <div className="mt-2">
               <ChatThemePreview themeStyles={message.themeStyles} className="p-0">
                 <ScrollArea className="h-48">
@@ -139,7 +133,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           >
             <CopyButton textToCopy={message.content} />
 
-            {message.role === "assistant" && message.themeStyles && (
+            {isAssistant && message.themeStyles && (
               <TooltipWrapper label="Reset to this checkpoint" asChild>
                 <Button
                   size="icon"

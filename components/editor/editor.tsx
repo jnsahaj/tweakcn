@@ -69,7 +69,7 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
           <ResizablePanel
             defaultSize={30}
             minSize={20}
-            maxSize={50}
+            maxSize={40}
             className="z-1 min-w-[max(20%,22rem)]"
           >
             <div className="relative isolate flex h-full flex-1 flex-col">
@@ -82,7 +82,7 @@ const Editor: React.FC<EditorProps> = ({ config, themePromise }) => {
             </div>
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel defaultSize={70} minSize={50}>
+          <ResizablePanel defaultSize={70}>
             <div className="flex h-full flex-col">
               <div className="flex min-h-0 flex-1 flex-col">
                 <ActionBar />
