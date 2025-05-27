@@ -25,7 +25,6 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>((props, 
 
   // Function to select item (adapted from reference)
   const selectItem = (index: number) => {
-    console.log("selectItem", index);
     const item = props.items[index];
     if (item) {
       // Pass the whole item object to the command function
