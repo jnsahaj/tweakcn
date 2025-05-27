@@ -1,9 +1,8 @@
-import { PenLine } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { PenLine } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface EditButtonProps extends React.ComponentProps<typeof Button> {
