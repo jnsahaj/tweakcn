@@ -1,8 +1,7 @@
-import { Heart, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Heart, Loader2 } from "lucide-react";
 
 interface SaveButtonProps extends React.ComponentProps<typeof Button> {
   isSaving: boolean;

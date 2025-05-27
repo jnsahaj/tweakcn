@@ -1,17 +1,16 @@
-import { useState } from "react";
+import McpIcon from "@/assets/mcp.svg";
+import ContrastChecker from "@/components/editor/contrast-checker";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { MoreVertical } from "lucide-react";
-import { MCPDialog } from "./mcp-dialog";
-import McpIcon from "@/assets/mcp.svg";
-import ContrastChecker from "@/components/editor/contrast-checker";
 import { useEditorStore } from "@/store/editor-store";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { MoreVertical } from "lucide-react";
+import { useState } from "react";
+import { MCPDialog } from "./mcp-dialog";
 
 interface MoreOptionsProps extends React.ComponentProps<typeof DropdownMenuTrigger> {}
 
