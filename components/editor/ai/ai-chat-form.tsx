@@ -101,16 +101,16 @@ export function AIChatForm() {
         </div>
 
         <div className="flex items-center justify-between gap-2 px-2 pb-2">
-          <TooltipWrapper label="New chat" asChild>
+          <TooltipWrapper label="Create new chat" asChild>
             <Button
-              variant="ghost"
-              size="icon"
+              variant="outline"
+              size="sm"
               onClick={clearMessages}
-              className="size-8"
               disabled={aiGenerateLoading || messages.length === 0}
+              className="shadow-none"
             >
               <Plus />
-              <span className="sr-only">New chat</span>
+              <span>New chat</span>
             </Button>
           </TooltipWrapper>
           <div className="flex items-center gap-2">
@@ -121,7 +121,7 @@ export function AIChatForm() {
                   variant="destructive"
                   size="sm"
                   onClick={cancelThemeGeneration}
-                  className={cn("flex items-center gap-1", "@max-[350px]/form:w-8")}
+                  className={cn("flex items-center gap-1 shadow-none", "@max-[350px]/form:w-8")}
                 >
                   <StopCircle />
                   <span className="hidden @[350px]/form:inline-flex">Stop</span>
@@ -131,7 +131,7 @@ export function AIChatForm() {
               <TooltipWrapper label="Send message" asChild>
                 <Button
                   size="icon"
-                  className="size-8"
+                  className="size-8 shadow-none"
                   onClick={handleGenerate}
                   disabled={!prompt || aiGenerateLoading}
                 >
