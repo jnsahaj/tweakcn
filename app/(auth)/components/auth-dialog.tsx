@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,9 +29,16 @@ export function AuthDialog({
   trigger,
 }: AuthDialogProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isSignIn, setIsSignIn] = useState(initialMode === "signin");
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
+
+  const getCallbackUrl = () => {
+    const baseUrl = pathname || "/editor/theme";
+    const queryString = searchParams.toString();
+    return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+  };
 
   useEffect(() => {
     if (open) {
@@ -44,7 +51,7 @@ export function AuthDialog({
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: pathname || "/editor/theme",
+        callbackURL: getCallbackUrl(),
       });
     } catch (error) {
       console.error("Google Sign In Error:", error);
@@ -57,7 +64,7 @@ export function AuthDialog({
     try {
       await authClient.signIn.social({
         provider: "github",
-        callbackURL: pathname || "/editor/theme",
+        callbackURL: getCallbackUrl(),
       });
     } catch (error) {
       console.error("GitHub Sign In Error:", error);
