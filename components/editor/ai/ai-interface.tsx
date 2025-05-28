@@ -7,7 +7,6 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { getUserMessagesCount, useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
-import { ThemeStyles } from "@/types/theme";
 import {
   createCurrentThemePromptJson,
   getTextContent,
@@ -17,6 +16,7 @@ import { JSONContent } from "@tiptap/react";
 import dynamic from "next/dynamic";
 import { AIChatForm } from "./ai-chat-form";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
+import { buildPrompt } from "@/lib/ai-theme-generator";
 
 const ChatMessages = dynamic(() => import("./chat-messages").then((mod) => mod.ChatMessages), {
   ssr: false,
@@ -55,14 +55,20 @@ export function AIInterface() {
       });
     }
 
-    const { text, theme } = await generateTheme({
-      jsonContent: transformedJsonContent,
-    });
+    const result = await generateTheme(buildPrompt(transformedJsonContent));
+
+    if (!result) {
+      addAssistantMessage({
+        content: "Failed to generate theme.",
+      });
+      return;
+    }
 
     addAssistantMessage({
       content:
-        text ?? (theme ? "Here's the theme I generated for you." : "Failed to generate theme."),
-      themeStyles: theme,
+        result?.text ??
+        (result?.theme ? "Here's the theme I generated for you." : "Failed to generate theme."),
+      themeStyles: result?.theme,
     });
   };
 

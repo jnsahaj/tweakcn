@@ -4,16 +4,11 @@ import { defaultThemeState } from "@/config/theme";
 import { JSONContent } from "@tiptap/react";
 import { Theme } from "@/types/theme";
 import { getTextContent } from "@/utils/tiptap-json-content";
-interface GenerateThemeOptions {
-  onSuccess?: (themeStyles: Theme["styles"]) => void;
-  onError?: (error: Error) => void;
-  signal?: AbortSignal;
-}
 
 /**
  * Generate a theme with AI using a text prompt
  */
-export async function generateThemeWithAI(prompt: string, options?: GenerateThemeOptions) {
+export async function generateThemeWithAI(prompt: string, options?: { signal?: AbortSignal }) {
   if (!prompt.trim()) return null;
 
   try {
@@ -27,39 +22,24 @@ export async function generateThemeWithAI(prompt: string, options?: GenerateThem
     });
 
     if (!response.ok) {
-      throw new Error("Failed to generate theme");
+      let errorMessage = "Failed to generate theme";
+      try {
+        const errorBody = await response.json();
+        errorMessage = errorBody.message || errorBody.error || errorMessage;
+      } catch (e) {
+        // Ignore if error body isn't valid JSON or doesn't contain a message
+      }
+      throw new Error(errorMessage);
     }
 
     const result = await response.json();
     applyGeneratedTheme(result.theme);
 
-    options?.onSuccess?.(result);
     return result;
   } catch (error) {
     console.error("AI theme generation error:", error);
-
-    if (error instanceof Error) {
-      options?.onError?.(error);
-    } else {
-      options?.onError?.(new Error("Unknown error occurred"));
-    }
-
     throw error;
   }
-}
-
-/**
- * Generate a theme with AI using a structured prompt
- * with references to existing themes/presets
- */
-export async function generateThemeWithReferences(
-  jsonContent: JSONContent,
-  options?: GenerateThemeOptions
-) {
-  if (!jsonContent) return null;
-
-  const prompt = buildPrompt(jsonContent);
-  return generateThemeWithAI(prompt, options);
 }
 
 /**
@@ -94,7 +74,7 @@ export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
   }
 }
 
-function buildPrompt(jsonContent: JSONContent) {
+export function buildPrompt(jsonContent: JSONContent) {
   const mentionedReferences = getTransformedMentionedReferences(jsonContent);
   const textContent = getTextContent(jsonContent);
   return `${textContent}\n\n${mentionedReferences}`;

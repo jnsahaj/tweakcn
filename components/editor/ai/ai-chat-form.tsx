@@ -3,13 +3,14 @@
 import { Loading } from "@/components/loading";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
-import { useAIThemeGeneration, useAIThemeGenerationPrompts } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { LoadingLogo } from "./loading-logo";
+import { useState } from "react";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -21,7 +22,7 @@ export function AIChatForm({
 }: {
   handleThemeGeneration: (jsonContent: JSONContent | null) => void;
 }) {
-  const { jsonContent, setJsonContent } = useAIThemeGenerationPrompts();
+  const [jsonContent, setJsonContent] = useState<JSONContent | null>(null);
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
   const { messages, clearMessages } = useAIChatStore();
