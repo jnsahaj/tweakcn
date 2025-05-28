@@ -5,7 +5,6 @@ import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { toast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
-import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
 import {
