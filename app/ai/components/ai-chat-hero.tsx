@@ -7,12 +7,8 @@ import { toast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
-import {
-  createCurrentThemePromptJson,
-  getTextContent,
-  mentionsCount,
-} from "@/utils/tiptap-json-content";
-import { JSONContent } from "@tiptap/react";
+import { createCurrentThemePrompt, getTextContent, mentionsCount } from "@/utils/ai-prompt";
+import { AIPromptData } from "@/types/ai";
 import { useRouter } from "next/navigation";
 import { AIChatForm } from "./ai-chat-form";
 import { ChatHeading } from "./chat-heading";
@@ -26,15 +22,15 @@ export function AIChatHero() {
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
 
-  const handleRedirectAndThemeGeneration = async (jsonContent: JSONContent | null) => {
+  const handleRedirectAndThemeGeneration = async (promptData: AIPromptData | null) => {
     if (!session) {
-      if (jsonContent) {
-        openAuthDialog("signup", "AI_GENERATE_FROM_PAGE", { jsonContent });
+      if (promptData) {
+        openAuthDialog("signup", "AI_GENERATE_FROM_PAGE", { promptData });
       }
       return;
     }
 
-    if (!jsonContent) {
+    if (!promptData) {
       toast({
         title: "Error",
         description: "Failed to generate theme. Please try again.",
@@ -46,21 +42,21 @@ export function AIChatHero() {
     clearMessages();
 
     addUserMessage({
-      content: getTextContent(jsonContent),
+      promptData: promptData,
     });
 
     router.push("/editor/theme?tab=ai");
 
-    let transformedJsonContent = jsonContent;
+    let transformedPromptData = promptData;
 
-    // If the jsonContent does not have a mention, add the current theme to the jsonContent
-    if (mentionsCount(jsonContent) === 0) {
-      transformedJsonContent = createCurrentThemePromptJson({
-        prompt: getTextContent(jsonContent),
+    // If the promptData does not have a mention, add the current theme to the promptData
+    if (mentionsCount(promptData) === 0) {
+      transformedPromptData = createCurrentThemePrompt({
+        prompt: getTextContent(promptData),
       });
     }
 
-    const result = await generateTheme(buildPrompt(transformedJsonContent));
+    const result = await generateTheme(buildPrompt(transformedPromptData));
 
     if (!result) {
       addAssistantMessage({
@@ -76,8 +72,8 @@ export function AIChatHero() {
     });
   };
 
-  usePostLoginAction("AI_GENERATE_FROM_PAGE", ({ jsonContent }) => {
-    if (!jsonContent) {
+  usePostLoginAction("AI_GENERATE_FROM_PAGE", ({ promptData }) => {
+    if (!promptData) {
       toast({
         title: "Error",
         description: "Failed to generate theme. Please try again.",
@@ -85,7 +81,7 @@ export function AIChatHero() {
       return;
     }
 
-    handleRedirectAndThemeGeneration(jsonContent);
+    handleRedirectAndThemeGeneration(promptData);
   });
 
   return (

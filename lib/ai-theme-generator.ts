@@ -1,9 +1,9 @@
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { defaultThemeState } from "@/config/theme";
-import { JSONContent } from "@tiptap/react";
 import { Theme } from "@/types/theme";
-import { getTextContent } from "@/utils/tiptap-json-content";
+import { AIPromptData } from "@/types/ai";
+import { buildPromptForAPI } from "@/utils/ai-prompt";
 
 /**
  * Generate a theme with AI using a text prompt
@@ -74,30 +74,6 @@ export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
   }
 }
 
-export function buildPrompt(jsonContent: JSONContent) {
-  const mentionedReferences = getTransformedMentionedReferences(jsonContent);
-  const textContent = getTextContent(jsonContent);
-  return `${textContent}\n\n${mentionedReferences}`;
-}
-
-/**
- * Transform a prompt to include references to other themes
- */
-function getTransformedMentionedReferences(jsonContent: JSONContent) {
-  const mentions = jsonContent.content?.[0]?.content?.filter((item) => item.type === "mention");
-
-  const getMentionContent = (id: string) => {
-    if (id === "editor:current-changes") {
-      return useEditorStore.getState().themeState.styles;
-    }
-
-    return useThemePresetStore.getState().getPreset(id)?.styles;
-  };
-
-  const mentionReferences = mentions?.map(
-    (mention) => `@${mention.attrs?.label} = 
-  ${JSON.stringify(getMentionContent(mention.attrs?.id))}`
-  );
-
-  return mentionReferences?.join("\n") || "";
+export function buildPrompt(promptData: AIPromptData) {
+  return buildPromptForAPI(promptData);
 }

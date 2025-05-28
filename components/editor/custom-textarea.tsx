@@ -5,13 +5,52 @@ import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
-import { suggestion } from "@/components/editor/mention-suggestion"; // We'll create this next
+import { suggestion } from "@/components/editor/mention-suggestion";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { AIPromptData, MentionReference } from "@/types/ai";
+import { useEditorStore } from "@/store/editor-store";
+import { useThemePresetStore } from "@/store/theme-preset-store";
 
 interface CustomTextareaProps {
-  onContentChange: (jsonContent: JSONContent) => void;
+  onContentChange: (promptData: AIPromptData) => void;
   onGenerate?: () => void;
 }
+
+const convertJSONContentToPromptData = (jsonContent: JSONContent): AIPromptData => {
+  const content =
+    jsonContent.content?.[0]?.content?.reduce((text: string, node: any) => {
+      if (node.type === "text") return text + node.text;
+      if (node.type === "mention") return text + `@${node.attrs?.label}`;
+      return text;
+    }, "") || "";
+
+  const mentions: MentionReference[] =
+    jsonContent.content?.[0]?.content
+      ?.filter((node: any) => node.type === "mention")
+      ?.map((mention: any) => {
+        const id = mention.attrs?.id;
+        const label = mention.attrs?.label;
+
+        let themeData;
+        if (id === "editor:current-changes") {
+          themeData = useEditorStore.getState().themeState.styles;
+        } else {
+          const preset = useThemePresetStore.getState().getPreset(id);
+          themeData = preset?.styles || { light: {}, dark: {} };
+        }
+
+        return {
+          id,
+          label,
+          themeData,
+        };
+      }) || [];
+
+  return {
+    content,
+    mentions,
+  };
+};
 
 const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGenerate }) => {
   const { loading: aiGenerateLoading } = useAIThemeGeneration();
@@ -42,20 +81,16 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGene
           const { state } = view;
           const mentionPluginKey = Mention.options.suggestion.pluginKey;
 
-          // Ensure the plugin key exists before trying to get state
           if (!mentionPluginKey) {
             console.error("Mention plugin key not found.");
-            // Fallback: allow default Enter behavior if key is missing
             return false;
           }
 
           const mentionState = mentionPluginKey.getState(state);
 
           if (mentionState?.active) {
-            // Mention list is active, let the mention extension handle Enter.
             return false;
           } else {
-            // Mention list is not active, submit the prompt.
             event.preventDefault();
             onGenerate?.();
             return true;
@@ -65,7 +100,9 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGene
       },
     },
     onUpdate: ({ editor }) => {
-      onContentChange(editor.getJSON());
+      const jsonContent = editor.getJSON();
+      const promptData = convertJSONContentToPromptData(jsonContent);
+      onContentChange(promptData);
     },
   });
 
