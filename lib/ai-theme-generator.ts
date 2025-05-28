@@ -30,11 +30,11 @@ export async function generateThemeWithAI(prompt: string, options?: GenerateThem
       throw new Error("Failed to generate theme");
     }
 
-    const themeStyles = await response.json();
-    applyGeneratedTheme(themeStyles);
+    const result = await response.json();
+    applyGeneratedTheme(result.theme);
 
-    options?.onSuccess?.(themeStyles);
-    return themeStyles;
+    options?.onSuccess?.(result);
+    return result;
   } catch (error) {
     console.error("AI theme generation error:", error);
 
