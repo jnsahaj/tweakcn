@@ -3,7 +3,6 @@ import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 import Editor from "@/components/editor/editor";
 import { Header } from "@/components/header";
 import { Loading } from "@/components/loading";
-import { getEditorConfig } from "@/config/editors";
 import { cn } from "@/lib/utils";
 import { Metadata } from "next";
 import { Suspense } from "react";
