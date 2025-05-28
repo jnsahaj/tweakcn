@@ -2,56 +2,23 @@
 
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Button } from "@/components/ui/button";
-import { useAIChat } from "@/hooks/use-ai-chat";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { authClient } from "@/lib/auth-client";
-import { useAuthStore } from "@/store/auth-store";
-import { ThemeStyles } from "@/types/theme";
 import { PROMPTS } from "@/utils/prompts";
-import {
-  createCurrentThemePromptJson,
-  getTextContent,
-  mentionsCount,
-} from "@/utils/tiptap-json-content";
+import { createCurrentThemePromptJson } from "@/utils/tiptap-json-content";
+import { JSONContent } from "@tiptap/react";
 import { Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { AIPillActionButton } from "./ai-pill-action-button";
 
-export function ClosableSuggestedPillActions() {
+export function ClosableSuggestedPillActions({
+  handleThemeGeneration,
+}: {
+  handleThemeGeneration: (jsonContent: JSONContent | null) => void;
+}) {
   const [hasClosedSuggestions, setHasClosedSuggestions] = useState(false);
-
-  const { generateTheme } = useAIThemeGeneration();
-  const { openAuthDialog } = useAuthStore();
-  const { data: session } = authClient.useSession();
-  const { addUserMessage, addAssistantMessage } = useAIChat();
 
   const handleSetPrompt = async (prompt: string) => {
     const jsonContent = createCurrentThemePromptJson({ prompt });
-
-    if (!session) {
-      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { jsonContent });
-      return;
-    }
-
-    addUserMessage({
-      content: prompt,
-    });
-
-    let transformedJsonContent = jsonContent;
-
-    // If the jsonContent does not have a mention, add the current theme to the jsonContent
-    if (mentionsCount(jsonContent) === 0) {
-      transformedJsonContent = createCurrentThemePromptJson({
-        prompt: getTextContent(jsonContent),
-      });
-    }
-
-    const theme: ThemeStyles = await generateTheme({ jsonContent: transformedJsonContent });
-
-    addAssistantMessage({
-      content: theme ? "Here's the theme I generated for you." : "Failed to generate theme.",
-      themeStyles: theme,
-    });
+    handleThemeGeneration(jsonContent);
   };
 
   if (hasClosedSuggestions) return null;
