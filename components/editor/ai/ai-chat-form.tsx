@@ -1,91 +1,37 @@
 "use client";
 
 import { Loading } from "@/components/loading";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration, useAIThemeGenerationPrompts } from "@/hooks/use-ai-theme-generation";
-import { usePostLoginAction } from "@/hooks/use-post-login-action";
-import { toast } from "@/hooks/use-toast";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth-store";
+import { useAIChatStore } from "@/store/ai-chat-store";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { LoadingLogo } from "./loading-logo";
-import { ThemeStyles } from "@/types/theme";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { getUserMessagesCount, useAIChatStore } from "@/store/ai-chat-store";
-import {
-  createCurrentThemePromptJson,
-  getTextContent,
-  mentionsCount,
-} from "@/utils/tiptap-json-content";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
   loading: () => <Loading className="min-h-[60px] w-full rounded-lg" />,
 });
 
-export function AIChatForm() {
+export function AIChatForm({
+  handleThemeGeneration,
+}: {
+  handleThemeGeneration: (jsonContent: JSONContent | null) => void;
+}) {
   const { jsonContent, setJsonContent } = useAIThemeGenerationPrompts();
-  const {
-    generateTheme,
-    loading: aiGenerateLoading,
-    cancelThemeGeneration,
-  } = useAIThemeGeneration();
+  const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
-  const { data: session } = authClient.useSession();
-  const { openAuthDialog } = useAuthStore();
-  const { messages, addUserMessage, addAssistantMessage, clearMessages } = useAIChatStore();
-
-  const handleThemeGeneration = async (jsonContent: JSONContent | null) => {
-    if (!jsonContent) {
-      toast({
-        title: "Error",
-        description: "Failed to generate theme. Please try again.",
-      });
-      return;
-    }
-
-    addUserMessage({
-      content: getTextContent(jsonContent),
-    });
-
-    let transformedJsonContent = jsonContent;
-
-    // if it's not the first message and the jsonContent does not have a mention, add the current theme to the jsonContent
-    if (getUserMessagesCount(messages) > 0 && mentionsCount(jsonContent) === 0) {
-      transformedJsonContent = createCurrentThemePromptJson({
-        prompt: getTextContent(jsonContent),
-      });
-    }
-
-    const theme: ThemeStyles = await generateTheme({
-      jsonContent: transformedJsonContent,
-      onSuccess: () => {},
-    });
-
-    addAssistantMessage({
-      content: theme ? "Here's the theme I generated for you." : "Failed to generate theme.",
-      themeStyles: theme,
-    });
-  };
-
-  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ jsonContent }) => {
-    handleThemeGeneration(jsonContent);
-  });
+  const { messages, clearMessages } = useAIChatStore();
 
   const handleContentChange = (jsonContent: JSONContent) => {
     setJsonContent(jsonContent);
   };
 
   const handleGenerate = async () => {
-    if (!session) {
-      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { jsonContent });
-      return;
-    }
-
-    await handleThemeGeneration(jsonContent);
+    handleThemeGeneration(jsonContent);
   };
 
   return (
