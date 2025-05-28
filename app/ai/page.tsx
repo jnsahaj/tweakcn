@@ -19,13 +19,13 @@ export default function AiPage() {
       <AuthDialogWrapper />
       <div className="relative isolate container mx-auto flex flex-1 flex-col gap-24 overflow-x-visible overflow-y-auto px-4 md:px-6">
         {/* AI Chat entry point section */}
-        <section className="flex flex-col gap-4 pt-32 lg:pt-48">
+        <section className="relative isolate flex flex-col gap-4 pt-28 lg:pt-44">
           <AIAnnouncement />
           <AIChatHero />
         </section>
 
         {/* Community section */}
-        <section className="relative isolate mb-24 flex w-full flex-col gap-4 lg:mb-32">
+        <section className="bg-muted/50 border-border/75! relative isolate mb-24 flex w-full flex-col gap-4 rounded-xl border p-8 lg:mb-32">
           <CommunityThemes />
         </section>
       </div>
