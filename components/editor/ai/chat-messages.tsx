@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { ThemeStyles } from "@/types/theme";
+import { buildAIPromptRender } from "@/utils/ai-prompt";
 import { RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ColorPreview from "../theme-preview/color-preview";
@@ -89,6 +90,20 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     });
   };
 
+  const getDisplayContent = () => {
+    if (isUser && message.promptData) {
+      return buildAIPromptRender(message.promptData);
+    }
+    return message.content || "";
+  };
+
+  const getCopyContent = () => {
+    if (isUser && message.promptData) {
+      return message.promptData.content;
+    }
+    return message.content || "";
+  };
+
   return (
     <div className={cn("flex items-start gap-4", isUser ? "justify-end" : "justify-start")}>
       <div
@@ -107,7 +122,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
               isUser && "bg-muted/80 text-foreground/80 border-border/50! rounded-lg border p-4"
             )}
           >
-            {message.content}
+            {getDisplayContent()}
           </p>
 
           {isAssistant && message.themeStyles && (
@@ -131,7 +146,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
               isUser ? "justify-end" : "justify-start"
             )}
           >
-            <CopyButton textToCopy={message.content} />
+            <CopyButton textToCopy={getCopyContent()} />
 
             {isAssistant && message.themeStyles && (
               <TooltipWrapper label="Reset to this checkpoint" asChild>

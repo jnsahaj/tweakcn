@@ -4,8 +4,8 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { PROMPTS } from "@/utils/prompts";
-import { createCurrentThemePromptJson } from "@/utils/tiptap-json-content";
-import { JSONContent } from "@tiptap/react";
+import { createCurrentThemePrompt } from "@/utils/ai-prompt";
+import { AIPromptData } from "@/types/ai";
 import { Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { AIPillActionButton } from "./ai-pill-action-button";
@@ -13,14 +13,14 @@ import { AIPillActionButton } from "./ai-pill-action-button";
 export function ClosableSuggestedPillActions({
   handleThemeGeneration,
 }: {
-  handleThemeGeneration: (jsonContent: JSONContent | null) => void;
+  handleThemeGeneration: (promptData: AIPromptData | null) => void;
 }) {
   const [hasClosedSuggestions, setHasClosedSuggestions] = useState(false);
   const { loading: aiIsGenerating } = useAIThemeGeneration();
 
   const handleSetPrompt = async (prompt: string) => {
-    const jsonContent = createCurrentThemePromptJson({ prompt });
-    handleThemeGeneration(jsonContent);
+    const promptData = createCurrentThemePrompt({ prompt });
+    handleThemeGeneration(promptData);
   };
 
   if (hasClosedSuggestions) return null;

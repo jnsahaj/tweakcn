@@ -5,7 +5,7 @@ import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { cn } from "@/lib/utils";
-import { JSONContent } from "@tiptap/react";
+import { AIPromptData } from "@/types/ai";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
@@ -18,17 +18,17 @@ const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea
 export function AIChatForm({
   handleThemeGeneration,
 }: {
-  handleThemeGeneration: (jsonContent: JSONContent | null) => void;
+  handleThemeGeneration: (promptData: AIPromptData | null) => void;
 }) {
-  const [jsonContent, setJsonContent] = useState<JSONContent | null>(null);
+  const [promptData, setPromptData] = useState<AIPromptData | null>(null);
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
-  const handleContentChange = (content: JSONContent) => {
-    setJsonContent(content);
+  const handleContentChange = (content: AIPromptData) => {
+    setPromptData(content);
   };
 
   const handleGenerate = async () => {
-    handleThemeGeneration(jsonContent);
+    handleThemeGeneration(promptData);
   };
 
   return (
@@ -65,7 +65,7 @@ export function AIChatForm({
                 size="icon"
                 className="size-8"
                 onClick={handleGenerate}
-                disabled={!jsonContent || aiGenerateLoading}
+                disabled={!promptData || aiGenerateLoading}
               >
                 {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
               </Button>

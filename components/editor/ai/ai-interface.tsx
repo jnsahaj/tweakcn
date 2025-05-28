@@ -7,12 +7,8 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { getUserMessagesCount, useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
-import {
-  createCurrentThemePromptJson,
-  getTextContent,
-  mentionsCount,
-} from "@/utils/tiptap-json-content";
-import { JSONContent } from "@tiptap/react";
+import { createCurrentThemePrompt, getTextContent, mentionsCount } from "@/utils/ai-prompt";
+import { AIPromptData } from "@/types/ai";
 import dynamic from "next/dynamic";
 import { AIChatForm } from "./ai-chat-form";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
@@ -28,13 +24,13 @@ export function AIInterface() {
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
 
-  const handleThemeGeneration = async (jsonContent: JSONContent | null) => {
+  const handleThemeGeneration = async (promptData: AIPromptData | null) => {
     if (!session) {
-      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { jsonContent });
+      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { promptData });
       return;
     }
 
-    if (!jsonContent) {
+    if (!promptData) {
       toast({
         title: "Error",
         description: "Failed to generate theme. Please try again.",
@@ -43,19 +39,18 @@ export function AIInterface() {
     }
 
     addUserMessage({
-      content: getTextContent(jsonContent),
+      promptData: promptData,
     });
 
-    let transformedJsonContent = jsonContent;
+    let transformedPromptData = promptData;
 
-    // if it's not the first message and the jsonContent does not have a mention, add the current theme to the jsonContent
-    if (getUserMessagesCount(messages) > 0 && mentionsCount(jsonContent) === 0) {
-      transformedJsonContent = createCurrentThemePromptJson({
-        prompt: getTextContent(jsonContent),
+    if (getUserMessagesCount(messages) > 0 && mentionsCount(promptData) === 0) {
+      transformedPromptData = createCurrentThemePrompt({
+        prompt: getTextContent(promptData),
       });
     }
 
-    const result = await generateTheme(buildPrompt(transformedJsonContent));
+    const result = await generateTheme(buildPrompt(transformedPromptData));
 
     if (!result) {
       addAssistantMessage({
@@ -72,8 +67,8 @@ export function AIInterface() {
     });
   };
 
-  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ jsonContent }) => {
-    handleThemeGeneration(jsonContent);
+  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ promptData }) => {
+    handleThemeGeneration(promptData);
   });
 
   return (

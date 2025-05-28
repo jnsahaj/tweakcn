@@ -31,7 +31,7 @@ export const useAIChatStore = create<AIChatStore>()(
       addUserMessage: (message: UserMessage) => {
         const userMessage: ChatMessage = {
           id: crypto.randomUUID(),
-          content: message.content,
+          promptData: message.promptData,
           role: "user",
           timestamp: Date.now(),
         };
@@ -61,4 +61,13 @@ export const useAIChatStore = create<AIChatStore>()(
 
 export const getUserMessagesCount = (messages: ChatMessage[]) => {
   return messages.filter((message) => message.role === "user").length;
+};
+
+export const getUserMessages = (messages: ChatMessage[]) => {
+  return messages.filter((message) => message.role === "user");
+};
+
+export const getLastUserMessage = (messages: ChatMessage[]) => {
+  const userMessages = getUserMessages(messages);
+  return userMessages[userMessages.length - 1];
 };
