@@ -9,7 +9,6 @@ import { useAIChatStore } from "@/store/ai-chat-store";
 import { AIPromptData } from "@/types/ai";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import { LoadingLogo } from "./loading-logo";
 import { useState } from "react";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
@@ -39,12 +38,8 @@ export function AIChatForm({
     <div className="@container/form relative transition-all">
       <div className="bg-background relative z-10 flex size-full min-h-[100px] flex-1 flex-col gap-2 overflow-hidden rounded-lg border shadow-xs">
         <label className="sr-only">Chat Input</label>
-        <div className={cn("min-h-[60px] p-2 pb-0", aiGenerateLoading && "pointer-events-none")}>
-          <div
-            className="bg-muted/40 relative isolate rounded-lg"
-            aria-disabled={aiGenerateLoading}
-          >
-            <AIChatFormGeneratingFallback aiGenerateLoading={aiGenerateLoading} />
+        <div className="min-h-[60px] p-2 pb-0">
+          <div className="bg-muted/40 relative isolate rounded-lg">
             <CustomTextarea
               onContentChange={handleContentChange}
               onGenerate={handleGenerate}
@@ -94,26 +89,6 @@ export function AIChatForm({
             )}
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function AIChatFormGeneratingFallback({ aiGenerateLoading }: { aiGenerateLoading: boolean }) {
-  return (
-    <div
-      className={cn(
-        "bg-background/50 pointer-events-none absolute inset-0 z-1 flex size-full items-center justify-center opacity-0 backdrop-blur-sm transition-all duration-150 ease-out",
-        aiGenerateLoading && "pointer-events-auto opacity-100"
-      )}
-    >
-      <div
-        className={cn(
-          "text-muted-foreground size-8 scale-0 opacity-0 transition-all duration-150 ease-out md:size-10",
-          aiGenerateLoading && "scale-100 opacity-100"
-        )}
-      >
-        <LoadingLogo />
       </div>
     </div>
   );

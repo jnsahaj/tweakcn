@@ -14,6 +14,7 @@ import { RotateCcw, RefreshCw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ColorPreview from "../theme-preview/color-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
+import { LoadingLogo } from "./loading-logo";
 
 type ChatMessagesProps = {
   onRetry?: (messageIndex: number) => void;
@@ -22,6 +23,7 @@ type ChatMessagesProps = {
 export function ChatMessages({ onRetry }: ChatMessagesProps) {
   const [isScrollTop, setIsScrollTop] = useState(true);
   const { messages, getDefaultMessage } = useAIChat();
+  const { loading: isAIGenerating } = useAIThemeGeneration();
   const previousMessages = useRef<ChatMessageType[]>(messages);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,7 +36,7 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
       // Update the previous messages ref
       previousMessages.current = messages;
     }
-  }, [messages]);
+  }, [messages, isAIGenerating]);
 
   // Toggle top fade out effect when scrolling
   useEffect(() => {
@@ -72,6 +74,15 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
               onRetry={onRetry}
             />
           ))}
+
+          {/* Loading message when AI is generating */}
+          {isAIGenerating && (
+            <div className="group/message flex gap-1">
+              <div className="relative size-6">
+                <LoadingLogo />
+              </div>
+            </div>
+          )}
         </div>
         <div ref={messagesEndRef} />
       </div>
