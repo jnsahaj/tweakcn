@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { AIChatForm } from "./ai-chat-form";
-import { ClosableSuggestedPillActions } from "./suggested-pill-actions";
+import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
 
 const ChatMessages = dynamic(() => import("./chat-messages").then((mod) => mod.ChatMessages), {
   ssr: false,
