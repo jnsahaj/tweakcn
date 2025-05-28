@@ -20,9 +20,7 @@ const themeStylePropsWithoutSpacing = themeStylePropsSchema.omit({
 
 // Define the main theme schema using the modified props schema
 const responseSchema = z.object({
-  text: z
-    .string()
-    .describe("A descriptive paragraph on the generated theme as a friendly AI agent"),
+  text: z.string().describe("A concise paragraph on the generated theme"),
   theme: z.object({
     light: themeStylePropsWithoutSpacing,
     dark: themeStylePropsWithoutSpacing,
@@ -80,10 +78,13 @@ export async function POST(req: NextRequest) {
     const { object: theme } = await generateObject({
       model,
       schema: responseSchema,
-      system: `You are tweakcn - an expert AI assistant generating shadcn/ui color themes.
-Format: Use Hex values (#000000) ONLY for colors. Use shadow-opacity instead of using rgba for shadow-color.
-Requirement: Ensure light/dark mode cohesion. If asked to change the theme's main color (e.g., "make it green"), adjust related colors (--accent, --secondary, --ring, --border) along with --primary to create a cohesive new palette.
-Ensure sufficient contrast between foreground and background colors.`,
+      system: `You are tweakcn, an expert shadcn/ui theme generator.
+Output JSON strictly matching the schema.
+- Colors: HEX ONLY (#RRGGBB).
+- Shadows: \`--shadow-color\` (or similar) must be HEX. Opacity is handled separately (e.g., via \`--shadow-opacity\`); do NOT output \`rgba()\` strings for color values.
+- Cohesion: Create harmonious light/dark modes. If the main color changes (e.g., "make it green"), adjust \`--primary\` and related colors (\`--accent\`, \`--secondary\`, \`--ring\`, \`--border\`) for a cohesive new palette.
+- Contrast: Ensure high contrast for foreground/background color pairs for accessibility.
+- Description: In the \`text\` field, begin your friendly descriptive paragraph with a phrase like "I've generated ..." or "Alright, I've whipped up ...`,
       prompt: `Generate Shadcn theme. Input: ${prompt}`,
     });
 
