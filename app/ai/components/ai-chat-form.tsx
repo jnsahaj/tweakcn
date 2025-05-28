@@ -3,11 +3,12 @@
 import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
-import { useAIThemeGeneration, useAIThemeGenerationPrompts } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { cn } from "@/lib/utils";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useState } from "react";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -19,7 +20,7 @@ export function AIChatForm({
 }: {
   handleThemeGeneration: (jsonContent: JSONContent | null) => void;
 }) {
-  const { jsonContent, setJsonContent } = useAIThemeGenerationPrompts();
+  const [jsonContent, setJsonContent] = useState<JSONContent | null>(null);
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
   const handleContentChange = (content: JSONContent) => {

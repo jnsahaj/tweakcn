@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { AIChatForm } from "./ai-chat-form";
 import { ChatHeading } from "./chat-heading";
 import { SuggestedPillActions } from "./suggested-pill-actions";
+import { buildPrompt } from "@/lib/ai-theme-generator";
 
 export function AIChatHero() {
   const { addUserMessage, addAssistantMessage, clearMessages } = useAIChatStore();
@@ -59,12 +60,19 @@ export function AIChatHero() {
       });
     }
 
-    const { text, theme } = await generateTheme({ jsonContent: transformedJsonContent });
+    const result = await generateTheme(buildPrompt(transformedJsonContent));
+
+    if (!result) {
+      addAssistantMessage({
+        content: "Failed to generate theme.",
+      });
+    }
 
     addAssistantMessage({
       content:
-        text ?? (theme ? "Here's the theme I generated for you." : "Failed to generate theme."),
-      themeStyles: theme,
+        result?.text ??
+        (result?.theme ? "Here's the theme I generated for you." : "Failed to generate theme."),
+      themeStyles: result?.theme,
     });
   };
 

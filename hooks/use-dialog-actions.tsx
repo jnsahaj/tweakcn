@@ -54,7 +54,7 @@ function useDialogActionsStore(): DialogActionsContextType {
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const { createTheme, isCreatingTheme } = useThemeActions();
-  const { generateTheme, loading: aiGenerateLoading } = useAIThemeGeneration();
+  const { loading: aiGenerateLoading } = useAIThemeGeneration();
   const posthog = usePostHog();
 
   usePostLoginAction("SAVE_THEME", () => {
