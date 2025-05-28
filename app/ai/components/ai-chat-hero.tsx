@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
-import { createCurrentThemePrompt, getTextContent, mentionsCount } from "@/utils/ai-prompt";
+import { attachCurrentThemeMention, mentionsCount } from "@/utils/ai-prompt";
 import { AIPromptData } from "@/types/ai";
 import { useRouter } from "next/navigation";
 import { AIChatForm } from "./ai-chat-form";
@@ -41,20 +41,18 @@ export function AIChatHero() {
     // Clear the messages when the user starts a chat from the '/ai' page
     clearMessages();
 
-    addUserMessage({
-      promptData: promptData,
-    });
-
-    router.push("/editor/theme?tab=ai");
-
     let transformedPromptData = promptData;
 
     // If the promptData does not have a mention, add the current theme to the promptData
     if (mentionsCount(promptData) === 0) {
-      transformedPromptData = createCurrentThemePrompt({
-        prompt: getTextContent(promptData),
-      });
+      transformedPromptData = attachCurrentThemeMention(promptData);
     }
+
+    addUserMessage({
+      promptData: transformedPromptData,
+    });
+
+    router.push("/editor/theme?tab=ai");
 
     const result = await generateTheme(buildPrompt(transformedPromptData));
 

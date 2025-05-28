@@ -31,6 +31,21 @@ export const buildAIPromptRender = (promptData: AIPromptData): React.ReactNode =
   return displayText;
 };
 
+export function attachCurrentThemeMention(promptData: AIPromptData): AIPromptData {
+  const currentThemeData = useEditorStore.getState().themeState.styles;
+
+  const mentionReference: MentionReference = {
+    id: "editor:current-changes",
+    label: "Current Theme",
+    themeData: currentThemeData,
+  };
+
+  return {
+    content: promptData.content,
+    mentions: [...promptData.mentions, mentionReference],
+  };
+}
+
 export function createCurrentThemePrompt({ prompt }: { prompt: string }): AIPromptData {
   const currentThemeData = useEditorStore.getState().themeState.styles;
 
@@ -41,9 +56,13 @@ export function createCurrentThemePrompt({ prompt }: { prompt: string }): AIProm
   };
 
   return {
-    content: `Make the following changes based on @Current Theme:\n${prompt}`,
+    content: `Make the following changes to the @Current Theme:\n${prompt}`,
     mentions: [mentionReference],
   };
+}
+
+export function mentionsCurrentTheme(promptData: AIPromptData): boolean {
+  return promptData.mentions.some((mention) => mention.id === "editor:current-changes");
 }
 
 export function createPromptDataFromMentions(content: string, mentionIds: string[]): AIPromptData {
