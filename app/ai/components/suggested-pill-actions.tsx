@@ -2,37 +2,29 @@
 
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth-store";
 import { PROMPTS } from "@/utils/prompts";
 import { createCurrentThemePromptJson } from "@/utils/tiptap-json-content";
+import { JSONContent } from "@tiptap/react";
 import { Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { ComponentProps } from "react";
 
-export function SuggestedPillActions() {
-  const { generateTheme } = useAIThemeGeneration();
-  const { openAuthDialog } = useAuthStore();
-  const { data: session } = authClient.useSession();
-  const router = useRouter();
+export function SuggestedPillActions({
+  handleThemeGeneration,
+}: {
+  handleThemeGeneration: (jsonContent: JSONContent | null) => void;
+}) {
+  const { loading: aiGenerateLoading } = useAIThemeGeneration();
 
-  const handleSetPrompt = async (prompt: string) => {
+  const handleGenerate = async (prompt: string) => {
     const jsonContent = createCurrentThemePromptJson({ prompt });
-
-    if (!session) {
-      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { jsonContent });
-      return;
-    }
-
-    generateTheme({ jsonContent });
-    router.push("/editor/theme?tab=ai");
+    handleThemeGeneration(jsonContent);
   };
 
   return (
     <>
       {Object.entries(PROMPTS).map(([key, { label, prompt }]) => (
-        <PillButton key={key} onClick={() => handleSetPrompt(prompt)}>
+        <PillButton key={key} onClick={() => handleGenerate(prompt)} disabled={aiGenerateLoading}>
           <Sparkles /> {label}
         </PillButton>
       ))}
@@ -43,15 +35,8 @@ export function SuggestedPillActions() {
 interface PillButtonProps extends ComponentProps<typeof Button> {}
 
 function PillButton({ className, children, disabled, ...props }: PillButtonProps) {
-  const { loading: aiGenerateLoading } = useAIThemeGeneration();
-
   return (
-    <div
-      className={cn(
-        "group/pill relative active:scale-95",
-        aiGenerateLoading && "pointer-events-none"
-      )}
-    >
+    <div className={cn("group/pill relative active:scale-95", disabled && "pointer-events-none")}>
       <div className="from-primary to-background absolute inset-0 z-[-1] rounded-full bg-gradient-to-br opacity-0 transition-all duration-150 ease-in group-hover/pill:opacity-30" />
       <Button
         variant="ghost"
@@ -61,7 +46,7 @@ function PillButton({ className, children, disabled, ...props }: PillButtonProps
           "group-hover/pill:inset-shadow-primary/50 h-7 inset-shadow-2xs inset-shadow-transparent [&>svg]:size-3",
           className
         )}
-        disabled={aiGenerateLoading || disabled}
+        disabled={disabled}
         {...props}
       >
         {children}

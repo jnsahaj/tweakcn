@@ -4,65 +4,30 @@ import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration, useAIThemeGenerationPrompts } from "@/hooks/use-ai-theme-generation";
-import { usePostLoginAction } from "@/hooks/use-post-login-action";
-import { toast } from "@/hooks/use-toast";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth-store";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
   loading: () => <Loading className="min-h-[60px] w-full rounded-lg" />,
 });
 
-export function AIChatForm() {
+export function AIChatForm({
+  handleThemeGeneration,
+}: {
+  handleThemeGeneration: (jsonContent: JSONContent | null) => void;
+}) {
   const { jsonContent, setJsonContent } = useAIThemeGenerationPrompts();
-  const {
-    generateTheme,
-    loading: aiGenerateLoading,
-    cancelThemeGeneration,
-  } = useAIThemeGeneration();
-  const router = useRouter();
-
-  const { data: session } = authClient.useSession();
-  const { openAuthDialog } = useAuthStore();
-
-  const handleThemeGenerationAndRedirect = (jsonContent: JSONContent) => {
-    generateTheme({ jsonContent });
-    router.push("/editor/theme?tab=ai");
-  };
-
-  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ jsonContent }) => {
-    if (!jsonContent) {
-      toast({
-        title: "Error",
-        description: "Failed to generate theme. Please try again.",
-      });
-      return;
-    }
-
-    handleThemeGenerationAndRedirect(jsonContent);
-  });
+  const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
   const handleContentChange = (content: JSONContent) => {
     setJsonContent(content);
   };
 
   const handleGenerate = async () => {
-    if (!session) {
-      if (jsonContent) {
-        openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { jsonContent });
-      }
-      return;
-    }
-
-    if (jsonContent) {
-      handleThemeGenerationAndRedirect(jsonContent);
-    }
+    handleThemeGeneration(jsonContent);
   };
 
   return (
