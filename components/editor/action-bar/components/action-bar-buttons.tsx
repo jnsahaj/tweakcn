@@ -17,7 +17,6 @@ interface ActionBarButtonsProps {
   onImportClick: () => void;
   onCodeClick: () => void;
   onSaveClick: () => void;
-  onAiGenerateClick: () => void;
   onShareClick: (id?: string) => void;
   isSaving: boolean;
 }

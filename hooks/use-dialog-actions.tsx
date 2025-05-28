@@ -1,7 +1,6 @@
 import { usePostHog } from "posthog-js/react";
 import { createContext, ReactNode, useContext, useState } from "react";
 
-import { AIGenerateDialog } from "@/components/editor/action-bar/components/ai-generate-dialog";
 import { CodePanelDialog } from "@/components/editor/code-panel-dialog";
 import CssImportDialog from "@/components/editor/css-import-dialog";
 import { ShareDialog } from "@/components/editor/share-dialog";
@@ -21,7 +20,6 @@ interface DialogActionsContextType {
   cssImportOpen: boolean;
   codePanelOpen: boolean;
   saveDialogOpen: boolean;
-  aiGenerateOpen: boolean;
   shareDialogOpen: boolean;
   shareUrl: string;
   dialogKey: number;
@@ -32,14 +30,11 @@ interface DialogActionsContextType {
   setCssImportOpen: (open: boolean) => void;
   setCodePanelOpen: (open: boolean) => void;
   setSaveDialogOpen: (open: boolean) => void;
-  setAiGenerateOpen: (open: boolean) => void;
   setShareDialogOpen: (open: boolean) => void;
 
   // Handler functions
   handleCssImport: (css: string) => void;
   handleSaveClick: (options?: { shareAfterSave?: boolean }) => void;
-  handleAiGenerateClick: () => void;
-  handleGenerateTheme: (promptText: string, jsonPromptText: string) => Promise<void>;
   handleShareClick: (id?: string) => Promise<void>;
   saveTheme: (themeName: string) => Promise<void>;
 }
@@ -49,17 +44,12 @@ function useDialogActionsStore(): DialogActionsContextType {
   const [codePanelOpen, setCodePanelOpen] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [shareAfterSave, setShareAfterSave] = useState(false);
-  const [aiGenerateOpen, setAiGenerateOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
   const [dialogKey, setDialogKey] = useState(0);
 
-  const {
-    themeState,
-    setThemeState,
-    applyThemePreset,
-    hasThemeChangedFromCheckpoint,
-  } = useEditorStore();
+  const { themeState, setThemeState, applyThemePreset, hasThemeChangedFromCheckpoint } =
+    useEditorStore();
   const { getPreset } = useThemePresetStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
@@ -71,39 +61,10 @@ function useDialogActionsStore(): DialogActionsContextType {
     setSaveDialogOpen(true);
   });
 
-  usePostLoginAction("AI_GENERATE_FROM_DIALOG", () => {
-    setAiGenerateOpen(true);
-  });
-
   usePostLoginAction("SAVE_THEME_FOR_SHARE", () => {
     setSaveDialogOpen(true);
     setShareAfterSave(true);
   });
-
-  const handleGenerateTheme = async (promptText: string, jsonPromptText: string) => {
-    if (!promptText.trim()) return;
-    await generateTheme({
-      prompt: promptText,
-      jsonPrompt: jsonPromptText,
-      onSuccess: () => {
-        setAiGenerateOpen(false);
-        setDialogKey((prev) => prev + 1);
-      },
-    });
-
-    posthog.capture("AI_GENERATE_THEME", {
-      prompt_text: promptText,
-    });
-  };
-
-  const handleAiGenerateClick = () => {
-    if (!session) {
-      openAuthDialog("signin", "AI_GENERATE_FROM_DIALOG");
-      return;
-    }
-
-    setAiGenerateOpen(true);
-  };
 
   const handleCssImport = (css: string) => {
     const { lightColors, darkColors } = parseCssInput(css);
@@ -198,7 +159,6 @@ function useDialogActionsStore(): DialogActionsContextType {
     cssImportOpen,
     codePanelOpen,
     saveDialogOpen,
-    aiGenerateOpen,
     shareDialogOpen,
     shareUrl,
     dialogKey,
@@ -209,14 +169,11 @@ function useDialogActionsStore(): DialogActionsContextType {
     setCssImportOpen,
     setCodePanelOpen,
     setSaveDialogOpen,
-    setAiGenerateOpen,
     setShareDialogOpen,
 
     // Handler functions
     handleCssImport,
     handleSaveClick,
-    handleAiGenerateClick,
-    handleGenerateTheme,
     handleShareClick,
     saveTheme,
   };
@@ -250,13 +207,6 @@ export function DialogActionsProvider({ children }: { children: ReactNode }) {
         onOpenChange={store.setSaveDialogOpen}
         onSave={store.saveTheme}
         isSaving={store.isCreatingTheme}
-      />
-      <AIGenerateDialog
-        key={store.dialogKey}
-        open={store.aiGenerateOpen}
-        onOpenChange={store.setAiGenerateOpen}
-        loading={store.aiGenerateLoading}
-        onGenerate={store.handleGenerateTheme}
       />
       <ShareDialog
         open={store.shareDialogOpen}

@@ -13,14 +13,8 @@ export function ActionBar() {
 }
 
 function ActionBarContent() {
-  const {
-    isCreatingTheme,
-    handleSaveClick,
-    handleAiGenerateClick,
-    handleShareClick,
-    setCssImportOpen,
-    setCodePanelOpen,
-  } = useDialogActions();
+  const { isCreatingTheme, handleSaveClick, handleShareClick, setCssImportOpen, setCodePanelOpen } =
+    useDialogActions();
 
   return (
     <div className="border-b">
@@ -29,7 +23,6 @@ function ActionBarContent() {
           onImportClick={() => setCssImportOpen(true)}
           onCodeClick={() => setCodePanelOpen(true)}
           onSaveClick={() => handleSaveClick()}
-          onAiGenerateClick={handleAiGenerateClick}
           isSaving={isCreatingTheme}
           onShareClick={handleShareClick}
         />

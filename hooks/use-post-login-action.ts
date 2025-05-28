@@ -10,7 +10,6 @@ import { useEffect } from "react";
 
 export type PostLoginActionType =
   | "SAVE_THEME"
-  | "AI_GENERATE_FROM_DIALOG" // Should be removed
   | "AI_GENERATE_FROM_PAGE"
   | "AI_GENERATE_FROM_CHAT"
   | "SAVE_THEME_FOR_SHARE";
