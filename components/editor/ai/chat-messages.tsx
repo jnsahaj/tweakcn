@@ -47,13 +47,13 @@ export function ChatMessages() {
       {/* Top fade out effect when scrolling */}
       <div
         className={cn(
-          "via-background/50 from-background pointer-events-none absolute top-0 right-4 left-0 z-20 h-8 bg-gradient-to-b to-transparent opacity-100 transition-opacity ease-out",
+          "via-background/50 from-background pointer-events-none absolute top-0 right-0 left-0 z-20 h-8 bg-gradient-to-b to-transparent opacity-100 transition-opacity ease-out",
           isScrollTop ? "opacity-0" : "opacity-100"
         )}
       />
       <div
         id="scroll-inner-container"
-        className="scrollbar-thin scrollbar-gutter-both relative size-full flex-1 overflow-y-auto py-8 pr-1"
+        className="scrollbar-thin scrollbar-gutter-both relative size-full flex-1 overflow-y-auto px-1 py-8"
       >
         <div className="flex flex-col gap-8 text-pretty wrap-anywhere">
           {/* Default message: "How can I help you theme?" */}
@@ -94,14 +94,11 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       <div
         className={cn("flex w-full max-w-[90%] items-start gap-1.5", isUser && "flex-row-reverse")}
       >
-        <div className="border-border/50! relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border select-none">
-          {isAssistant ? (
-            <div className="bg-foreground size-6 p-0.5">
-              <Logo className="text-background size-full" />
-            </div>
-          ) : null}
-          {/* Add component for user avatar if needed */}
-        </div>
+        {isAssistant && (
+          <div className="border-border/50! bg-foreground relative flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full border select-none">
+            <Logo className="text-background size-full p-0.5" />
+          </div>
+        )}
 
         <div className={cn("group/message relative", isAssistant && "w-full")}>
           <p

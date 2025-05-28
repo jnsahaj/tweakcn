@@ -2,6 +2,7 @@
 
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Button } from "@/components/ui/button";
+import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { PROMPTS } from "@/utils/prompts";
 import { createCurrentThemePromptJson } from "@/utils/tiptap-json-content";
 import { JSONContent } from "@tiptap/react";
@@ -15,6 +16,7 @@ export function ClosableSuggestedPillActions({
   handleThemeGeneration: (jsonContent: JSONContent | null) => void;
 }) {
   const [hasClosedSuggestions, setHasClosedSuggestions] = useState(false);
+  const { loading: aiIsGenerating } = useAIThemeGeneration();
 
   const handleSetPrompt = async (prompt: string) => {
     const jsonContent = createCurrentThemePromptJson({ prompt });
@@ -26,7 +28,7 @@ export function ClosableSuggestedPillActions({
   return (
     <div className="relative flex flex-col items-center justify-center">
       {/* Fade out effect when scrolling */}
-      <div className="via-background/50 from-background pointer-events-none absolute -top-8 right-4 left-0 z-20 h-8 bg-gradient-to-t to-transparent opacity-100 transition-opacity ease-out" />
+      <div className="via-background/50 from-background pointer-events-none absolute -top-8 right-0 left-0 z-20 h-8 bg-gradient-to-t to-transparent opacity-100 transition-opacity ease-out" />
 
       <div className="flex w-full items-center justify-between gap-4">
         <h3 className="text-muted-foreground text-xs">Suggestions</h3>
@@ -42,7 +44,11 @@ export function ClosableSuggestedPillActions({
 
       <HorizontalScrollArea className="pt-1 pb-2">
         {Object.entries(PROMPTS).map(([key, { label, prompt }]) => (
-          <AIPillActionButton key={key} onClick={() => handleSetPrompt(prompt)}>
+          <AIPillActionButton
+            key={key}
+            onClick={() => handleSetPrompt(prompt)}
+            disabled={aiIsGenerating}
+          >
             <Sparkles /> {label}
           </AIPillActionButton>
         ))}
