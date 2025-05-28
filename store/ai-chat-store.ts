@@ -9,6 +9,7 @@ interface AIChatStore {
   addUserMessage: (message: UserMessage) => void;
   addAssistantMessage: (message: AssistantMessage) => void;
   clearMessages: () => void;
+  resetMessagesUpToIndex: (index: number) => void;
 }
 
 export const useAIChatStore = create<AIChatStore>()(
@@ -51,6 +52,9 @@ export const useAIChatStore = create<AIChatStore>()(
       },
       clearMessages: () => {
         set({ messages: [] });
+      },
+      resetMessagesUpToIndex: (index: number) => {
+        set((state) => ({ messages: state.messages.slice(0, index) }));
       },
     }),
     {

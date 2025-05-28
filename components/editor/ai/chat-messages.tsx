@@ -10,12 +10,16 @@ import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { ThemeStyles } from "@/types/theme";
 import { buildAIPromptRender } from "@/utils/ai-prompt";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, RefreshCw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ColorPreview from "../theme-preview/color-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
 
-export function ChatMessages() {
+type ChatMessagesProps = {
+  onRetry?: (messageIndex: number) => void;
+};
+
+export function ChatMessages({ onRetry }: ChatMessagesProps) {
   const [isScrollTop, setIsScrollTop] = useState(true);
   const { messages, getDefaultMessage } = useAIChat();
   const previousMessages = useRef<ChatMessageType[]>(messages);
@@ -60,8 +64,13 @@ export function ChatMessages() {
           {/* Default message: "How can I help you theme?" */}
           <ChatMessage message={getDefaultMessage()} />
 
-          {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
+          {messages.map((message, index) => (
+            <ChatMessage
+              key={message.id}
+              message={message}
+              messageIndex={index}
+              onRetry={onRetry}
+            />
           ))}
         </div>
         <div ref={messagesEndRef} />
@@ -72,9 +81,11 @@ export function ChatMessages() {
 
 type ChatMessageProps = {
   message: ChatMessageType;
+  messageIndex?: number;
+  onRetry?: (messageIndex: number) => void;
 };
 
-export default function ChatMessage({ message }: ChatMessageProps) {
+export default function ChatMessage({ message, messageIndex, onRetry }: ChatMessageProps) {
   const isUser = message.role === "user";
   const isAssistant = message.role === "assistant";
 
@@ -88,6 +99,12 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       ...themeState,
       styles: themeStyles,
     });
+  };
+
+  const handleRetry = () => {
+    if (messageIndex !== undefined && onRetry) {
+      onRetry(messageIndex);
+    }
   };
 
   const getDisplayContent = () => {
@@ -147,6 +164,20 @@ export default function ChatMessage({ message }: ChatMessageProps) {
             )}
           >
             <CopyButton textToCopy={getCopyContent()} />
+
+            {isUser && onRetry && messageIndex !== undefined && (
+              <TooltipWrapper label="Retry this prompt" asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="size-6 [&>svg]:size-3.5"
+                  disabled={isAIGenerating}
+                  onClick={handleRetry}
+                >
+                  <RefreshCw />
+                </Button>
+              </TooltipWrapper>
+            )}
 
             {isAssistant && message.themeStyles && (
               <TooltipWrapper label="Reset to this checkpoint" asChild>

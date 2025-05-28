@@ -20,7 +20,8 @@ const ChatMessages = dynamic(() => import("./chat-messages").then((mod) => mod.C
 
 export function AIInterface() {
   const { generateTheme } = useAIThemeGeneration();
-  const { messages, addUserMessage, addAssistantMessage } = useAIChatStore();
+  const { messages, addUserMessage, addAssistantMessage, resetMessagesUpToIndex } =
+    useAIChatStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
 
@@ -67,6 +68,24 @@ export function AIInterface() {
     });
   };
 
+  const handleRetry = async (messageIndex: number) => {
+    const messageToRetry = messages[messageIndex];
+
+    if (!messageToRetry || messageToRetry.role !== "user" || !messageToRetry.promptData) {
+      toast({
+        title: "Error",
+        description: "Cannot retry this message.",
+      });
+      return;
+    }
+
+    // Reset messages up to the retry point (remove the user message and any subsequent messages)
+    resetMessagesUpToIndex(messageIndex);
+
+    // Resend the prompt
+    await handleThemeGeneration(messageToRetry.promptData);
+  };
+
   usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ promptData }) => {
     handleThemeGeneration(promptData);
   });
@@ -78,7 +97,7 @@ export function AIInterface() {
           "relative flex w-full flex-1 flex-col overflow-hidden transition-all duration-300 ease-out"
         )}
       >
-        <ChatMessages />
+        <ChatMessages onRetry={handleRetry} />
       </div>
 
       {/* Chat form input and suggestions */}
