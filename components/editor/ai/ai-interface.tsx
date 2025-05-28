@@ -7,7 +7,7 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { getUserMessagesCount, useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
-import { createCurrentThemePrompt, getTextContent, mentionsCount } from "@/utils/ai-prompt";
+import { attachCurrentThemeMention, mentionsCount } from "@/utils/ai-prompt";
 import { AIPromptData } from "@/types/ai";
 import dynamic from "next/dynamic";
 import { AIChatForm } from "./ai-chat-form";
@@ -39,17 +39,15 @@ export function AIInterface() {
       return;
     }
 
-    addUserMessage({
-      promptData: promptData,
-    });
-
     let transformedPromptData = promptData;
 
     if (getUserMessagesCount(messages) > 0 && mentionsCount(promptData) === 0) {
-      transformedPromptData = createCurrentThemePrompt({
-        prompt: getTextContent(promptData),
-      });
+      transformedPromptData = attachCurrentThemeMention(promptData);
     }
+
+    addUserMessage({
+      promptData: transformedPromptData,
+    });
 
     const result = await generateTheme(buildPrompt(transformedPromptData));
 
