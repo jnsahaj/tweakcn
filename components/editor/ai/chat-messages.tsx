@@ -174,8 +174,6 @@ export default function ChatMessage({ message, messageIndex, onRetry }: ChatMess
               isUser ? "justify-end" : "justify-start"
             )}
           >
-            <CopyButton textToCopy={getCopyContent()} />
-
             {isUser && onRetry && messageIndex !== undefined && (
               <TooltipWrapper label="Retry this prompt" asChild>
                 <Button
@@ -189,6 +187,8 @@ export default function ChatMessage({ message, messageIndex, onRetry }: ChatMess
                 </Button>
               </TooltipWrapper>
             )}
+
+            <CopyButton textToCopy={getCopyContent()} />
 
             {isAssistant && message.themeStyles && (
               <TooltipWrapper label="Reset to this checkpoint" asChild>
