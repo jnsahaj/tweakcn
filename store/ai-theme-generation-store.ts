@@ -73,18 +73,20 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     set({ loading: true, abortController });
 
     try {
-      const themeStyles = await generateThemeWithReferences(jsonContent, {
+      const response = await generateThemeWithReferences(jsonContent, {
         onSuccess: options?.onSuccess,
         onError: options?.onError,
         signal: abortController.signal,
       });
 
+      console.log(response);
+
       set({
         hasPrompted: true,
-        lastGeneratedTheme: themeStyles,
+        lastGeneratedTheme: response?.theme,
       });
 
-      return themeStyles;
+      return response;
     } catch (error) {
       console.error(error);
     } finally {

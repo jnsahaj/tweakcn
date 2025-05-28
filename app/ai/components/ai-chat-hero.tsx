@@ -59,10 +59,11 @@ export function AIChatHero() {
       });
     }
 
-    const theme = await generateTheme({ jsonContent: transformedJsonContent });
+    const { text, theme } = await generateTheme({ jsonContent: transformedJsonContent });
 
     addAssistantMessage({
-      content: theme ? "Here's the theme I generated for you." : "Failed to generate theme.",
+      content:
+        text ?? (theme ? "Here's the theme I generated for you." : "Failed to generate theme."),
       themeStyles: theme,
     });
   };

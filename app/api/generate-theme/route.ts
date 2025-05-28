@@ -19,9 +19,14 @@ const themeStylePropsWithoutSpacing = themeStylePropsSchema.omit({
 });
 
 // Define the main theme schema using the modified props schema
-const themeSchemaWithoutSpacing = z.object({
-  light: themeStylePropsWithoutSpacing,
-  dark: themeStylePropsWithoutSpacing,
+const responseSchema = z.object({
+  text: z
+    .string()
+    .describe("A descriptive paragraph on the generated theme as a friendly AI agent"),
+  theme: z.object({
+    light: themeStylePropsWithoutSpacing,
+    dark: themeStylePropsWithoutSpacing,
+  }),
 });
 
 // Create Rate limit - 5 requests per 60 seconds
@@ -65,10 +70,7 @@ export async function POST(req: NextRequest) {
     });
 
     const model = createFallback({
-      models: [
-        groq("llama-3.3-70b-versatile"),
-        google("gemini-2.0-flash-lite"),
-      ],
+      models: [groq("llama-3.3-70b-versatile"), google("gemini-2.0-flash-lite")],
       onError: (error, modelId) => {
         console.error(`Error with model ${modelId}:`, error);
       },
@@ -77,8 +79,8 @@ export async function POST(req: NextRequest) {
 
     const { object: theme } = await generateObject({
       model,
-      schema: themeSchemaWithoutSpacing,
-      system: `You are an AI generating Shadcn UI color themes.
+      schema: responseSchema,
+      system: `You are tweakcn - an expert AI assistant generating shadcn/ui color themes.
 Format: Use Hex values (#000000) ONLY for colors. Use shadow-opacity instead of using rgba for shadow-color.
 Requirement: Ensure light/dark mode cohesion. If asked to change the theme's main color (e.g., "make it green"), adjust related colors (--accent, --secondary, --ring, --border) along with --primary to create a cohesive new palette.
 Ensure sufficient contrast between foreground and background colors.`,
