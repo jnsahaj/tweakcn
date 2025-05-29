@@ -23,13 +23,25 @@ export const buildPromptForAPI = (promptData: AIPromptData) => {
 };
 
 export const buildAIPromptRender = (promptData: AIPromptData): React.ReactNode => {
-  let displayText = promptData.content;
+  // Create a regex that matches all possible mention patterns from the actual mentions
+  const mentionPatterns = promptData.mentions.map(
+    (m) => `@${m.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`
+  );
+  const mentionRegex = new RegExp(`(${mentionPatterns.join("|")})`, "g");
 
-  promptData.mentions.forEach((mention) => {
-    displayText = displayText.replace(new RegExp(`@${mention.label}`, "g"), `@${mention.label}`);
+  const parts = promptData.content.split(mentionRegex);
+
+  return parts.map((part, index) => {
+    const mention = promptData.mentions.find((m) => `@${m.label}` === part);
+    if (mention) {
+      return (
+        <span key={index} className="mention">
+          {part}
+        </span>
+      );
+    }
+    return part;
   });
-
-  return displayText;
 };
 
 export function attachCurrentThemeMention(promptData: AIPromptData): AIPromptData {
