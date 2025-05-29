@@ -24,13 +24,13 @@ interface VariantPrompt {
 
 const CREATE_PROMPTS: CreatePrompt[] = [
   {
-    displayContent: "Make Twitter but in a slick pink",
-    prompt: "Make Twitter but in a slick pink",
+    displayContent: "Make @Twitter but in a slick pink",
+    prompt: "Make @Twitter but in a slick pink",
     basePreset: "twitter",
   },
   {
-    displayContent: "What if Supabase was vibrant blue?",
-    prompt: "What if Supabase was vibrant blue?",
+    displayContent: "What if @Supabase was vibrant blue?",
+    prompt: "What if @Supabase was vibrant blue?",
     basePreset: "supabase",
   },
   {
@@ -42,15 +42,15 @@ const CREATE_PROMPTS: CreatePrompt[] = [
 
 const VARIANT_PROMPTS: VariantPrompt[] = [
   {
-    displayContent: "Make my theme minimalistic",
+    displayContent: "Make my @Current Theme minimalistic",
     prompt: PROMPTS.minimalStyle.prompt,
   },
   {
-    displayContent: "Flatten the colors of my theme",
+    displayContent: "Flatten the colors of my @Current Theme",
     prompt: PROMPTS.flatDesign.prompt,
   },
   {
-    displayContent: "Create a brutalist variant of my theme",
+    displayContent: "Create a brutalist variant of my @Current Theme",
     prompt: PROMPTS.brutalist.prompt,
   },
 ];
