@@ -1,8 +1,7 @@
-import { useEditorStore } from "@/store/editor-store";
-import { useThemePresetStore } from "@/store/theme-preset-store";
 import { defaultThemeState } from "@/config/theme";
-import { Theme } from "@/types/theme";
+import { useEditorStore } from "@/store/editor-store";
 import { AIPromptData } from "@/types/ai";
+import { Theme } from "@/types/theme";
 import { buildPromptForAPI } from "@/utils/ai-prompt";
 
 /**
@@ -26,7 +25,7 @@ export async function generateThemeWithAI(prompt: string, options?: { signal?: A
       try {
         const errorBody = await response.json();
         errorMessage = errorBody.message || errorBody.error || errorMessage;
-      } catch (e) {
+      } catch {
         // Ignore if error body isn't valid JSON or doesn't contain a message
       }
       throw new Error(errorMessage);
