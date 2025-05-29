@@ -60,6 +60,7 @@ export function AIChatHero() {
       addAssistantMessage({
         content: "Failed to generate theme.",
       });
+      return;
     }
 
     addAssistantMessage({
