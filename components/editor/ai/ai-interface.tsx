@@ -1,22 +1,30 @@
 "use client";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
+import { buildPrompt } from "@/lib/ai-theme-generator";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { getUserMessagesCount, useAIChatStore } from "@/store/ai-chat-store";
+import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
-import { attachCurrentThemeMention, mentionsCount } from "@/utils/ai-prompt";
 import { AIPromptData } from "@/types/ai";
+import { attachCurrentThemeMention, mentionsCount } from "@/utils/ai-prompt";
 import dynamic from "next/dynamic";
 import { AIChatForm } from "./ai-chat-form";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
-import { buildPrompt } from "@/lib/ai-theme-generator";
 
 const ChatMessages = dynamic(() => import("./chat-messages").then((mod) => mod.ChatMessages), {
   ssr: false,
 });
+
+const NoMessagesPlaceholder = dynamic(
+  () => import("./no-messages-placeholder").then((mod) => mod.NoMessagesPlaceholder),
+  {
+    ssr: false,
+  }
+);
 
 export function AIInterface() {
   const { generateTheme } = useAIThemeGeneration();
@@ -24,6 +32,8 @@ export function AIInterface() {
     useAIChatStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
+
+  const hasMessages = messages.length > 0;
 
   const handleThemeGeneration = async (promptData: AIPromptData | null) => {
     if (!session) {
@@ -41,7 +51,7 @@ export function AIInterface() {
 
     let transformedPromptData = promptData;
 
-    if (getUserMessagesCount(messages) > 0 && mentionsCount(promptData) === 0) {
+    if (mentionsCount(promptData) === 0) {
       transformedPromptData = attachCurrentThemeMention(promptData);
     }
 
@@ -95,13 +105,33 @@ export function AIInterface() {
           "relative flex w-full flex-1 flex-col overflow-hidden transition-all duration-300 ease-out"
         )}
       >
-        <ChatMessages onRetry={handleRetry} />
+        <ScrollArea className="relative size-full px-4">
+          <div
+            className={cn(
+              "absolute inset-0 px-4 pt-24",
+              hasMessages
+                ? "pointer-events-none scale-80 opacity-0 select-none"
+                : "scale-100 opacity-100 transition-all ease-out"
+            )}
+          >
+            <NoMessagesPlaceholder handleThemeGeneration={handleThemeGeneration} />
+          </div>
+
+          <ChatMessages onRetry={handleRetry} />
+        </ScrollArea>
       </div>
 
       {/* Chat form input and suggestions */}
-      <div className="relative mx-auto flex w-full flex-col">
+      <div className="relative mx-auto flex w-full flex-col px-4">
         <div className="relative isolate z-10 w-full">
-          <ClosableSuggestedPillActions handleThemeGeneration={handleThemeGeneration} />
+          <div
+            className={cn(
+              "transition-all ease-out",
+              hasMessages ? "scale-100 opacity-100" : "scale-80 opacity-0"
+            )}
+          >
+            <ClosableSuggestedPillActions handleThemeGeneration={handleThemeGeneration} />
+          </div>
           <AIChatForm handleThemeGeneration={handleThemeGeneration} />
         </div>
       </div>

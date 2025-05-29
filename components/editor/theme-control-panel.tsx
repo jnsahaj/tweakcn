@@ -442,7 +442,7 @@ const ThemeControlPanel = ({
           </TabsContent>
 
           {isDevelopment && (
-            <TabsContent value="ai" className="mt-1 size-full overflow-hidden px-4">
+            <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
               <AIInterface />
             </TabsContent>
           )}

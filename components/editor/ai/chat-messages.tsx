@@ -10,7 +10,7 @@ import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { ThemeStyles } from "@/types/theme";
 import { buildAIPromptRender } from "@/utils/ai-prompt";
-import { RotateCcw, RefreshCw } from "lucide-react";
+import { Goal, RefreshCw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ColorPreview from "../theme-preview/color-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
@@ -22,7 +22,7 @@ type ChatMessagesProps = {
 
 export function ChatMessages({ onRetry }: ChatMessagesProps) {
   const [isScrollTop, setIsScrollTop] = useState(true);
-  const { messages, getDefaultMessage } = useAIChat();
+  const { messages } = useAIChat();
   const { loading: isAIGenerating } = useAIThemeGeneration();
   const previousMessages = useRef<ChatMessageType[]>(messages);
 
@@ -58,14 +58,8 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
           isScrollTop ? "opacity-0" : "opacity-100"
         )}
       />
-      <div
-        id="scroll-inner-container"
-        className="scrollbar-thin scrollbar-gutter-both relative size-full flex-1 overflow-y-auto px-1 py-8"
-      >
+      <div id="scroll-inner-container" className="relative size-full flex-1 px-2 py-8">
         <div className="flex flex-col gap-8 text-pretty wrap-anywhere">
-          {/* Default message: "How can I help you theme?" */}
-          <ChatMessage message={getDefaultMessage()} />
-
           {messages.map((message, index) => (
             <ChatMessage
               key={message.id}
@@ -77,10 +71,17 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
 
           {/* Loading message when AI is generating */}
           {isAIGenerating && (
-            <div className="group/message flex gap-1">
+            <div className="group/message flex gap-1.5">
               <div className="relative size-6">
                 <LoadingLogo />
               </div>
+
+              <p className="inline-flex animate-pulse gap-0.25 delay-150">
+                <span className="text-sm">Generating</span>
+                <span className="animate-bounce delay-100">.</span>
+                <span className="animate-bounce delay-200">.</span>
+                <span className="animate-bounce delay-300">.</span>
+              </p>
             </div>
           )}
         </div>
@@ -199,7 +200,7 @@ export default function ChatMessage({ message, messageIndex, onRetry }: ChatMess
                   disabled={isAIGenerating}
                   onClick={() => handleResetThemeToMessageCheckpoint(message.themeStyles)}
                 >
-                  <RotateCcw />
+                  <Goal />
                 </Button>
               </TooltipWrapper>
             )}
