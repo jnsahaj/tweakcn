@@ -18,6 +18,7 @@ interface CustomTextareaProps {
 
 const convertJSONContentToPromptData = (jsonContent: JSONContent): AIPromptData => {
   const content =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jsonContent.content?.[0]?.content?.reduce((text: string, node: any) => {
       if (node.type === "text") return text + node.text;
       if (node.type === "mention") return text + `@${node.attrs?.label}`;
@@ -26,7 +27,9 @@ const convertJSONContentToPromptData = (jsonContent: JSONContent): AIPromptData 
 
   const mentions: MentionReference[] =
     jsonContent.content?.[0]?.content
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.filter((node: any) => node.type === "mention")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.map((mention: any) => {
         const id = mention.attrs?.id;
         const label = mention.attrs?.label;
