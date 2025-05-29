@@ -28,6 +28,7 @@ export function AIChatForm({
   };
 
   const handleGenerate = async () => {
+    if (!promptData?.content) return;
     handleThemeGeneration(promptData);
   };
 
@@ -65,7 +66,7 @@ export function AIChatForm({
                 size="icon"
                 className="size-8"
                 onClick={handleGenerate}
-                disabled={!promptData || aiGenerateLoading}
+                disabled={!promptData?.content || aiGenerateLoading}
               >
                 {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
               </Button>
