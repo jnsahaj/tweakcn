@@ -14,6 +14,7 @@ import {
   DEFAULT_FONT_SERIF,
   defaultThemeState,
 } from "@/config/theme";
+import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useControlsTabFromUrl, type ControlTab } from "@/hooks/use-controls-tab-from-url";
 import { useEditorStore } from "@/store/editor-store";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
@@ -29,7 +30,6 @@ import ThemeEditActions from "./theme-edit-actions";
 import ThemeFontSelect from "./theme-font-select";
 import ThemePresetSelect from "./theme-preset-select";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 
 const ThemeControlPanel = ({
   styles,
@@ -81,8 +81,6 @@ const ThemeControlPanel = ({
 
   const theme = use(themePromise);
 
-  const isDevelopment = process.env.NODE_ENV === "development";
-
   return (
     <>
       <div className="border-b">
@@ -103,17 +101,15 @@ const ThemeControlPanel = ({
               <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
               <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
               <TabsTriggerPill value="other">Other</TabsTriggerPill>
-              {isDevelopment && (
-                <TabsTriggerPill
-                  value="ai"
-                  className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
-                >
-                  <Sparkles className="mr-1 size-3.5 text-current" />
-                  <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-gradient-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
-                    Generate
-                  </span>
-                </TabsTriggerPill>
-              )}
+              <TabsTriggerPill
+                value="ai"
+                className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
+              >
+                <Sparkles className="mr-1 size-3.5 text-current" />
+                <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-gradient-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
+                  Generate
+                </span>
+              </TabsTriggerPill>
             </TabsList>
           </HorizontalScrollArea>
 
@@ -441,11 +437,9 @@ const ThemeControlPanel = ({
             </ScrollArea>
           </TabsContent>
 
-          {isDevelopment && (
-            <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
-              <AIInterface />
-            </TabsContent>
-          )}
+          <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
+            <AIInterface />
+          </TabsContent>
         </Tabs>
       </div>
     </>
