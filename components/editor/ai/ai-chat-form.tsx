@@ -81,7 +81,7 @@ export function AIChatForm({
                   size="icon"
                   className="size-8 shadow-none"
                   onClick={handleGenerate}
-                  disabled={!promptData || aiGenerateLoading}
+                  disabled={!promptData?.content || aiGenerateLoading}
                 >
                   {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
                 </Button>
