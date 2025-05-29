@@ -2,7 +2,6 @@ import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 import { Metadata } from "next";
 import { AIAnnouncement } from "./components/ai-announcement";
 import { AIChatHero } from "./components/ai-chat-hero";
-import { CommunityThemes } from "./components/community-themes";
 
 export const metadata: Metadata = {
   title: "AI Theme Editor for shadcn/ui — tweakcn",
@@ -22,11 +21,6 @@ export default function AiPage() {
         <section className="relative isolate flex flex-col gap-4 pt-28 lg:pt-44">
           <AIAnnouncement />
           <AIChatHero />
-        </section>
-
-        {/* Community section */}
-        <section className="bg-muted/50 border-border/75! relative isolate mb-24 flex w-full flex-col gap-4 rounded-xl border p-8 lg:mb-32">
-          <CommunityThemes />
         </section>
       </div>
     </>
