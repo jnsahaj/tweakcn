@@ -1,6 +1,7 @@
 import { AIPromptData, MentionReference } from "@/types/ai";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
+import { getLastGeneratedThemeStyles, useAIChatStore } from "@/store/ai-chat-store";
 
 export const getTextContent = (promptData: AIPromptData | null) => {
   if (!promptData) return "";
@@ -38,6 +39,22 @@ export function attachCurrentThemeMention(promptData: AIPromptData): AIPromptDat
     id: "editor:current-changes",
     label: "Current Theme",
     themeData: currentThemeData,
+  };
+
+  return {
+    content: promptData.content,
+    mentions: [...promptData.mentions, mentionReference],
+  };
+}
+
+export function attachLastGeneratedThemeMention(promptData: AIPromptData): AIPromptData {
+  const lastGeneratedThemeStyles = getLastGeneratedThemeStyles(useAIChatStore.getState().messages);
+  if (!lastGeneratedThemeStyles) return promptData;
+
+  const mentionReference: MentionReference = {
+    id: "ai:last-generated-theme",
+    label: "Last Generated Theme",
+    themeData: lastGeneratedThemeStyles,
   };
 
   return {
