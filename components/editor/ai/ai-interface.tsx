@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
 import { AIPromptData } from "@/types/ai";
-import { attachCurrentThemeMention, mentionsCount } from "@/utils/ai-prompt";
+import { attachLastGeneratedThemeMention, mentionsCount } from "@/utils/ai-prompt";
 import dynamic from "next/dynamic";
 import { AIChatForm } from "./ai-chat-form";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
@@ -52,7 +52,7 @@ export function AIInterface() {
     let transformedPromptData = promptData;
 
     if (mentionsCount(promptData) === 0) {
-      transformedPromptData = attachCurrentThemeMention(promptData);
+      transformedPromptData = attachLastGeneratedThemeMention(promptData);
     }
 
     addUserMessage({

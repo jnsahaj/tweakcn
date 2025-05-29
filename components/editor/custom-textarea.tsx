@@ -59,6 +59,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGene
   const { loading: aiGenerateLoading } = useAIThemeGeneration();
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Mention.configure({
