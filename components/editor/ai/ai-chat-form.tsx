@@ -31,6 +31,8 @@ export function AIChatForm({
   };
 
   const handleGenerate = async () => {
+    if (!promptData?.content) return;
+
     handleThemeGeneration(promptData);
   };
 
