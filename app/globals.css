@@ -117,7 +117,7 @@ body {
 
 /* Mention styles */
 .mention {
-  @apply bg-primary/10 text-primary rounded-md px-1;
+  @apply bg-primary/10 rounded-md px-1 font-mono text-sm font-semibold;
 }
 
 @keyframes text {
