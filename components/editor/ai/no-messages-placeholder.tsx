@@ -8,40 +8,58 @@ import { useThemePresetStore } from "@/store/theme-preset-store";
 import { AIPromptData } from "@/types/ai";
 import { createCurrentThemePrompt } from "@/utils/ai-prompt";
 import { PROMPTS } from "@/utils/prompts";
-import { PaintRoller, Palette } from "lucide-react";
+import { Blend, PaintRoller, WandSparkles } from "lucide-react";
 import { ComponentProps, Fragment } from "react";
 import TabsTriggerPill from "../theme-preview/tabs-trigger-pill";
 
-interface CreatePrompt {
+interface RemixPrompt {
   displayContent: string;
   prompt: string;
   basePreset: string;
 }
 
-interface VariantPrompt {
+interface Prompt {
   displayContent: string;
   prompt: string;
 }
 
-const CREATE_PROMPTS: CreatePrompt[] = [
+const CREATE_PROMPTS: Prompt[] = [
   {
-    displayContent: "Make @Twitter but in a slick pink",
-    prompt: "Make @Twitter but in a slick pink",
+    displayContent: "Magazine layout, bold and clean",
+    prompt:
+      "Design a high-contrast editorial layout with bold type, strict grids, and print-inspired accents — like a modern digital magazine.",
+  },
+  {
+    displayContent: "I want a minimal Ghibli Studio vibe",
+    prompt:
+      "Generate a theme inspired by Studio Ghibli — soft pastels, natural greens, organic colors, and hand-drawn charm.",
+  },
+  {
+    displayContent: "Retro Terminal UI, green phosphor glow",
+    prompt:
+      "Create a retro terminal theme with black background (in dark mode), phosphorescent green primary and text,  and monospace font.",
+  },
+];
+
+const REMIX_PROMPTS: RemixPrompt[] = [
+  {
+    displayContent: "Make @Twitter but in a slick purple",
+    prompt: "Make @Twitter but in a slick purple",
     basePreset: "twitter",
   },
   {
     displayContent: "What if @Supabase was vibrant blue?",
-    prompt: "What if @Supabase was vibrant blue?",
+    prompt: "Make @Supabase but in vibrant blue",
     basePreset: "supabase",
   },
   {
-    displayContent: "I want a minimal Ghibli Studio vibe",
-    prompt: "I want a minimal Ghibli Studio vibe",
-    basePreset: "kodama-grove",
+    displayContent: "I want @Doom 64 with muted colors",
+    prompt: "I want @Doom 64 with alternate colors",
+    basePreset: "doom-64",
   },
 ];
 
-const VARIANT_PROMPTS: VariantPrompt[] = [
+const VARIANT_PROMPTS: Prompt[] = [
   {
     displayContent: "Make my @Current Theme minimalistic",
     prompt: PROMPTS.minimalStyle.prompt,
@@ -103,14 +121,37 @@ export function NoMessagesPlaceholder({
             Create
           </TabsTriggerPill>
           <TabsTriggerPill value="variant-prompts" className="flex items-center gap-1">
-            <Palette className="size-3.5" aria-hidden="true" />
-            Variant
+            <Blend className="size-3.5" aria-hidden="true" />
+            Remix
+          </TabsTriggerPill>
+          <TabsTriggerPill value="tweak-prompts" className="flex items-center gap-1">
+            <WandSparkles className="size-3.5" aria-hidden="true" />
+            Tweak
           </TabsTriggerPill>
         </TabsList>
 
         <TabsContent value="create-prompts">
           {CREATE_PROMPTS.map((prompt, index) => (
             <Fragment key={`create-${index}`}>
+              <PromptButton
+                disabled={isGenerating}
+                onClick={() =>
+                  handleThemeGeneration({
+                    content: prompt.prompt,
+                    mentions: [],
+                  })
+                }
+              >
+                {prompt.displayContent}
+              </PromptButton>
+              {index < CREATE_PROMPTS.length - 1 && <Separator className="bg-border/50" />}
+            </Fragment>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="variant-prompts">
+          {REMIX_PROMPTS.map((prompt, index) => (
+            <Fragment key={`variant-${index}`}>
               <PromptButton
                 disabled={isGenerating}
                 onClick={() =>
@@ -121,12 +162,12 @@ export function NoMessagesPlaceholder({
               >
                 {prompt.displayContent}
               </PromptButton>
-              {index < CREATE_PROMPTS.length - 1 && <Separator />}
+              {index < REMIX_PROMPTS.length - 1 && <Separator className="bg-border/50" />}
             </Fragment>
           ))}
         </TabsContent>
 
-        <TabsContent value="variant-prompts">
+        <TabsContent value="tweak-prompts">
           {VARIANT_PROMPTS.map((prompt, index) => (
             <Fragment key={`variant-${index}`}>
               <PromptButton
@@ -137,7 +178,7 @@ export function NoMessagesPlaceholder({
               >
                 {prompt.displayContent}
               </PromptButton>
-              {index < VARIANT_PROMPTS.length - 1 && <Separator />}
+              {index < VARIANT_PROMPTS.length - 1 && <Separator className="bg-border/50" />}
             </Fragment>
           ))}
         </TabsContent>

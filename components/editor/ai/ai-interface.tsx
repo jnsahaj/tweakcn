@@ -107,14 +107,14 @@ export function AIInterface() {
         {hasMessages ? (
           <ChatMessages onRetry={handleRetry} />
         ) : (
-          <div className="animate-in fade-in-50 zoom-in-95 relative isolate px-4 pt-24 duration-300 ease-out">
+          <div className="animate-in fade-in-50 zoom-in-95 relative isolate px-4 pt-16 duration-300 ease-out md:pt-24">
             <NoMessagesPlaceholder handleThemeGeneration={handleThemeGeneration} />
           </div>
         )}
       </div>
 
       {/* Chat form input and suggestions */}
-      <div className="relative mx-auto flex w-full flex-col px-4">
+      <div className="relative mx-auto flex w-full flex-col px-4 pb-4">
         <div className="relative isolate z-10 w-full">
           <div
             className={cn(
@@ -127,10 +127,6 @@ export function AIInterface() {
           <AIChatForm handleThemeGeneration={handleThemeGeneration} />
         </div>
       </div>
-
-      <p className="text-muted-foreground truncate py-2 text-center text-xs tracking-tight">
-        tweakcn may make mistakes. Please use with discretion.
-      </p>
     </section>
   );
 }

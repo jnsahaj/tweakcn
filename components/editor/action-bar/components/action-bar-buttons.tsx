@@ -48,8 +48,8 @@ export function ActionBarButtons({
       <Separator orientation="vertical" className="mx-1 h-8" />
       <UndoRedoButtons disabled={aiGenerationLoading} />
       <Separator orientation="vertical" className="mx-1 h-8" />
+      <ResetButton onClick={handleReset} disabled={!hasUnsavedChanges() || aiGenerationLoading} />
       <div className="hidden items-center gap-1 md:flex">
-        <ResetButton onClick={handleReset} disabled={!hasUnsavedChanges() || aiGenerationLoading} />
         <ImportButton onClick={onImportClick} disabled={aiGenerationLoading} />
       </div>
       <Separator orientation="vertical" className="mx-1 h-8" />
