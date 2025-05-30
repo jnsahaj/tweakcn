@@ -102,7 +102,7 @@ export function NoMessagesPlaceholder({
           </TabsTriggerPill>
         </TabsList>
 
-        <TabsContent value="create-prompts" className="flex-1">
+        <TabsContent value="create-prompts">
           {CREATE_PROMPTS.map((prompt, index) => (
             <Fragment key={`create-${index}`}>
               <PromptButton
@@ -146,10 +146,10 @@ function PromptButton({ className, children, ...props }: PromptButtonProps) {
   return (
     <Button
       variant="ghost"
-      className={cn("text-muted-foreground w-full justify-start", className)}
+      className={cn("text-muted-foreground w-full justify-start font-normal", className)}
       {...props}
     >
-      {children}
+      <span className="truncate">{children}</span>
     </Button>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
@@ -102,23 +101,16 @@ export function AIInterface() {
     <section className="@container relative isolate z-1 mx-auto flex h-full w-full max-w-[49rem] flex-1 flex-col justify-center">
       <div
         className={cn(
-          "relative flex w-full flex-1 flex-col overflow-hidden transition-all duration-300 ease-out"
+          "relative flex w-full flex-1 flex-col overflow-y-hidden transition-all duration-300 ease-out"
         )}
       >
-        <ScrollArea className="relative size-full px-4">
-          <div
-            className={cn(
-              "absolute inset-0 px-4 pt-24",
-              hasMessages
-                ? "pointer-events-none scale-80 opacity-0 select-none"
-                : "scale-100 opacity-100 transition-all ease-out"
-            )}
-          >
+        {hasMessages ? (
+          <ChatMessages onRetry={handleRetry} />
+        ) : (
+          <div className="animate-in fade-in-50 zoom-in-95 relative isolate px-4 pt-24 duration-300 ease-out">
             <NoMessagesPlaceholder handleThemeGeneration={handleThemeGeneration} />
           </div>
-
-          <ChatMessages onRetry={handleRetry} />
-        </ScrollArea>
+        )}
       </div>
 
       {/* Chat form input and suggestions */}
