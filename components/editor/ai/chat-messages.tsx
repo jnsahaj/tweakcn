@@ -26,7 +26,9 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
   const { loading: isAIGenerating } = useAIThemeGeneration();
   const previousMessages = useRef<ChatMessageType[]>(messages);
 
+  const messagesStartRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (messagesEndRef.current) {
       // When switching tabs, messages do not change, so we don't need to animate the scroll
@@ -40,17 +42,26 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
 
   // Toggle top fade out effect when scrolling
   useEffect(() => {
-    const scrollInnerContainer = document.getElementById("scroll-inner-container");
-    if (!scrollInnerContainer) return;
+    const startMarker = messagesStartRef.current;
 
-    const handleScroll = () => setIsScrollTop(scrollInnerContainer?.scrollTop === 0);
-    scrollInnerContainer.addEventListener("scroll", handleScroll);
+    if (!startMarker) return;
 
-    return () => scrollInnerContainer.removeEventListener("scroll", handleScroll);
+    const observerOptions = {
+      root: null, // Use viewport as root for more reliable detection
+      threshold: 0,
+    };
+
+    const startMessagesObserver = new IntersectionObserver(([entry]) => {
+      setIsScrollTop(entry.isIntersecting);
+    }, observerOptions);
+
+    startMessagesObserver.observe(startMarker);
+
+    return () => startMessagesObserver.disconnect();
   }, []);
 
   return (
-    <>
+    <ScrollArea className="relative isolate flex flex-1 flex-col">
       {/* Top fade out effect when scrolling */}
       <div
         className={cn(
@@ -58,7 +69,8 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
           isScrollTop ? "opacity-0" : "opacity-100"
         )}
       />
-      <div id="scroll-inner-container" className="relative size-full flex-1 px-2 py-8">
+      <div className="relative size-full flex-1 px-4 pt-2 pb-8">
+        <div ref={messagesStartRef} />
         <div className="flex flex-col gap-8 text-pretty wrap-anywhere">
           {messages.map((message, index) => (
             <ChatMessage
@@ -87,7 +99,7 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
         </div>
         <div ref={messagesEndRef} />
       </div>
-    </>
+    </ScrollArea>
   );
 }
 
