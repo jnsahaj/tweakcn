@@ -21,13 +21,8 @@ export async function generateThemeWithAI(prompt: string, options?: { signal?: A
     });
 
     if (!response.ok) {
-      let errorMessage = "Failed to generate theme";
-      try {
-        const errorBody = await response.json();
-        errorMessage = errorBody.message || errorBody.error || errorMessage;
-      } catch {
-        // Ignore if error body isn't valid JSON or doesn't contain a message
-      }
+      const errorBody = await response.text();
+      const errorMessage = errorBody || "Failed to generate theme. Please try again.";
       throw new Error(errorMessage);
     }
 

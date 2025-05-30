@@ -4,6 +4,7 @@ import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { AIPromptData } from "@/types/ai";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
@@ -41,7 +42,11 @@ export function AIChatForm({
             className="bg-muted/40 relative isolate rounded-lg"
             aria-disabled={aiGenerateLoading}
           >
-            <CustomTextarea onContentChange={handleContentChange} onGenerate={handleGenerate} />
+            <CustomTextarea
+              onContentChange={handleContentChange}
+              onGenerate={handleGenerate}
+              characterLimit={AI_PROMPT_CHARACTER_LIMIT}
+            />
           </div>
         </div>
 

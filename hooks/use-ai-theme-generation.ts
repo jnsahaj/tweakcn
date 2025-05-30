@@ -23,9 +23,11 @@ export function useAIThemeGeneration() {
           description: "The theme generation was cancelled, no changes were made.",
         });
       } else {
+        const description =
+          error instanceof Error ? error.message : "Failed to generate theme. Please try again.";
         toast({
           title: "Error",
-          description: "Failed to generate theme. Please try again.",
+          description,
           variant: "destructive",
         });
       }

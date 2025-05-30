@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { themeStylePropsSchema } from "@/types/theme";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createGroq } from "@ai-sdk/groq";
@@ -10,7 +11,12 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 
 const requestSchema = z.object({
-  prompt: z.string().min(1),
+  prompt: z
+    .string()
+    .min(1)
+    .max(AI_PROMPT_CHARACTER_LIMIT + 4000, {
+      message: `Failed to generate theme. Input character limit exceeded.`,
+    }),
 });
 
 // Create a new schema based on themeStylePropsSchema excluding 'spacing'
@@ -112,6 +118,15 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error(error);
+
+    // Handle Zod validation errors specifically
+    if (error instanceof z.ZodError) {
+      const firstError = error.errors[0];
+      return new Response(firstError.message, {
+        status: 400,
+      });
+    }
+
     // Consider more specific error handling based on AI SDK errors if needed
     return new Response("Error generating theme", { status: 500 });
   }

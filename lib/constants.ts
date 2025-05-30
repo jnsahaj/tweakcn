@@ -1,0 +1,1 @@
+export const AI_PROMPT_CHARACTER_LIMIT = 500;

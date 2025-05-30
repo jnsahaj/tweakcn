@@ -5,15 +5,18 @@ import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
+import CharacterCount from "@tiptap/extension-character-count";
 import { suggestion } from "@/components/editor/mention-suggestion";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { AIPromptData, MentionReference } from "@/types/ai";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
+import { useToast } from "@/hooks/use-toast";
 
 interface CustomTextareaProps {
   onContentChange: (promptData: AIPromptData) => void;
   onGenerate?: () => void;
+  characterLimit?: number;
 }
 
 const convertJSONContentToPromptData = (jsonContent: JSONContent): AIPromptData => {
@@ -55,8 +58,13 @@ const convertJSONContentToPromptData = (jsonContent: JSONContent): AIPromptData 
   };
 };
 
-const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGenerate }) => {
+const CustomTextarea: React.FC<CustomTextareaProps> = ({
+  onContentChange,
+  onGenerate,
+  characterLimit,
+}) => {
   const { loading: aiGenerateLoading } = useAIThemeGeneration();
+  const { toast } = useToast();
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -73,12 +81,15 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGene
         emptyEditorClass:
           "cursor-text before:content-[attr(data-placeholder)] before:absolute before:top-2 before:left-3 before:text-mauve-11 before:opacity-50 before-pointer-events-none",
       }),
+      CharacterCount.configure({
+        limit: characterLimit,
+      }),
     ],
     autofocus: !aiGenerateLoading,
     editorProps: {
       attributes: {
         class:
-          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full rounded-md bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50",
+          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full rounded-md bg-background px-3 py-2 pb-6 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50",
       },
       handleKeyDown: (view, event) => {
         if (event.key === "Enter" && !event.shiftKey) {
@@ -102,6 +113,28 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGene
         }
         return false;
       },
+      handlePaste: (_view, event) => {
+        if (!characterLimit) return false;
+
+        const clipboardData = event.clipboardData;
+        if (!clipboardData) return false;
+
+        const pastedText = clipboardData.getData("text/plain");
+        const currentCharacterCount = editor?.storage.characterCount.characters() || 0;
+        const totalCharacters = currentCharacterCount + pastedText.length;
+
+        if (totalCharacters > characterLimit) {
+          event.preventDefault();
+          toast({
+            title: "Text too long",
+            description: `The pasted content would exceed the ${characterLimit} character limit.`,
+            variant: "destructive",
+          });
+          return true;
+        }
+
+        return false;
+      },
     },
     onUpdate: ({ editor }) => {
       const jsonContent = editor.getJSON();
@@ -121,7 +154,22 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({ onContentChange, onGene
     return null;
   }
 
-  return <EditorContent editor={editor} />;
+  const characterCount = editor.storage.characterCount.characters();
+  const isLimitExceeded = characterLimit && characterCount > characterLimit;
+  const shouldShowCount = characterLimit && characterCount >= characterLimit * 0.9;
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+      {shouldShowCount && (
+        <div className="pointer-events-none absolute right-3 bottom-2 text-xs">
+          <span className={isLimitExceeded ? "text-destructive" : "text-muted-foreground"}>
+            {characterCount} / {characterLimit}
+          </span>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default CustomTextarea;

@@ -4,6 +4,7 @@ import { Loading } from "@/components/loading";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { AIPromptData } from "@/types/ai";
@@ -46,6 +47,7 @@ export function AIChatForm({
               onContentChange={handleContentChange}
               onGenerate={handleGenerate}
               key={messages.length}
+              characterLimit={AI_PROMPT_CHARACTER_LIMIT}
             />
           </div>
         </div>
