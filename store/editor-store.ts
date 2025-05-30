@@ -184,7 +184,10 @@ export const useEditorStore = create<EditorStore>()(
         const newFuture = [newFutureEntry, ...future];
 
         set({
-          themeState: lastHistoryEntry.state,
+          themeState: {
+            ...lastHistoryEntry.state,
+            currentMode: currentThemeState.currentMode,
+          },
           themeCheckpoint: lastHistoryEntry.state,
           history: newHistory,
           future: newFuture,
@@ -209,7 +212,10 @@ export const useEditorStore = create<EditorStore>()(
         }
 
         set({
-          themeState: firstFutureEntry.state,
+          themeState: {
+            ...firstFutureEntry.state,
+            currentMode: currentThemeState.currentMode,
+          },
           themeCheckpoint: firstFutureEntry.state,
           history: updatedHistory,
           future: newFuture,
