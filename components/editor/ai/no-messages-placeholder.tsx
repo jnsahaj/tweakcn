@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { AIPromptData } from "@/types/ai";
@@ -83,11 +84,16 @@ export function NoMessagesPlaceholder({
 }: {
   handleThemeGeneration: (promptData: AIPromptData | null) => void;
 }) {
+  const { data: session } = authClient.useSession();
   const { loading: isGenerating } = useAIThemeGeneration();
+
+  const userName = session?.user.name?.split(" ")[0];
+  const heading = `What can I help you theme${userName ? `, ${userName}` : ""}?`;
+
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-4">
       <h2 className="text-[clamp(22px,6cqw,32px)] font-semibold tracking-tighter text-pretty">
-        What can I help you theme?
+        {heading}
       </h2>
 
       <Tabs defaultValue="create-prompts">
