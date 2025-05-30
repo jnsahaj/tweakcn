@@ -92,7 +92,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
           "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full rounded-md bg-background px-3 py-2 pb-6 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50",
       },
       handleKeyDown: (view, event) => {
-        if (event.key === "Enter" && !event.shiftKey) {
+        if (event.key === "Enter" && !event.shiftKey && !aiGenerateLoading) {
           const { state } = view;
           const mentionPluginKey = Mention.options.suggestion.pluginKey;
 
@@ -145,7 +145,6 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
 
   useEffect(() => {
     if (editor) {
-      editor.setEditable(!aiGenerateLoading);
       editor.commands.blur();
     }
   }, [aiGenerateLoading, editor]);
