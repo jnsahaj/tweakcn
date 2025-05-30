@@ -1,13 +1,13 @@
-import { createGroq } from "@ai-sdk/groq";
-import { createFallback } from "ai-fallback";
-import { generateObject } from "ai";
-import { z } from "zod";
-import { themeStylePropsSchema } from "@/types/theme";
-import { kv } from "@vercel/kv";
-import { Ratelimit } from "@upstash/ratelimit";
-import { NextRequest } from "next/server";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { auth } from "@/lib/auth";
+import { themeStylePropsSchema } from "@/types/theme";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGroq } from "@ai-sdk/groq";
+import { Ratelimit } from "@upstash/ratelimit";
+import { kv } from "@vercel/kv";
+import { generateObject } from "ai";
+import { createFallback } from "ai-fallback";
+import { NextRequest } from "next/server";
+import { z } from "zod";
 
 const requestSchema = z.object({
   prompt: z.string().min(1),
@@ -78,14 +78,33 @@ export async function POST(req: NextRequest) {
     const { object: theme } = await generateObject({
       model,
       schema: responseSchema,
-      system: `You are tweakcn, an expert shadcn/ui theme generator.
-Output JSON strictly matching the schema.
-- Colors: HEX ONLY (#RRGGBB).
-- Shadows: \`--shadow-color\` (or similar) must be HEX. Opacity is handled separately (e.g., via \`--shadow-opacity\`); do NOT output \`rgba()\` strings for color values.
-- Cohesion: Create harmonious light/dark modes. If the main color changes (e.g., "make it green"), adjust \`--primary\` and related colors (\`--accent\`, \`--secondary\`, \`--ring\`, \`--border\`) for a cohesive new palette.
-- Contrast: Ensure high contrast for foreground/background color pairs for accessibility.
-- Description: In the \`text\` field, begin your friendly descriptive paragraph with a phrase like "I've generated ..." or "Alright, I've whipped up ...`,
-      prompt: `Generate Shadcn theme. Input: ${prompt}`,
+      system: `# Role
+    You are tweakcn, an expert shadcn/ui theme generator.
+
+    # Token Groups
+    - **Brand**: primary, secondary, accent, ring
+    - **Surfaces**: background, card, popover, muted, sidebar
+    - **Typography**: font-sans, font-serif, font-mono
+    - **Contrast pairs**: Some colors have a -foreground counterpart for text, (e.g., primary/primary-foreground, secondary/secondary-foreground)
+
+    # Rules **IMPORTANT**
+    - Output JSON matching schema exactly
+    - Colors: HEX only (#RRGGBB), do NOT output rgba()
+    - Shadows: Shadow Opacity is handled separately (e.g., via \`--shadow-opacity\`);
+    - Generate harmonious light/dark modes
+    - Ensure contrast for base/foreground pairs
+    - Don't change typography unless requested
+
+    # Color Change Logic
+    - "Make it [color]" → modify brand colors only
+    - "Background darker/lighter" → modify surface colors only
+    - Specific tokens requests → change those tokens + their direct foreground pairs
+    - "Change [colors] in light/dark mode" → change those colors only in the requested mode, leave the other mode unchanged. (e.g. "Make primary color in light mode a little darker" → only change primary in light mode, keep dark mode unchanged)
+    - Maintain color harmony across all related tokens
+
+    # Text Description
+    Fill the \`text\` field in a friendly way, for example: "I've generated..." or "Alright, I've whipped up..."`,
+      prompt: `Create shadcn/ui theme for: ${prompt}`,
     });
 
     return new Response(JSON.stringify(theme), {
