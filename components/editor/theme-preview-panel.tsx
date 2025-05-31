@@ -8,11 +8,17 @@ import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useFullscreen } from "@/hooks/use-fullscreen";
 import { cn } from "@/lib/utils";
 import { ThemeEditorPreviewProps } from "@/types/theme";
-import { Maximize, Minimize, Moon, Sun } from "lucide-react";
+import { Maximize, Minimize, Moon, MoreVertical, Sun } from "lucide-react";
 import Link from "next/link";
-import { lazy } from "react";
+import { lazy, useState } from "react";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
 import { TooltipWrapper } from "../tooltip-wrapper";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
@@ -28,6 +34,7 @@ const TypographyDemo = lazy(() => import("@/components/examples/typography/typog
 const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const { theme, toggleTheme } = useTheme();
+  const [activeTab, setActiveTab] = useState("cards");
 
   if (!styles || !styles[currentMode]) {
     return null;
@@ -38,6 +45,10 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
     toggleTheme({ x, y });
   };
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
   return (
     <>
       <div
@@ -46,19 +57,47 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
           isFullscreen && "bg-background fixed inset-0 z-50"
         )}
       >
-        <Tabs defaultValue="cards" className="flex flex-1 flex-col overflow-hidden">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="flex flex-1 flex-col overflow-hidden"
+        >
           <HorizontalScrollArea className="mt-2 mb-1 flex w-full items-center justify-between px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
-                <TabsTriggerPill value="tasks">Tasks</TabsTriggerPill>
-                <TabsTriggerPill value="music">Music</TabsTriggerPill>
               </div>
               <TabsTriggerPill value="pricing">Pricing</TabsTriggerPill>
-              <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
               <TabsTriggerPill value="colors">Color Palette</TabsTriggerPill>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <TooltipWrapper label="More previews" asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical />
+                    </Button>
+                  </TooltipWrapper>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleTabChange("typography")}>
+                    Typography
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleTabChange("tasks")}
+                    className="hidden md:flex"
+                  >
+                    Tasks
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleTabChange("music")}
+                    className="hidden md:flex"
+                  >
+                    Music
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </TabsList>
 
             <div className="flex items-center gap-0">
