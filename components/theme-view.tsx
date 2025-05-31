@@ -1,22 +1,21 @@
 "use client";
 
-import { notFound } from "next/navigation";
-import type { Theme } from "@/types/theme";
-import ThemePreviewPanel from "./editor/theme-preview-panel";
+import { Footer } from "@/components/home/footer";
 import { Button } from "@/components/ui/button";
-import { Share, Sun, Moon, MoreVertical, Edit } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEditorStore } from "@/store/editor-store";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Header } from "./header";
-import { Footer } from "@/components/home/footer";
 import { toast } from "@/components/ui/use-toast";
+import { useEditorStore } from "@/store/editor-store";
+import type { Theme } from "@/types/theme";
+import { Edit, Moon, MoreVertical, Share, Sun } from "lucide-react";
+import { notFound, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import ThemePreviewPanel from "./editor/theme-preview-panel";
+import { Header } from "./header";
 
 export default function ThemeView({ theme }: { theme: Theme }) {
   const { themeState, setThemeState, saveThemeCheckpoint, restoreThemeCheckpoint } =
@@ -94,7 +93,7 @@ export default function ThemeView({ theme }: { theme: Theme }) {
             </div>
           </div>
 
-          <div className="-m-4 mt-6 flex max-h-240 flex-col">
+          <div className="-m-4 mt-6 flex h-[min(80svh,900px)] flex-col">
             <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
           </div>
         </div>

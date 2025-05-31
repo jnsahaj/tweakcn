@@ -139,7 +139,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
 
           <ScrollArea className="relative m-4 mt-1 flex flex-1 flex-col overflow-hidden rounded-lg border">
             <div className="flex h-full flex-1 flex-col">
-              <TabsContent value="cards" className="m-0 h-full space-y-6 p-2 md:p-4">
+              <TabsContent value="cards" className="m-0 h-full">
                 <ExamplesPreviewContainer>
                   <DemoCards />
                 </ExamplesPreviewContainer>

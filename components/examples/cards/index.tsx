@@ -15,7 +15,7 @@ import { GithubCard } from "./github-card";
 
 export default function CardsDemo() {
   return (
-    <div className="@3xl:grids-col-2 grid **:data-[slot=card]:shadow-none @3xl:gap-4 @5xl:grid-cols-10 @7xl:grid-cols-11">
+    <div className="@3xl:grids-col-2 grid p-2 **:data-[slot=card]:shadow-none md:p-4 @3xl:gap-4 @5xl:grid-cols-10 @7xl:grid-cols-11">
       <div className="grid gap-4 @5xl:col-span-4 @7xl:col-span-6">
         <CardsStats />
         <div className="grid gap-1 @2xl:grid-cols-[auto_1fr] @3xl:hidden">

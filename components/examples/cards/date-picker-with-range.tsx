@@ -7,9 +7,9 @@ import { DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function DatePickerWithRange({ className }: React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = React.useState<DateRange | undefined>({
@@ -31,7 +31,7 @@ export function DatePickerWithRange({ className }: React.HTMLAttributes<HTMLDivE
               id="date"
               variant={"outline"}
               className={cn(
-                "w-[300px] justify-start text-left font-normal",
+                "w-full max-w-[300px] justify-start text-left font-normal",
                 !date && "text-muted-foreground"
               )}
             >
