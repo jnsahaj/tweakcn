@@ -69,7 +69,7 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
           isScrollTop ? "opacity-0" : "opacity-100"
         )}
       />
-      <div className="relative size-full flex-1 px-4 pt-2 pb-8">
+      <div className="relative size-full flex-1 px-6 pt-2 pb-8">
         <div ref={messagesStartRef} />
         <div className="flex flex-col gap-8 text-pretty wrap-anywhere">
           {messages.map((message, index) => (
@@ -83,8 +83,8 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
 
           {/* Loading message when AI is generating */}
           {isAIGenerating && (
-            <div className="group/message flex gap-1.5">
-              <div className="relative size-6">
+            <div className="flex gap-1.5 pb-8">
+              <div className="relative flex size-6 items-center justify-center">
                 <LoadingLogo />
               </div>
 
@@ -159,7 +159,7 @@ export default function ChatMessage({ message, messageIndex, onRetry }: ChatMess
         <div className={cn("group/message relative", isAssistant && "w-full")}>
           <p
             className={cn(
-              "w-fit rounded-lg text-sm",
+              "bg-red w-fit text-sm",
               isUser && "bg-muted/80 text-foreground/80 border-border/50! rounded-lg border p-4"
             )}
           >

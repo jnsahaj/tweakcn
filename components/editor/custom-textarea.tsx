@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Mention from "@tiptap/extension-mention";
-import Placeholder from "@tiptap/extension-placeholder";
-import CharacterCount from "@tiptap/extension-character-count";
 import { suggestion } from "@/components/editor/mention-suggestion";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { AIPromptData, MentionReference } from "@/types/ai";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
-import { useToast } from "@/hooks/use-toast";
+import { AIPromptData, MentionReference } from "@/types/ai";
+import CharacterCount from "@tiptap/extension-character-count";
+import Mention from "@tiptap/extension-mention";
+import Placeholder from "@tiptap/extension-placeholder";
+import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import React, { useEffect } from "react";
 
 interface CustomTextareaProps {
   onContentChange: (promptData: AIPromptData) => void;
@@ -89,7 +90,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
     editorProps: {
       attributes: {
         class:
-          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full rounded-md bg-background px-3 py-2 pb-6 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50",
+          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full rounded-md bg-background px-3 py-2 pb-6 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50 max-sm:text-[16px]!",
       },
       handleKeyDown: (view, event) => {
         if (event.key === "Enter" && !event.shiftKey && !aiGenerateLoading) {
@@ -158,11 +159,16 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   const shouldShowCount = characterLimit && characterCount >= characterLimit * 0.9;
 
   return (
-    <div className="relative">
+    <div className="relative isolate">
       <EditorContent editor={editor} />
       {shouldShowCount && (
-        <div className="pointer-events-none absolute right-3 bottom-2 text-xs">
-          <span className={isLimitExceeded ? "text-destructive" : "text-muted-foreground"}>
+        <div className="pointer-events-none absolute right-3 bottom-2 z-10 flex text-xs">
+          <span
+            className={cn(
+              "bg-background/10 rounded-full px-0.5 backdrop-blur-xs",
+              isLimitExceeded ? "text-destructive" : "text-muted-foreground"
+            )}
+          >
             {characterCount} / {characterLimit}
           </span>
         </div>
