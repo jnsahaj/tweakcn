@@ -158,7 +158,9 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               </TabsContent>
 
               <TabsContent value="typography" className="space-y-6 p-4">
-                <TypographyDemo />
+                <ExamplesPreviewContainer>
+                  <TypographyDemo />
+                </ExamplesPreviewContainer>
               </TabsContent>
 
               <TabsContent value="colors" className="space-y-6 p-4">
