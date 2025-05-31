@@ -1,3 +1,7 @@
+"use client";
+
+import * as React from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,19 +22,21 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-export function DemoReportAnIssue() {
+export function CardsReportIssue() {
+  const id = React.useId();
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Report an issue</CardTitle>
         <CardDescription>What area are you having problems with?</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-6">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="area">Area</Label>
+      <CardContent className="flex flex-col gap-6">
+        <div className="grid gap-4 @2xl:grid-cols-2">
+          <div className="flex flex-col gap-3">
+            <Label htmlFor={`area-${id}`}>Area</Label>
             <Select defaultValue="billing">
-              <SelectTrigger id="area">
+              <SelectTrigger id={`area-${id}`} aria-label="Area" className="w-full">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
@@ -42,10 +48,14 @@ export function DemoReportAnIssue() {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="security-level">Security Level</Label>
+          <div className="flex flex-col gap-3">
+            <Label htmlFor={`security-level-${id}`}>Security Level</Label>
             <Select defaultValue="2">
-              <SelectTrigger id="security-level">
+              <SelectTrigger
+                id={`security-level-${id}`}
+                className="w-full [&_span]:!block [&_span]:truncate"
+                aria-label="Security Level"
+              >
                 <SelectValue placeholder="Select level" />
               </SelectTrigger>
               <SelectContent>
@@ -57,21 +67,24 @@ export function DemoReportAnIssue() {
             </Select>
           </div>
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="subject">Subject</Label>
-          <Input id="subject" placeholder="I need help with..." />
+        <div className="flex flex-col gap-3">
+          <Label htmlFor={`subject-${id}`}>Subject</Label>
+          <Input id={`subject-${id}`} placeholder="I need help with..." />
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="description">Description</Label>
+        <div className="flex flex-col gap-3">
+          <Label htmlFor={`description-${id}`}>Description</Label>
           <Textarea
-            id="description"
+            id={`description-${id}`}
             placeholder="Please include all information relevant to your issue."
+            className="min-h-28"
           />
         </div>
       </CardContent>
-      <CardFooter className="justify-between space-x-2">
-        <Button variant="ghost">Cancel</Button>
-        <Button>Submit</Button>
+      <CardFooter className="justify-end gap-2">
+        <Button variant="ghost" size="sm">
+          Cancel
+        </Button>
+        <Button size="sm">Submit</Button>
       </CardFooter>
     </Card>
   );

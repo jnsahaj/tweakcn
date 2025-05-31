@@ -1,16 +1,18 @@
-import { Bar, BarChart, Line, LineChart } from "recharts";
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Area, AreaChart, Line, LineChart } from "recharts";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 
 const data = [
   {
     revenue: 10400,
-    subscription: 240,
+    subscription: 40,
   },
   {
     revenue: 14405,
-    subscription: 300,
+    subscription: 90,
   },
   {
     revenue: 9400,
@@ -22,7 +24,7 @@ const data = [
   },
   {
     revenue: 7000,
-    subscription: 189,
+    subscription: 89,
   },
   {
     revenue: 9600,
@@ -30,11 +32,11 @@ const data = [
   },
   {
     revenue: 11244,
-    subscription: 278,
+    subscription: 78,
   },
   {
     revenue: 26475,
-    subscription: 189,
+    subscription: 89,
   },
 ];
 
@@ -49,16 +51,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function DemoStats() {
+export function CardsStats() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-2">
+    <div className="grid gap-4 @2xl:grid-cols-2 @5xl:grid-cols-1 @7xl:grid-cols-2">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-normal">Total Revenue</CardTitle>
+        <CardHeader>
+          <CardDescription>Total Revenue</CardDescription>
+          <CardTitle className="text-3xl">$15,231.89</CardTitle>
+          <CardDescription>+20.1% from last month</CardDescription>
         </CardHeader>
         <CardContent className="pb-0">
-          <div className="text-2xl font-bold">$15,231.89</div>
-          <p className="text-xs text-muted-foreground">+20.1% from last month</p>
           <ChartContainer config={chartConfig} className="h-[80px] w-full">
             <LineChart
               data={data}
@@ -82,21 +84,31 @@ export function DemoStats() {
           </ChartContainer>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-normal">Subscriptions</CardTitle>
+      <Card className="relative flex flex-col pb-0 @5xl:hidden @7xl:flex">
+        <CardHeader>
+          <CardDescription>Subscriptions</CardDescription>
+          <CardTitle className="text-3xl">+2,350</CardTitle>
+          <CardDescription>+180.1% from last month</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">+2350</div>
-          <p className="text-xs text-muted-foreground">+180.1% from last month</p>
-          <ChartContainer config={chartConfig} className="mt-2 h-[80px] w-full">
-            <BarChart data={data}>
-              <Bar
+        <CardContent className="relative mt-auto max-h-[124px] flex-1 p-0">
+          <ChartContainer config={chartConfig} className="relative size-full">
+            <AreaChart
+              data={data}
+              margin={{
+                left: 0,
+                right: 0,
+              }}
+              className="size-fit"
+            >
+              <Area
                 dataKey="subscription"
                 fill="var(--color-subscription)"
-                radius={4}
+                fillOpacity={0.05}
+                stroke="var(--color-subscription)"
+                strokeWidth={2}
+                type="monotone"
               />
-            </BarChart>
+            </AreaChart>
           </ChartContainer>
         </CardContent>
       </Card>

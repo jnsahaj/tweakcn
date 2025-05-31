@@ -17,7 +17,7 @@ import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 
-const DemoCards = lazy(() => import("@/components/examples/demo-cards"));
+const DemoCards = lazy(() => import("@/components/examples/cards"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoTasks = lazy(() => import("@/components/examples/tasks"));
 const DemoMusic = lazy(() => import("@/components/examples/music"));
