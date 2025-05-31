@@ -53,7 +53,7 @@ const chartConfig = {
 
 export function CardsStats() {
   return (
-    <div className="grid gap-4 @2xl:grid-cols-2 @5xl:grid-cols-1 @7xl:grid-cols-2">
+    <div className="grid gap-4 @xl:grid-cols-2 @5xl:grid-cols-1 @7xl:grid-cols-2">
       <Card>
         <CardHeader>
           <CardDescription>Total Revenue</CardDescription>
@@ -61,7 +61,7 @@ export function CardsStats() {
           <CardDescription>+20.1% from last month</CardDescription>
         </CardHeader>
         <CardContent className="pb-0">
-          <ChartContainer config={chartConfig} className="h-[80px] w-full">
+          <ChartContainer config={chartConfig} className="h-[90px] w-full">
             <LineChart
               data={data}
               margin={{
@@ -90,8 +90,8 @@ export function CardsStats() {
           <CardTitle className="text-3xl">+2,350</CardTitle>
           <CardDescription>+180.1% from last month</CardDescription>
         </CardHeader>
-        <CardContent className="relative mt-auto max-h-[124px] flex-1 p-0">
-          <ChartContainer config={chartConfig} className="relative size-full">
+        <CardContent className="relative mt-auto flex-1 p-0">
+          <ChartContainer config={chartConfig} className="relative size-full h-[90px]">
             <AreaChart
               data={data}
               margin={{
