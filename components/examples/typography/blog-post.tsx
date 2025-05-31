@@ -93,8 +93,8 @@ export function BlogPost() {
             </p>
 
             <blockquote className="border-primary my-6 border-l-4 pl-6 text-lg italic">
-              "The best way to predict the future is to create it. In web development, we're not
-              just following trends—we're setting them."
+              &quot;The best way to predict the future is to create it. In web development,
+              we&apos;re not just following trends—we&apos;re setting them.&quot;
             </blockquote>
 
             <h3 className="mt-6 mb-3 text-xl font-semibold">Key Technologies Shaping the Future</h3>
@@ -180,7 +180,8 @@ export function BlogPost() {
                   <p className="text-sm">
                     Jane is a passionate developer with over 8 years of experience in web
                     development. She specializes in React, TypeScript, and modern web technologies.
-                    When she's not coding, you can find her writing about the latest trends in tech.
+                    When she&apos;s not coding, you can find her writing about the latest trends in
+                    tech.
                   </p>
                 </div>
                 <Button variant="outline" size="sm" className="self-start">
