@@ -1,3 +1,4 @@
+import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
@@ -115,20 +116,22 @@ export function NoMessagesPlaceholder({
       </h2>
 
       <Tabs defaultValue="create-prompts">
-        <TabsList className="m-0 bg-transparent p-0">
-          <TabsTriggerPill value="create-prompts" className="flex items-center gap-1">
-            <PaintRoller className="size-3.5" aria-hidden="true" />
-            Create
-          </TabsTriggerPill>
-          <TabsTriggerPill value="variant-prompts" className="flex items-center gap-1">
-            <Blend className="size-3.5" aria-hidden="true" />
-            Remix
-          </TabsTriggerPill>
-          <TabsTriggerPill value="tweak-prompts" className="flex items-center gap-1">
-            <WandSparkles className="size-3.5" aria-hidden="true" />
-            Tweak
-          </TabsTriggerPill>
-        </TabsList>
+        <HorizontalScrollArea className="mb-1">
+          <TabsList className="m-0 bg-transparent p-0">
+            <TabsTriggerPill value="create-prompts" className="flex items-center gap-1">
+              <PaintRoller className="size-3.5" aria-hidden="true" />
+              Create
+            </TabsTriggerPill>
+            <TabsTriggerPill value="variant-prompts" className="flex items-center gap-1">
+              <Blend className="size-3.5" aria-hidden="true" />
+              Remix
+            </TabsTriggerPill>
+            <TabsTriggerPill value="tweak-prompts" className="flex items-center gap-1">
+              <WandSparkles className="size-3.5" aria-hidden="true" />
+              Tweak
+            </TabsTriggerPill>
+          </TabsList>
+        </HorizontalScrollArea>
 
         <TabsContent value="create-prompts">
           {CREATE_PROMPTS.map((prompt, index) => (

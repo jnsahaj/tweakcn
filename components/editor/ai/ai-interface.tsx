@@ -107,7 +107,7 @@ export function AIInterface() {
         {hasMessages ? (
           <ChatMessages onRetry={handleRetry} />
         ) : (
-          <div className="animate-in fade-in-50 zoom-in-95 relative isolate px-4 pt-16 duration-300 ease-out md:pt-24">
+          <div className="animate-in fade-in-50 zoom-in-95 relative isolate px-4 pt-8 duration-300 ease-out sm:pt-16 md:pt-24">
             <NoMessagesPlaceholder handleThemeGeneration={handleThemeGeneration} />
           </div>
         )}
@@ -119,7 +119,7 @@ export function AIInterface() {
           <div
             className={cn(
               "transition-all ease-out",
-              hasMessages ? "scale-100 opacity-100" : "scale-80 opacity-0"
+              hasMessages ? "scale-100 opacity-100" : "h-0 scale-80 opacity-0"
             )}
           >
             <ClosableSuggestedPillActions handleThemeGeneration={handleThemeGeneration} />
