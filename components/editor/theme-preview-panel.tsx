@@ -23,6 +23,7 @@ const DemoTasks = lazy(() => import("@/components/examples/tasks"));
 const DemoMusic = lazy(() => import("@/components/examples/music"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
 const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
+const TypographyDemo = lazy(() => import("@/components/examples/typography/typography-demo"));
 
 const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
@@ -51,11 +52,12 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
-                <TabsTriggerPill value="pricing">Pricing</TabsTriggerPill>
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
                 <TabsTriggerPill value="tasks">Tasks</TabsTriggerPill>
                 <TabsTriggerPill value="music">Music</TabsTriggerPill>
               </div>
+              <TabsTriggerPill value="pricing">Pricing</TabsTriggerPill>
+              <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
               <TabsTriggerPill value="colors">Color Palette</TabsTriggerPill>
             </TabsList>
 
@@ -153,6 +155,10 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMusic />
                 </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="typography" className="space-y-6 p-4">
+                <TypographyDemo />
               </TabsContent>
 
               <TabsContent value="colors" className="space-y-6 p-4">
