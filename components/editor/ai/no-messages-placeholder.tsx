@@ -26,19 +26,24 @@ interface Prompt {
 
 const CREATE_PROMPTS: Prompt[] = [
   {
-    displayContent: "Magazine layout, bold and clean",
+    displayContent: "JavaScript/TypeScript Advent of Code playground",
     prompt:
-      "Design a high-contrast editorial layout with bold type, strict grids, and print-inspired accents — like a modern digital magazine.",
+      "Create a retro JavaScript Advent of Code theme. Use a grayish background with JavaScript yellow and TypeScript blue as primary/secondary colors. Change all fonts to monospace. Make borders sharp.",
+  },
+  {
+    displayContent: "Retro Terminal UI, green phosphor glow",
+    prompt:
+      "Create a retro terminal theme with black background (in dark mode), phosphorescent green primary and text, and all fonts monospace.",
+  },
+  {
+    displayContent: "Monochrome Manga-inspired theme",
+    prompt:
+      "Create a Manga-inspired theme. Monochromatic palette (black, off-white, grays), square corners, small contrast solid offset shadows, and high-contrast borders (black on light, off-white on dark). Use a playful font, like Architects daughter.",
   },
   {
     displayContent: "I want a minimal Ghibli Studio vibe",
     prompt:
       "Generate a theme inspired by Studio Ghibli — soft pastels, natural greens, organic colors, and hand-drawn charm.",
-  },
-  {
-    displayContent: "Retro Terminal UI, green phosphor glow",
-    prompt:
-      "Create a retro terminal theme with black background (in dark mode), phosphorescent green primary and text,  and monospace font.",
   },
 ];
 
