@@ -1,13 +1,9 @@
+"use client";
+
 import { ChevronDown, Circle, Plus, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -20,54 +16,30 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 
-export function DemoGithub() {
+export function GithubCard() {
   return (
     <Card>
-      <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
-        <div className="space-y-1">
-          <CardTitle>tweakcn</CardTitle>
-          <CardDescription>
-            A visual editor for shadcn/ui components with beautiful themes.
-            Accessible. Customizable. Open Source.
-          </CardDescription>
-        </div>
-        <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
-          <Link href="https://github.com/jnsahaj/tweakcn">
-            <Button variant="secondary" className="px-3 shadow-none">
-              <Star />
-              Star
-            </Button>
-          </Link>
-          <Separator orientation="vertical" className="h-[20px]" />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="px-2 shadow-none">
-                <ChevronDown className="text-secondary-foreground" />
+      <CardHeader>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1.5">
+            <CardTitle>tweakcn</CardTitle>
+            <CardDescription>
+              A visual editor for shadcn/ui components with beautiful themes. Accessible.
+              Customizable. Open Source.
+            </CardDescription>
+          </div>
+          <div className="bg-secondary text-secondary-foreground flex min-w-20 shrink-0 items-center space-x-1 rounded-md">
+            <Link href="https://github.com/jnsahaj/tweakcn">
+              <Button variant="secondary" className="flex items-center gap-2 px-3 shadow-none">
+                <Star />
+                Star
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              alignOffset={-5}
-              className="w-[200px]"
-              forceMount
-            >
-              <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem checked>
-                Future Ideas
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>My Stack</DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>Inspiration</DropdownMenuCheckboxItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Plus /> Create List
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </Link>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex space-x-4 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex space-x-4 text-sm">
           <div className="flex items-center">
             <Circle className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
             TypeScript

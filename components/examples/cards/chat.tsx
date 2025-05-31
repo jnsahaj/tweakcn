@@ -1,7 +1,7 @@
-import * as React from "react";
-import { Check, Plus, Send } from "lucide-react";
+"use client";
 
-import { cn } from "@/lib/utils";
+import * as React from "react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -22,12 +22,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { ArrowUpIcon, CheckIcon, PlusIcon } from "lucide-react";
 
 const users = [
   {
@@ -59,7 +56,7 @@ const users = [
 
 type User = (typeof users)[number];
 
-export function DemoChat() {
+export function CardsChat() {
   const [open, setOpen] = React.useState(false);
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
 
@@ -88,14 +85,14 @@ export function DemoChat() {
     <>
       <Card>
         <CardHeader className="flex flex-row items-center">
-          <div className="flex items-center space-x-4">
-            <Avatar>
+          <div className="flex items-center gap-4">
+            <Avatar className="border">
               <AvatarImage src="/avatars/01.png" alt="Image" />
-              <AvatarFallback>OM</AvatarFallback>
+              <AvatarFallback>S</AvatarFallback>
             </Avatar>
-            <div>
-              <p className="text-sm font-medium leading-none">Sofia Davis</p>
-              <p className="text-sm text-muted-foreground">m@example.com</p>
+            <div className="flex flex-col gap-0.5">
+              <p className="text-sm leading-none font-medium">Sofia Davis</p>
+              <p className="text-muted-foreground text-xs">m@example.com</p>
             </div>
           </div>
           <TooltipProvider delayDuration={0}>
@@ -103,11 +100,11 @@ export function DemoChat() {
               <TooltipTrigger asChild>
                 <Button
                   size="icon"
-                  variant="outline"
-                  className="ml-auto rounded-full"
+                  variant="secondary"
+                  className="ml-auto size-8 rounded-full"
                   onClick={() => setOpen(true)}
                 >
-                  <Plus />
+                  <PlusIcon />
                   <span className="sr-only">New message</span>
                 </Button>
               </TooltipTrigger>
@@ -116,15 +113,15 @@ export function DemoChat() {
           </TooltipProvider>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             {messages.map((message, index) => (
               <div
                 key={index}
                 className={cn(
                   "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
                   message.role === "user"
-                    ? "ml-auto bg-primary text-primary-foreground"
-                    : "bg-muted",
+                    ? "bg-primary text-primary-foreground ml-auto"
+                    : "bg-muted"
                 )}
               >
                 {message.content}
@@ -146,26 +143,31 @@ export function DemoChat() {
               ]);
               setInput("");
             }}
-            className="flex w-full items-center space-x-2"
+            className="relative w-full"
           >
             <Input
               id="message"
               placeholder="Type your message..."
-              className="flex-1"
+              className="flex-1 pr-10"
               autoComplete="off"
               value={input}
               onChange={(event) => setInput(event.target.value)}
             />
-            <Button type="submit" size="icon" disabled={inputLength === 0}>
-              <Send />
+            <Button
+              type="submit"
+              size="icon"
+              className="absolute top-1/2 right-2 size-6 -translate-y-1/2 rounded-full"
+              disabled={inputLength === 0}
+            >
+              <ArrowUpIcon className="size-3.5" />
               <span className="sr-only">Send</span>
             </Button>
           </form>
         </CardFooter>
       </Card>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="gap-0 p-0 outline-hidden">
-          <DialogHeader className="px-4 pb-4 pt-5">
+        <DialogContent className="gap-0 p-0 outline-none">
+          <DialogHeader className="px-4 pt-5 pb-4">
             <DialogTitle>New message</DialogTitle>
             <DialogDescription>
               Invite a user to this thread. This will create a new group message.
@@ -175,63 +177,56 @@ export function DemoChat() {
             <CommandInput placeholder="Search user..." />
             <CommandList>
               <CommandEmpty>No users found.</CommandEmpty>
-              <CommandGroup className="p-2">
+              <CommandGroup>
                 {users.map((user) => (
                   <CommandItem
                     key={user.email}
-                    className="flex items-center px-2"
+                    data-active={selectedUsers.includes(user)}
+                    className="data-[active=true]:opacity-50"
                     onSelect={() => {
                       if (selectedUsers.includes(user)) {
                         return setSelectedUsers(
-                          selectedUsers.filter(
-                            (selectedUser) => selectedUser !== user,
-                          ),
+                          selectedUsers.filter((selectedUser) => selectedUser !== user)
                         );
                       }
 
                       return setSelectedUsers(
-                        [...users].filter((u) =>
-                          [...selectedUsers, user].includes(u),
-                        ),
+                        [...users].filter((u) => [...selectedUsers, user].includes(u))
                       );
                     }}
                   >
-                    <Avatar>
+                    <Avatar className="border">
                       <AvatarImage src={user.avatar} alt="Image" />
                       <AvatarFallback>{user.name[0]}</AvatarFallback>
                     </Avatar>
                     <div className="ml-2">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <p className="text-sm leading-none font-medium">{user.name}</p>
+                      <p className="text-muted-foreground text-sm">{user.email}</p>
                     </div>
                     {selectedUsers.includes(user) ? (
-                      <Check className="ml-auto flex h-5 w-5 text-primary" />
+                      <CheckIcon className="text-primary ml-auto flex size-4" />
                     ) : null}
                   </CommandItem>
                 ))}
               </CommandGroup>
             </CommandList>
           </Command>
-          <DialogFooter className="flex items-center border-t p-4 sm:justify-between">
+          <DialogFooter className="flex items-center border-t p-4 @2xl:justify-between">
             {selectedUsers.length > 0 ? (
               <div className="flex -space-x-2 overflow-hidden">
                 {selectedUsers.map((user) => (
-                  <Avatar
-                    key={user.email}
-                    className="inline-block border-2 border-background"
-                  >
+                  <Avatar key={user.email} className="inline-block border">
                     <AvatarImage src={user.avatar} />
                     <AvatarFallback>{user.name[0]}</AvatarFallback>
                   </Avatar>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
-                Select users to add to this thread.
-              </p>
+              <p className="text-muted-foreground text-sm">Select users to add to this thread.</p>
             )}
             <Button
               disabled={selectedUsers.length < 2}
+              size="sm"
               onClick={() => {
                 setOpen(false);
               }}
