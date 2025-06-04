@@ -1,4 +1,3 @@
-import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 import { Metadata } from "next";
 import { AIAnnouncement } from "./components/ai-announcement";
 import { AIChatHero } from "./components/ai-chat-hero";
@@ -14,15 +13,12 @@ export const metadata: Metadata = {
 
 export default function AiPage() {
   return (
-    <>
-      <AuthDialogWrapper />
-      <div className="relative isolate container mx-auto flex flex-1 flex-col gap-24 overflow-x-visible overflow-y-auto px-4 md:px-6">
-        {/* AI Chat entry point section */}
-        <section className="relative isolate flex flex-col gap-4 pt-28 lg:pt-44">
-          <AIAnnouncement />
-          <AIChatHero />
-        </section>
-      </div>
-    </>
+    <div className="relative isolate container mx-auto flex flex-1 flex-col gap-24 overflow-x-visible overflow-y-auto px-4 md:px-6">
+      {/* AI Chat entry point section */}
+      <section className="relative isolate flex flex-col gap-4 pt-28 lg:pt-44">
+        <AIAnnouncement />
+        <AIChatHero />
+      </section>
+    </div>
   );
 }
