@@ -1,6 +1,5 @@
 "use client";
 
-import { Footer } from "@/components/home/footer";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,7 +14,6 @@ import { Edit, Moon, MoreVertical, Share, Sun } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ThemePreviewPanel from "./editor/theme-preview-panel";
-import { Header } from "./header";
 
 export default function ThemeView({ theme }: { theme: Theme }) {
   const { themeState, setThemeState, saveThemeCheckpoint, restoreThemeCheckpoint } =
@@ -63,42 +61,36 @@ export default function ThemeView({ theme }: { theme: Theme }) {
     });
   };
   return (
-    <div className="flex h-screen flex-col">
-      <Header />
-      <main className="bg-background text-foreground flex-1">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold">{theme.name}</h1>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" onClick={toggleTheme}>
-                {currentMode === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+    <>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">{theme.name}</h1>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" onClick={toggleTheme}>
+            {currentMode === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </Button>
+          <Button variant="outline" size="default" onClick={handleShare}>
+            <Share className="size-4" />
+            Share
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="size-4" />
               </Button>
-              <Button variant="outline" size="default" onClick={handleShare}>
-                <Share className="size-4" />
-                Share
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreVertical className="size-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem className="gap-2" onClick={handleOpenInEditor}>
-                    <Edit className="size-4" />
-                    Open in Editor
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-
-          <div className="-m-4 mt-6 flex h-[min(80svh,900px)] flex-col">
-            <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem className="gap-2" onClick={handleOpenInEditor}>
+                <Edit className="size-4" />
+                Open in Editor
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+
+      <div className="-m-4 mt-6 flex h-[min(80svh,900px)] flex-col">
+        <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
+      </div>
+    </>
   );
 }

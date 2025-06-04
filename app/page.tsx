@@ -9,7 +9,7 @@ import { HowItWorks } from "@/components/home/how-it-works";
 import { Roadmap } from "@/components/home/roadmap";
 import { FAQ } from "@/components/home/faq";
 import { CTA } from "@/components/home/cta";
-import { Footer } from "@/components/home/footer";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,13 +29,13 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex min-h-[100dvh] justify-items-center items-center flex-col bg-background text-foreground">
+    <div className="bg-background text-foreground flex min-h-[100dvh] flex-col items-center justify-items-center">
       <Header
         isScrolled={isScrolled}
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
       />
-      <main className="flex-1 w-full">
+      <main className="w-full flex-1">
         <Hero />
         <ThemePresetSelector />
         <Features />

@@ -1,9 +1,6 @@
-import { Suspense } from "react";
 import { getTheme } from "@/actions/themes";
 import ThemeView from "@/components/theme-view";
 import { Metadata } from "next";
-import { Header } from "@/components/header";
-import { Loading } from "@/components/loading";
 
 interface ThemePageProps {
   params: Promise<{
@@ -11,9 +8,7 @@ interface ThemePageProps {
   }>;
 }
 
-export async function generateMetadata({
-  params,
-}: ThemePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ThemePageProps): Promise<Metadata> {
   const { themeId } = await params;
   const theme = await getTheme(themeId);
 
@@ -42,15 +37,10 @@ export default async function ThemePage({ params }: ThemePageProps) {
   const theme = await getTheme(themeId);
 
   return (
-    <Suspense
-      fallback={
-        <>
-          <Header />
-          <Loading />
-        </>
-      }
-    >
-      <ThemeView theme={theme} />
-    </Suspense>
+    <div className="flex flex-1 flex-col">
+      <div className="container mx-auto px-4 py-8">
+        <ThemeView theme={theme} />
+      </div>
+    </div>
   );
 }
