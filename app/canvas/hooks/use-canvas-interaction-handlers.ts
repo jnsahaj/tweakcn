@@ -50,7 +50,29 @@ export function useCanvasInteractionHandlers({
         return;
       }
 
-      // For single selection or clicking on non-selected component
+      // Check if we have a group selected and the click is within the group's bounding area
+      if (componentState.selectedComponentIds.length > 1) {
+        const boundingRect = getBoundingRect(componentState.selectedComponents);
+        const canvasPoint = screenToCanvas(
+          { x: e.clientX, y: e.clientY },
+          viewport.canvasOffset,
+          viewport.zoomState.scale
+        );
+
+        if (
+          canvasPoint.x >= boundingRect.x &&
+          canvasPoint.x <= boundingRect.x + boundingRect.width &&
+          canvasPoint.y >= boundingRect.y &&
+          canvasPoint.y <= boundingRect.y + boundingRect.height
+        ) {
+          // Clicking within group bounding area should start group drag
+          const startPoint = { x: e.clientX, y: e.clientY };
+          interactions.startGroupDrag(startPoint);
+          return;
+        }
+      }
+
+      // For single selection or clicking on non-selected component outside group area
       componentState.selectComponent(componentId);
 
       if (!canvasRef.current) return;
@@ -62,7 +84,7 @@ export function useCanvasInteractionHandlers({
 
       interactions.startDrag(componentId, dragOffset);
     },
-    [componentState, dragInteractions, interactions, canvasRef]
+    [componentState, dragInteractions, interactions, canvasRef, viewport]
   );
 
   const handleResizeMouseDown = useCallback(
