@@ -35,6 +35,12 @@ export interface PanState {
   panStart: { x: number; y: number };
 }
 
+export interface ZoomState {
+  scale: number;
+  minScale: number;
+  maxScale: number;
+}
+
 export type ComponentType = "button" | "input" | "card" | "textarea" | "checkbox";
 
 export interface ComponentSize {

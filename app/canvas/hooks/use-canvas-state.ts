@@ -5,6 +5,7 @@ import type {
   ResizeState,
   CanvasOffset,
   PanState,
+  ZoomState,
 } from "../types/canvas-types";
 
 export function useCanvasState() {
@@ -28,6 +29,11 @@ export function useCanvasState() {
   const [panState, setPanState] = useState<PanState>({
     isPanning: false,
     panStart: { x: 0, y: 0 },
+  });
+  const [zoomState, setZoomState] = useState<ZoomState>({
+    scale: 1,
+    minScale: 0.1,
+    maxScale: 5,
   });
 
   const addComponent = useCallback((component: CanvasComponent) => {
@@ -78,6 +84,80 @@ export function useCanvasState() {
       isPanning: false,
       panStart: { x: 0, y: 0 },
     });
+  }, []);
+
+  // Zoom management functions
+  const zoomIn = useCallback(
+    (origin?: { x: number; y: number }) => {
+      setZoomState((prev) => {
+        const newScale = Math.min(prev.scale * 1.2, prev.maxScale);
+
+        if (origin) {
+          const scaleChange = newScale / prev.scale;
+          setCanvasOffset((prevOffset) => ({
+            x: origin.x - (origin.x - prevOffset.x) * scaleChange,
+            y: origin.y - (origin.y - prevOffset.y) * scaleChange,
+          }));
+        }
+
+        return {
+          ...prev,
+          scale: newScale,
+        };
+      });
+    },
+    [setCanvasOffset]
+  );
+
+  const zoomOut = useCallback(
+    (origin?: { x: number; y: number }) => {
+      setZoomState((prev) => {
+        const newScale = Math.max(prev.scale / 1.2, prev.minScale);
+
+        if (origin) {
+          const scaleChange = newScale / prev.scale;
+          setCanvasOffset((prevOffset) => ({
+            x: origin.x - (origin.x - prevOffset.x) * scaleChange,
+            y: origin.y - (origin.y - prevOffset.y) * scaleChange,
+          }));
+        }
+
+        return {
+          ...prev,
+          scale: newScale,
+        };
+      });
+    },
+    [setCanvasOffset]
+  );
+
+  const resetZoom = useCallback(
+    (origin?: { x: number; y: number }) => {
+      setZoomState((prev) => {
+        const newScale = 1;
+
+        if (origin) {
+          const scaleChange = newScale / prev.scale;
+          setCanvasOffset((prevOffset) => ({
+            x: origin.x - (origin.x - prevOffset.x) * scaleChange,
+            y: origin.y - (origin.y - prevOffset.y) * scaleChange,
+          }));
+        }
+
+        return {
+          ...prev,
+          scale: newScale,
+        };
+      });
+    },
+    [setCanvasOffset]
+  );
+
+  const setZoomScale = useCallback((scale: number) => {
+    setZoomState((prev) => ({
+      ...prev,
+      scale: Math.max(prev.minScale, Math.min(scale, prev.maxScale)),
+    }));
   }, []);
 
   // Layer management functions
@@ -187,6 +267,7 @@ export function useCanvasState() {
     resizeState,
     canvasOffset,
     panState,
+    zoomState,
 
     // Setters
     setComponents,
@@ -195,6 +276,7 @@ export function useCanvasState() {
     setResizeState,
     setCanvasOffset,
     setPanState,
+    setZoomState,
 
     // Actions
     addComponent,
@@ -203,6 +285,12 @@ export function useCanvasState() {
     resetDragState,
     resetResizeState,
     resetPanState,
+
+    // Zoom actions
+    zoomIn,
+    zoomOut,
+    resetZoom,
+    setZoomScale,
 
     // Layer management
     bringToFront,
