@@ -75,6 +75,7 @@ export default function CanvasPage() {
         onMouseMove={canvas.eventHandlers.handleMouseMove}
         onMouseUp={canvas.eventHandlers.handleMouseUp}
         onMouseLeave={canvas.eventHandlers.handleMouseUp}
+        onContextMenu={canvas.eventHandlers.handleCanvasContextMenu}
         style={{
           userSelect: "none",
           WebkitUserSelect: "none",

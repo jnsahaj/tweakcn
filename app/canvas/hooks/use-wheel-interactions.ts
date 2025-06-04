@@ -6,6 +6,10 @@ interface UseWheelInteractionsProps {
   setZoomScale: (scale: number) => void;
   setCanvasOffset: (offset: Point | ((prev: Point) => Point)) => void;
   canvasRef: React.RefObject<HTMLDivElement | null>;
+  startPan: (point: Point) => void;
+  updatePan: (point: Point) => void;
+  resetPanState: () => void;
+  isSelectionMode: boolean;
 }
 
 export function useWheelInteractions({
@@ -13,9 +17,14 @@ export function useWheelInteractions({
   setZoomScale,
   setCanvasOffset,
   canvasRef,
+  startPan,
+  updatePan,
+  resetPanState,
+  isSelectionMode,
 }: UseWheelInteractionsProps) {
   const handleWheel = useCallback(
     (e: WheelEvent) => {
+      // Zoom with Ctrl/Cmd + wheel (existing behavior)
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
 
@@ -51,8 +60,22 @@ export function useWheelInteractions({
 
         setZoomScale(newScale);
       }
+      // Pan with 2-finger drag on trackpad (no Ctrl/Cmd modifier)
+      // This works in both selection mode and panning mode
+      else if (Math.abs(e.deltaX) > 0 || Math.abs(e.deltaY) > 0) {
+        e.preventDefault();
+
+        // Apply panning offset directly to canvas
+        const panDeltaX = -e.deltaX * 1.0; // Negative for natural scrolling direction
+        const panDeltaY = -e.deltaY * 1.0;
+
+        setCanvasOffset((prev) => ({
+          x: prev.x + panDeltaX,
+          y: prev.y + panDeltaY,
+        }));
+      }
     },
-    [zoomState, setZoomScale, setCanvasOffset, canvasRef]
+    [zoomState, setZoomScale, setCanvasOffset, canvasRef, setCanvasOffset]
   );
 
   useEffect(() => {

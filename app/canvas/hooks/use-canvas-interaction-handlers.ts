@@ -27,7 +27,13 @@ export function useCanvasInteractionHandlers({
       e.preventDefault();
       e.stopPropagation();
 
-      // In panning mode: no component selection or interaction is allowed
+      // Right-click anywhere should initiate panning (works in both modes)
+      if (e.button === 2) {
+        viewport.startPan({ x: e.clientX, y: e.clientY });
+        return;
+      }
+
+      // In panning mode: no component selection or interaction is allowed (except right-click panning)
       if (!interactions.isSelectionMode) {
         return;
       }
@@ -92,6 +98,12 @@ export function useCanvasInteractionHandlers({
       e.preventDefault();
       e.stopPropagation();
 
+      // Right-click on resize handle should also initiate panning
+      if (e.button === 2) {
+        viewport.startPan({ x: e.clientX, y: e.clientY });
+        return;
+      }
+
       // In panning mode: no resize interaction is allowed
       if (!interactions.isSelectionMode) {
         return;
@@ -105,7 +117,7 @@ export function useCanvasInteractionHandlers({
 
       interactions.startResize(componentId, handle, startPoint, startSize);
     },
-    [componentState, interactions]
+    [componentState, interactions, viewport]
   );
 
   const handleMouseMove = useCallback(
@@ -144,7 +156,7 @@ export function useCanvasInteractionHandlers({
         viewport.updatePan({ x: e.clientX, y: e.clientY });
       }
 
-      if (interactions.isInteracting) {
+      if (interactions.isInteracting || viewport.panState.isPanning) {
         e.preventDefault();
       }
     },
@@ -186,6 +198,12 @@ export function useCanvasInteractionHandlers({
 
       if (!clickedOnComponent) {
         e.preventDefault();
+
+        // Right-click anywhere on canvas should initiate panning (works in both modes)
+        if (e.button === 2) {
+          viewport.startPan({ x: e.clientX, y: e.clientY });
+          return;
+        }
 
         if (interactions.isSelectionMode) {
           // In selection mode: allow canvas selection for group selection
@@ -232,6 +250,11 @@ export function useCanvasInteractionHandlers({
     [dragInteractions, canvasRef]
   );
 
+  // Add context menu handler to prevent right-click menu
+  const handleCanvasContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+  }, []);
+
   return {
     handleComponentMouseDown,
     handleResizeMouseDown,
@@ -239,5 +262,6 @@ export function useCanvasInteractionHandlers({
     handleMouseUp,
     handleCanvasMouseDown,
     handleCanvasDrop,
+    handleCanvasContextMenu,
   };
 }

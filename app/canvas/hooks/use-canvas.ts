@@ -63,6 +63,10 @@ export function useCanvas() {
     setZoomScale: viewport.setZoomScale,
     setCanvasOffset: viewport.setCanvasOffset,
     canvasRef,
+    startPan: viewport.startPan,
+    updatePan: viewport.updatePan,
+    resetPanState: viewport.resetPanState,
+    isSelectionMode: interactions.isSelectionMode,
   });
 
   useInteractionPrevention({
@@ -76,6 +80,7 @@ export function useCanvas() {
     selectedComponents: componentState.selectedComponents,
     canvasOffset: viewport.canvasOffset,
     zoomState: viewport.zoomState,
+    panState: viewport.panState,
     currentInteractionMode: interactions.currentMode,
     isSelectionMode: interactions.isSelectionMode,
     selectionState: interactions.selectionState,
