@@ -38,6 +38,19 @@ export function useCanvasInteractionHandlers({
         return;
       }
 
+      // Check if the clicked component is part of a multiple selection
+      const isPartOfMultipleSelection =
+        componentState.selectedComponentIds.length > 1 &&
+        componentState.selectedComponentIds.includes(componentId);
+
+      if (isPartOfMultipleSelection) {
+        // Start group drag instead of individual component drag
+        const startPoint = { x: e.clientX, y: e.clientY };
+        interactions.startGroupDrag(startPoint);
+        return;
+      }
+
+      // For single selection or clicking on non-selected component
       componentState.selectComponent(componentId);
 
       if (!canvasRef.current) return;
