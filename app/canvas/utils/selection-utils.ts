@@ -17,10 +17,10 @@ export function isComponentInRect(component: CanvasComponent, rect: Rect): boole
   };
 
   return (
-    rect.x <= compRect.x + compRect.width &&
-    rect.x + rect.width >= compRect.x &&
-    rect.y <= compRect.y + compRect.height &&
-    rect.y + rect.height >= compRect.y
+    rect.x <= compRect.x &&
+    rect.y <= compRect.y &&
+    rect.x + rect.width >= compRect.x + compRect.width &&
+    rect.y + rect.height >= compRect.y + compRect.height
   );
 }
 
