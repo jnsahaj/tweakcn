@@ -254,6 +254,40 @@ export function useCanvasState() {
     });
   }, []);
 
+  const duplicateComponent = useCallback(
+    (componentId: string) => {
+      const component = components.find((c) => c.id === componentId);
+      if (!component) return;
+
+      // Generate a new unique ID
+      const newId = `${component.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      // Calculate offset for the copy (20px down and right)
+      const offset = 20;
+
+      // Get the highest z-index to place the copy on top
+      const maxZIndex = Math.max(...components.map((c) => c.zIndex || 0), 0);
+
+      // Create the copied component
+      const copiedComponent: CanvasComponent = {
+        ...component,
+        id: newId,
+        x: component.x + offset,
+        y: component.y + offset,
+        zIndex: maxZIndex + 1,
+        // Deep clone props if they exist
+        props: component.props ? JSON.parse(JSON.stringify(component.props)) : undefined,
+      };
+
+      // Add the component first
+      setComponents((prev) => [...prev, copiedComponent]);
+
+      // Then select the newly copied component
+      setSelectedComponentId(newId);
+    },
+    [components]
+  );
+
   const selectedComponent = selectedComponentId
     ? components.find((c) => c.id === selectedComponentId)
     : null;
@@ -297,5 +331,6 @@ export function useCanvasState() {
     sendToBack,
     bringForward,
     sendBackward,
+    duplicateComponent,
   };
 }

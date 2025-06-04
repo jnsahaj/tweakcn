@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown, Copy } from "lucide-react";
 
 interface CanvasComponent {
   id: string;
@@ -33,6 +33,7 @@ interface PropertiesSidebarProps {
   onBringForward: (componentId: string) => void;
   onSendBackward: (componentId: string) => void;
   onSendToBack: (componentId: string) => void;
+  onDuplicateComponent: (componentId: string) => void;
 }
 
 export function PropertiesSidebar({
@@ -42,6 +43,7 @@ export function PropertiesSidebar({
   onBringForward,
   onSendBackward,
   onSendToBack,
+  onDuplicateComponent,
 }: PropertiesSidebarProps) {
   const [localProps, setLocalProps] = useState(component.props || {});
 
@@ -65,6 +67,10 @@ export function PropertiesSidebar({
 
   const handleSendToBack = () => {
     onSendToBack(component.id);
+  };
+
+  const handleDuplicateComponent = () => {
+    onDuplicateComponent(component.id);
   };
 
   const renderButtonProperties = () => (
@@ -357,6 +363,24 @@ export function PropertiesSidebar({
                 title="Send to Back"
               >
                 <ChevronsDown className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Actions Section */}
+          <div className="space-y-3">
+            <h4 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Actions
+            </h4>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDuplicateComponent}
+                className="h-8 w-8 p-0"
+                title="Duplicate Component"
+              >
+                <Copy className="h-4 w-4" />
               </Button>
             </div>
           </div>
