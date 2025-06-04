@@ -17,11 +17,7 @@ interface HeaderProps {
   setMobileMenuOpen: (open: boolean) => void;
 }
 
-export function Header({
-  isScrolled,
-  mobileMenuOpen,
-  setMobileMenuOpen,
-}: HeaderProps) {
+export function Header({ isScrolled, mobileMenuOpen, setMobileMenuOpen }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const { stargazersCount } = useGithubStars("jnsahaj", "tweakcn");
 
@@ -45,37 +41,46 @@ export function Header({
     <header
       className={cn(
         "sticky top-0 z-50 w-full backdrop-blur-lg",
-        isScrolled
-          ? "bg-background/90 shadow-xs border-b border-border/20"
-          : "bg-transparent"
+        isScrolled ? "bg-background/90 border-border/20 border-b shadow-xs" : "bg-transparent"
       )}
     >
-      <div className="container mx-auto flex h-16 px-4 md:px-6 items-center justify-between">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/">
           <div className="flex items-center gap-2 font-bold">
             <Logo className="size-6" />
             <span>tweakcn</span>
           </div>
         </Link>
-        <nav className="hidden md:flex gap-4 lg:gap-8 items-center">
-          {["Examples", "Features", "How It Works", "Roadmap", "FAQ"].map(
-            (item, i) => (
-              <motion.a
-                key={item}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
-                href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-                onClick={handleScrollToSection}
-                className="text-xs lg:text-sm font-medium text-muted-foreground transition-colors hover:text-foreground relative group"
-              >
-                {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-              </motion.a>
-            )
-          )}
+        <nav className="hidden items-center gap-4 md:flex lg:gap-8">
+          {["Examples", "Features", "How It Works", "Roadmap", "FAQ"].map((item, i) => (
+            <motion.a
+              key={item}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
+              href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
+              onClick={handleScrollToSection}
+              className="text-muted-foreground hover:text-foreground group relative text-xs font-medium transition-colors lg:text-sm"
+            >
+              {item}
+              <span className="bg-primary absolute -bottom-1 left-0 h-0.5 w-0 transition-all duration-300 group-hover:w-full"></span>
+            </motion.a>
+          ))}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.35 }}
+          >
+            <Link
+              href="/canvas"
+              className="text-muted-foreground hover:text-foreground group relative text-xs font-medium transition-colors lg:text-sm"
+            >
+              Canvas
+              <span className="bg-primary absolute -bottom-1 left-0 h-0.5 w-0 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+          </motion.div>
         </nav>
-        <div className="hidden md:flex gap-4 items-center cursor-pointer">
+        <div className="hidden cursor-pointer items-center gap-4 md:flex">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -105,11 +110,7 @@ export function Header({
               onClick={handleThemeToggle}
               className="rounded-full transition-transform hover:scale-105"
             >
-              {theme === "light" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
+              {theme === "light" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
           </motion.div>
           <motion.div
@@ -118,7 +119,7 @@ export function Header({
             transition={{ duration: 0.3, delay: 0.5 }}
           >
             <Link href="/editor/theme" prefetch>
-              <Button className="rounded-full cursor-pointer transition-transform hover:scale-105 font-medium">
+              <Button className="cursor-pointer rounded-full font-medium transition-transform hover:scale-105">
                 Try It Now
                 <ChevronRight className="ml-1 size-4" />
               </Button>
@@ -130,24 +131,12 @@ export function Header({
             variant="ghost"
             size="icon"
             onClick={handleThemeToggle}
-            className="rounded-full cursor-pointer"
+            className="cursor-pointer rounded-full"
           >
-            {theme === "dark" ? (
-              <Sun className="size-[18px]" />
-            ) : (
-              <Moon className="size-[18px]" />
-            )}
+            {theme === "dark" ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? (
-              <X className="size-5" />
-            ) : (
-              <Menu className="size-5" />
-            )}
+          <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
             <span className="sr-only">Toggle menu</span>
           </Button>
         </div>
@@ -158,38 +147,47 @@ export function Header({
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="md:hidden absolute top-16 inset-x-0 bg-background/95 backdrop-blur-lg border-b"
+          className="bg-background/95 absolute inset-x-0 top-16 border-b backdrop-blur-lg md:hidden"
         >
-          <div className="container mx-auto py-4 flex flex-col gap-4 px-4">
-            {["Examples", "Features", "How It Works", "Roadmap", "FAQ"].map(
-              (item, i) => (
-                <motion.a
-                  key={item}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.2, delay: i * 0.05 }}
-                  href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-                  onClick={(e) => {
-                    handleScrollToSection(e);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="py-2 text-sm font-medium relative overflow-hidden group"
-                >
-                  <span className="relative z-10">{item}</span>
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-                </motion.a>
-              )
-            )}
+          <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
+            {["Examples", "Features", "How It Works", "Roadmap", "FAQ"].map((item, i) => (
+              <motion.a
+                key={item}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2, delay: i * 0.05 }}
+                href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
+                onClick={(e) => {
+                  handleScrollToSection(e);
+                  setMobileMenuOpen(false);
+                }}
+                className="group relative overflow-hidden py-2 text-sm font-medium"
+              >
+                <span className="relative z-10">{item}</span>
+                <span className="bg-primary absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-300 group-hover:w-full"></span>
+              </motion.a>
+            ))}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2, delay: 0.25 }}
+            >
+              <Link
+                href="/canvas"
+                onClick={() => setMobileMenuOpen(false)}
+                className="group relative block overflow-hidden py-2 text-sm font-medium"
+              >
+                <span className="relative z-10">Canvas</span>
+                <span className="bg-primary absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.3 }}
-              className="pt-2 mt-2 border-t border-border/30"
+              className="border-border/30 mt-2 border-t pt-2"
             >
-              <Link
-                href="/editor/theme"
-                onClick={() => setMobileMenuOpen(false)}
-              >
+              <Link href="/editor/theme" onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full rounded-full">
                   Try It Now
                   <ChevronRight className="ml-2 size-4" />

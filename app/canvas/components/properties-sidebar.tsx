@@ -1,0 +1,330 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown } from "lucide-react";
+
+interface CanvasComponent {
+  id: string;
+  type: "button" | "input" | "card";
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+  zIndex?: number;
+  props?: Record<string, any>;
+}
+
+interface PropertiesSidebarProps {
+  component: CanvasComponent;
+  onUpdateProps: (newProps: Record<string, any>) => void;
+  onBringToFront: (componentId: string) => void;
+  onBringForward: (componentId: string) => void;
+  onSendBackward: (componentId: string) => void;
+  onSendToBack: (componentId: string) => void;
+}
+
+export function PropertiesSidebar({
+  component,
+  onUpdateProps,
+  onBringToFront,
+  onBringForward,
+  onSendBackward,
+  onSendToBack,
+}: PropertiesSidebarProps) {
+  const [localProps, setLocalProps] = useState(component.props || {});
+
+  const handlePropChange = (key: string, value: any) => {
+    const newProps = { ...localProps, [key]: value };
+    setLocalProps(newProps);
+    onUpdateProps(newProps);
+  };
+
+  const handleBringToFront = () => {
+    onBringToFront(component.id);
+  };
+
+  const handleBringForward = () => {
+    onBringForward(component.id);
+  };
+
+  const handleSendBackward = () => {
+    onSendBackward(component.id);
+  };
+
+  const handleSendToBack = () => {
+    onSendToBack(component.id);
+  };
+
+  const renderButtonProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="button-text">Text</Label>
+        <Input
+          id="button-text"
+          value={localProps.children || ""}
+          onChange={(e) => handlePropChange("children", e.target.value)}
+          placeholder="Button text"
+        />
+      </div>
+      <div>
+        <Label htmlFor="button-variant">Variant</Label>
+        <Select
+          value={localProps.variant || "default"}
+          onValueChange={(value) => handlePropChange("variant", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select variant" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Default</SelectItem>
+            <SelectItem value="destructive">Destructive</SelectItem>
+            <SelectItem value="outline">Outline</SelectItem>
+            <SelectItem value="secondary">Secondary</SelectItem>
+            <SelectItem value="ghost">Ghost</SelectItem>
+            <SelectItem value="link">Link</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label htmlFor="button-size">Size</Label>
+        <Select
+          value={localProps.size || "default"}
+          onValueChange={(value) => handlePropChange("size", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select size" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Default</SelectItem>
+            <SelectItem value="sm">Small</SelectItem>
+            <SelectItem value="lg">Large</SelectItem>
+            <SelectItem value="icon">Icon</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const renderInputProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="input-placeholder">Placeholder</Label>
+        <Input
+          id="input-placeholder"
+          value={localProps.placeholder || ""}
+          onChange={(e) => handlePropChange("placeholder", e.target.value)}
+          placeholder="Enter placeholder text"
+        />
+      </div>
+      <div>
+        <Label htmlFor="input-type">Type</Label>
+        <Select
+          value={localProps.type || "text"}
+          onValueChange={(value) => handlePropChange("type", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="text">Text</SelectItem>
+            <SelectItem value="email">Email</SelectItem>
+            <SelectItem value="password">Password</SelectItem>
+            <SelectItem value="number">Number</SelectItem>
+            <SelectItem value="tel">Phone</SelectItem>
+            <SelectItem value="url">URL</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label htmlFor="input-disabled">Disabled</Label>
+        <Select
+          value={localProps.disabled ? "true" : "false"}
+          onValueChange={(value) => handlePropChange("disabled", value === "true")}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="false">No</SelectItem>
+            <SelectItem value="true">Yes</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const renderCardProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="card-title">Title</Label>
+        <Input
+          id="card-title"
+          value={localProps.title || ""}
+          onChange={(e) => handlePropChange("title", e.target.value)}
+          placeholder="Card title"
+        />
+      </div>
+      <div>
+        <Label htmlFor="card-content">Content</Label>
+        <Textarea
+          id="card-content"
+          value={localProps.content || ""}
+          onChange={(e) => handlePropChange("content", e.target.value)}
+          placeholder="Card content"
+          rows={4}
+        />
+      </div>
+    </div>
+  );
+
+  const renderProperties = () => {
+    switch (component.type) {
+      case "button":
+        return renderButtonProperties();
+      case "input":
+        return renderInputProperties();
+      case "card":
+        return renderCardProperties();
+      default:
+        return <div>No properties available</div>;
+    }
+  };
+
+  return (
+    <div className="absolute top-4 right-4 z-10 w-80">
+      <Card className="bg-background/95 shadow-lg backdrop-blur-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold capitalize">
+            {component.type} Properties
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Layers Section */}
+          <div className="space-y-3">
+            <h4 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Layers
+            </h4>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBringToFront}
+                className="h-8 w-8 p-0"
+                title="Bring to Front"
+              >
+                <ChevronsUp className="h-4 w-4" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBringForward}
+                className="h-8 w-8 p-0"
+                title="Bring Forward"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSendBackward}
+                className="h-8 w-8 p-0"
+                title="Send Backward"
+              >
+                <ArrowDown className="h-4 w-4" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSendToBack}
+                className="h-8 w-8 p-0"
+                title="Send to Back"
+              >
+                <ChevronsDown className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Position and Size */}
+          <div className="space-y-3">
+            <h4 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Position & Size
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label htmlFor="pos-x" className="text-xs">
+                  X
+                </Label>
+                <Input
+                  id="pos-x"
+                  type="number"
+                  value={Math.round(component.x)}
+                  readOnly
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div>
+                <Label htmlFor="pos-y" className="text-xs">
+                  Y
+                </Label>
+                <Input
+                  id="pos-y"
+                  type="number"
+                  value={Math.round(component.y)}
+                  readOnly
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div>
+                <Label htmlFor="width" className="text-xs">
+                  Width
+                </Label>
+                <Input
+                  id="width"
+                  type="number"
+                  value={component.width || 0}
+                  readOnly
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div>
+                <Label htmlFor="height" className="text-xs">
+                  Height
+                </Label>
+                <Input
+                  id="height"
+                  type="number"
+                  value={component.height || 0}
+                  readOnly
+                  className="h-8 text-xs"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Component-specific Properties */}
+          <div className="space-y-3">
+            <h4 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Properties
+            </h4>
+            {renderProperties()}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
