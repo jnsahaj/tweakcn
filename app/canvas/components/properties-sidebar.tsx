@@ -17,7 +17,7 @@ import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown } from "lucide-react";
 
 interface CanvasComponent {
   id: string;
-  type: "button" | "input" | "card";
+  type: "button" | "input" | "card" | "textarea" | "checkbox";
   x: number;
   y: number;
   width?: number;

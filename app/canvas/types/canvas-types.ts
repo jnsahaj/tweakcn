@@ -1,6 +1,6 @@
 export interface CanvasComponent {
   id: string;
-  type: "button" | "input" | "card";
+  type: "button" | "input" | "card" | "textarea" | "checkbox";
   x: number;
   y: number;
   width?: number;
@@ -35,7 +35,7 @@ export interface PanState {
   panStart: { x: number; y: number };
 }
 
-export type ComponentType = "button" | "input" | "card";
+export type ComponentType = "button" | "input" | "card" | "textarea" | "checkbox";
 
 export interface ComponentSize {
   width: number;

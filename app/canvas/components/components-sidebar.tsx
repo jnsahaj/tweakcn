@@ -3,14 +3,19 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface ComponentsSidebarProps {
-  onDragStart: (e: React.DragEvent, componentType: "button" | "input" | "card") => void;
+  onDragStart: (
+    e: React.DragEvent,
+    componentType: "button" | "input" | "card" | "textarea" | "checkbox"
+  ) => void;
 }
 
 // Shared component factory to ensure preview and canvas components are identical
 const createComponent = (
-  type: "button" | "input" | "card",
+  type: "button" | "input" | "card" | "textarea" | "checkbox",
   props?: Record<string, any>,
   size?: { width?: number; height?: number }
 ) => {
@@ -36,6 +41,20 @@ const createComponent = (
           </div>
         </Card>
       );
+    case "textarea":
+      return <Textarea style={style} placeholder="Enter multi-line text..." {...props} />;
+    case "checkbox":
+      return (
+        <div className="flex items-center space-x-2">
+          <Checkbox id="terms" {...props} />
+          <label
+            htmlFor="terms"
+            className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            {props?.label || "Checkbox"}
+          </label>
+        </div>
+      );
     default:
       return null;
   }
@@ -46,9 +65,14 @@ export function ComponentsSidebar({ onDragStart }: ComponentsSidebarProps) {
     { type: "button" as const, label: "Button" },
     { type: "input" as const, label: "Input" },
     { type: "card" as const, label: "Card" },
+    { type: "textarea" as const, label: "Textarea" },
+    { type: "checkbox" as const, label: "Checkbox" },
   ];
 
-  const handleDragStart = (e: React.DragEvent, componentType: "button" | "input" | "card") => {
+  const handleDragStart = (
+    e: React.DragEvent,
+    componentType: "button" | "input" | "card" | "textarea" | "checkbox"
+  ) => {
     // Find the corresponding preview element and use it as drag image
     const previewElement = document.getElementById(`preview-${componentType}`);
     if (previewElement) {
@@ -66,6 +90,8 @@ export function ComponentsSidebar({ onDragStart }: ComponentsSidebarProps) {
         <div id="preview-button">{createComponent("button")}</div>
         <div id="preview-input">{createComponent("input")}</div>
         <div id="preview-card">{createComponent("card")}</div>
+        <div id="preview-textarea">{createComponent("textarea")}</div>
+        <div id="preview-checkbox">{createComponent("checkbox")}</div>
       </div>
 
       <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2">
