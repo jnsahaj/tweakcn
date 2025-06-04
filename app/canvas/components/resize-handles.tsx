@@ -11,9 +11,18 @@ export function ResizeHandles({ componentId, onResizeMouseDown }: ResizeHandlesP
       {RESIZE_HANDLES.map((handle) => (
         <div
           key={handle.position}
-          className={`absolute size-2 rounded-sm bg-blue-500 ${getHandlePositionClass(handle.position)}`}
-          style={{ cursor: handle.cursor }}
-          onMouseDown={(e) => onResizeMouseDown(e, componentId, handle.position)}
+          className={`absolute size-2 rounded-sm bg-blue-500 select-none ${getHandlePositionClass(handle.position)}`}
+          style={{
+            cursor: handle.cursor,
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
+          }}
+          onMouseDown={(e) => {
+            e.preventDefault(); // Prevent text selection
+            onResizeMouseDown(e, componentId, handle.position);
+          }}
         />
       ))}
     </>

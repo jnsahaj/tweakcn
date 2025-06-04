@@ -32,13 +32,17 @@ export function CanvasComponentRenderer({
         : isSelected
           ? "grab"
           : "pointer",
+    userSelect: "none" as const,
+    WebkitUserSelect: "none" as const,
+    MozUserSelect: "none" as const,
+    msUserSelect: "none" as const,
   };
 
   return (
     <div
       key={component.id}
       style={style}
-      className={`relative ${isSelected ? "ring-1 ring-blue-500" : ""}`}
+      className={`relative select-none ${isSelected ? "ring-1 ring-blue-500" : ""}`}
       data-component-id={component.id}
       onMouseDown={(e) => onMouseDown(e, component.id)}
     >

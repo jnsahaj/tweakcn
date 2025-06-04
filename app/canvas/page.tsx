@@ -87,7 +87,7 @@ export default function CanvasPage() {
       {/* Infinite Canvas */}
       <div
         ref={canvasRef}
-        className={`relative h-full w-full ${
+        className={`relative h-full w-full select-none ${
           panState.isPanning
             ? "cursor-grabbing"
             : dragState.isDragging
@@ -102,7 +102,12 @@ export default function CanvasPage() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         style={{
-          userSelect: panState.isPanning ? "none" : "auto",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+          WebkitTouchCallout: "none",
+          WebkitTapHighlightColor: "transparent",
         }}
       >
         {/* Grid Pattern */}

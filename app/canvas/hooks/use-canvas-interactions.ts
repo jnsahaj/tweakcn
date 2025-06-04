@@ -44,6 +44,32 @@ export function useCanvasInteractions({
 }: UseCanvasInteractionsProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
 
+  // Prevent text selection during drag operations
+  useEffect(() => {
+    const preventSelection = (e: Event) => {
+      if (dragState.isDragging || resizeState.isResizing || panState.isPanning) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const preventDragStart = (e: DragEvent) => {
+      if (dragState.isDragging || resizeState.isResizing || panState.isPanning) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    // Add event listeners to prevent text selection during interactions
+    document.addEventListener("selectstart", preventSelection);
+    document.addEventListener("dragstart", preventDragStart);
+
+    return () => {
+      document.removeEventListener("selectstart", preventSelection);
+      document.removeEventListener("dragstart", preventDragStart);
+    };
+  }, [dragState.isDragging, resizeState.isResizing, panState.isPanning]);
+
   // Handle mouse wheel events for zooming
   const handleWheel = useCallback(
     (e: WheelEvent) => {
@@ -204,6 +230,7 @@ export function useCanvasInteractions({
 
   const handleComponentMouseDown = useCallback(
     (e: React.MouseEvent, componentId: string) => {
+      e.preventDefault(); // Prevent text selection
       e.stopPropagation();
       setSelectedComponentId(componentId);
 
@@ -228,6 +255,7 @@ export function useCanvasInteractions({
 
   const handleResizeMouseDown = useCallback(
     (e: React.MouseEvent, componentId: string, handle: string) => {
+      e.preventDefault(); // Prevent text selection
       e.stopPropagation();
       const component = components.find((c) => c.id === componentId);
       if (!component) return;
@@ -247,6 +275,11 @@ export function useCanvasInteractions({
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
+      // Prevent text selection during mouse move
+      if (resizeState.isResizing || dragState.isDragging || panState.isPanning) {
+        e.preventDefault();
+      }
+
       if (resizeState.isResizing && resizeState.componentId && resizeState.handle) {
         const deltaX = (e.clientX - resizeState.startX) / zoomState.scale;
         const deltaY = (e.clientY - resizeState.startY) / zoomState.scale;
@@ -317,6 +350,9 @@ export function useCanvasInteractions({
       const clickedOnComponent = target.closest("[data-component-id]");
 
       if (!clickedOnComponent) {
+        // Prevent text selection when starting pan operation
+        e.preventDefault();
+
         // Deselect any selected component when clicking outside components
         setSelectedComponentId(null);
 
