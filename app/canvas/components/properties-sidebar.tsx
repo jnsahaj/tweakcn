@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown, Copy } from "lucide-react";
+import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown, Copy, Trash2 } from "lucide-react";
 
 interface CanvasComponent {
   id: string;
@@ -34,6 +34,7 @@ interface PropertiesSidebarProps {
   onSendBackward: (componentId: string) => void;
   onSendToBack: (componentId: string) => void;
   onDuplicateComponent: (componentId: string) => void;
+  onDeleteComponent: (componentId: string) => void;
 }
 
 export function PropertiesSidebar({
@@ -44,6 +45,7 @@ export function PropertiesSidebar({
   onSendBackward,
   onSendToBack,
   onDuplicateComponent,
+  onDeleteComponent,
 }: PropertiesSidebarProps) {
   const [localProps, setLocalProps] = useState(component.props || {});
 
@@ -71,6 +73,10 @@ export function PropertiesSidebar({
 
   const handleDuplicateComponent = () => {
     onDuplicateComponent(component.id);
+  };
+
+  const handleDeleteComponent = () => {
+    onDeleteComponent(component.id);
   };
 
   const renderButtonProperties = () => (
@@ -381,6 +387,15 @@ export function PropertiesSidebar({
                 title="Duplicate Component"
               >
                 <Copy className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDeleteComponent}
+                className="h-8 w-8 p-0"
+                title="Delete Component"
+              >
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </div>

@@ -7,6 +7,7 @@ import type {
   PanState,
   ZoomState,
 } from "../types/canvas-types";
+import { GRID_SIZE } from "../utils/grid-utils";
 
 export function useCanvasState() {
   const [components, setComponents] = useState<CanvasComponent[]>([]);
@@ -263,7 +264,7 @@ export function useCanvasState() {
       const newId = `${component.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       // Calculate offset for the copy (20px down and right)
-      const offset = 20;
+      const offset = GRID_SIZE * 2;
 
       // Get the highest z-index to place the copy on top
       const maxZIndex = Math.max(...components.map((c) => c.zIndex || 0), 0);
@@ -286,6 +287,18 @@ export function useCanvasState() {
       setSelectedComponentId(newId);
     },
     [components]
+  );
+
+  const deleteComponent = useCallback(
+    (componentId: string) => {
+      setComponents((prev) => prev.filter((c) => c.id !== componentId));
+
+      // Clear selection if the deleted component was selected
+      if (selectedComponentId === componentId) {
+        setSelectedComponentId(null);
+      }
+    },
+    [selectedComponentId]
   );
 
   const selectedComponent = selectedComponentId
@@ -332,5 +345,6 @@ export function useCanvasState() {
     bringForward,
     sendBackward,
     duplicateComponent,
+    deleteComponent,
   };
 }

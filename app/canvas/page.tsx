@@ -26,6 +26,7 @@ export default function CanvasPage() {
     bringForward,
     sendBackward,
     duplicateComponent,
+    deleteComponent,
     zoomIn,
     zoomOut,
     resetZoom,
@@ -75,6 +76,7 @@ export default function CanvasPage() {
           onSendBackward={sendBackward}
           onSendToBack={sendToBack}
           onDuplicateComponent={duplicateComponent}
+          onDeleteComponent={deleteComponent}
         />
       )}
 
