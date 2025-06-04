@@ -8,13 +8,7 @@ import { executePostLoginAction } from "@/hooks/use-post-login-action";
 import { usePostHog } from "posthog-js/react";
 
 export function AuthDialogWrapper() {
-  const {
-    isOpen,
-    mode,
-    closeAuthDialog,
-    postLoginAction,
-    clearPostLoginAction,
-  } = useAuthStore();
+  const { isOpen, mode, closeAuthDialog, postLoginAction, clearPostLoginAction } = useAuthStore();
   const { data: session } = authClient.useSession();
   const posthog = usePostHog();
 
@@ -36,20 +30,7 @@ export function AuthDialogWrapper() {
       executePostLoginAction(postLoginAction);
       clearPostLoginAction();
     }
-  }, [
-    session,
-    isOpen,
-    closeAuthDialog,
-    postLoginAction,
-    clearPostLoginAction,
-    posthog,
-  ]);
+  }, [session, isOpen, closeAuthDialog, postLoginAction, clearPostLoginAction, posthog]);
 
-  return (
-    <AuthDialog
-      open={isOpen}
-      onOpenChange={closeAuthDialog}
-      initialMode={mode}
-    />
-  );
+  return <AuthDialog open={isOpen} onOpenChange={closeAuthDialog} initialMode={mode} />;
 }

@@ -1,12 +1,13 @@
-import { NuqsAdapter } from "nuqs/adapters/next/app";
-import type { Metadata, Viewport } from "next";
+import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
+import { PostHogInit } from "@/components/posthog-init";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeScript } from "@/components/theme-script";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeScript } from "@/components/theme-script";
-import "./globals.css";
-import { PostHogInit } from "@/components/posthog-init";
+import type { Metadata, Viewport } from "next";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Suspense>
             <ThemeProvider defaultTheme="light">
               <TooltipProvider>
+                <AuthDialogWrapper />
                 <Toaster />
                 {children}
               </TooltipProvider>
