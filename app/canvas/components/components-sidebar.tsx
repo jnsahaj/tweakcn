@@ -5,17 +5,34 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 interface ComponentsSidebarProps {
   onDragStart: (
     e: React.DragEvent,
-    componentType: "button" | "input" | "card" | "textarea" | "checkbox"
+    componentType:
+      | "button"
+      | "input"
+      | "card"
+      | "textarea"
+      | "checkbox"
+      | "label"
+      | "select"
+      | "switch"
   ) => void;
 }
 
 // Shared component factory to ensure preview and canvas components are identical
 const createComponent = (
-  type: "button" | "input" | "card" | "textarea" | "checkbox",
+  type: "button" | "input" | "card" | "textarea" | "checkbox" | "label" | "select" | "switch",
   props?: Record<string, any>,
   size?: { width?: number; height?: number }
 ) => {
@@ -55,6 +72,32 @@ const createComponent = (
           </label>
         </div>
       );
+    case "label":
+      return (
+        <Label style={style} {...props}>
+          {props?.children || "Label"}
+        </Label>
+      );
+    case "select":
+      return (
+        <Select {...props}>
+          <SelectTrigger style={{ ...style, pointerEvents: "none" }} className="cursor-pointer">
+            <SelectValue placeholder={props?.placeholder || "Select an option"} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="option1">Option 1</SelectItem>
+            <SelectItem value="option2">Option 2</SelectItem>
+            <SelectItem value="option3">Option 3</SelectItem>
+          </SelectContent>
+        </Select>
+      );
+    case "switch":
+      return (
+        <div className="flex items-center space-x-2">
+          <Switch id="switch" style={style} {...props} />
+          <Label htmlFor="switch">{props?.label || "Switch"}</Label>
+        </div>
+      );
     default:
       return null;
   }
@@ -67,11 +110,22 @@ export function ComponentsSidebar({ onDragStart }: ComponentsSidebarProps) {
     { type: "card" as const, label: "Card" },
     { type: "textarea" as const, label: "Textarea" },
     { type: "checkbox" as const, label: "Checkbox" },
+    { type: "label" as const, label: "Label" },
+    { type: "select" as const, label: "Select" },
+    { type: "switch" as const, label: "Switch" },
   ];
 
   const handleDragStart = (
     e: React.DragEvent,
-    componentType: "button" | "input" | "card" | "textarea" | "checkbox"
+    componentType:
+      | "button"
+      | "input"
+      | "card"
+      | "textarea"
+      | "checkbox"
+      | "label"
+      | "select"
+      | "switch"
   ) => {
     // Find the corresponding preview element and use it as drag image
     const previewElement = document.getElementById(`preview-${componentType}`);
@@ -92,6 +146,9 @@ export function ComponentsSidebar({ onDragStart }: ComponentsSidebarProps) {
         <div id="preview-card">{createComponent("card")}</div>
         <div id="preview-textarea">{createComponent("textarea")}</div>
         <div id="preview-checkbox">{createComponent("checkbox")}</div>
+        <div id="preview-label">{createComponent("label")}</div>
+        <div id="preview-select">{createComponent("select")}</div>
+        <div id="preview-switch">{createComponent("switch")}</div>
       </div>
 
       <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2">

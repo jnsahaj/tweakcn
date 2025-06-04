@@ -17,7 +17,7 @@ import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown } from "lucide-react";
 
 interface CanvasComponent {
   id: string;
-  type: "button" | "input" | "card" | "textarea" | "checkbox";
+  type: "button" | "input" | "card" | "textarea" | "checkbox" | "label" | "select" | "switch";
   x: number;
   y: number;
   width?: number;
@@ -189,6 +189,102 @@ export function PropertiesSidebar({
     </div>
   );
 
+  const renderLabelProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="label-text">Text</Label>
+        <Input
+          id="label-text"
+          value={localProps.children || ""}
+          onChange={(e) => handlePropChange("children", e.target.value)}
+          placeholder="Label text"
+        />
+      </div>
+      <div>
+        <Label htmlFor="label-for">For (connects to input)</Label>
+        <Input
+          id="label-for"
+          value={localProps.htmlFor || ""}
+          onChange={(e) => handlePropChange("htmlFor", e.target.value)}
+          placeholder="Input ID"
+        />
+      </div>
+    </div>
+  );
+
+  const renderSelectProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="select-placeholder">Placeholder</Label>
+        <Input
+          id="select-placeholder"
+          value={localProps.placeholder || ""}
+          onChange={(e) => handlePropChange("placeholder", e.target.value)}
+          placeholder="Select placeholder text"
+        />
+      </div>
+      <div>
+        <Label htmlFor="select-disabled">Disabled</Label>
+        <Select
+          value={localProps.disabled ? "true" : "false"}
+          onValueChange={(value) => handlePropChange("disabled", value === "true")}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="false">No</SelectItem>
+            <SelectItem value="true">Yes</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const renderSwitchProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="switch-label">Label</Label>
+        <Input
+          id="switch-label"
+          value={localProps.label || ""}
+          onChange={(e) => handlePropChange("label", e.target.value)}
+          placeholder="Switch label"
+        />
+      </div>
+      <div>
+        <Label htmlFor="switch-disabled">Disabled</Label>
+        <Select
+          value={localProps.disabled ? "true" : "false"}
+          onValueChange={(value) => handlePropChange("disabled", value === "true")}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="false">No</SelectItem>
+            <SelectItem value="true">Yes</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label htmlFor="switch-checked">Default Checked</Label>
+        <Select
+          value={localProps.defaultChecked ? "true" : "false"}
+          onValueChange={(value) => handlePropChange("defaultChecked", value === "true")}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="false">No</SelectItem>
+            <SelectItem value="true">Yes</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
   const renderProperties = () => {
     switch (component.type) {
       case "button":
@@ -197,6 +293,12 @@ export function PropertiesSidebar({
         return renderInputProperties();
       case "card":
         return renderCardProperties();
+      case "label":
+        return renderLabelProperties();
+      case "select":
+        return renderSelectProperties();
+      case "switch":
+        return renderSwitchProperties();
       default:
         return <div>No properties available</div>;
     }

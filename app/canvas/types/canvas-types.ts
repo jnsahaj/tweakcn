@@ -1,6 +1,6 @@
 export interface CanvasComponent {
   id: string;
-  type: "button" | "input" | "card" | "textarea" | "checkbox";
+  type: "button" | "input" | "card" | "textarea" | "checkbox" | "label" | "select" | "switch";
   x: number;
   y: number;
   width?: number;
@@ -41,7 +41,15 @@ export interface ZoomState {
   maxScale: number;
 }
 
-export type ComponentType = "button" | "input" | "card" | "textarea" | "checkbox";
+export type ComponentType =
+  | "button"
+  | "input"
+  | "card"
+  | "textarea"
+  | "checkbox"
+  | "label"
+  | "select"
+  | "switch";
 
 export interface ComponentSize {
   width: number;

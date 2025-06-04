@@ -12,6 +12,12 @@ export function getDefaultProps(type: ComponentType): Record<string, any> {
       return { placeholder: "Enter multi-line text..." };
     case "checkbox":
       return { label: "Checkbox" };
+    case "label":
+      return { children: "Label" };
+    case "select":
+      return { placeholder: "Select an option" };
+    case "switch":
+      return { label: "Switch", defaultChecked: false };
     default:
       return {};
   }
@@ -29,6 +35,12 @@ export function getDefaultSize(type: ComponentType): ComponentSize {
       return { width: 200, height: 100 };
     case "checkbox":
       return { width: 120, height: 24 };
+    case "label":
+      return { width: 100, height: 24 };
+    case "select":
+      return { width: 220, height: 40 };
+    case "switch":
+      return { width: 52, height: 24 };
     default:
       return { width: 100, height: 40 };
   }
