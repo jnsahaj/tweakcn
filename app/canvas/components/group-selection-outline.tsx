@@ -22,7 +22,7 @@ export function GroupSelectionOutline({
 
   return (
     <div
-      className="pointer-events-none absolute z-40 border-2 border-blue-600 bg-blue-600/10"
+      className="absolute z-40 border-2 border-blue-600 bg-blue-600/10 hover:cursor-move"
       style={{
         left: screenX - 2,
         top: screenY - 2,

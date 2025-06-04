@@ -28,13 +28,6 @@ export function CanvasComponentRenderer({
     width: component.width,
     height: component.height,
     zIndex: component.zIndex || 0,
-    cursor: !isSelectionMode
-      ? "grab" // In panning mode, show grab cursor but don't allow interaction
-      : dragState.isDragging && dragState.componentId === component.id
-        ? "grabbing"
-        : isSelected
-          ? "grab"
-          : "pointer",
     userSelect: "none" as const,
     WebkitUserSelect: "none" as const,
     MozUserSelect: "none" as const,
@@ -42,19 +35,58 @@ export function CanvasComponentRenderer({
     pointerEvents: (!isSelectionMode ? "none" : "auto") as "none" | "auto",
   };
 
+  // Determine cursor classes based on state
+  const getCursorClasses = () => {
+    if (!isSelectionMode) {
+      return "cursor-grab"; // In panning mode
+    }
+
+    if (dragState.isDragging && dragState.componentId === component.id) {
+      return "cursor-grabbing";
+    }
+
+    if (isSelected) {
+      return "cursor-grab hover:cursor-move";
+    }
+
+    return "cursor-pointer";
+  };
+
+  // Get cursor classes specifically for components that override default cursor behavior
+  const getComponentCursorClasses = () => {
+    if (!isSelectionMode) {
+      return "";
+    }
+
+    if (dragState.isDragging && dragState.componentId === component.id) {
+      return "cursor-grabbing";
+    }
+
+    if (isSelected) {
+      return "hover:cursor-move";
+    }
+
+    return "";
+  };
+
   return (
     <div
       key={component.id}
       style={style}
-      className={`relative select-none ${isSelected && isSelectionMode ? "ring-1 ring-blue-500" : ""}`}
+      className={`relative select-none ${isSelected && isSelectionMode ? "ring-1 ring-blue-500" : ""} ${getCursorClasses()}`}
       data-component-id={component.id}
       onMouseDown={(e) => onMouseDown(e, component.id)}
     >
       <div className="h-full w-full overflow-hidden">
-        {createComponent(component.type, component.props, {
-          width: component.width,
-          height: component.height,
-        })}
+        {createComponent(
+          component.type,
+          component.props,
+          {
+            width: component.width,
+            height: component.height,
+          },
+          getComponentCursorClasses()
+        )}
       </div>
       {isSelected && isSelectionMode && (
         <ResizeHandles componentId={component.id} onResizeMouseDown={onResizeMouseDown} />

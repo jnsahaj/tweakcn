@@ -34,22 +34,30 @@ interface ComponentsSidebarProps {
 const createComponent = (
   type: "button" | "input" | "card" | "textarea" | "checkbox" | "label" | "select" | "switch",
   props?: Record<string, any>,
-  size?: { width?: number; height?: number }
+  size?: { width?: number; height?: number },
+  additionalClassName?: string
 ) => {
   const style = size ? { width: size.width, height: size.height } : {};
 
   switch (type) {
     case "button":
       return (
-        <Button style={style} {...props}>
+        <Button style={style} className={additionalClassName} {...props}>
           {props?.children || "Button"}
         </Button>
       );
     case "input":
-      return <Input style={style} placeholder="Enter text..." {...props} />;
+      return (
+        <Input
+          style={style}
+          className={additionalClassName}
+          placeholder="Enter text..."
+          {...props}
+        />
+      );
     case "card":
       return (
-        <Card className="h-full w-full" style={style} {...props}>
+        <Card className={`h-full w-full ${additionalClassName || ""}`} style={style} {...props}>
           <div className="flex h-full flex-col p-4">
             <h3 className="font-semibold">{props?.title || "Card Title"}</h3>
             <p className="text-muted-foreground mt-2 flex-1 text-sm">
@@ -59,10 +67,17 @@ const createComponent = (
         </Card>
       );
     case "textarea":
-      return <Textarea style={style} placeholder="Enter multi-line text..." {...props} />;
+      return (
+        <Textarea
+          style={style}
+          className={additionalClassName}
+          placeholder="Enter multi-line text..."
+          {...props}
+        />
+      );
     case "checkbox":
       return (
-        <div className="flex items-center space-x-2">
+        <div className={`flex items-center space-x-2 ${additionalClassName || ""}`}>
           <Checkbox id="terms" {...props} />
           <label
             htmlFor="terms"
@@ -74,14 +89,17 @@ const createComponent = (
       );
     case "label":
       return (
-        <Label style={style} {...props}>
+        <Label style={style} className={additionalClassName} {...props}>
           {props?.children || "Label"}
         </Label>
       );
     case "select":
       return (
         <Select {...props}>
-          <SelectTrigger style={{ ...style, pointerEvents: "none" }} className="cursor-pointer">
+          <SelectTrigger
+            style={{ ...style, pointerEvents: "none" }}
+            className={`cursor-pointer ${additionalClassName || ""}`}
+          >
             <SelectValue placeholder={props?.placeholder || "Select an option"} />
           </SelectTrigger>
           <SelectContent>
@@ -93,7 +111,7 @@ const createComponent = (
       );
     case "switch":
       return (
-        <div className="flex items-center space-x-2">
+        <div className={`flex items-center space-x-2 ${additionalClassName || ""}`}>
           <Switch id="switch" style={style} {...props} />
           <Label htmlFor="switch">{props?.label || "Switch"}</Label>
         </div>
