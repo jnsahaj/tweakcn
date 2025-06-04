@@ -76,7 +76,7 @@ export interface SelectionState {
   selectedIds: string[];
 }
 
-export type InteractionMode = "none" | "drag" | "resize" | "pan" | "select";
+export type InteractionMode = "none" | "drag" | "resize" | "pan" | "select" | "groupDrag";
 
 export type ComponentType =
   | "button"

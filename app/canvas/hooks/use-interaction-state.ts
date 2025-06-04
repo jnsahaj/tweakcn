@@ -10,6 +10,7 @@ import type {
 
 export function useInteractionState() {
   const [currentMode, setCurrentMode] = useState<InteractionMode>("none");
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
 
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
@@ -31,6 +32,20 @@ export function useInteractionState() {
     currentPoint: { x: 0, y: 0 },
     selectedIds: [],
   });
+
+  // Group drag state for moving multiple selected components
+  const [groupDragState, setGroupDragState] = useState({
+    isDragging: false,
+    startPoint: { x: 0, y: 0 },
+    dragOffset: { x: 0, y: 0 },
+  });
+
+  const toggleSelectionMode = useCallback(() => {
+    setIsSelectionMode((prev) => !prev);
+    if (currentMode !== "none") {
+      resetAllStates();
+    }
+  }, [currentMode]);
 
   const startDrag = useCallback((componentId: string, dragOffset: Point) => {
     setCurrentMode("drag");
@@ -135,21 +150,61 @@ export function useInteractionState() {
     }));
   }, []);
 
+  const startGroupDrag = useCallback((startPoint: Point) => {
+    setCurrentMode("groupDrag");
+    setGroupDragState({
+      isDragging: true,
+      startPoint,
+      dragOffset: { x: 0, y: 0 },
+    });
+  }, []);
+
+  const updateGroupDrag = useCallback(
+    (currentPoint: Point) => {
+      if (!groupDragState.isDragging) return;
+
+      const dragOffset = {
+        x: currentPoint.x - groupDragState.startPoint.x,
+        y: currentPoint.y - groupDragState.startPoint.y,
+      };
+
+      setGroupDragState((prev) => ({
+        ...prev,
+        dragOffset,
+      }));
+    },
+    [groupDragState.isDragging, groupDragState.startPoint]
+  );
+
+  const endGroupDrag = useCallback(() => {
+    setCurrentMode("none");
+    setGroupDragState({
+      isDragging: false,
+      startPoint: { x: 0, y: 0 },
+      dragOffset: { x: 0, y: 0 },
+    });
+  }, []);
+
   const resetAllStates = useCallback(() => {
     setCurrentMode("none");
     endDrag();
     endResize();
     endSelection();
-  }, [endDrag, endResize, endSelection]);
+    endGroupDrag();
+  }, [endDrag, endResize, endSelection, endGroupDrag]);
 
   const isInteracting = currentMode !== "none";
 
   return {
     currentMode,
+    isSelectionMode,
     dragState,
     resizeState,
     selectionState,
+    groupDragState,
     isInteracting,
+
+    toggleSelectionMode,
 
     startDrag,
     updateDrag,
@@ -162,6 +217,10 @@ export function useInteractionState() {
     startSelection,
     updateSelection,
     endSelection,
+
+    startGroupDrag,
+    updateGroupDrag,
+    endGroupDrag,
 
     resetAllStates,
   };

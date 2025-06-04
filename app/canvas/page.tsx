@@ -6,7 +6,10 @@ import { CanvasComponentRenderer } from "./components/canvas-component";
 import { CanvasGrid } from "./components/canvas-grid";
 import { CanvasInfo } from "./components/canvas-info";
 import { ZoomControls } from "./components/zoom-controls";
+import { CanvasControls } from "./components/canvas-controls";
+import { CanvasOverlay } from "./components/canvas-overlay";
 import { useCanvas } from "./hooks/use-canvas";
+import { getCanvasCursor } from "./utils/cursor-utils";
 
 export default function CanvasPage() {
   const canvas = useCanvas();
@@ -22,12 +25,16 @@ export default function CanvasPage() {
 
   const selectedComponent = canvas.selectedComponents[0];
   const sortedComponents = [...canvas.components].sort((a, b) => a.zIndex - b.zIndex);
+  const hasMultipleSelected = canvas.selectedComponentIds.length > 1;
+  const groupBoundingRect = hasMultipleSelected
+    ? canvas.utils.getBoundingRect(canvas.selectedComponents)
+    : { x: 0, y: 0, width: 0, height: 0 };
 
   return (
     <div className="bg-background relative h-screen w-full overflow-hidden">
       <ComponentsSidebar onDragStart={canvas.eventHandlers.handleSidebarDragStart} />
 
-      {selectedComponent && (
+      {selectedComponent && !hasMultipleSelected && (
         <PropertiesSidebar
           component={selectedComponent}
           onUpdateProps={(newProps: Record<string, any>) =>
@@ -42,6 +49,12 @@ export default function CanvasPage() {
         />
       )}
 
+      <CanvasControls
+        isSelectionMode={canvas.isSelectionMode}
+        selectedCount={canvas.selectedComponentIds.length}
+        onToggleSelectionMode={canvas.modeActions.toggleSelectionMode}
+      />
+
       <ZoomControls
         zoomState={canvas.zoomState}
         onZoomIn={() => canvas.viewportActions.zoomIn(getCanvasCenter())}
@@ -51,13 +64,10 @@ export default function CanvasPage() {
 
       <div
         ref={canvas.canvasRef}
-        className={`relative h-full w-full select-none ${
-          canvas.currentInteractionMode === "pan"
-            ? "cursor-grabbing"
-            : canvas.currentInteractionMode === "drag"
-              ? "cursor-default"
-              : "cursor-grab"
-        }`}
+        className={`relative h-full w-full select-none ${getCanvasCursor(
+          canvas.isSelectionMode,
+          canvas.currentInteractionMode
+        )}`}
         data-canvas-area
         onDrop={canvas.eventHandlers.handleCanvasDrop}
         onDragOver={canvas.eventHandlers.handleCanvasDragOver}
@@ -75,6 +85,16 @@ export default function CanvasPage() {
         }}
       >
         <CanvasGrid canvasOffset={canvas.canvasOffset} zoomScale={canvas.zoomState.scale} />
+
+        <CanvasOverlay
+          selectionState={canvas.selectionState}
+          selectedComponents={canvas.selectedComponents}
+          groupBoundingRect={groupBoundingRect}
+          currentInteractionMode={canvas.currentInteractionMode}
+          groupDragOffset={canvas.groupDragState.dragOffset}
+          zoomScale={canvas.zoomState.scale}
+          canvasOffset={canvas.canvasOffset}
+        />
 
         <div
           style={{
