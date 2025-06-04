@@ -109,7 +109,13 @@ export function useCanvas() {
     },
 
     modeActions: {
-      toggleSelectionMode: interactions.toggleSelectionMode,
+      toggleSelectionMode: () => {
+        // Clear selections when switching to panning mode
+        if (interactions.isSelectionMode) {
+          componentState.clearSelection();
+        }
+        interactions.toggleSelectionMode();
+      },
     },
 
     eventHandlers: {

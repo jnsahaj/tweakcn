@@ -7,6 +7,7 @@ interface CanvasComponentProps {
   isSelected: boolean;
   canvasOffset: { x: number; y: number };
   dragState: any;
+  isSelectionMode: boolean;
   onMouseDown: (e: React.MouseEvent, componentId: string) => void;
   onResizeMouseDown: (e: React.MouseEvent, componentId: string, handle: ResizeHandle) => void;
 }
@@ -16,6 +17,7 @@ export function CanvasComponentRenderer({
   isSelected,
   canvasOffset,
   dragState,
+  isSelectionMode,
   onMouseDown,
   onResizeMouseDown,
 }: CanvasComponentProps) {
@@ -26,8 +28,9 @@ export function CanvasComponentRenderer({
     width: component.width,
     height: component.height,
     zIndex: component.zIndex || 0,
-    cursor:
-      dragState.isDragging && dragState.componentId === component.id
+    cursor: !isSelectionMode
+      ? "grab" // In panning mode, show grab cursor but don't allow interaction
+      : dragState.isDragging && dragState.componentId === component.id
         ? "grabbing"
         : isSelected
           ? "grab"
@@ -36,13 +39,14 @@ export function CanvasComponentRenderer({
     WebkitUserSelect: "none" as const,
     MozUserSelect: "none" as const,
     msUserSelect: "none" as const,
+    pointerEvents: (!isSelectionMode ? "none" : "auto") as "none" | "auto",
   };
 
   return (
     <div
       key={component.id}
       style={style}
-      className={`relative select-none ${isSelected ? "ring-1 ring-blue-500" : ""}`}
+      className={`relative select-none ${isSelected && isSelectionMode ? "ring-1 ring-blue-500" : ""}`}
       data-component-id={component.id}
       onMouseDown={(e) => onMouseDown(e, component.id)}
     >
@@ -52,7 +56,7 @@ export function CanvasComponentRenderer({
           height: component.height,
         })}
       </div>
-      {isSelected && (
+      {isSelected && isSelectionMode && (
         <ResizeHandles componentId={component.id} onResizeMouseDown={onResizeMouseDown} />
       )}
     </div>

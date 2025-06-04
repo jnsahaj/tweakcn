@@ -27,15 +27,12 @@ export function useCanvasInteractionHandlers({
       e.preventDefault();
       e.stopPropagation();
 
-      if (interactions.isSelectionMode) {
-        if (e.metaKey || e.ctrlKey) {
-          componentState.toggleComponentSelection(componentId);
-        } else {
-          componentState.selectComponent(componentId);
-        }
+      // In panning mode: no component selection or interaction is allowed
+      if (!interactions.isSelectionMode) {
         return;
       }
 
+      // In selection mode: allow component selection and interactions
       if (e.metaKey || e.ctrlKey) {
         componentState.toggleComponentSelection(componentId);
         return;
@@ -59,6 +56,11 @@ export function useCanvasInteractionHandlers({
     (e: React.MouseEvent, componentId: string, handle: ResizeHandle) => {
       e.preventDefault();
       e.stopPropagation();
+
+      // In panning mode: no resize interaction is allowed
+      if (!interactions.isSelectionMode) {
+        return;
+      }
 
       const component = componentState.components.find((c: any) => c.id === componentId);
       if (!component) return;
@@ -151,30 +153,34 @@ export function useCanvasInteractionHandlers({
         e.preventDefault();
 
         if (interactions.isSelectionMode) {
+          // In selection mode: allow canvas selection for group selection
+          // But first check if clicking on selected components for group drag
+          if (componentState.selectedComponentIds.length > 0) {
+            const boundingRect = getBoundingRect(componentState.selectedComponents);
+            const canvasPoint = screenToCanvas(
+              { x: e.clientX, y: e.clientY },
+              viewport.canvasOffset,
+              viewport.zoomState.scale
+            );
+
+            if (
+              canvasPoint.x >= boundingRect.x &&
+              canvasPoint.x <= boundingRect.x + boundingRect.width &&
+              canvasPoint.y >= boundingRect.y &&
+              canvasPoint.y <= boundingRect.y + boundingRect.height
+            ) {
+              const startPoint = { x: e.clientX, y: e.clientY };
+              interactions.startGroupDrag(startPoint);
+              return;
+            }
+          }
+
+          // Start selection rectangle for group selection
           const startPoint = { x: e.clientX, y: e.clientY };
           interactions.startSelection(startPoint);
           componentState.clearSelection();
-        } else if (componentState.selectedComponentIds.length > 0) {
-          const boundingRect = getBoundingRect(componentState.selectedComponents);
-          const canvasPoint = screenToCanvas(
-            { x: e.clientX, y: e.clientY },
-            viewport.canvasOffset,
-            viewport.zoomState.scale
-          );
-
-          if (
-            canvasPoint.x >= boundingRect.x &&
-            canvasPoint.x <= boundingRect.x + boundingRect.width &&
-            canvasPoint.y >= boundingRect.y &&
-            canvasPoint.y <= boundingRect.y + boundingRect.height
-          ) {
-            const startPoint = { x: e.clientX, y: e.clientY };
-            interactions.startGroupDrag(startPoint);
-          } else {
-            componentState.clearSelection();
-            viewport.startPan({ x: e.clientX, y: e.clientY });
-          }
         } else {
+          // In panning mode: only allow panning, no selection
           componentState.clearSelection();
           viewport.startPan({ x: e.clientX, y: e.clientY });
         }

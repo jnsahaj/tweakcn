@@ -1,8 +1,5 @@
 export function getCanvasCursor(isSelectionMode: boolean, currentInteractionMode: string): string {
-  if (isSelectionMode && currentInteractionMode === "none") {
-    return "cursor-crosshair";
-  }
-
+  // Handle active interaction modes first
   switch (currentInteractionMode) {
     case "pan":
       return "cursor-grabbing";
@@ -12,7 +9,14 @@ export function getCanvasCursor(isSelectionMode: boolean, currentInteractionMode
       return "cursor-move";
     case "select":
       return "cursor-crosshair";
+    case "resize":
+      return "cursor-default";
     default:
-      return "cursor-grab";
+      // Handle default cursors based on mode
+      if (isSelectionMode) {
+        return "cursor-crosshair";
+      } else {
+        return "cursor-grab";
+      }
   }
 }

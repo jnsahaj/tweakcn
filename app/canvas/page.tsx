@@ -34,7 +34,7 @@ export default function CanvasPage() {
     <div className="bg-background relative h-screen w-full overflow-hidden">
       <ComponentsSidebar onDragStart={canvas.eventHandlers.handleSidebarDragStart} />
 
-      {selectedComponent && !hasMultipleSelected && (
+      {selectedComponent && !hasMultipleSelected && canvas.isSelectionMode && (
         <PropertiesSidebar
           component={selectedComponent}
           onUpdateProps={(newProps: Record<string, any>) =>
@@ -94,6 +94,7 @@ export default function CanvasPage() {
           groupDragOffset={canvas.groupDragState.dragOffset}
           zoomScale={canvas.zoomState.scale}
           canvasOffset={canvas.canvasOffset}
+          isSelectionMode={canvas.isSelectionMode}
         />
 
         <div
@@ -115,6 +116,7 @@ export default function CanvasPage() {
                 dragOffset: { x: 0, y: 0 },
                 componentId: null,
               }}
+              isSelectionMode={canvas.isSelectionMode}
               onMouseDown={canvas.eventHandlers.handleComponentMouseDown}
               onResizeMouseDown={canvas.eventHandlers.handleResizeMouseDown}
             />
