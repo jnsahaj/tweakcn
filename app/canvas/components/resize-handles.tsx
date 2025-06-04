@@ -1,8 +1,9 @@
 import { RESIZE_HANDLES, getHandlePositionClass } from "../utils/resize-utils";
+import type { ResizeHandle } from "../types/canvas-types";
 
 interface ResizeHandlesProps {
   componentId: string;
-  onResizeMouseDown: (e: React.MouseEvent, componentId: string, handle: string) => void;
+  onResizeMouseDown: (e: React.MouseEvent, componentId: string, handle: ResizeHandle) => void;
 }
 
 export function ResizeHandles({ componentId, onResizeMouseDown }: ResizeHandlesProps) {
@@ -21,7 +22,7 @@ export function ResizeHandles({ componentId, onResizeMouseDown }: ResizeHandlesP
           }}
           onMouseDown={(e) => {
             e.preventDefault(); // Prevent text selection
-            onResizeMouseDown(e, componentId, handle.position);
+            onResizeMouseDown(e, componentId, handle);
           }}
         />
       ))}

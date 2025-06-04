@@ -6,6 +6,7 @@ import type {
   CanvasOffset,
   PanState,
   ZoomState,
+  ComponentProps,
 } from "../types/canvas-types";
 import { GRID_SIZE } from "../utils/grid-utils";
 
@@ -21,10 +22,8 @@ export function useCanvasState() {
     isResizing: false,
     componentId: null,
     handle: null,
-    startX: 0,
-    startY: 0,
-    startWidth: 0,
-    startHeight: 0,
+    startPoint: { x: 0, y: 0 },
+    startSize: { width: 0, height: 0 },
   });
   const [canvasOffset, setCanvasOffset] = useState<CanvasOffset>({ x: 0, y: 0 });
   const [panState, setPanState] = useState<PanState>({
@@ -52,7 +51,7 @@ export function useCanvasState() {
     );
   }, []);
 
-  const updateComponentProps = useCallback((componentId: string, newProps: Record<string, any>) => {
+  const updateComponentProps = useCallback((componentId: string, newProps: ComponentProps) => {
     setComponents((prev) =>
       prev.map((comp) =>
         comp.id === componentId ? { ...comp, props: { ...comp.props, ...newProps } } : comp
@@ -73,10 +72,8 @@ export function useCanvasState() {
       isResizing: false,
       componentId: null,
       handle: null,
-      startX: 0,
-      startY: 0,
-      startWidth: 0,
-      startHeight: 0,
+      startPoint: { x: 0, y: 0 },
+      startSize: { width: 0, height: 0 },
     });
   }, []);
 
@@ -95,7 +92,7 @@ export function useCanvasState() {
 
         if (origin) {
           const scaleChange = newScale / prev.scale;
-          setCanvasOffset((prevOffset) => ({
+          setCanvasOffset((prevOffset: CanvasOffset) => ({
             x: origin.x - (origin.x - prevOffset.x) * scaleChange,
             y: origin.y - (origin.y - prevOffset.y) * scaleChange,
           }));
@@ -117,7 +114,7 @@ export function useCanvasState() {
 
         if (origin) {
           const scaleChange = newScale / prev.scale;
-          setCanvasOffset((prevOffset) => ({
+          setCanvasOffset((prevOffset: CanvasOffset) => ({
             x: origin.x - (origin.x - prevOffset.x) * scaleChange,
             y: origin.y - (origin.y - prevOffset.y) * scaleChange,
           }));
@@ -139,7 +136,7 @@ export function useCanvasState() {
 
         if (origin) {
           const scaleChange = newScale / prev.scale;
-          setCanvasOffset((prevOffset) => ({
+          setCanvasOffset((prevOffset: CanvasOffset) => ({
             x: origin.x - (origin.x - prevOffset.x) * scaleChange,
             y: origin.y - (origin.y - prevOffset.y) * scaleChange,
           }));

@@ -1,4 +1,4 @@
-import type { CanvasComponent } from "../types/canvas-types";
+import type { CanvasComponent, ResizeHandle } from "../types/canvas-types";
 import { createComponent } from "./components-sidebar";
 import { ResizeHandles } from "./resize-handles";
 
@@ -8,7 +8,7 @@ interface CanvasComponentProps {
   canvasOffset: { x: number; y: number };
   dragState: any;
   onMouseDown: (e: React.MouseEvent, componentId: string) => void;
-  onResizeMouseDown: (e: React.MouseEvent, componentId: string, handle: string) => void;
+  onResizeMouseDown: (e: React.MouseEvent, componentId: string, handle: ResizeHandle) => void;
 }
 
 export function CanvasComponentRenderer({

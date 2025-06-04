@@ -6,105 +6,65 @@ import { CanvasComponentRenderer } from "./components/canvas-component";
 import { CanvasGrid } from "./components/canvas-grid";
 import { CanvasInfo } from "./components/canvas-info";
 import { ZoomControls } from "./components/zoom-controls";
-import { useCanvasState } from "./hooks/use-canvas-state";
-import { useCanvasInteractions } from "./hooks/use-canvas-interactions";
+import { useCanvas } from "./hooks/use-canvas";
 
 export default function CanvasPage() {
-  const canvasState = useCanvasState();
-  const {
-    components,
-    selectedComponentId,
-    selectedComponent,
-    dragState,
-    resizeState,
-    canvasOffset,
-    panState,
-    zoomState,
-    updateComponentProps,
-    bringToFront,
-    sendToBack,
-    bringForward,
-    sendBackward,
-    duplicateComponent,
-    deleteComponent,
-    zoomIn,
-    zoomOut,
-    resetZoom,
-    setZoomScale,
-  } = canvasState;
+  const canvas = useCanvas();
 
-  const interactions = useCanvasInteractions(canvasState);
-  const {
-    canvasRef,
-    handleSidebarDragStart,
-    handleCanvasDrop,
-    handleCanvasDragOver,
-    handleComponentMouseDown,
-    handleResizeMouseDown,
-    handleMouseMove,
-    handleMouseUp,
-    handleCanvasMouseDown,
-  } = interactions;
-
-  // Calculate viewport center relative to canvas
   const getCanvasCenter = () => {
-    if (!canvasRef.current) return { x: 0, y: 0 };
-    const rect = canvasRef.current.getBoundingClientRect();
+    if (!canvas.canvasRef.current) return { x: 0, y: 0 };
+    const rect = canvas.canvasRef.current.getBoundingClientRect();
     return {
       x: rect.width / 2,
       y: rect.height / 2,
     };
   };
 
-  // Sort components by zIndex for proper rendering order
-  const sortedComponents = [...components].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+  const selectedComponent = canvas.selectedComponents[0];
+  const sortedComponents = [...canvas.components].sort((a, b) => a.zIndex - b.zIndex);
 
   return (
     <div className="bg-background relative h-screen w-full overflow-hidden">
-      {/* Floating Sidebar */}
-      <ComponentsSidebar onDragStart={handleSidebarDragStart} />
+      <ComponentsSidebar onDragStart={canvas.eventHandlers.handleSidebarDragStart} />
 
-      {/* Properties Sidebar */}
       {selectedComponent && (
         <PropertiesSidebar
           component={selectedComponent}
           onUpdateProps={(newProps: Record<string, any>) =>
-            updateComponentProps(selectedComponent.id, newProps)
+            canvas.componentActions.updateComponentProps(selectedComponent.id, newProps)
           }
-          onBringToFront={bringToFront}
-          onBringForward={bringForward}
-          onSendBackward={sendBackward}
-          onSendToBack={sendToBack}
-          onDuplicateComponent={duplicateComponent}
-          onDeleteComponent={deleteComponent}
+          onBringToFront={canvas.componentActions.bringToFront}
+          onBringForward={canvas.componentActions.bringForward}
+          onSendBackward={canvas.componentActions.sendBackward}
+          onSendToBack={canvas.componentActions.sendToBack}
+          onDuplicateComponent={canvas.componentActions.duplicateComponent}
+          onDeleteComponent={canvas.componentActions.deleteComponent}
         />
       )}
 
-      {/* Zoom Controls */}
       <ZoomControls
-        zoomState={zoomState}
-        onZoomIn={() => zoomIn(getCanvasCenter())}
-        onZoomOut={() => zoomOut(getCanvasCenter())}
-        onResetZoom={() => resetZoom(getCanvasCenter())}
+        zoomState={canvas.zoomState}
+        onZoomIn={() => canvas.viewportActions.zoomIn(getCanvasCenter())}
+        onZoomOut={() => canvas.viewportActions.zoomOut(getCanvasCenter())}
+        onResetZoom={() => canvas.viewportActions.resetZoom(getCanvasCenter())}
       />
 
-      {/* Infinite Canvas */}
       <div
-        ref={canvasRef}
+        ref={canvas.canvasRef}
         className={`relative h-full w-full select-none ${
-          panState.isPanning
+          canvas.currentInteractionMode === "pan"
             ? "cursor-grabbing"
-            : dragState.isDragging
+            : canvas.currentInteractionMode === "drag"
               ? "cursor-default"
               : "cursor-grab"
         }`}
         data-canvas-area
-        onDrop={handleCanvasDrop}
-        onDragOver={handleCanvasDragOver}
-        onMouseDown={handleCanvasMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onDrop={canvas.eventHandlers.handleCanvasDrop}
+        onDragOver={canvas.eventHandlers.handleCanvasDragOver}
+        onMouseDown={canvas.eventHandlers.handleCanvasMouseDown}
+        onMouseMove={canvas.eventHandlers.handleMouseMove}
+        onMouseUp={canvas.eventHandlers.handleMouseUp}
+        onMouseLeave={canvas.eventHandlers.handleMouseUp}
         style={{
           userSelect: "none",
           WebkitUserSelect: "none",
@@ -114,34 +74,34 @@ export default function CanvasPage() {
           WebkitTapHighlightColor: "transparent",
         }}
       >
-        {/* Grid Pattern */}
-        <CanvasGrid canvasOffset={canvasOffset} zoomScale={zoomState.scale} />
+        <CanvasGrid canvasOffset={canvas.canvasOffset} zoomScale={canvas.zoomState.scale} />
 
-        {/* Canvas Content with Zoom Transform */}
         <div
           style={{
-            transform: `scale(${zoomState.scale}) translate(${canvasOffset.x / zoomState.scale}px, ${canvasOffset.y / zoomState.scale}px)`,
+            transform: `scale(${canvas.zoomState.scale}) translate(${canvas.canvasOffset.x / canvas.zoomState.scale}px, ${canvas.canvasOffset.y / canvas.zoomState.scale}px)`,
             transformOrigin: "0 0",
-            width: `${100 / zoomState.scale}%`,
-            height: `${100 / zoomState.scale}%`,
+            width: `${100 / canvas.zoomState.scale}%`,
+            height: `${100 / canvas.zoomState.scale}%`,
           }}
         >
-          {/* Canvas Components */}
           {sortedComponents.map((component) => (
             <CanvasComponentRenderer
               key={component.id}
               component={component}
-              isSelected={selectedComponentId === component.id}
-              canvasOffset={{ x: 0, y: 0 }} // Offset is now handled by the transform
-              dragState={dragState}
-              onMouseDown={handleComponentMouseDown}
-              onResizeMouseDown={handleResizeMouseDown}
+              isSelected={canvas.selectedComponentIds.includes(component.id)}
+              canvasOffset={{ x: 0, y: 0 }}
+              dragState={{
+                isDragging: canvas.currentInteractionMode === "drag",
+                dragOffset: { x: 0, y: 0 },
+                componentId: null,
+              }}
+              onMouseDown={canvas.eventHandlers.handleComponentMouseDown}
+              onResizeMouseDown={canvas.eventHandlers.handleResizeMouseDown}
             />
           ))}
         </div>
 
-        {/* Canvas Info */}
-        <CanvasInfo componentCount={components.length} zoomScale={zoomState.scale} />
+        <CanvasInfo componentCount={canvas.components.length} zoomScale={canvas.zoomState.scale} />
       </div>
     </div>
   );
