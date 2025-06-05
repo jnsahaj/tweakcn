@@ -127,7 +127,7 @@ export function useCanvasInteractionHandlers({
       const startSize = { width: component.width, height: component.height };
       const startPosition = { x: component.x, y: component.y };
 
-      interactions.startResize(componentId, handle, startPoint, startSize, startPosition);
+      interactions.startResize(componentId, handle.position, startPoint, startSize, startPosition);
     },
     [componentState, interactions, viewport]
   );

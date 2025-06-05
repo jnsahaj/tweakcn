@@ -1,127 +1,243 @@
 import { useRef } from "react";
-
-import { useComponentState } from "./use-component-state";
-import { useCanvasViewport } from "./use-canvas-viewport";
-import { useInteractionState } from "./use-interaction-state";
-import { useDragInteractions } from "./use-drag-interactions";
-import { useResizeInteractions } from "./use-resize-interactions";
-import { useSelectionInteractions } from "./use-selection-interactions";
+import { useCanvasStore } from "@/store/canvas-store";
 import { useCanvasInteractionHandlers } from "./use-canvas-interaction-handlers";
 import { useKeyboardInteractions } from "./use-keyboard-interactions";
 import { useWheelInteractions } from "./use-wheel-interactions";
 import { useInteractionPrevention } from "./use-interaction-prevention";
+import { useDragInteractions } from "./use-drag-interactions";
+import { useResizeInteractions } from "./use-resize-interactions";
+import { useSelectionInteractions } from "./use-selection-interactions";
 import { getBoundingRect } from "../utils/selection-utils";
 import { screenToCanvas, canvasToScreen } from "../utils/coordinate-utils";
 
 export function useCanvas() {
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  const componentState = useComponentState();
-  const viewport = useCanvasViewport();
-  const interactions = useInteractionState();
+  const {
+    components,
+    selectedComponentIds,
+    canvasOffset,
+    zoomState,
+    panState,
+    dragState,
+    resizeState,
+    selectionState,
+    groupDragState,
+    currentInteractionMode,
+    isSelectionMode,
+    getSelectedComponents,
+    isInteracting,
+
+    addComponent,
+    updateComponent,
+    updateComponentProps,
+    deleteComponent,
+    duplicateComponent,
+
+    selectComponent,
+    selectMultipleComponents,
+    toggleComponentSelection,
+    addComponentToSelection,
+    clearSelection,
+    deleteSelectedComponents,
+    duplicateSelectedComponents,
+
+    bringToFront,
+    sendToBack,
+    bringForward,
+    sendBackward,
+
+    setCanvasOffset,
+    setZoomScale,
+    zoomIn,
+    zoomOut,
+    resetZoom,
+
+    startPan,
+    updatePan,
+    resetPanState,
+
+    startDrag,
+    updateDrag,
+    resetDragState,
+
+    startResize,
+    updateResize,
+    resetResizeState,
+
+    startSelection,
+    updateSelection,
+    endSelection,
+
+    startGroupDrag,
+    updateGroupDrag,
+    endGroupDrag,
+
+    toggleSelectionMode,
+    resetAllStates,
+  } = useCanvasStore();
+
+  const selectedComponents = getSelectedComponents();
 
   const dragInteractions = useDragInteractions({
-    components: componentState.components,
-    canvasOffset: viewport.canvasOffset,
-    zoomScale: viewport.zoomState.scale,
-    updateComponent: componentState.updateComponent,
-    addComponent: componentState.addComponent,
+    components,
+    canvasOffset,
+    zoomScale: zoomState.scale,
+    updateComponent,
+    addComponent,
   });
 
   const resizeInteractions = useResizeInteractions({
-    components: componentState.components,
-    zoomScale: viewport.zoomState.scale,
-    updateComponent: componentState.updateComponent,
+    components,
+    zoomScale: zoomState.scale,
+    updateComponent,
   });
 
   const selectionInteractions = useSelectionInteractions({
-    components: componentState.components,
-    zoomScale: viewport.zoomState.scale,
-    canvasOffset: viewport.canvasOffset,
-    updateComponent: componentState.updateComponent,
+    components,
+    zoomScale: zoomState.scale,
+    canvasOffset,
+    updateComponent,
   });
 
   const eventHandlers = useCanvasInteractionHandlers({
     canvasRef,
-    componentState,
-    viewport,
-    interactions,
+    componentState: {
+      components,
+      selectedComponentIds,
+      selectedComponents,
+      setComponents: () => {},
+      addComponent,
+      updateComponent,
+      updateComponentProps,
+      deleteComponent,
+      duplicateComponent,
+      bringToFront,
+      sendToBack,
+      bringForward,
+      sendBackward,
+      selectComponent,
+      selectMultipleComponents,
+      toggleComponentSelection,
+      addComponentToSelection,
+      clearSelection,
+      deleteSelectedComponents,
+      duplicateSelectedComponents,
+    },
+    viewport: {
+      canvasOffset,
+      zoomState,
+      panState,
+      setCanvasOffset,
+      setZoomState: () => {},
+      setZoomScale,
+      zoomIn,
+      zoomOut,
+      resetZoom,
+      zoomToFit: () => {},
+      setPanState: () => {},
+      startPan,
+      updatePan,
+      resetPanState,
+    },
+    interactions: {
+      currentMode: currentInteractionMode,
+      isSelectionMode,
+      dragState,
+      resizeState,
+      selectionState,
+      groupDragState,
+      toggleSelectionMode,
+      startDrag,
+      updateDrag,
+      endDrag: resetDragState,
+      startResize,
+      updateResize,
+      endResize: resetResizeState,
+      startSelection,
+      updateSelection,
+      endSelection,
+      startGroupDrag,
+      updateGroupDrag,
+      endGroupDrag,
+      resetAllStates,
+      isInteracting: isInteracting(),
+    },
     dragInteractions,
     resizeInteractions,
     selectionInteractions,
   });
 
   useKeyboardInteractions({
-    zoomIn: viewport.zoomIn,
-    zoomOut: viewport.zoomOut,
-    resetZoom: viewport.resetZoom,
+    zoomIn,
+    zoomOut,
+    resetZoom,
     canvasRef,
   });
 
   useWheelInteractions({
-    zoomState: viewport.zoomState,
-    setZoomScale: viewport.setZoomScale,
-    setCanvasOffset: viewport.setCanvasOffset,
+    zoomState,
+    setZoomScale,
+    setCanvasOffset,
     canvasRef,
-    startPan: viewport.startPan,
-    updatePan: viewport.updatePan,
-    resetPanState: viewport.resetPanState,
-    isSelectionMode: interactions.isSelectionMode,
+    startPan,
+    updatePan,
+    resetPanState,
+    isSelectionMode,
   });
 
   useInteractionPrevention({
-    isInteracting: interactions.isInteracting,
+    isInteracting: isInteracting(),
   });
 
   return {
     canvasRef,
-    components: componentState.components,
-    selectedComponentIds: componentState.selectedComponentIds,
-    selectedComponents: componentState.selectedComponents,
-    canvasOffset: viewport.canvasOffset,
-    zoomState: viewport.zoomState,
-    panState: viewport.panState,
-    currentInteractionMode: interactions.currentMode,
-    isSelectionMode: interactions.isSelectionMode,
-    selectionState: interactions.selectionState,
-    groupDragState: interactions.groupDragState,
+    components,
+    selectedComponentIds,
+    selectedComponents,
+    canvasOffset,
+    zoomState,
+    panState,
+    currentInteractionMode,
+    isSelectionMode,
+    selectionState,
+    groupDragState,
 
     componentActions: {
-      addComponent: componentState.addComponent,
-      updateComponent: componentState.updateComponent,
-      updateComponentProps: componentState.updateComponentProps,
-      deleteComponent: componentState.deleteComponent,
-      duplicateComponent: componentState.duplicateComponent,
-      bringToFront: componentState.bringToFront,
-      sendToBack: componentState.sendToBack,
-      bringForward: componentState.bringForward,
-      sendBackward: componentState.sendBackward,
-      deleteSelectedComponents: componentState.deleteSelectedComponents,
-      duplicateSelectedComponents: componentState.duplicateSelectedComponents,
+      addComponent,
+      updateComponent,
+      updateComponentProps,
+      deleteComponent,
+      duplicateComponent,
+      bringToFront,
+      sendToBack,
+      bringForward,
+      sendBackward,
+      deleteSelectedComponents,
+      duplicateSelectedComponents,
     },
 
     selectionActions: {
-      selectComponent: componentState.selectComponent,
-      selectMultipleComponents: componentState.selectMultipleComponents,
-      toggleComponentSelection: componentState.toggleComponentSelection,
-      clearSelection: componentState.clearSelection,
+      selectComponent,
+      selectMultipleComponents,
+      toggleComponentSelection,
+      clearSelection,
     },
 
     viewportActions: {
-      zoomIn: viewport.zoomIn,
-      zoomOut: viewport.zoomOut,
-      resetZoom: viewport.resetZoom,
-      setZoomScale: viewport.setZoomScale,
-      zoomToFit: viewport.zoomToFit,
+      zoomIn,
+      zoomOut,
+      resetZoom,
+      setZoomScale,
+      zoomToFit: () => {},
     },
 
     modeActions: {
       toggleSelectionMode: () => {
-        // Clear selections when switching to panning mode
-        if (interactions.isSelectionMode) {
-          componentState.clearSelection();
+        if (isSelectionMode) {
+          clearSelection();
         }
-        interactions.toggleSelectionMode();
+        toggleSelectionMode();
       },
     },
 
@@ -134,10 +250,8 @@ export function useCanvas() {
     utils: {
       getResizeHandles: resizeInteractions.getResizeHandles,
       getHandleCursor: resizeInteractions.getHandleCursor,
-      screenToCanvas: (point: any) =>
-        screenToCanvas(point, viewport.canvasOffset, viewport.zoomState.scale),
-      canvasToScreen: (point: any) =>
-        canvasToScreen(point, viewport.canvasOffset, viewport.zoomState.scale),
+      screenToCanvas: (point: any) => screenToCanvas(point, canvasOffset, zoomState.scale),
+      canvasToScreen: (point: any) => canvasToScreen(point, canvasOffset, zoomState.scale),
       getBoundingRect,
     },
   };
