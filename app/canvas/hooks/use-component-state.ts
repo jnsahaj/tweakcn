@@ -145,6 +145,38 @@ export function useComponentState() {
     setSelectedComponentIds([]);
   }, []);
 
+  const deleteSelectedComponents = useCallback(() => {
+    setComponents((prev) => prev.filter((c) => !selectedComponentIds.includes(c.id)));
+    setSelectedComponentIds([]);
+  }, [selectedComponentIds]);
+
+  const duplicateSelectedComponents = useCallback(() => {
+    const selectedComponents = components.filter((c) => selectedComponentIds.includes(c.id));
+    if (selectedComponents.length === 0) return;
+
+    const offset = GRID_SIZE * 2;
+    const maxZIndex = Math.max(...components.map((c) => c.zIndex), 0);
+    const newComponents: CanvasComponent[] = [];
+    const newSelectedIds: string[] = [];
+
+    selectedComponents.forEach((component, index) => {
+      const newId = `${component.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const copiedComponent: CanvasComponent = {
+        ...component,
+        id: newId,
+        x: component.x + offset,
+        y: component.y + offset,
+        zIndex: maxZIndex + 1 + index,
+        props: component.props ? JSON.parse(JSON.stringify(component.props)) : undefined,
+      };
+      newComponents.push(copiedComponent);
+      newSelectedIds.push(newId);
+    });
+
+    setComponents((prev) => [...prev, ...newComponents]);
+    setSelectedComponentIds(newSelectedIds);
+  }, [components, selectedComponentIds]);
+
   return {
     components,
     selectedComponentIds,
@@ -164,5 +196,7 @@ export function useComponentState() {
     toggleComponentSelection,
     addComponentToSelection,
     clearSelection,
+    deleteSelectedComponents,
+    duplicateSelectedComponents,
   };
 }

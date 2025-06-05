@@ -96,6 +96,8 @@ export function useCanvas() {
       sendToBack: componentState.sendToBack,
       bringForward: componentState.bringForward,
       sendBackward: componentState.sendBackward,
+      deleteSelectedComponents: componentState.deleteSelectedComponents,
+      duplicateSelectedComponents: componentState.duplicateSelectedComponents,
     },
 
     selectionActions: {

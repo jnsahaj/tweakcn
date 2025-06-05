@@ -2,6 +2,7 @@
 
 import { ComponentsSidebar } from "./components/components-sidebar";
 import { PropertiesSidebar } from "./components/properties-sidebar";
+import { GroupPropertiesSidebar } from "./components/group-properties-sidebar";
 import { CanvasComponentRenderer } from "./components/canvas-component";
 import { CanvasGrid } from "./components/canvas-grid";
 import { CanvasInfo } from "./components/canvas-info";
@@ -46,6 +47,14 @@ export default function CanvasPage() {
           onSendToBack={canvas.componentActions.sendToBack}
           onDuplicateComponent={canvas.componentActions.duplicateComponent}
           onDeleteComponent={canvas.componentActions.deleteComponent}
+        />
+      )}
+
+      {hasMultipleSelected && canvas.isSelectionMode && (
+        <GroupPropertiesSidebar
+          selectedCount={canvas.selectedComponentIds.length}
+          onDuplicateComponents={canvas.componentActions.duplicateSelectedComponents}
+          onDeleteComponents={canvas.componentActions.deleteSelectedComponents}
         />
       )}
 
