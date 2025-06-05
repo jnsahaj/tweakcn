@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import type { ComponentType } from "../types/canvas-types";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,37 +20,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 
 interface ComponentsSidebarProps {
-  onDragStart: (
-    e: React.DragEvent,
-    componentType:
-      | "button"
-      | "input"
-      | "card"
-      | "textarea"
-      | "checkbox"
-      | "label"
-      | "select"
-      | "switch"
-      | "badge"
-      | "avatar"
-      | "progress"
-  ) => void;
+  onDragStart: (e: React.DragEvent, componentType: ComponentType) => void;
 }
 
 // Shared component factory to ensure preview and canvas components are identical
 const createComponent = (
-  type:
-    | "button"
-    | "input"
-    | "card"
-    | "textarea"
-    | "checkbox"
-    | "label"
-    | "select"
-    | "switch"
-    | "badge"
-    | "avatar"
-    | "progress",
+  type: ComponentType,
   props?: Record<string, any>,
   size?: { width?: number; height?: number },
   additionalClassName?: string
@@ -180,21 +156,7 @@ export function ComponentsSidebar({ onDragStart }: ComponentsSidebarProps) {
     { type: "progress" as const, label: "Progress" },
   ];
 
-  const handleDragStart = (
-    e: React.DragEvent,
-    componentType:
-      | "button"
-      | "input"
-      | "card"
-      | "textarea"
-      | "checkbox"
-      | "label"
-      | "select"
-      | "switch"
-      | "badge"
-      | "avatar"
-      | "progress"
-  ) => {
+  const handleDragStart = (e: React.DragEvent, componentType: ComponentType) => {
     // Find the corresponding preview element and use it as drag image
     const previewElement = document.getElementById(`preview-${componentType}`);
     if (previewElement) {

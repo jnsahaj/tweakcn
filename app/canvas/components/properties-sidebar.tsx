@@ -14,31 +14,15 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown, Copy, Trash2 } from "lucide-react";
+import type { CanvasComponent } from "../types/canvas-types";
 
-interface CanvasComponent {
-  id: string;
-  type:
-    | "button"
-    | "input"
-    | "card"
-    | "textarea"
-    | "checkbox"
-    | "label"
-    | "select"
-    | "switch"
-    | "badge"
-    | "avatar"
-    | "progress";
-  x: number;
-  y: number;
-  width?: number;
-  height?: number;
-  zIndex?: number;
+// Local version with more flexible props for UI form handling
+interface LocalCanvasComponent extends Omit<CanvasComponent, "props"> {
   props?: Record<string, any>;
 }
 
 interface PropertiesSidebarProps {
-  component: CanvasComponent;
+  component: LocalCanvasComponent;
   onUpdateProps: (newProps: Record<string, any>) => void;
   onBringToFront: (componentId: string) => void;
   onBringForward: (componentId: string) => void;
@@ -173,7 +157,7 @@ export function PropertiesSidebar({
       <div>
         <Label htmlFor="input-disabled">Disabled</Label>
         <Select
-          value={localProps.disabled ? "true" : "false"}
+          value={String(Boolean(localProps.disabled))}
           onValueChange={(value) => handlePropChange("disabled", value === "true")}
         >
           <SelectTrigger>
