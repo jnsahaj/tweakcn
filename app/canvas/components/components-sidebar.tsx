@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import type { ComponentType } from "../types/canvas-types";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -51,12 +51,10 @@ const createComponent = (
     case "card":
       return (
         <Card className={`h-full w-full ${additionalClassName || ""}`} style={style} {...props}>
-          <div className="flex h-full flex-col p-4">
-            <h3 className="font-semibold">{props?.title || "Card Title"}</h3>
-            <p className="text-muted-foreground mt-2 flex-1 text-sm">
-              {props?.content || "This is a card component with some content."}
-            </p>
-          </div>
+          <CardHeader>
+            {props?.title && <CardTitle>{props.title}</CardTitle>}
+            {props?.content && <CardDescription>{props.content}</CardDescription>}
+          </CardHeader>
         </Card>
       );
     case "textarea":
