@@ -7,6 +7,7 @@ import {
   getBoundingRect,
 } from "../utils/selection-utils";
 import { snapToGrid } from "../utils/grid-utils";
+import { useCanvasStore } from "@/store/canvas-store";
 
 interface UseSelectionInteractionsProps {
   components: CanvasComponent[];
@@ -21,6 +22,7 @@ export function useSelectionInteractions({
   canvasOffset,
   updateComponent,
 }: UseSelectionInteractionsProps) {
+  const gridSize = useCanvasStore((state) => state.gridSize);
   const findComponentsInSelectionRect = useCallback(
     (startScreenPoint: Point, currentScreenPoint: Point): string[] => {
       const startCanvasPoint = screenToCanvas(startScreenPoint, canvasOffset, zoomScale);
@@ -35,12 +37,12 @@ export function useSelectionInteractions({
   const moveSelectedComponents = useCallback(
     (selectedComponents: CanvasComponent[], deltaX: number, deltaY: number) => {
       selectedComponents.forEach((component) => {
-        const newX = snapToGrid(component.x + deltaX);
-        const newY = snapToGrid(component.y + deltaY);
+        const newX = snapToGrid(component.x + deltaX, gridSize);
+        const newY = snapToGrid(component.y + deltaY, gridSize);
         updateComponent(component.id, { x: newX, y: newY });
       });
     },
-    [updateComponent]
+    [updateComponent, gridSize]
   );
 
   return {

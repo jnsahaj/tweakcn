@@ -1,4 +1,4 @@
-import { GRID_SIZE } from "../utils/grid-utils";
+import { useCanvasStore } from "@/store/canvas-store";
 
 interface CanvasGridProps {
   canvasOffset: { x: number; y: number };
@@ -6,8 +6,9 @@ interface CanvasGridProps {
 }
 
 export function CanvasGrid({ canvasOffset, zoomScale }: CanvasGridProps) {
-  const scaledGridSize = GRID_SIZE * zoomScale;
-  const scaledBlockSize = GRID_SIZE * 10 * zoomScale; // 10x10 blocks
+  const gridSize = useCanvasStore((state) => state.gridSize);
+  const scaledGridSize = gridSize * zoomScale;
+  const scaledBlockSize = gridSize * 10 * zoomScale; // 10x10 blocks
 
   return (
     <>

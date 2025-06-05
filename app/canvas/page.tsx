@@ -9,6 +9,7 @@ import { CanvasInfo } from "./components/canvas-info";
 import { ZoomControls } from "./components/zoom-controls";
 import { CanvasControls } from "./components/canvas-controls";
 import { CanvasOverlay } from "./components/canvas-overlay";
+import { GridSizeControl } from "./components/grid-size-control";
 import { useCanvas } from "./hooks/use-canvas";
 import { getCanvasCursor } from "./utils/cursor-utils";
 
@@ -134,6 +135,7 @@ export default function CanvasPage() {
         </div>
 
         <CanvasInfo componentCount={canvas.components.length} zoomScale={canvas.zoomState.scale} />
+        <GridSizeControl />
       </div>
     </div>
   );

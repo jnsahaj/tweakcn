@@ -2,6 +2,8 @@ import { useCallback } from "react";
 import type { ResizeHandle } from "../types/canvas-types";
 import { screenToCanvas } from "../utils/coordinate-utils";
 import { getBoundingRect, getTopmostComponentAtPoint } from "../utils/selection-utils";
+import { snapToGrid } from "../utils/grid-utils";
+import { useCanvasStore } from "@/store/canvas-store";
 
 interface UseCanvasInteractionHandlersProps {
   canvasRef: React.RefObject<HTMLDivElement | null>;
@@ -22,6 +24,7 @@ export function useCanvasInteractionHandlers({
   resizeInteractions,
   selectionInteractions,
 }: UseCanvasInteractionHandlersProps) {
+  const gridSize = useCanvasStore((state) => state.gridSize);
   const handleComponentMouseDown = useCallback(
     (e: React.MouseEvent, componentId: string) => {
       e.preventDefault();
@@ -185,8 +188,12 @@ export function useCanvasInteractionHandlers({
       componentState.selectMultipleComponents(selectedIds);
       interactions.endSelection(selectedIds);
     } else if (interactions.groupDragState.isDragging) {
-      const deltaX = interactions.groupDragState.dragOffset.x / viewport.zoomState.scale;
-      const deltaY = interactions.groupDragState.dragOffset.y / viewport.zoomState.scale;
+      const rawDeltaX = interactions.groupDragState.dragOffset.x / viewport.zoomState.scale;
+      const rawDeltaY = interactions.groupDragState.dragOffset.y / viewport.zoomState.scale;
+
+      // Apply grid snapping to the deltas
+      const deltaX = snapToGrid(rawDeltaX, gridSize);
+      const deltaY = snapToGrid(rawDeltaY, gridSize);
 
       if (Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5) {
         selectionInteractions.moveSelectedComponents(
@@ -202,7 +209,7 @@ export function useCanvasInteractionHandlers({
     }
 
     viewport.resetPanState();
-  }, [interactions, selectionInteractions, componentState, viewport]);
+  }, [interactions, selectionInteractions, componentState, viewport, gridSize]);
 
   const handleCanvasMouseDown = useCallback(
     (e: React.MouseEvent) => {

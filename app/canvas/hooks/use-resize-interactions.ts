@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import type { CanvasComponent, Point, ResizeHandlePosition } from "../types/canvas-types";
-import { snapSizeToGrid, GRID_SIZE } from "../utils/grid-utils";
+import { snapSizeToGrid } from "../utils/grid-utils";
 import { getDefaultSize } from "../utils/component-utils";
+import { useCanvasStore } from "@/store/canvas-store";
 
 interface UseResizeInteractionsProps {
   components: CanvasComponent[];
@@ -14,6 +15,7 @@ export function useResizeInteractions({
   zoomScale,
   updateComponent,
 }: UseResizeInteractionsProps) {
+  const gridSize = useCanvasStore((state) => state.gridSize);
   const calculateResizeDeltas = useCallback(
     (
       currentPoint: Point,
@@ -32,46 +34,46 @@ export function useResizeInteractions({
 
       switch (handle) {
         case "top-left":
-          newWidth = snapSizeToGrid(startSize.width - deltaX, GRID_SIZE);
-          newHeight = snapSizeToGrid(startSize.height - deltaY, GRID_SIZE);
+          newWidth = snapSizeToGrid(startSize.width - deltaX, gridSize, gridSize);
+          newHeight = snapSizeToGrid(startSize.height - deltaY, gridSize, gridSize);
           newX = startPosition.x + startSize.width - newWidth;
           newY = startPosition.y + startSize.height - newHeight;
           break;
         case "top-right":
-          newWidth = snapSizeToGrid(startSize.width + deltaX, GRID_SIZE);
-          newHeight = snapSizeToGrid(startSize.height - deltaY, GRID_SIZE);
+          newWidth = snapSizeToGrid(startSize.width + deltaX, gridSize, gridSize);
+          newHeight = snapSizeToGrid(startSize.height - deltaY, gridSize, gridSize);
           newX = startPosition.x;
           newY = startPosition.y + startSize.height - newHeight;
           break;
         case "bottom-left":
-          newWidth = snapSizeToGrid(startSize.width - deltaX, GRID_SIZE);
-          newHeight = snapSizeToGrid(startSize.height + deltaY, GRID_SIZE);
+          newWidth = snapSizeToGrid(startSize.width - deltaX, gridSize, gridSize);
+          newHeight = snapSizeToGrid(startSize.height + deltaY, gridSize, gridSize);
           newX = startPosition.x + startSize.width - newWidth;
           newY = startPosition.y;
           break;
         case "bottom-right":
-          newWidth = snapSizeToGrid(startSize.width + deltaX, GRID_SIZE);
-          newHeight = snapSizeToGrid(startSize.height + deltaY, GRID_SIZE);
+          newWidth = snapSizeToGrid(startSize.width + deltaX, gridSize, gridSize);
+          newHeight = snapSizeToGrid(startSize.height + deltaY, gridSize, gridSize);
           newX = startPosition.x;
           newY = startPosition.y;
           break;
         case "top":
-          newHeight = snapSizeToGrid(startSize.height - deltaY, GRID_SIZE);
+          newHeight = snapSizeToGrid(startSize.height - deltaY, gridSize, gridSize);
           newX = startPosition.x;
           newY = startPosition.y + startSize.height - newHeight;
           break;
         case "bottom":
-          newHeight = snapSizeToGrid(startSize.height + deltaY, GRID_SIZE);
+          newHeight = snapSizeToGrid(startSize.height + deltaY, gridSize, gridSize);
           newX = startPosition.x;
           newY = startPosition.y;
           break;
         case "left":
-          newWidth = snapSizeToGrid(startSize.width - deltaX, GRID_SIZE);
+          newWidth = snapSizeToGrid(startSize.width - deltaX, gridSize, gridSize);
           newX = startPosition.x + startSize.width - newWidth;
           newY = startPosition.y;
           break;
         case "right":
-          newWidth = snapSizeToGrid(startSize.width + deltaX, GRID_SIZE);
+          newWidth = snapSizeToGrid(startSize.width + deltaX, gridSize, gridSize);
           newX = startPosition.x;
           newY = startPosition.y;
           break;
@@ -79,7 +81,7 @@ export function useResizeInteractions({
 
       return { newWidth, newHeight, newX, newY };
     },
-    [zoomScale]
+    [zoomScale, gridSize]
   );
 
   const resizeComponent = useCallback(

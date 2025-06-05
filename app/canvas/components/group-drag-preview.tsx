@@ -1,5 +1,6 @@
 import type { CanvasComponent, Point } from "../types/canvas-types";
 import { snapToGrid } from "../utils/grid-utils";
+import { useCanvasStore } from "@/store/canvas-store";
 
 interface GroupDragPreviewProps {
   selectedComponents: CanvasComponent[];
@@ -16,13 +17,15 @@ export function GroupDragPreview({
   zoomScale,
   canvasOffset,
 }: GroupDragPreviewProps) {
+  const gridSize = useCanvasStore((state) => state.gridSize);
+
   if (!isVisible || selectedComponents.length === 0) return null;
 
   // Apply grid snapping to the drag offset
   const rawDeltaX = dragOffset.x / zoomScale;
   const rawDeltaY = dragOffset.y / zoomScale;
-  const deltaX = snapToGrid(rawDeltaX);
-  const deltaY = snapToGrid(rawDeltaY);
+  const deltaX = snapToGrid(rawDeltaX, gridSize);
+  const deltaY = snapToGrid(rawDeltaY, gridSize);
 
   return (
     <div className="pointer-events-none absolute z-30">

@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import type { CanvasComponent, Point, ComponentType } from "../types/canvas-types";
-import { snapToGrid, snapSizeToGrid, GRID_SIZE } from "../utils/grid-utils";
+import { snapToGrid, snapSizeToGrid } from "../utils/grid-utils";
 import { getDefaultSize, getDefaultProps } from "../utils/component-utils";
+import { useCanvasStore } from "@/store/canvas-store";
 
 interface UseDragInteractionsProps {
   components: CanvasComponent[];
@@ -18,6 +19,7 @@ export function useDragInteractions({
   updateComponent,
   addComponent,
 }: UseDragInteractionsProps) {
+  const gridSize = useCanvasStore((state) => state.gridSize);
   const handleSidebarDragStart = useCallback((e: React.DragEvent, componentType: ComponentType) => {
     e.dataTransfer.setData("componentType", componentType);
     e.dataTransfer.effectAllowed = "copy";
@@ -33,8 +35,8 @@ export function useDragInteractions({
         const rawX = (e.clientX - rect.left - canvasOffset.x) / zoomScale;
         const rawY = (e.clientY - rect.top - canvasOffset.y) / zoomScale;
 
-        const x = snapToGrid(rawX);
-        const y = snapToGrid(rawY);
+        const x = snapToGrid(rawX, gridSize);
+        const y = snapToGrid(rawY, gridSize);
 
         const defaultSize = getDefaultSize(componentType);
         const maxZIndex = Math.max(...components.map((c) => c.zIndex), 0);
@@ -44,8 +46,8 @@ export function useDragInteractions({
           type: componentType,
           x,
           y,
-          width: snapSizeToGrid(defaultSize.width, GRID_SIZE),
-          height: snapSizeToGrid(defaultSize.height, GRID_SIZE),
+          width: snapSizeToGrid(defaultSize.width, gridSize, gridSize),
+          height: snapSizeToGrid(defaultSize.height, gridSize, gridSize),
           zIndex: maxZIndex + 1,
           props: getDefaultProps(componentType),
         };
@@ -53,7 +55,7 @@ export function useDragInteractions({
         addComponent(newComponent);
       }
     },
-    [canvasOffset, zoomScale, components, addComponent]
+    [canvasOffset, zoomScale, components, addComponent, gridSize]
   );
 
   const handleCanvasDragOver = useCallback((e: React.DragEvent) => {
@@ -79,11 +81,11 @@ export function useDragInteractions({
       const rawY = (mouseEvent.clientY - rect.top - dragOffset.y - canvasOffset.y) / zoomScale;
 
       return {
-        x: snapToGrid(rawX),
-        y: snapToGrid(rawY),
+        x: snapToGrid(rawX, gridSize),
+        y: snapToGrid(rawY, gridSize),
       };
     },
-    [canvasOffset, zoomScale]
+    [canvasOffset, zoomScale, gridSize]
   );
 
   const moveComponent = useCallback(
@@ -99,13 +101,13 @@ export function useDragInteractions({
         const component = components.find((c) => c.id === id);
         if (component) {
           updateComponent(id, {
-            x: snapToGrid(component.x + deltaX),
-            y: snapToGrid(component.y + deltaY),
+            x: snapToGrid(component.x + deltaX, gridSize),
+            y: snapToGrid(component.y + deltaY, gridSize),
           });
         }
       });
     },
-    [components, updateComponent]
+    [components, updateComponent, gridSize]
   );
 
   return {

@@ -12,7 +12,6 @@ import {
   ResizeHandlePosition,
   ComponentProps,
 } from "@/app/canvas/types/canvas-types";
-import { GRID_SIZE } from "@/app/canvas/utils/grid-utils";
 
 interface GroupDragState {
   isDragging: boolean;
@@ -32,6 +31,7 @@ interface CanvasState {
   groupDragState: GroupDragState;
   currentInteractionMode: InteractionMode;
   isSelectionMode: boolean;
+  gridSize: number;
 }
 
 interface CanvasActions {
@@ -95,6 +95,7 @@ interface CanvasActions {
   setCurrentInteractionMode: (mode: InteractionMode) => void;
   toggleSelectionMode: () => void;
   resetAllStates: () => void;
+  setGridSize: (size: number) => void;
 }
 
 interface CanvasStore extends CanvasState, CanvasActions {
@@ -141,6 +142,7 @@ const initialState: CanvasState = {
   },
   currentInteractionMode: "none",
   isSelectionMode: false,
+  gridSize: 10, // Default grid size
 };
 
 export const useCanvasStore = create<CanvasStore>()(
@@ -193,12 +195,12 @@ export const useCanvasStore = create<CanvasStore>()(
       },
 
       duplicateComponent: (componentId: string) => {
-        const { components } = get();
+        const { components, gridSize } = get();
         const component = components.find((c) => c.id === componentId);
         if (!component) return;
 
         const newId = `${component.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        const offset = GRID_SIZE * 2;
+        const offset = gridSize * 2;
         const maxZIndex = Math.max(...components.map((c) => c.zIndex || 0), 0);
 
         const copiedComponent: CanvasComponent = {
@@ -252,11 +254,11 @@ export const useCanvasStore = create<CanvasStore>()(
       },
 
       duplicateSelectedComponents: () => {
-        const { components, selectedComponentIds } = get();
+        const { components, selectedComponentIds, gridSize } = get();
         const selectedComponents = components.filter((c) => selectedComponentIds.includes(c.id));
         if (selectedComponents.length === 0) return;
 
-        const offset = GRID_SIZE * 2;
+        const offset = gridSize * 2;
         const maxZIndex = Math.max(...components.map((c) => c.zIndex || 0), 0);
         const newComponents: CanvasComponent[] = [];
         const newSelectedIds: string[] = [];
@@ -661,6 +663,10 @@ export const useCanvasStore = create<CanvasStore>()(
           },
         });
       },
+
+      setGridSize: (size: number) => {
+        set({ gridSize: Math.max(2, Math.min(16, size)) }); // Clamp between 2px and 16px
+      },
     }),
     {
       name: "canvas-store",
@@ -670,6 +676,7 @@ export const useCanvasStore = create<CanvasStore>()(
         canvasOffset: state.canvasOffset,
         zoomState: state.zoomState,
         isSelectionMode: state.isSelectionMode,
+        gridSize: state.gridSize,
       }),
     }
   )
