@@ -24,54 +24,61 @@ export function useResizeInteractions({
       currentPoint: Point,
       startPoint: Point,
       handle: ResizeHandlePosition,
-      startSize: { width: number; height: number }
+      startSize: { width: number; height: number },
+      startPosition: { x: number; y: number }
     ) => {
       const deltaX = (currentPoint.x - startPoint.x) / zoomScale;
       const deltaY = (currentPoint.y - startPoint.y) / zoomScale;
 
       let newWidth = startSize.width;
       let newHeight = startSize.height;
-      let newX = 0;
-      let newY = 0;
+      let newX = startPosition.x;
+      let newY = startPosition.y;
 
       switch (handle) {
         case "top-left":
           newWidth = snapSizeToGrid(startSize.width - deltaX, 50);
           newHeight = snapSizeToGrid(startSize.height - deltaY, 30);
-          newX = deltaX;
-          newY = deltaY;
+          newX = startPosition.x + startSize.width - newWidth;
+          newY = startPosition.y + startSize.height - newHeight;
           break;
         case "top-right":
           newWidth = snapSizeToGrid(startSize.width + deltaX, 50);
           newHeight = snapSizeToGrid(startSize.height - deltaY, 30);
-          newX = 0;
-          newY = deltaY;
+          newX = startPosition.x;
+          newY = startPosition.y + startSize.height - newHeight;
           break;
         case "bottom-left":
           newWidth = snapSizeToGrid(startSize.width - deltaX, 50);
           newHeight = snapSizeToGrid(startSize.height + deltaY, 30);
-          newX = deltaX;
-          newY = 0;
+          newX = startPosition.x + startSize.width - newWidth;
+          newY = startPosition.y;
           break;
         case "bottom-right":
           newWidth = snapSizeToGrid(startSize.width + deltaX, 50);
           newHeight = snapSizeToGrid(startSize.height + deltaY, 30);
-          newX = 0;
-          newY = 0;
+          newX = startPosition.x;
+          newY = startPosition.y;
           break;
         case "top":
           newHeight = snapSizeToGrid(startSize.height - deltaY, 30);
-          newY = deltaY;
+          newX = startPosition.x;
+          newY = startPosition.y + startSize.height - newHeight;
           break;
         case "bottom":
           newHeight = snapSizeToGrid(startSize.height + deltaY, 30);
+          newX = startPosition.x;
+          newY = startPosition.y;
           break;
         case "left":
           newWidth = snapSizeToGrid(startSize.width - deltaX, 50);
-          newX = deltaX;
+          newX = startPosition.x + startSize.width - newWidth;
+          newY = startPosition.y;
           break;
         case "right":
           newWidth = snapSizeToGrid(startSize.width + deltaX, 50);
+          newX = startPosition.x;
+          newY = startPosition.y;
           break;
       }
 
@@ -86,7 +93,8 @@ export function useResizeInteractions({
       currentPoint: Point,
       startPoint: Point,
       handle: ResizeHandlePosition,
-      startSize: { width: number; height: number }
+      startSize: { width: number; height: number },
+      startPosition: { x: number; y: number }
     ) => {
       const component = components.find((c) => c.id === componentId);
       if (!component) return;
@@ -95,20 +103,16 @@ export function useResizeInteractions({
         currentPoint,
         startPoint,
         handle,
-        startSize
+        startSize,
+        startPosition
       );
 
       const updates: Partial<CanvasComponent> = {
         width: newWidth,
         height: newHeight,
+        x: newX,
+        y: newY,
       };
-
-      if (newX !== 0) {
-        updates.x = component.x + newX;
-      }
-      if (newY !== 0) {
-        updates.y = component.y + newY;
-      }
 
       updateComponent(componentId, updates);
     },

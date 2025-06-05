@@ -24,6 +24,7 @@ export function useInteractionState() {
     handle: null,
     startPoint: { x: 0, y: 0 },
     startSize: { width: 0, height: 0 },
+    startPosition: { x: 0, y: 0 },
   });
 
   const [selectionState, setSelectionState] = useState<SelectionState>({
@@ -82,7 +83,8 @@ export function useInteractionState() {
       componentId: string,
       handle: ResizeHandle,
       startPoint: Point,
-      startSize: { width: number; height: number }
+      startSize: { width: number; height: number },
+      startPosition: { x: number; y: number }
     ) => {
       setCurrentMode("resize");
       setResizeState({
@@ -91,6 +93,7 @@ export function useInteractionState() {
         handle: handle.position,
         startPoint,
         startSize,
+        startPosition,
       });
     },
     []
@@ -116,6 +119,7 @@ export function useInteractionState() {
       handle: null,
       startPoint: { x: 0, y: 0 },
       startSize: { width: 0, height: 0 },
+      startPosition: { x: 0, y: 0 },
     });
   }, []);
 

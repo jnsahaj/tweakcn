@@ -56,6 +56,7 @@ export interface ResizeState {
   handle: ResizeHandlePosition | null;
   startPoint: Point;
   startSize: { width: number; height: number };
+  startPosition: { x: number; y: number };
 }
 
 export interface PanState {

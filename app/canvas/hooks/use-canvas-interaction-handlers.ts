@@ -125,8 +125,9 @@ export function useCanvasInteractionHandlers({
 
       const startPoint = { x: e.clientX, y: e.clientY };
       const startSize = { width: component.width, height: component.height };
+      const startPosition = { x: component.x, y: component.y };
 
-      interactions.startResize(componentId, handle, startPoint, startSize);
+      interactions.startResize(componentId, handle, startPoint, startSize, startPosition);
     },
     [componentState, interactions, viewport]
   );
@@ -144,7 +145,8 @@ export function useCanvasInteractionHandlers({
           currentPoint,
           interactions.resizeState.startPoint,
           interactions.resizeState.handle,
-          interactions.resizeState.startSize
+          interactions.resizeState.startSize,
+          interactions.resizeState.startPosition
         );
       } else if (
         interactions.dragState.isDragging &&
