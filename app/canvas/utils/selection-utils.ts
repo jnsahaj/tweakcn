@@ -1,4 +1,5 @@
 import type { CanvasComponent, Point, Rect } from "../types/canvas-types";
+import { pointInRect, componentToRect } from "./geometry-utils";
 
 export function createSelectionRect(startPoint: Point, currentPoint: Point): Rect {
   const x = Math.min(startPoint.x, currentPoint.x);
@@ -44,4 +45,25 @@ export function getBoundingRect(components: CanvasComponent[]): Rect {
     width: maxX - minX,
     height: maxY - minY,
   };
+}
+
+/**
+ * Find the topmost component at a given point, considering z-index for overlapping components
+ */
+export function getTopmostComponentAtPoint(
+  components: CanvasComponent[],
+  point: Point
+): CanvasComponent | null {
+  // Filter components that contain the point
+  const componentsAtPoint = components.filter((component) => {
+    const rect = componentToRect(component);
+    return pointInRect(point, rect);
+  });
+
+  if (componentsAtPoint.length === 0) {
+    return null;
+  }
+
+  // Sort by z-index (highest first) and return the topmost one
+  return componentsAtPoint.sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0))[0];
 }

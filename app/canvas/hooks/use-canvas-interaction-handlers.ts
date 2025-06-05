@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { ResizeHandle } from "../types/canvas-types";
 import { screenToCanvas } from "../utils/coordinate-utils";
-import { getBoundingRect } from "../utils/selection-utils";
+import { getBoundingRect, getTopmostComponentAtPoint } from "../utils/selection-utils";
 
 interface UseCanvasInteractionHandlersProps {
   canvasRef: React.RefObject<HTMLDivElement | null>;
@@ -38,16 +38,32 @@ export function useCanvasInteractionHandlers({
         return;
       }
 
+      // Find the topmost component at the click position to handle overlapping components properly
+      const canvasPoint = screenToCanvas(
+        { x: e.clientX, y: e.clientY },
+        viewport.canvasOffset,
+        viewport.zoomState.scale
+      );
+      const topmostComponent = getTopmostComponentAtPoint(componentState.components, canvasPoint);
+      const actualComponentId = topmostComponent ? topmostComponent.id : componentId;
+
       // In selection mode: allow component selection and interactions
+      // Handle Shift+click for additive selection (add to selection without toggling)
+      if (e.shiftKey) {
+        componentState.addComponentToSelection(actualComponentId);
+        return;
+      }
+
+      // Handle Cmd/Ctrl+click for toggle selection
       if (e.metaKey || e.ctrlKey) {
-        componentState.toggleComponentSelection(componentId);
+        componentState.toggleComponentSelection(actualComponentId);
         return;
       }
 
       // Check if the clicked component is part of a multiple selection
       const isPartOfMultipleSelection =
         componentState.selectedComponentIds.length > 1 &&
-        componentState.selectedComponentIds.includes(componentId);
+        componentState.selectedComponentIds.includes(actualComponentId);
 
       if (isPartOfMultipleSelection) {
         // Start group drag instead of individual component drag
@@ -59,11 +75,6 @@ export function useCanvasInteractionHandlers({
       // Check if we have a group selected and the click is within the group's bounding area
       if (componentState.selectedComponentIds.length > 1) {
         const boundingRect = getBoundingRect(componentState.selectedComponents);
-        const canvasPoint = screenToCanvas(
-          { x: e.clientX, y: e.clientY },
-          viewport.canvasOffset,
-          viewport.zoomState.scale
-        );
 
         if (
           canvasPoint.x >= boundingRect.x &&
@@ -79,7 +90,7 @@ export function useCanvasInteractionHandlers({
       }
 
       // For single selection or clicking on non-selected component outside group area
-      componentState.selectComponent(componentId);
+      componentState.selectComponent(actualComponentId);
 
       if (!canvasRef.current) return;
 
@@ -88,7 +99,7 @@ export function useCanvasInteractionHandlers({
         e.currentTarget as HTMLElement
       );
 
-      interactions.startDrag(componentId, dragOffset);
+      interactions.startDrag(actualComponentId, dragOffset);
     },
     [componentState, dragInteractions, interactions, canvasRef, viewport]
   );

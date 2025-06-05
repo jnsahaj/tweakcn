@@ -137,6 +137,10 @@ export function useComponentState() {
     );
   }, []);
 
+  const addComponentToSelection = useCallback((componentId: string) => {
+    setSelectedComponentIds((prev) => (prev.includes(componentId) ? prev : [...prev, componentId]));
+  }, []);
+
   const clearSelection = useCallback(() => {
     setSelectedComponentIds([]);
   }, []);
@@ -158,6 +162,7 @@ export function useComponentState() {
     selectComponent,
     selectMultipleComponents,
     toggleComponentSelection,
+    addComponentToSelection,
     clearSelection,
   };
 }
