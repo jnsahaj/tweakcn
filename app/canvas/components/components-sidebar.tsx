@@ -14,6 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 
 interface ComponentsSidebarProps {
   onDragStart: (
@@ -27,12 +30,26 @@ interface ComponentsSidebarProps {
       | "label"
       | "select"
       | "switch"
+      | "badge"
+      | "avatar"
+      | "progress"
   ) => void;
 }
 
 // Shared component factory to ensure preview and canvas components are identical
 const createComponent = (
-  type: "button" | "input" | "card" | "textarea" | "checkbox" | "label" | "select" | "switch",
+  type:
+    | "button"
+    | "input"
+    | "card"
+    | "textarea"
+    | "checkbox"
+    | "label"
+    | "select"
+    | "switch"
+    | "badge"
+    | "avatar"
+    | "progress",
   props?: Record<string, any>,
   size?: { width?: number; height?: number },
   additionalClassName?: string
@@ -116,6 +133,33 @@ const createComponent = (
           <Label htmlFor="switch">{props?.label || "Switch"}</Label>
         </div>
       );
+    case "badge":
+      return (
+        <Badge
+          style={style}
+          className={additionalClassName}
+          variant={props?.variant || "default"}
+          {...props}
+        >
+          {props?.children || "Badge"}
+        </Badge>
+      );
+    case "avatar":
+      return (
+        <Avatar style={style} className={additionalClassName} {...props}>
+          <AvatarImage src={props?.src} alt={props?.alt} />
+          <AvatarFallback>{props?.fallback || "CN"}</AvatarFallback>
+        </Avatar>
+      );
+    case "progress":
+      return (
+        <Progress
+          style={style}
+          className={additionalClassName}
+          value={props?.value || 50}
+          {...props}
+        />
+      );
     default:
       return null;
   }
@@ -131,6 +175,9 @@ export function ComponentsSidebar({ onDragStart }: ComponentsSidebarProps) {
     { type: "label" as const, label: "Label" },
     { type: "select" as const, label: "Select" },
     { type: "switch" as const, label: "Switch" },
+    { type: "badge" as const, label: "Badge" },
+    { type: "avatar" as const, label: "Avatar" },
+    { type: "progress" as const, label: "Progress" },
   ];
 
   const handleDragStart = (
@@ -144,6 +191,9 @@ export function ComponentsSidebar({ onDragStart }: ComponentsSidebarProps) {
       | "label"
       | "select"
       | "switch"
+      | "badge"
+      | "avatar"
+      | "progress"
   ) => {
     // Find the corresponding preview element and use it as drag image
     const previewElement = document.getElementById(`preview-${componentType}`);
@@ -167,6 +217,9 @@ export function ComponentsSidebar({ onDragStart }: ComponentsSidebarProps) {
         <div id="preview-label">{createComponent("label")}</div>
         <div id="preview-select">{createComponent("select")}</div>
         <div id="preview-switch">{createComponent("switch")}</div>
+        <div id="preview-badge">{createComponent("badge")}</div>
+        <div id="preview-avatar">{createComponent("avatar")}</div>
+        <div id="preview-progress">{createComponent("progress")}</div>
       </div>
 
       <div className="absolute top-1/2 left-4 z-10 -translate-y-1/2">

@@ -17,7 +17,18 @@ import { ArrowUp, ArrowDown, ChevronsUp, ChevronsDown, Copy, Trash2 } from "luci
 
 interface CanvasComponent {
   id: string;
-  type: "button" | "input" | "card" | "textarea" | "checkbox" | "label" | "select" | "switch";
+  type:
+    | "button"
+    | "input"
+    | "card"
+    | "textarea"
+    | "checkbox"
+    | "label"
+    | "select"
+    | "switch"
+    | "badge"
+    | "avatar"
+    | "progress";
   x: number;
   y: number;
   width?: number;
@@ -297,6 +308,98 @@ export function PropertiesSidebar({
     </div>
   );
 
+  const renderBadgeProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="badge-text">Text</Label>
+        <Input
+          id="badge-text"
+          value={localProps.children || ""}
+          onChange={(e) => handlePropChange("children", e.target.value)}
+          placeholder="Badge text"
+        />
+      </div>
+      <div>
+        <Label htmlFor="badge-variant">Variant</Label>
+        <Select
+          value={localProps.variant || "default"}
+          onValueChange={(value) => handlePropChange("variant", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select variant" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Default</SelectItem>
+            <SelectItem value="secondary">Secondary</SelectItem>
+            <SelectItem value="destructive">Destructive</SelectItem>
+            <SelectItem value="outline">Outline</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+
+  const renderAvatarProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="avatar-src">Image URL</Label>
+        <Input
+          id="avatar-src"
+          value={localProps.src || ""}
+          onChange={(e) => handlePropChange("src", e.target.value)}
+          placeholder="https://example.com/avatar.jpg"
+        />
+      </div>
+      <div>
+        <Label htmlFor="avatar-alt">Alt Text</Label>
+        <Input
+          id="avatar-alt"
+          value={localProps.alt || ""}
+          onChange={(e) => handlePropChange("alt", e.target.value)}
+          placeholder="Avatar description"
+        />
+      </div>
+      <div>
+        <Label htmlFor="avatar-fallback">Fallback Text</Label>
+        <Input
+          id="avatar-fallback"
+          value={localProps.fallback || ""}
+          onChange={(e) => handlePropChange("fallback", e.target.value)}
+          placeholder="CN"
+          maxLength={2}
+        />
+      </div>
+    </div>
+  );
+
+  const renderProgressProperties = () => (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="progress-value">Value (%)</Label>
+        <Input
+          id="progress-value"
+          type="number"
+          min="0"
+          max="100"
+          value={localProps.value || 50}
+          onChange={(e) => handlePropChange("value", parseInt(e.target.value) || 0)}
+          placeholder="50"
+        />
+      </div>
+      <div>
+        <Label htmlFor="progress-max">Maximum Value</Label>
+        <Input
+          id="progress-max"
+          type="number"
+          min="1"
+          value={localProps.max || 100}
+          onChange={(e) => handlePropChange("max", parseInt(e.target.value) || 100)}
+          placeholder="100"
+        />
+      </div>
+    </div>
+  );
+
   const renderProperties = () => {
     switch (component.type) {
       case "button":
@@ -311,6 +414,12 @@ export function PropertiesSidebar({
         return renderSelectProperties();
       case "switch":
         return renderSwitchProperties();
+      case "badge":
+        return renderBadgeProperties();
+      case "avatar":
+        return renderAvatarProperties();
+      case "progress":
+        return renderProgressProperties();
       default:
         return <div>No properties available</div>;
     }

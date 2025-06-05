@@ -1,11 +1,6 @@
 import { useCallback } from "react";
-import type {
-  CanvasComponent,
-  Point,
-  ResizeHandle,
-  ResizeHandlePosition,
-} from "../types/canvas-types";
-import { snapSizeToGrid } from "../utils/grid-utils";
+import type { CanvasComponent, Point, ResizeHandlePosition } from "../types/canvas-types";
+import { snapSizeToGrid, GRID_SIZE } from "../utils/grid-utils";
 import { getDefaultSize } from "../utils/component-utils";
 
 interface UseResizeInteractionsProps {
@@ -37,46 +32,46 @@ export function useResizeInteractions({
 
       switch (handle) {
         case "top-left":
-          newWidth = snapSizeToGrid(startSize.width - deltaX, 50);
-          newHeight = snapSizeToGrid(startSize.height - deltaY, 30);
+          newWidth = snapSizeToGrid(startSize.width - deltaX, GRID_SIZE);
+          newHeight = snapSizeToGrid(startSize.height - deltaY, GRID_SIZE);
           newX = startPosition.x + startSize.width - newWidth;
           newY = startPosition.y + startSize.height - newHeight;
           break;
         case "top-right":
-          newWidth = snapSizeToGrid(startSize.width + deltaX, 50);
-          newHeight = snapSizeToGrid(startSize.height - deltaY, 30);
+          newWidth = snapSizeToGrid(startSize.width + deltaX, GRID_SIZE);
+          newHeight = snapSizeToGrid(startSize.height - deltaY, GRID_SIZE);
           newX = startPosition.x;
           newY = startPosition.y + startSize.height - newHeight;
           break;
         case "bottom-left":
-          newWidth = snapSizeToGrid(startSize.width - deltaX, 50);
-          newHeight = snapSizeToGrid(startSize.height + deltaY, 30);
+          newWidth = snapSizeToGrid(startSize.width - deltaX, GRID_SIZE);
+          newHeight = snapSizeToGrid(startSize.height + deltaY, GRID_SIZE);
           newX = startPosition.x + startSize.width - newWidth;
           newY = startPosition.y;
           break;
         case "bottom-right":
-          newWidth = snapSizeToGrid(startSize.width + deltaX, 50);
-          newHeight = snapSizeToGrid(startSize.height + deltaY, 30);
+          newWidth = snapSizeToGrid(startSize.width + deltaX, GRID_SIZE);
+          newHeight = snapSizeToGrid(startSize.height + deltaY, GRID_SIZE);
           newX = startPosition.x;
           newY = startPosition.y;
           break;
         case "top":
-          newHeight = snapSizeToGrid(startSize.height - deltaY, 30);
+          newHeight = snapSizeToGrid(startSize.height - deltaY, GRID_SIZE);
           newX = startPosition.x;
           newY = startPosition.y + startSize.height - newHeight;
           break;
         case "bottom":
-          newHeight = snapSizeToGrid(startSize.height + deltaY, 30);
+          newHeight = snapSizeToGrid(startSize.height + deltaY, GRID_SIZE);
           newX = startPosition.x;
           newY = startPosition.y;
           break;
         case "left":
-          newWidth = snapSizeToGrid(startSize.width - deltaX, 50);
+          newWidth = snapSizeToGrid(startSize.width - deltaX, GRID_SIZE);
           newX = startPosition.x + startSize.width - newWidth;
           newY = startPosition.y;
           break;
         case "right":
-          newWidth = snapSizeToGrid(startSize.width + deltaX, 50);
+          newWidth = snapSizeToGrid(startSize.width + deltaX, GRID_SIZE);
           newX = startPosition.x;
           newY = startPosition.y;
           break;
@@ -148,20 +143,10 @@ export function useResizeInteractions({
     return cursorMap[handle];
   }, []);
 
-  const validateComponentSize = useCallback((component: CanvasComponent): CanvasComponent => {
-    const defaultSize = getDefaultSize(component.type);
-    return {
-      ...component,
-      width: Math.max(component.width, defaultSize.width * 0.5),
-      height: Math.max(component.height, defaultSize.height * 0.5),
-    };
-  }, []);
-
   return {
     calculateResizeDeltas,
     resizeComponent,
     getResizeHandles,
     getHandleCursor,
-    validateComponentSize,
   };
 }

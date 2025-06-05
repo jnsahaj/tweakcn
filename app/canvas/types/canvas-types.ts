@@ -1,6 +1,19 @@
+export type ComponentType =
+  | "button"
+  | "input"
+  | "card"
+  | "textarea"
+  | "checkbox"
+  | "label"
+  | "select"
+  | "switch"
+  | "badge"
+  | "avatar"
+  | "progress";
+
 export interface CanvasComponent {
   id: string;
-  type: "button" | "input" | "card" | "textarea" | "checkbox" | "label" | "select" | "switch";
+  type: ComponentType;
   x: number;
   y: number;
   width: number;
@@ -78,16 +91,6 @@ export interface SelectionState {
 }
 
 export type InteractionMode = "none" | "drag" | "resize" | "pan" | "select" | "groupDrag";
-
-export type ComponentType =
-  | "button"
-  | "input"
-  | "card"
-  | "textarea"
-  | "checkbox"
-  | "label"
-  | "select"
-  | "switch";
 
 export interface ComponentSize {
   width: number;

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import type { CanvasComponent, Point, ComponentType } from "../types/canvas-types";
-import { snapToGrid, snapSizeToGrid } from "../utils/grid-utils";
+import { snapToGrid, snapSizeToGrid, GRID_SIZE } from "../utils/grid-utils";
 import { getDefaultSize, getDefaultProps } from "../utils/component-utils";
 
 interface UseDragInteractionsProps {
@@ -44,8 +44,8 @@ export function useDragInteractions({
           type: componentType,
           x,
           y,
-          width: snapSizeToGrid(defaultSize.width, 50),
-          height: snapSizeToGrid(defaultSize.height, 30),
+          width: snapSizeToGrid(defaultSize.width, GRID_SIZE),
+          height: snapSizeToGrid(defaultSize.height, GRID_SIZE),
           zIndex: maxZIndex + 1,
           props: getDefaultProps(componentType),
         };

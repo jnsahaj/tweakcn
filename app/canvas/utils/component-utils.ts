@@ -18,6 +18,12 @@ export function getDefaultProps(type: ComponentType): Record<string, any> {
       return { placeholder: "Select an option" };
     case "switch":
       return { label: "Switch", defaultChecked: false };
+    case "badge":
+      return { children: "Badge", variant: "default" };
+    case "avatar":
+      return { fallback: "CN", alt: "Avatar" };
+    case "progress":
+      return { value: 50, max: 100 };
     default:
       return {};
   }
@@ -41,6 +47,12 @@ export function getDefaultSize(type: ComponentType): ComponentSize {
       return { width: 220, height: 40 };
     case "switch":
       return { width: 52, height: 24 };
+    case "badge":
+      return { width: 80, height: 24 };
+    case "avatar":
+      return { width: 48, height: 48 };
+    case "progress":
+      return { width: 200, height: 10 };
     default:
       return { width: 100, height: 40 };
   }
