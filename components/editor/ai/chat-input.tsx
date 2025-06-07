@@ -17,7 +17,7 @@ const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea
   loading: () => <Loading className="min-h-[60px] w-full rounded-lg" />,
 });
 
-export function AIChatForm({
+export function ChatInput({
   handleThemeGeneration,
 }: {
   handleThemeGeneration: (promptData: AIPromptData | null) => void;

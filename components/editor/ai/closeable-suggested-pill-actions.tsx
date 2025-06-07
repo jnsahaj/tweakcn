@@ -8,7 +8,7 @@ import { createCurrentThemePrompt } from "@/utils/ai-prompt";
 import { AIPromptData } from "@/types/ai";
 import { Sparkles, X } from "lucide-react";
 import { useState } from "react";
-import { AIPillActionButton } from "./ai-pill-action-button";
+import { PillActionButton } from "./pill-action-button";
 
 export function ClosableSuggestedPillActions({
   handleThemeGeneration,
@@ -44,13 +44,13 @@ export function ClosableSuggestedPillActions({
 
       <HorizontalScrollArea className="pt-1 pb-2">
         {Object.entries(PROMPTS).map(([key, { label, prompt }]) => (
-          <AIPillActionButton
+          <PillActionButton
             key={key}
             onClick={() => handleSetPrompt(prompt)}
             disabled={aiIsGenerating}
           >
             <Sparkles /> {label}
-          </AIPillActionButton>
+          </PillActionButton>
         ))}
       </HorizontalScrollArea>
     </div>

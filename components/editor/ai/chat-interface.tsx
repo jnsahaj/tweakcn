@@ -11,7 +11,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { AIPromptData } from "@/types/ai";
 import { attachLastGeneratedThemeMention, mentionsCount } from "@/utils/ai-prompt";
 import dynamic from "next/dynamic";
-import { AIChatForm } from "./ai-chat-form";
+import { ChatInput } from "./chat-input";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
 
 const ChatMessages = dynamic(() => import("./chat-messages").then((mod) => mod.ChatMessages), {
@@ -25,7 +25,7 @@ const NoMessagesPlaceholder = dynamic(
   }
 );
 
-export function AIInterface() {
+export function ChatInterface() {
   const { generateTheme } = useAIThemeGeneration();
   const { messages, addUserMessage, addAssistantMessage, resetMessagesUpToIndex } =
     useAIChatStore();
@@ -124,7 +124,7 @@ export function AIInterface() {
           >
             <ClosableSuggestedPillActions handleThemeGeneration={handleThemeGeneration} />
           </div>
-          <AIChatForm handleThemeGeneration={handleThemeGeneration} />
+          <ChatInput handleThemeGeneration={handleThemeGeneration} />
         </div>
       </div>
     </section>

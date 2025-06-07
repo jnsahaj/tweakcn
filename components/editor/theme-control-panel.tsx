@@ -20,7 +20,7 @@ import { useEditorStore } from "@/store/editor-store";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
 import { getAppliedThemeFont, monoFonts, sansSerifFonts, serifFonts } from "@/utils/theme-fonts";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
-import { AIInterface } from "./ai/ai-interface";
+import { ChatInterface } from "./ai/chat-interface";
 import ColorPicker from "./color-picker";
 import ControlSection from "./control-section";
 import HslAdjustmentControls from "./hsl-adjustment-controls";
@@ -470,7 +470,7 @@ const ThemeControlPanel = ({
           </TabsContent>
 
           <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
-            <AIInterface />
+            <ChatInterface />
           </TabsContent>
         </Tabs>
       </div>
