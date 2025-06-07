@@ -3,7 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
-import { buildAIPromptRender } from "@/utils/ai-prompt";
+import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
 import ColorPreview from "../theme-preview/color-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
 import { MessageControls } from "./message-controls";

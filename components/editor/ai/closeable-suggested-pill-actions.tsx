@@ -3,8 +3,8 @@
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { PROMPTS } from "@/utils/prompts";
-import { createCurrentThemePrompt } from "@/utils/ai-prompt";
+import { PROMPTS } from "@/utils/ai/prompts";
+import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
 import { AIPromptData } from "@/types/ai";
 import { Sparkles, X } from "lucide-react";
 import { useState } from "react";

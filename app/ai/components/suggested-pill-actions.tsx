@@ -1,8 +1,8 @@
 "use client";
 
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { PROMPTS } from "@/utils/prompts";
-import { createCurrentThemePrompt } from "@/utils/ai-prompt";
+import { PROMPTS } from "@/utils/ai/prompts";
+import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
 import { AIPromptData } from "@/types/ai";
 import { Sparkles } from "lucide-react";
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
