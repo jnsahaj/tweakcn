@@ -233,6 +233,7 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
                             <CommandItem
                               key={hex}
                               className="flex items-center gap-3 rounded-md px-3 py-2 transition-colors"
+                              onClick={() => handleColorSelect(hex)}
                             >
                               <ColorSwatch hex={hex} name={`${colorName}-${shade}`} />
                               <span className="text-base font-medium">{`${colorName}-${shade}`}</span>
