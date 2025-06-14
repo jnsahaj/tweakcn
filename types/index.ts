@@ -36,3 +36,9 @@ export type ReadOnlyColorDisplayProps = {
 };
 
 export type ColorFormat = "hex" | "rgb" | "hsl" | "oklch";
+
+export type ColorSwatchProps = {
+  hex: string;
+  name: string;
+  size?: "sm" | "md" | "lg";
+};
