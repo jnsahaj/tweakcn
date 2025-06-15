@@ -76,13 +76,12 @@ Even if you don't plan to write code, there are many ways to contribute:
 
 ### Set up the development environment (follow closely)
 
-1.  **Configure Environment Variables:**
+1.  **Configure Environment Variables:** 
 
-    - Copy the example environment file:
     ```bash
-    cp .env.example .env.local
+    cp .env.example .env.local # Copy the example environment file
     ```
-    - Open the .env.local file and replace the placeholder values with your actual credentials obtained from the services.
+    - Open the `.env.local` file and replace the placeholder values with your actual credentials obtained from the services.
 
 2.  **Apply Database Schema:** Push the database schema defined in `db/schema.ts` to your Neon database using Drizzle Kit:
 
