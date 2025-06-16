@@ -76,42 +76,12 @@ Even if you don't plan to write code, there are many ways to contribute:
 
 ### Set up the development environment (follow closely)
 
-1.  **Configure Environment Variables:**
-
-    - Create a new file named `.env.local` in the root of the project directory.
-    - Copy the following content into `.env.local` and fill in your credentials.
+1.  **Configure Environment Variables:** 
 
     ```bash
-    # Base URL for local development
-    BASE_URL="http://localhost:3000"
-
-    ###### DATABASE ######
-    # Set up a free PostgreSQL database on Neon: https://console.neon.tech/
-    # The project uses the Neon serverless driver adapter.
-    # Copy your connection string here.
-    DATABASE_URL="postgresql://neondb_owner:[YOUR_NEON_PASSWORD]@[YOUR_NEON_HOST]/neondb?sslmode=require"
-
-    ###### AUTH ######
-    # Generate your own Secret Key for encryption. If ommited, the default will be used:
-    # https://www.better-auth.com/docs/installation#set-environment-variables
-    BETTER_AUTH_SECRET="YOUR_BETTER_AUTH_SECRET"
-
-    # Create GitHub OAuth App: https://www.better-auth.com/docs/authentication/github
-    GITHUB_CLIENT_ID="YOUR_GITHUB_CLIENT_ID"
-    GITHUB_CLIENT_SECRET="YOUR_GITHUB_CLIENT_SECRET"
-
-    # Create Google OAuth Credentials: https://www.better-auth.com/docs/authentication/google
-    GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
-    GOOGLE_CLIENT_SECRET="YOUR_GOOGLE_CLIENT_SECRET"
-
-    ###### AI ######
-    # Get a Google API Key: https://aistudio.google.com/apikey
-    GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
-    # Get a Groq API Key: https://console.groq.com/keys
-    GROQ_API_KEY="YOUR_GROQ_API_KEY"
+    cp .env.example .env.local # Copy the example environment file
     ```
-
-    - Make sure to replace the placeholder values with your actual credentials obtained from the services
+    - Open the `.env.local` file and replace the placeholder values with your actual credentials obtained from the services.
 
 2.  **Apply Database Schema:** Push the database schema defined in `db/schema.ts` to your Neon database using Drizzle Kit:
 
