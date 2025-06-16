@@ -26,6 +26,7 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [localColor, setLocalColor] = useState(color);
   const [showPalette, setShowPalette] = useState(false);
+  const [palettePosition, setPalettePosition] = useState({ top: 0, left: 0, width: 0 });
   const pickerRef = useRef<HTMLDivElement>(null);
 
   // Update localColor if the prop changes externally
@@ -91,6 +92,29 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
       debouncedOnChange.cancel();
     };
   }, [debouncedOnChange]);
+
+  useEffect(() => {
+    if (showPalette && pickerRef.current) {
+      const updatePosition = () => {
+        const rect = pickerRef?.current?.getBoundingClientRect();
+        if (!rect) return;
+        setPalettePosition({
+          top: rect.bottom + 4,
+          left: rect.left,
+          width: rect.width,
+        });
+      };
+      
+      updatePosition();
+      window.addEventListener('scroll', updatePosition);
+      window.addEventListener('resize', updatePosition);
+      
+      return () => {
+        window.removeEventListener('scroll', updatePosition);
+        window.removeEventListener('resize', updatePosition);
+      };
+    }
+  }, [showPalette]);
 
   // Memoize the ColorSwatch component
   const ColorSwatch = useCallback(
@@ -163,16 +187,16 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
 
         <div
           className={cn(
-            "bg-background border-accent-foreground fixed z-[9999] rounded-xl border shadow-2xl",
+            "bg-background border-accent-foreground fixed z-50 rounded-xl border shadow-2xl",
             showPalette ? "block" : "hidden"
           )}
           style={
-            pickerRef.current
+            palettePosition
               ? {
                   position: "fixed",
-                  top: pickerRef.current.getBoundingClientRect().bottom + 4,
-                  left: pickerRef.current.getBoundingClientRect().left,
-                  width: pickerRef.current.getBoundingClientRect().width,
+                  top: palettePosition.top,
+                  left: palettePosition.left,
+                  width: palettePosition.width,
                 }
               : undefined
           }
