@@ -9,6 +9,7 @@ import { generateObject } from "ai";
 import { createFallback } from "ai-fallback";
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { headers } from "next/headers";
 
 const requestSchema = z.object({
   prompt: z
@@ -48,16 +49,22 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    const headersList = await headers();
     // Skip rate limiting in development environment
     if (process.env.NODE_ENV !== "development") {
       // Apply rate limiting based on the request IP
-      const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
-      const { success } = await ratelimit.limit(ip);
+      const ip = headersList.get("x-forwarded-for") ?? "anonymous";
+      const { success, limit, reset, remaining } = await ratelimit.limit(ip);
 
       // Block the request if rate limit exceeded
       if (!success) {
         return new Response("Rate limit exceeded. Please try again later.", {
           status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          },
         });
       }
     }
