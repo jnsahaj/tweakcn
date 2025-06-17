@@ -1,0 +1,24 @@
+# Ignore node_modules — let Docker install fresh inside the image
+node_modules
+
+# Ignore environment files (not needed inside build context)
+.env
+.env.*
+
+
+
+# OS-specific
+.DS_Store
+
+# Git stuff
+.git
+.gitignore
+
+
+
+
+# Build artifacts
+.next
+dist
+out
+
