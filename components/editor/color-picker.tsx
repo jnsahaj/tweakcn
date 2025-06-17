@@ -1,11 +1,11 @@
+// color-picker.tsx
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { ColorPickerProps, ColorSwatchProps } from "@/types";
+import { ColorPickerProps, ColorSwatchProps, ValidShade } from "@/types";
 import { debounce } from "@/utils/debounce";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { tailwindColors } from "@/lib/constants";
+import { tailwindColors, tailwindColorShades } from "@/utils/registry/tailwind-colors";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Command,
   CommandEmpty,
@@ -14,13 +14,10 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { ChevronDown, Palette, Search } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Validate hex color format
-const isValidHexColor = (color: string): boolean => {
-  return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
-};
+import { DEBOUNCE_DELAY } from "@/lib/constants";
+import { convertColorhexToTailClasses, isValidHexColor } from "@/utils/color-type-checker";
 
 const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,15 +25,16 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
   const [showPalette, setShowPalette] = useState(false);
   const [palettePosition, setPalettePosition] = useState({ top: 0, left: 0, width: 0 });
   const pickerRef = useRef<HTMLDivElement>(null);
+  const validShades = useMemo(() => tailwindColorShades as ValidShade[], []);
 
   // Update localColor if the prop changes externally
   useEffect(() => {
-    if (isValidHexColor(color)) {
+    if (color !== localColor) {
       setLocalColor(color);
     }
   }, [color]);
 
-  // Handle click outside
+  // Handle click outside for close the color box
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
@@ -45,9 +43,7 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Create a stable debounced onChange handler
@@ -57,7 +53,7 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
         if (isValidHexColor(value)) {
           onChange(value);
         }
-      }, 20),
+      }, DEBOUNCE_DELAY),
     [onChange]
   );
 
@@ -65,11 +61,14 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const newColor = e.target.value;
       setLocalColor(newColor);
-      if (isValidHexColor(newColor)) {
+      const convertedColor = convertColorhexToTailClasses(newColor, validShades);
+      if (convertedColor !== newColor) {
+        debouncedOnChange(convertedColor);
+      } else {
         debouncedOnChange(newColor);
       }
     },
-    [debouncedOnChange]
+    [debouncedOnChange, validShades]
   );
 
   const handleColorSelect = useCallback(
@@ -82,38 +81,36 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
   );
 
   const handlePaletteToggle = useCallback(() => {
-    const newShowPalette = !showPalette;
-    setShowPalette(newShowPalette);
-  }, [showPalette]);
+    setShowPalette((prev) => !prev);
+  }, []);
 
   // Cleanup debounced function on unmount
   useEffect(() => {
-    return () => {
-      debouncedOnChange.cancel();
-    };
+    return () => debouncedOnChange.cancel();
   }, [debouncedOnChange]);
 
+  // Update palette position
   useEffect(() => {
-    if (showPalette && pickerRef.current) {
-      const updatePosition = () => {
-        const rect = pickerRef?.current?.getBoundingClientRect();
-        if (!rect) return;
-        setPalettePosition({
-          top: rect.bottom + 4,
-          left: rect.left,
-          width: rect.width,
-        });
-      };
-      
-      updatePosition();
-      window.addEventListener('scroll', updatePosition);
-      window.addEventListener('resize', updatePosition);
-      
-      return () => {
-        window.removeEventListener('scroll', updatePosition);
-        window.removeEventListener('resize', updatePosition);
-      };
-    }
+    if (!showPalette || !pickerRef.current) return;
+
+    const updatePosition = () => {
+      const rect = pickerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setPalettePosition({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      });
+    };
+
+    updatePosition();
+    window.addEventListener("scroll", updatePosition);
+    window.addEventListener("resize", updatePosition);
+
+    return () => {
+      window.removeEventListener("scroll", updatePosition);
+      window.removeEventListener("resize", updatePosition);
+    };
   }, [showPalette]);
 
   // Memoize the ColorSwatch component
@@ -142,10 +139,14 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
     },
     [handleColorSelect]
   );
+  const convertedColor = useMemo(
+    () => convertColorhexToTailClasses(localColor, validShades),
+    [localColor, validShades]
+  );
 
   return (
     <div className="mb-3" ref={pickerRef}>
-      <div className="flex items-center justify-between mb-1.5">
+      <div className="mb-1.5 flex items-center justify-between">
         <Label
           htmlFor={`color-${label.replace(/\s+/g, "-").toLowerCase()}`}
           className="text-xs font-medium"
@@ -155,8 +156,8 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
       </div>
       <div className="relative flex items-center gap-1">
         <div
-          className="h-8 w-8 border cursor-pointer relative flex items-center justify-center rounded"
-          style={{ backgroundColor: localColor }}
+          className="relative flex h-8 w-8 cursor-pointer items-center justify-center rounded border"
+          style={{ backgroundColor: convertedColor }}
           onClick={() => setIsOpen(!isOpen)}
         >
           <input
@@ -164,14 +165,15 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
             id={`color-${label.replace(/\s+/g, "-").toLowerCase()}`}
             value={localColor}
             onChange={handleColorChange}
-            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           />
         </div>
         <input
           type="text"
           value={localColor}
           onChange={handleColorChange}
-          className="flex-1 h-8 px-2 text-sm rounded bg-input/25 border-border/20"
+          className="bg-input/25 border-border/20 h-8 flex-1 rounded px-2 text-sm"
+          placeholder="Enter color (hex or tailwind class)"
         />
         <Button
           onClick={handlePaletteToggle}
@@ -203,74 +205,34 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
           role="dialog"
           aria-label="Color palette"
         >
-          <div className="w-full">
-            <Tabs defaultValue="palette">
-              <TabsList className="w-full">
-                <TabsTrigger value="palette" className="w-full">
-                  <Palette className="mr-2 inline h-4 w-4" />
-                  Palette
-                </TabsTrigger>
-                <TabsTrigger value="color_search" className="w-full">
-                  <Search className="mr-2 inline h-4 w-4" />
-                  Search
-                </TabsTrigger>
-              </TabsList>
+          <Command className="bg-background w-full shadow-md">
+            <CommandInput
+              placeholder="Search colors..."
+              className="h-10 rounded-t-md px-3 text-sm"
+            />
 
-              <TabsContent value="palette">
-                <ScrollArea className="h-60 p-2">
-                  <div className="space-y-6">
-                    {Object.entries(tailwindColors).map(([colorName, shades]) => (
-                      <div key={colorName} className="space-y-2">
-                        <h4 className="text-foreground text-xs font-semibold tracking-wider uppercase">
-                          {colorName}
-                        </h4>
-                        <div className="grid grid-cols-11 gap-1.5">
-                          {Object.entries(shades).map(([shade, hex]) => (
-                            <ColorSwatch
-                              key={`${colorName}-${shade}`}
-                              hex={hex}
-                              name={`${colorName}-${shade}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </TabsContent>
-
-              <TabsContent value="color_search">
-                <Command className="bg-background w-full shadow-md">
-                  <CommandInput
-                    placeholder="Search colors..."
-                    className="h-10 rounded-t-md px-3 text-sm"
-                  />
-
-                  <ScrollArea className="h-60">
-                    <CommandList className="!overflow-x-visible !overflow-y-visible">
-                      <CommandEmpty className="text-muted-foreground p-4 text-center">
-                        No results found.
-                      </CommandEmpty>
-                      <CommandGroup heading="Tailwind classes" className="!overflow-auto p-2">
-                        {Object.entries(tailwindColors).map(([colorName, shades]) =>
-                          Object.entries(shades).map(([shade, hex]) => (
-                            <CommandItem
-                              key={hex}
-                              className="flex items-center gap-3 rounded-md px-3 py-2 transition-colors"
-                              onClick={() => handleColorSelect(hex)}
-                            >
-                              <ColorSwatch hex={hex} name={`${colorName}-${shade}`} />
-                              <span className="text-base font-medium">{`${colorName}-${shade}`}</span>
-                            </CommandItem>
-                          ))
-                        )}
-                      </CommandGroup>
-                    </CommandList>
-                  </ScrollArea>
-                </Command>
-              </TabsContent>
-            </Tabs>
-          </div>
+            <ScrollArea className="h-60">
+              <CommandList className="!overflow-x-visible !overflow-y-visible">
+                <CommandEmpty className="text-muted-foreground p-4 text-center">
+                  No tailwind color found. Please try a different search term.
+                </CommandEmpty>
+                <CommandGroup heading="Tailwind classes" className="!overflow-auto p-2">
+                  {Object.entries(tailwindColors).map(([colorName, shades]) =>
+                    Object.entries(shades).map(([shade, hex]) => (
+                      <CommandItem
+                        key={hex}
+                        className="flex items-center gap-3 rounded-md px-3 py-2 transition-colors"
+                        onClick={() => handleColorSelect(hex)}
+                      >
+                        <ColorSwatch hex={hex} name={`${colorName}-${shade}`} />
+                        <span className="text-base font-medium">{`${colorName}-${shade}`}</span>
+                      </CommandItem>
+                    ))
+                  )}
+                </CommandGroup>
+              </CommandList>
+            </ScrollArea>
+          </Command>
         </div>
       </div>
     </div>
