@@ -7,7 +7,8 @@
     "build": "npm run generate-theme-registry && next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-theme-registry": "tsx scripts/generate-theme-registry.ts && tsx scripts/generate-registry.ts"
+    "generate-theme-registry": "tsx scripts/generate-theme-registry.ts && tsx scripts/generate-registry.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.14",
@@ -110,6 +111,7 @@
     "drizzle-kit": "^0.31.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
+    "husky": "^9.1.7",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "raw-loader": "^4.0.2",
