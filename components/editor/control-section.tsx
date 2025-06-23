@@ -1,16 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ControlSectionProps } from "@/types";
 
-const ControlSection = ({
+export interface ControlSectionRef {
+  expand: () => void;
+  scrollIntoView: () => void;
+}
+
+const ControlSection = forwardRef<ControlSectionRef, ControlSectionProps>(({
   title,
   children,
   expanded = false,
   className,
   id,
-}: ControlSectionProps) => {
+}, ref) => {
   const [isExpanded, setIsExpanded] = useState(expanded);
+
+  useImperativeHandle(ref, () => ({
+    expand: () => setIsExpanded(true),
+    scrollIntoView: () => {
+      const element = document.getElementById(id || '');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }));
 
   return (
     <div
@@ -45,6 +60,8 @@ const ControlSection = ({
       </div>
     </div>
   );
-};
+});
+
+ControlSection.displayName = "ControlSection";
 
 export default ControlSection;
