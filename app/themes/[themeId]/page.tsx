@@ -36,6 +36,19 @@ export default async function ThemePage({ params }: ThemePageProps) {
   const { themeId } = await params;
   const theme = await getTheme(themeId);
 
+  if (!theme) {
+    return (
+      <div className="flex flex-1 flex-col">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Theme not found</h1>
+            <p className="text-muted-foreground">The requested theme could not be found.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="container mx-auto px-4 py-8">

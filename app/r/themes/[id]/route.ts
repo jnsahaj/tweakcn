@@ -11,6 +11,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
   try {
     const theme = await getTheme(id);
+    if (!theme) {
+      return new NextResponse("Theme not found.", {
+        status: 404,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
+    
     const generatedRegistryItem = generateThemeRegistryItemFromStyles(theme.name, theme.styles);
 
     // Validate the generated registry item against the official shadcn registry item schema

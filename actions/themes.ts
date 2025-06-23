@@ -31,6 +31,10 @@ const updateThemeSchema = z.object({
 });
 
 export async function getThemes() {
+  if (!db) {
+    return [];
+  }
+  
   const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -43,12 +47,16 @@ export async function getThemes() {
     return userThemes;
   } catch (error) {
     console.error("Error fetching themes:", error);
-    throw new Error("Failed to fetch themes."); // Propagate a generic error
+    throw new Error("Failed to fetch themes.");
   }
 }
 
 // Wrap getTheme with React.cache
 export const getTheme = cache(async (themeId: string) => {
+  if (!db) {
+    return null;
+  }
+  
   try {
     const [theme] = await db
       .select()
@@ -68,6 +76,10 @@ export async function createTheme(formData: {
   name: string;
   styles: ThemeStyles;
 }) {
+  if (!db) {
+    return { success: false, error: "Database not available" };
+  }
+  
   const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -75,7 +87,6 @@ export async function createTheme(formData: {
 
   const validation = createThemeSchema.safeParse(formData);
   if (!validation.success) {
-    // Return validation errors for the client to handle
     return {
       success: false,
       error: "Invalid input",
@@ -83,7 +94,6 @@ export async function createTheme(formData: {
     };
   }
 
-  // Check if user already has 10 themes
   const userThemes = await db
     .select()
     .from(themeTable)
@@ -108,13 +118,13 @@ export async function createTheme(formData: {
         id: newThemeId,
         userId: userId,
         name: name,
-        styles: styles, // Already validated
+        styles: styles,
         createdAt: now,
         updatedAt: now,
       })
       .returning();
 
-    revalidatePath("/"); // Or a more specific path where themes are displayed
+    revalidatePath("/");
     return {
       success: true,
       theme: insertedTheme,
@@ -131,6 +141,10 @@ export async function updateTheme(formData: {
   name?: string;
   styles?: ThemeStyles;
 }) {
+  if (!db) {
+    return { success: false, error: "Database not available" };
+  }
+  
   const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -155,7 +169,7 @@ export async function updateTheme(formData: {
     updatedAt: new Date(),
   };
   if (name) updateData.name = name;
-  if (styles) updateData.styles = styles; // Already validated
+  if (styles) updateData.styles = styles;
 
   try {
     const [updatedTheme] = await db
@@ -168,7 +182,7 @@ export async function updateTheme(formData: {
       return { success: false, error: "Theme not found or not owned by user" };
     }
 
-    revalidatePath("/"); // Or a more specific path
+    revalidatePath("/");
     return {
       success: true,
       theme: updatedTheme,
@@ -181,6 +195,10 @@ export async function updateTheme(formData: {
 
 // Action to delete a theme
 export async function deleteTheme(themeId: string) {
+  if (!db) {
+    return { success: false, error: "Database not available" };
+  }
+  
   const userId = await getCurrentUserId();
   if (!userId) {
     throw new Error("Unauthorized");
@@ -200,7 +218,7 @@ export async function deleteTheme(themeId: string) {
       return { success: false, error: "Theme not found or not owned by user" };
     }
 
-    revalidatePath("/dashboard"); // Or a more specific path
+    revalidatePath("/dashboard");
     return { success: true, deletedId: themeId };
   } catch (error) {
     console.error(`Error deleting theme ${themeId}:`, error);
