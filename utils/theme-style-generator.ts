@@ -10,7 +10,8 @@ type ThemeMode = "light" | "dark";
 const generateColorVariables = (
   themeStyles: ThemeStyles,
   mode: ThemeMode,
-  formatColor: (color: string) => string
+  formatColor: (color: string) => string,
+  tailwindVersion: "3" | "4" = "3"
 ): string => {
   const styles = themeStyles[mode];
   return `
@@ -38,7 +39,7 @@ const generateColorVariables = (
   --chart-3: ${formatColor(styles["chart-3"])};
   --chart-4: ${formatColor(styles["chart-4"])};
   --chart-5: ${formatColor(styles["chart-5"])};
-  --sidebar: ${formatColor(styles.sidebar)};
+  ${tailwindVersion === "4" ? `--sidebar-background: ${formatColor(styles["sidebar"])};` : `--sidebar: ${formatColor(styles["sidebar"])};`}
   --sidebar-foreground: ${formatColor(styles["sidebar-foreground"])};
   --sidebar-primary: ${formatColor(styles["sidebar-primary"])};
   --sidebar-primary-foreground: ${formatColor(styles["sidebar-primary-foreground"])};
@@ -86,10 +87,11 @@ const generateTrackingVariables = (themeStyles: ThemeStyles): string => {
 const generateThemeVariables = (
   themeStyles: ThemeStyles,
   mode: ThemeMode,
-  formatColor: (color: string) => string
+  formatColor: (color: string) => string,
+  tailwindVersion: "3" | "4" = "3"
 ): string => {
   const selector = mode === "dark" ? ".dark" : ":root";
-  const colorVars = generateColorVariables(themeStyles, mode, formatColor);
+  const colorVars = generateColorVariables(themeStyles, mode, formatColor, tailwindVersion);
   const fontVars = generateFontVariables(themeStyles, mode);
   const radiusVar = `\n  --radius: ${themeStyles[mode].radius};`;
   const shadowVars = generateShadowVariables(
@@ -145,7 +147,7 @@ const generateTailwindV4ThemeInline = (themeStyles: ThemeStyles): string => {
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
+  --color-sidebar-background: var(--sidebar-background);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
@@ -190,8 +192,8 @@ export const generateThemeCode = (
   const themeStyles = themeEditorState.styles as ThemeStyles;
   const formatColor = (color: string) => colorFormatter(color, colorFormat, tailwindVersion);
 
-  const lightTheme = generateThemeVariables(themeStyles, "light", formatColor);
-  const darkTheme = generateThemeVariables(themeStyles, "dark", formatColor);
+  const lightTheme = generateThemeVariables(themeStyles, "light", formatColor, tailwindVersion);
+  const darkTheme = generateThemeVariables(themeStyles, "dark", formatColor, tailwindVersion);
   const tailwindV4Theme =
     tailwindVersion === "4" ? `\n\n${generateTailwindV4ThemeInline(themeStyles)}` : "";
 
