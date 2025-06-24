@@ -11,7 +11,6 @@ const generateColorVariables = (
   themeStyles: ThemeStyles,
   mode: ThemeMode,
   formatColor: (color: string) => string,
-  tailwindVersion: "3" | "4" = "3"
 ): string => {
   const styles = themeStyles[mode];
   return `
@@ -39,7 +38,7 @@ const generateColorVariables = (
   --chart-3: ${formatColor(styles["chart-3"])};
   --chart-4: ${formatColor(styles["chart-4"])};
   --chart-5: ${formatColor(styles["chart-5"])};
-  ${tailwindVersion === "4" ? `--sidebar-background: ${formatColor(styles["sidebar"])};` : `--sidebar: ${formatColor(styles["sidebar"])};`}
+  --sidebar: ${formatColor(styles["sidebar"])};
   --sidebar-foreground: ${formatColor(styles["sidebar-foreground"])};
   --sidebar-primary: ${formatColor(styles["sidebar-primary"])};
   --sidebar-primary-foreground: ${formatColor(styles["sidebar-primary-foreground"])};
@@ -88,10 +87,9 @@ const generateThemeVariables = (
   themeStyles: ThemeStyles,
   mode: ThemeMode,
   formatColor: (color: string) => string,
-  tailwindVersion: "3" | "4" = "3"
 ): string => {
   const selector = mode === "dark" ? ".dark" : ":root";
-  const colorVars = generateColorVariables(themeStyles, mode, formatColor, tailwindVersion);
+  const colorVars = generateColorVariables(themeStyles, mode, formatColor);
   const fontVars = generateFontVariables(themeStyles, mode);
   const radiusVar = `\n  --radius: ${themeStyles[mode].radius};`;
   const shadowVars = generateShadowVariables(
@@ -176,6 +174,19 @@ const generateTailwindV4ThemeInline = (themeStyles: ThemeStyles): string => {
 }`;
 };
 
+export function changeThemeObjKeyName(
+  cssVars: string,
+  oldKey: string,
+  newKey: string,
+) {
+  console.log("calling")
+  const escapedOldKey = oldKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+  console.log("calling",escapedOldKey)  
+  const regex = new RegExp(`(${escapedOldKey}):`, 'g');
+  console.log("calling",regex)  
+  console.log("")
+  return cssVars.replace(regex, `${newKey}:`);
+}
 export const generateThemeCode = (
   themeEditorState: ThemeEditorState,
   colorFormat: ColorFormat = "hsl",
@@ -192,11 +203,15 @@ export const generateThemeCode = (
   const themeStyles = themeEditorState.styles as ThemeStyles;
   const formatColor = (color: string) => colorFormatter(color, colorFormat, tailwindVersion);
 
-  const lightTheme = generateThemeVariables(themeStyles, "light", formatColor, tailwindVersion);
-  const darkTheme = generateThemeVariables(themeStyles, "dark", formatColor, tailwindVersion);
+  let lightTheme = generateThemeVariables(themeStyles, "light", formatColor);
+  let darkTheme = generateThemeVariables(themeStyles, "dark", formatColor);
   const tailwindV4Theme =
     tailwindVersion === "4" ? `\n\n${generateTailwindV4ThemeInline(themeStyles)}` : "";
 
+  if(tailwindVersion === "4") {
+    lightTheme = changeThemeObjKeyName(lightTheme,"--sidebar","--sidebar-background");
+    darkTheme = changeThemeObjKeyName(darkTheme,"--sidebar","--sidebar-background");
+  }
   const bodyLetterSpacing =
     themeStyles["light"]["letter-spacing"] !== "0em"
       ? "\n\nbody {\n  letter-spacing: var(--tracking-normal);\n}"
