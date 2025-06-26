@@ -1,15 +1,30 @@
+import { FocusColorId } from "@/store/color-control-focus-store";
+
 export type ControlSectionProps = {
   title: string;
   children: React.ReactNode;
   expanded?: boolean;
   className?: string;
-  id?: string;
 };
 
 export type ColorPickerProps = {
+  /**
+   * The current color value.
+   */
   color: string;
+  /**
+   * Callback invoked whenever the color value changes.
+   */
   onChange: (color: string) => void;
+  /**
+   * Human-readable label for the control.
+   */
   label: string;
+  /**
+   * (Optional) Identifier that maps this color picker to a theme style key.
+   * When provided, it enables programmatic focusing via `focusColorControl()`.
+   */
+  name?: FocusColorId;
 };
 
 export type SliderInputProps = {

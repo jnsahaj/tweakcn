@@ -146,7 +146,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               </TabsContent>
 
               <TabsContent value="dashboard" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer className="min-w-[1400px]">
+                <ExamplesPreviewContainer>
                   <DemoDashboard />
                 </ExamplesPreviewContainer>
               </TabsContent>

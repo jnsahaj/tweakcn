@@ -1,5 +1,5 @@
 // color-picker.tsx
-import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef, useContext } from "react";
 import { ColorPickerProps, ColorSwatchProps, ValidShade } from "@/types";
 import { debounce } from "@/utils/debounce";
 import { Label } from "@/components/ui/label";
@@ -18,14 +18,27 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DEBOUNCE_DELAY } from "@/lib/constants";
 import { convertColorhexToTailClasses, isValidHexColor } from "@/utils/color-type-checker";
+import { useColorControlFocus } from "@/store/color-control-focus-store";
+import { SectionContext } from "./section-context";
 
-const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
+const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [localColor, setLocalColor] = useState(color);
   const [showPalette, setShowPalette] = useState(false);
   const [palettePosition, setPalettePosition] = useState({ top: 0, left: 0, width: 0 });
   const pickerRef = useRef<HTMLDivElement>(null);
   const validShades = useMemo(() => tailwindColorShades as ValidShade[], []);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const sectionCtx = useContext(SectionContext);
+  const { registerColor, unregisterColor, highlightTarget } = useColorControlFocus();
+
+  // Register/unregister this color control with the focus store
+  useEffect(() => {
+    if (!name) return;
+    registerColor(name, rootRef.current);
+    return () => unregisterColor(name);
+  }, [name, registerColor, unregisterColor]);
 
   // Update localColor if the prop changes externally
   useEffect(() => {
@@ -144,8 +157,38 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
     [localColor, validShades]
   );
 
+  const isHighlighted = name && highlightTarget === name;
+
+  useEffect(() => {
+    if (isHighlighted) {
+      // Trigger animation
+      setShouldAnimate(true);
+
+      sectionCtx?.setIsExpanded(true);
+      setTimeout(
+        () => {
+          rootRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        },
+        sectionCtx?.isExpanded ? 0 : 100
+      );
+
+      // Reset animation after it completes
+      const timer = setTimeout(() => {
+        setShouldAnimate(false);
+      }, 1000); // Duration should match the animation duration
+
+      return () => clearTimeout(timer);
+    }
+  }, [isHighlighted, sectionCtx]);
+
   return (
-    <div className="mb-3" ref={pickerRef}>
+    <div
+      ref={rootRef}
+      className={cn(
+        "mb-3 transition-all duration-300",
+        shouldAnimate && "bg-border/50 -m-1.5 mb-1.5 rounded-sm p-1.5"
+      )}
+    >
       <div className="mb-1.5 flex items-center justify-between">
         <Label
           htmlFor={`color-${label.replace(/\s+/g, "-").toLowerCase()}`}
@@ -156,7 +199,7 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
       </div>
       <div className="relative flex items-center gap-1">
         <div
-          className="relative flex h-8 w-8 cursor-pointer items-center justify-center rounded border"
+          className="relative flex h-8 w-8 cursor-pointer items-center justify-center overflow-hidden rounded border"
           style={{ backgroundColor: convertedColor }}
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -172,7 +215,7 @@ const ColorPicker = ({ color, onChange, label }: ColorPickerProps) => {
           type="text"
           value={localColor}
           onChange={handleColorChange}
-          className="bg-input/25 border-border/20 h-8 flex-1 rounded px-2 text-sm"
+          className="bg-input/25 border-border/20 h-8 flex-1 rounded border px-2 text-sm"
           placeholder="Enter color (hex or tailwind class)"
         />
         <Button
