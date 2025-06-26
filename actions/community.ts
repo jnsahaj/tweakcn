@@ -18,6 +18,7 @@ import {
   ThemeLimitError,
 } from "@/types/errors";
 import { getCurrentUserId, logError } from "./shared";
+import { buildPaginatedResponse } from "@/utils/pagination";
 
 const publishThemeSchema = z.object({
   themeId: z.string().min(1, "Theme ID required"),
@@ -229,44 +230,60 @@ export async function addTagsToTheme(formData: { themeId: string; tags: string[]
   }
 }
 
-export async function getFeaturedThemes() {
+export async function getFeaturedThemes(limit: number = 10, cursor?: string) {
   try {
+    const conditions = [eq(themeTable.isCommunity, true), eq(themeTable.featured, true)];
+
+    if (cursor) {
+      conditions.push(sql`id > ${cursor}`);
+    }
+
     const themes = await db
       .select()
       .from(themeTable)
-      .where(and(eq(themeTable.isCommunity, true), eq(themeTable.featured, true)))
-      .orderBy(desc(themeTable.featuredAt));
+      .where(and(...conditions))
+      .orderBy(desc(themeTable.featuredAt))
+      .limit(limit);
 
-    return themes;
+    return buildPaginatedResponse(themes, limit);
   } catch (error) {
     logError(error as Error, { action: "getFeaturedThemes" });
     throw error;
   }
 }
 
-export async function getPopularThemes(limit = 50) {
+export async function getPopularThemes(limit: number = 10, cursor?: string) {
   try {
+    const conditions = [eq(themeTable.isCommunity, true)];
+    if (cursor) {
+      conditions.push(sql`id > ${cursor}`);
+    }
+
     const themes = await db
       .select()
       .from(themeTable)
-      .where(eq(themeTable.isCommunity, true))
+      .where(and(...conditions))
       .orderBy(desc(themeTable.likeCount), desc(themeTable.publishedAt))
       .limit(limit);
 
-    return themes;
+    return buildPaginatedResponse(themes, limit);
   } catch (error) {
     logError(error as Error, { action: "getPopularThemes" });
     throw error;
   }
 }
 
-export async function getCommunityThemesByTag(tagSlug: string) {
+export async function getCommunityThemesByTag(
+  tagSlug: string,
+  limit: number = 10,
+  cursor?: string
+) {
   try {
     if (!tagSlug) {
       throw new ValidationError("Tag slug required");
     }
 
-    const themes = await db
+    const baseQuery = db
       .select({
         id: themeTable.id,
         userId: themeTable.userId,
@@ -282,11 +299,20 @@ export async function getCommunityThemesByTag(tagSlug: string) {
       })
       .from(themeTable)
       .innerJoin(themeTagTable, eq(themeTagTable.themeId, themeTable.id))
-      .innerJoin(tagTable, eq(tagTable.id, themeTagTable.tagId))
-      .where(and(eq(themeTable.isCommunity, true), eq(tagTable.slug, tagSlug)))
-      .orderBy(desc(themeTable.likeCount));
+      .innerJoin(tagTable, eq(tagTable.id, themeTagTable.tagId));
 
-    return themes;
+    const conditions = [eq(themeTable.isCommunity, true), eq(tagTable.slug, tagSlug)];
+
+    if (cursor) {
+      conditions.push(sql`"theme"."id" > ${cursor}`);
+    }
+
+    const themes = await baseQuery
+      .where(and(...conditions))
+      .orderBy(desc(themeTable.likeCount))
+      .limit(limit);
+
+    return buildPaginatedResponse(themes, limit);
   } catch (error) {
     logError(error as Error, { action: "getCommunityThemesByTag", tagSlug });
     throw error;
