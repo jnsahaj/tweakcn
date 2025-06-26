@@ -5,44 +5,10 @@ import { db } from "@/db";
 import { theme as themeTable } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import cuid from "cuid";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getCurrentUserId, logError } from "./shared";
 import { themeStylesSchema, type ThemeStyles } from "@/types/theme";
 import { cache } from "react";
-import {
-  UnauthorizedError,
-  ValidationError,
-  ThemeNotFoundError,
-  ThemeLimitError,
-} from "@/types/errors";
-
-// Helper to get user ID with better error handling
-async function getCurrentUserId(): Promise<string> {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user?.id) {
-    throw new UnauthorizedError();
-  }
-
-  return session.user.id;
-}
-
-// Log errors for observability
-function logError(error: Error, context: Record<string, any>) {
-  console.error("Theme action error:", error, context);
-
-  // TODO: Add server-side error reporting to PostHog or your preferred service
-  // For production, you'd want to send critical errors to an external service
-  if (error.name === "UnauthorizedError" || error.name === "ValidationError") {
-    // These are expected errors, log but don't report
-    console.warn("Expected error:", { error: error.message, context });
-  } else {
-    // Unexpected errors should be reported
-    console.error("Unexpected error:", { error: error.message, stack: error.stack, context });
-  }
-}
+import { ValidationError, ThemeNotFoundError, ThemeLimitError } from "@/types/errors";
 
 const createThemeSchema = z.object({
   name: z.string().min(1, "Theme name cannot be empty").max(50, "Theme name too long"),
