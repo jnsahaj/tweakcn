@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useRef, useState } from "react";
+import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,17 +26,10 @@ type ColorPopoverProps = {
   setLocalColor: (color: string) => void;
 };
 const ColorPopover = ({ onChange, setLocalColor }: ColorPopoverProps) => {
-  const pickerRef = useRef<HTMLDivElement>(null);
-  const [showPalette, setShowPalette] = useState(false);
-  const handlePaletteToggle = useCallback(() => {
-    setShowPalette((prev) => !prev);
-  }, []);
-
   const handleColorSelect = useCallback(
     (hex: string) => {
       setLocalColor(hex);
       onChange(hex);
-      setShowPalette(false);
     },
     [onChange]
   );
@@ -72,12 +65,11 @@ const ColorPopover = ({ onChange, setLocalColor }: ColorPopoverProps) => {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          onClick={handlePaletteToggle}
           className="px-3 py-3 transition-colors"
           variant="outline"
         >
           <ChevronDown
-            className={cn("h-4 w-4 transition-transform", showPalette && "rotate-180")}
+            className={cn("h-4 w-4 transition-transform")}
           />
         </Button>
       </PopoverTrigger>
