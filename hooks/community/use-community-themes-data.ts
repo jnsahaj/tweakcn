@@ -3,9 +3,12 @@ import { getFeaturedThemes, getPopularThemes, getCommunityThemesByTag } from "@/
 
 export const communityThemeKeys = {
   all: ["communityThemes"] as const,
-  featured: () => [...communityThemeKeys.all, "featured"] as const,
-  popular: () => [...communityThemeKeys.all, "popular"] as const,
-  byTag: (slug: string) => [...communityThemeKeys.all, "tag", slug] as const,
+  lists: () => [...communityThemeKeys.all, "list"] as const,
+  featured: () => [...communityThemeKeys.lists(), "featured"] as const,
+  popular: () => [...communityThemeKeys.lists(), "popular"] as const,
+  byTag: (slug: string) => [...communityThemeKeys.lists(), "tag", slug] as const,
+  details: () => [...communityThemeKeys.all, "detail"] as const,
+  detail: (id: string) => [...communityThemeKeys.details(), id] as const,
 };
 
 export function useFeaturedCommunityThemes() {

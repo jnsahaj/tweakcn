@@ -42,10 +42,11 @@ export function useAddTagsToTheme() {
 
 export function useToggleThemeLike() {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (themeId: string) => toggleThemeLike({ themeId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityThemeKeys.popular() });
+    onSuccess: (_data, themeId) => {
+      queryClient.invalidateQueries({ queryKey: communityThemeKeys.detail(themeId) });
     },
     onError: (error) => handleCommunityError(error as Error, "like/unlike"),
   });
