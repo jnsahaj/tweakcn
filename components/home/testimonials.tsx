@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { motion, useMotionValue } from 'framer-motion';
+import { motion, useMotionValue, useReducedMotion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import man1 from '@/assets/man1.png';
 import man2 from '@/assets/man2.png';
@@ -56,8 +56,9 @@ const MarqueeRow = ({
   items: typeof testimonials;
   reverse?: boolean;
 }) => {
+  const shouldReduceMotion = useReducedMotion();
   const x = useRef(useMotionValue(0));
-  const speed = 50;
+  const speed = shouldReduceMotion ? 0 : 50;
   const containerRef = useRef<HTMLDivElement>(null);
   const animationFrame = useRef(0);
   const lastTime = useRef(performance.now());
@@ -75,11 +76,13 @@ const MarqueeRow = ({
 
       const totalWidth = cardWidth * items.length * loopCount;
       setContainerWidth(totalWidth);
-      x.current.set(reverse ? -totalWidth / 2 : 0); // Start offset for reverse
+      x.current.set(reverse ? -totalWidth / 2 : 0);
     }
   }, [items.length, reverse]);
 
   useEffect(() => {
+    if (shouldReduceMotion) return;
+
     const animate = (time: number) => {
       const delta = time - lastTime.current;
       lastTime.current = time;
@@ -105,7 +108,7 @@ const MarqueeRow = ({
 
     animationFrame.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrame.current);
-  }, [containerWidth, reverse]);
+  }, [containerWidth, reverse, shouldReduceMotion]);
 
   const pause = () => (isPaused.current = true);
   const resume = () => {
