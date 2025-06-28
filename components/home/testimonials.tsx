@@ -12,48 +12,36 @@ const testimonials = [
     image: man1.src,
     name: "Sanwal Sulehri",
     tag: "sanwalakram12",
-    description: `
-       Playing around with <a href="https://tailwindcss.com/docs/customizing-colors">@tweakcn</a> suddenly made me feeling inspired to launch that side project.
-    `,
+    description: `Playing around with @tweakcn suddenly made me feel inspired to launch that side project.`,
   },
   {
     image: man2.src,
     name: "Darius Flynn",
     tag: "flynnn",
-    description: `
-     Exploring <a href="https://react.dev">@tweakcn</a> sleek UI. It's like a dark mode enthusiast&apos;s playground. Simply incredible stuff.
-    `,
+    description: `Exploring @tweakcn's sleek UI. It's like a dark mode enthusiast's playground. Simply incredible stuff.`,
   },
   {
     name: "Suna Martinez",
     tag: "sunacode",
-    description: `
-      <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::backdrop">@tweakcn</a> is not messing around with its component library game.
-    `,
+    description: `@tweakcn is not messing around with its component library game.`,
   },
   {
     image: girl1.src,
     name: "Olivia Blackwood",
     tag: "olivia1992",
-    description: `
-      <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::backdrop">@tweakcn</a> is slick. That globe graphic though. Making me feel like I&apos;m building websites for a sci-fi movie.
-    `,
+    description: `@tweakcn is slick. That globe graphic though. Making me feel like I'm building websites for a sci-fi movie.`,
   },
   {
     image: girl2.src,
     name: "Esme Rothschild",
     tag: "EmeRothArt",
-    description: `
-      Just made my first website with <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::backdrop">@tweakcn</a>. Its flexibility is speaking my language. No drama, just seamless integration.
-    `,
+    description: `Just made my first website with @tweakcn. Its flexibility is speaking my language. No drama, just seamless integration.`,
   },
   {
     image: girl3.src,
     name: "Kai Nakamura",
     tag: "KaiNakWaves",
-    description: `
-      <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::backdrop">@tweakcn</a> is a game-changer for rapid prototyping. The components are so well thought out.
-    `,
+    description: `@tweakcn is a game-changer for rapid prototyping. The components are so well thought out.`,
   },
 ];
 
@@ -130,10 +118,7 @@ export function Testimonials() {
                       <p className="text-muted-foreground text-sm">@{testimonial.tag}</p>
                     </div>
                   </div>
-                  <p
-                    className="text-foreground [&>a]:text-primary [&>a]:no-underline [&>a]:font-semibold"
-                    dangerouslySetInnerHTML={{ __html: testimonial.description }}
-                  />
+                  <p className="text-foreground">{testimonial.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
