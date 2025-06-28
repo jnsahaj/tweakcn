@@ -1,0 +1,5 @@
+onlyBuiltDependencies:
+  - core-js
+  - esbuild
+  - msw
+  - sharp

@@ -1,7 +1,7 @@
-import { AIPromptData, MentionReference } from "@/types/ai";
+import { getLastGeneratedThemeStyles, useAIChatStore } from "@/store/ai-chat-store";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
-import { getLastGeneratedThemeStyles, useAIChatStore } from "@/store/ai-chat-store";
+import { AIPromptData, MentionReference } from "@/types/ai";
 
 export const getTextContent = (promptData: AIPromptData | null) => {
   if (!promptData) return "";
@@ -15,7 +15,7 @@ export const mentionsCount = (promptData: AIPromptData | null) => {
 
 export const buildPromptForAPI = (promptData: AIPromptData) => {
   const mentionReferences = promptData.mentions.map(
-    (mention) => `@${mention.label} = 
+    (mention) => `@${mention.label} =
   ${JSON.stringify(mention.themeData)}`
   );
 
@@ -31,7 +31,7 @@ export const buildAIPromptRender = (promptData: AIPromptData): React.ReactNode =
 
   const parts = promptData.content.split(mentionRegex);
 
-  return parts.map((part, index) => {
+  const textContent = parts.map((part, index) => {
     const mention = promptData.mentions.find((m) => `@${m.label}` === part);
     if (mention) {
       return (
@@ -42,6 +42,21 @@ export const buildAIPromptRender = (promptData: AIPromptData): React.ReactNode =
     }
     return part;
   });
+
+  if (promptData.image) {
+    return (
+      <div className="flex flex-col gap-2">
+        <img
+          src={promptData.image.preview}
+          alt="Uploaded"
+          className="max-w-32 rounded border object-cover"
+        />
+        <div>{textContent}</div>
+      </div>
+    );
+  }
+
+  return textContent;
 };
 
 export function attachCurrentThemeMention(promptData: AIPromptData): AIPromptData {

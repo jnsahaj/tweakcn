@@ -58,7 +58,8 @@ export function AIInterface() {
       promptData: transformedPromptData,
     });
 
-    const result = await generateTheme(buildPrompt(transformedPromptData));
+    const builtPrompt = buildPrompt(transformedPromptData);
+    const result = await generateTheme(builtPrompt.text, builtPrompt.image);
 
     if (!result) {
       addAssistantMessage({

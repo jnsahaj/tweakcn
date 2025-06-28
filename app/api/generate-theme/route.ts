@@ -5,18 +5,46 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
 import { generateObject } from "ai";
+import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { headers } from "next/headers";
 
-const requestSchema = z.object({
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_API_KEY,
+});
+const model = google("gemini-2.5-flash-lite-preview-06-17");
+
+const formDataSchema = z.object({
   prompt: z
     .string()
     .min(1)
     .max(AI_PROMPT_CHARACTER_LIMIT + 4000, {
       message: `Failed to generate theme. Input character limit exceeded.`,
     }),
+  image: z
+    .instanceof(File)
+    .refine((file) => file.type.startsWith('image/'), {
+      message: "File must be an image",
+    })
+    .refine((file) => file.size <= 5 * 1024 * 1024, {
+      message: "Image must be smaller than 5MB",
+    })
+    .optional(),
 });
+
+// Helper function to parse and validate FormData
+function parseFormData(formData: FormData) {
+  const prompt = formData.get('prompt');
+  const imageFile = formData.get('image');
+
+  // Convert FormData to object for validation
+  const data = {
+    prompt: typeof prompt === 'string' ? prompt : undefined,
+    image: imageFile instanceof File ? imageFile : undefined,
+  };
+
+  return formDataSchema.parse(data);
+}
 
 // Create a new schema based on themeStylePropsSchema excluding 'spacing'
 const themeStylePropsWithoutSpacing = themeStylePropsSchema.omit({
@@ -67,20 +95,35 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const body = await req.json();
-    const { prompt } = requestSchema.parse(body);
+    const formData = await req.formData();
+    const { prompt, image: imageFile } = parseFormData(formData);
 
-    const google = createGoogleGenerativeAI({
-      apiKey: process.env.GOOGLE_API_KEY,
-    });
 
-    const model = google("gemini-2.5-flash-lite-preview-06-17");
+    let imageBase64: string | undefined;
+    if (imageFile) {
+      const arrayBuffer = await imageFile.arrayBuffer();
+      const base64 = Buffer.from(arrayBuffer).toString('base64');
+      imageBase64 = `data:${imageFile.type};base64,${base64}`;
+    }
+
+    const messages = imageBase64 ? [{
+      role: "user" as const,
+      content: [
+        { type: "text" as const, text: `Analyze this image and create a shadcn/ui theme based on it. ${prompt}` },
+        { type: "image" as const, image: imageBase64 }
+      ]
+    }] : undefined;
 
     const { object: theme } = await generateObject({
       model,
       schema: responseSchema,
       system: `# Role
     You are tweakcn, an expert shadcn/ui theme generator.
+
+    # Image Analysis Instructions (when image provided)
+    - Extract dominant colors, mood, and aesthetic from the image
+    - Consider color harmony, contrast, and visual hierarchy
+    - Translate visual elements into appropriate theme tokens
 
     # Token Groups
     - **Brand**: primary, secondary, accent, ring
@@ -105,7 +148,8 @@ export async function POST(req: NextRequest) {
 
     # Text Description
     Fill the \`text\` field in a friendly way, for example: "I've generated..." or "Alright, I've whipped up..."`,
-      prompt: `Create shadcn/ui theme for: ${prompt}`,
+      prompt: imageBase64 ? undefined : `Create shadcn/ui theme for: ${prompt}`,
+      messages,
     });
 
     return new Response(JSON.stringify(theme), {
@@ -114,15 +158,11 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error(error);
 
-    // Handle Zod validation errors specifically
     if (error instanceof z.ZodError) {
       const firstError = error.errors[0];
-      return new Response(firstError.message, {
-        status: 400,
-      });
+      return new Response(firstError.message, { status: 400 });
     }
 
-    // Consider more specific error handling based on AI SDK errors if needed
     return new Response("Error generating theme", { status: 500 });
   }
 }

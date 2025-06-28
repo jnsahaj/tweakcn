@@ -8,7 +8,7 @@ interface AIThemeGenerationStore {
 
   setLoading: (loading: boolean) => void;
   // generateTheme now only takes prompt. Callbacks are removed.
-  generateTheme: (prompt: string) => Promise<{ text: string; theme: ThemeStyles }>;
+  generateTheme: (prompt: string, image?: File) => Promise<{ text: string; theme: ThemeStyles }>;
   cancelThemeGeneration: () => void;
   resetState: () => void;
 }
@@ -31,9 +31,9 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     }
   },
 
-  generateTheme: async (prompt: string) => {
+  generateTheme: async (prompt: string, image?: File) => {
     const state = get();
-    if (!prompt.trim()) return; // Or throw new Error("Prompt cannot be empty");
+    if (!prompt.trim()) return;
 
     if (state.abortController) {
       state.abortController.abort();
@@ -43,7 +43,7 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     set({ loading: true, abortController });
 
     try {
-      const response = await generateThemeWithAI(prompt, {
+      const response = await generateThemeWithAI(prompt, image, {
         signal: abortController.signal,
       });
       return response;
