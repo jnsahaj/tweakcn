@@ -73,6 +73,7 @@
     "input-otp": "^1.4.2",
     "isbot": "^5.1.26",
     "lexical": "^0.31.0",
+    "lightningcss": "^1.30.1",
     "lucide-react": "^0.488.0",
     "motion": "^12.7.3",
     "next": "15.3.0",

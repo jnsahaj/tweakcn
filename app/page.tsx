@@ -7,6 +7,7 @@ import { ThemePresetSelector } from "@/components/home/theme-preset-selector";
 import { Features } from "@/components/home/features";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Roadmap } from "@/components/home/roadmap";
+import { Testimonials } from "@/components/home/testimonials";
 import { FAQ } from "@/components/home/faq";
 import { CTA } from "@/components/home/cta";
 import { Footer } from "@/components/footer";
@@ -41,6 +42,7 @@ export default function Home() {
         <Features />
         <HowItWorks />
         <Roadmap />
+        <Testimonials />
         <FAQ />
         <CTA />
       </main>
