@@ -33,7 +33,7 @@ const CREATE_PROMPTS: Prompt[] = [
   {
     displayContent: "Retro Terminal UI, green phosphor glow",
     prompt:
-      "Create a retro terminal theme with black background (in dark mode), phosphorescent green primary and text, and all fonts monospace.",
+      "Create a retro terminal theme with black background (dark mode) and grayish background (light mode), use phosphorescent green for text and borders. Use monospace fonts and sharp corners.",
   },
   {
     displayContent: "Monochrome Manga-inspired theme",
