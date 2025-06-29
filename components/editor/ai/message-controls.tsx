@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { ThemeStyles } from "@/types/theme";
+import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
 import { Goal, RefreshCw } from "lucide-react";
 
 type MessageControlsProps = {
@@ -24,7 +25,7 @@ export function MessageControls({ message, onRetry }: MessageControlsProps) {
 
     setThemeState({
       ...themeState,
-      styles: themeStyles,
+      styles: mergeThemeStylesWithDefaults(themeStyles),
     });
   };
 
