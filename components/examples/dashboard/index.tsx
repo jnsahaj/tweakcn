@@ -22,6 +22,7 @@ export default function Page() {
               <div className="px-4 lg:px-6">
                 <ChartAreaInteractive />
               </div>
+              <DataTable data={data} />
               <div className="flex gap-4 px-4 lg:px-6">
                 <div className="basis-1/2">
                   <ChartPieDonut />
@@ -30,7 +31,6 @@ export default function Page() {
                   <ChartBarMixed />
                 </div>
               </div>
-              <DataTable data={data} />
             </div>
           </div>
         </div>

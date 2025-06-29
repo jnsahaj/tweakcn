@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryProvider } from "@/lib/query-client";
 import type { Metadata, Viewport } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
@@ -74,13 +75,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <NuqsAdapter>
           <Suspense>
-            <ThemeProvider defaultTheme="light">
-              <TooltipProvider>
-                <AuthDialogWrapper />
-                <Toaster />
-                {children}
-              </TooltipProvider>
-            </ThemeProvider>
+            <QueryProvider>
+              <ThemeProvider defaultTheme="light">
+                <TooltipProvider>
+                  <AuthDialogWrapper />
+                  <Toaster />
+                  {children}
+                </TooltipProvider>
+              </ThemeProvider>
+            </QueryProvider>
           </Suspense>
         </NuqsAdapter>
         <PostHogInit />

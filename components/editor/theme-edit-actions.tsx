@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useThemeActions } from "@/hooks/use-theme-actions";
+import { useUpdateTheme } from "@/hooks/themes";
 import { useEditorStore } from "@/store/editor-store";
 import { Theme } from "@/types/theme";
 import { Check, X } from "lucide-react";
@@ -17,10 +17,9 @@ interface ThemeEditActionsProps {
 const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme, disabled = false }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { updateTheme } = useThemeActions();
+  const updateThemeMutation = useUpdateTheme();
   const { themeState, applyThemePreset } = useEditorStore();
   const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   const mainEditorUrl = `/editor/theme?${searchParams}`;
 
@@ -31,7 +30,6 @@ const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme, disabled = f
   };
 
   const handleSaveTheme = async (newName: string) => {
-    setIsSaving(true);
     const dataToUpdate: {
       id: string;
       name?: string;
@@ -52,19 +50,18 @@ const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme, disabled = f
 
     if (!dataToUpdate.name && !dataToUpdate.styles) {
       setIsNameDialogOpen(false);
-      setIsSaving(false);
       return;
     }
 
-    const result = await updateTheme(dataToUpdate);
-    setIsSaving(false);
-
-    if (result) {
-      setIsNameDialogOpen(false);
-      router.push(mainEditorUrl);
-      applyThemePreset(result?.id || themeState?.preset || "default");
-    } else {
-      console.error("Failed to update theme");
+    try {
+      const result = await updateThemeMutation.mutateAsync(dataToUpdate);
+      if (result) {
+        setIsNameDialogOpen(false);
+        router.push(mainEditorUrl);
+        applyThemePreset(result?.id || themeState?.preset || "default");
+      }
+    } catch (error) {
+      console.error("Failed to update theme:", error);
     }
   };
 
@@ -126,7 +123,7 @@ const ThemeEditActions: React.FC<ThemeEditActionsProps> = ({ theme, disabled = f
         open={isNameDialogOpen}
         onOpenChange={setIsNameDialogOpen}
         onSave={handleSaveTheme}
-        isSaving={isSaving}
+        isSaving={updateThemeMutation.isPending}
         initialThemeName={theme.name}
         title="Save Theme Changes"
         description="Confirm or update the theme name before saving."

@@ -8,7 +8,7 @@ import { ThemeSaveDialog } from "@/components/editor/theme-save-dialog";
 import { toast } from "@/components/ui/use-toast";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
-import { useThemeActions } from "@/hooks/use-theme-actions";
+import { useCreateTheme } from "@/hooks/themes";
 import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/store/auth-store";
 import { useEditorStore } from "@/store/editor-store";
@@ -53,7 +53,7 @@ function useDialogActionsStore(): DialogActionsContextType {
   const { getPreset } = useThemePresetStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
-  const { createTheme, isCreatingTheme } = useThemeActions();
+  const createThemeMutation = useCreateTheme();
   const { loading: aiGenerateLoading } = useAIThemeGeneration();
   const posthog = usePostHog();
 
@@ -104,7 +104,7 @@ function useDialogActionsStore(): DialogActionsContextType {
     };
 
     try {
-      const theme = await createTheme(themeData);
+      const theme = await createThemeMutation.mutateAsync(themeData);
       posthog.capture("CREATE_THEME", {
         theme_id: theme?.id,
         theme_name: theme?.name,
@@ -162,7 +162,7 @@ function useDialogActionsStore(): DialogActionsContextType {
     shareDialogOpen,
     shareUrl,
     dialogKey,
-    isCreatingTheme,
+    isCreatingTheme: createThemeMutation.isPending,
     aiGenerateLoading,
 
     // Dialog actions

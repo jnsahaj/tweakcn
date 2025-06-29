@@ -1,163 +1,150 @@
 "use server";
 
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { theme as themeTable } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import cuid from "cuid";
 import { auth } from "@/lib/auth";
-import { headers } from "next/headers"; // Keep for session, but actions handle auth differently
+import { headers } from "next/headers";
 import { themeStylesSchema, type ThemeStyles } from "@/types/theme";
 import { cache } from "react";
+import {
+  UnauthorizedError,
+  ValidationError,
+  ThemeNotFoundError,
+  ThemeLimitError,
+} from "@/types/errors";
 
-// Helper to get user ID (Consider centralizing auth checks)
-async function getCurrentUserId(): Promise<string | null> {
+// Helper to get user ID with better error handling
+async function getCurrentUserId(): Promise<string> {
   const session = await auth.api.getSession({
-    headers: await headers(), // you need to pass the headers object.
+    headers: await headers(),
   });
-  return session?.user?.id ?? null;
+
+  if (!session?.user?.id) {
+    throw new UnauthorizedError();
+  }
+
+  return session.user.id;
+}
+
+// Log errors for observability
+function logError(error: Error, context: Record<string, any>) {
+  console.error("Theme action error:", error, context);
+
+  // TODO: Add server-side error reporting to PostHog or your preferred service
+  // For production, you'd want to send critical errors to an external service
+  if (error.name === "UnauthorizedError" || error.name === "ValidationError") {
+    // These are expected errors, log but don't report
+    console.warn("Expected error:", { error: error.message, context });
+  } else {
+    // Unexpected errors should be reported
+    console.error("Unexpected error:", { error: error.message, stack: error.stack, context });
+  }
 }
 
 const createThemeSchema = z.object({
-  name: z.string().min(1, "Theme name cannot be empty"),
+  name: z.string().min(1, "Theme name cannot be empty").max(50, "Theme name too long"),
   styles: themeStylesSchema,
 });
 
 const updateThemeSchema = z.object({
-  id: z.string(), // ID is needed to know which theme to update
-  name: z.string().min(1, "Theme name cannot be empty").optional(),
+  id: z.string().min(1, "Theme ID required"),
+  name: z.string().min(1, "Theme name cannot be empty").max(50, "Theme name too long").optional(),
   styles: themeStylesSchema.optional(),
 });
 
+// Layer 1: Clean server actions with proper error handling
 export async function getThemes() {
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
   try {
-    const userThemes = await db
-      .select()
-      .from(themeTable)
-      .where(eq(themeTable.userId, userId));
+    const userId = await getCurrentUserId();
+    const userThemes = await db.select().from(themeTable).where(eq(themeTable.userId, userId));
     return userThemes;
   } catch (error) {
-    console.error("Error fetching themes:", error);
-    throw new Error("Failed to fetch themes."); // Propagate a generic error
+    logError(error as Error, { action: "getThemes" });
+    throw error;
   }
 }
 
-// Wrap getTheme with React.cache
 export const getTheme = cache(async (themeId: string) => {
   try {
-    const [theme] = await db
-      .select()
-      .from(themeTable)
-      .where(eq(themeTable.id, themeId))
-      .limit(1);
+    if (!themeId) {
+      throw new ValidationError("Theme ID required");
+    }
+
+    const [theme] = await db.select().from(themeTable).where(eq(themeTable.id, themeId)).limit(1);
+
+    if (!theme) {
+      throw new ThemeNotFoundError();
+    }
 
     return theme;
   } catch (error) {
-    console.error("Error fetching theme:", error);
-    throw new Error("Failed to fetch theme.");
+    logError(error as Error, { action: "getTheme", themeId });
+    throw error;
   }
 });
 
-// Action to create a new theme
-export async function createTheme(formData: {
-  name: string;
-  styles: ThemeStyles;
-}) {
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
-  const validation = createThemeSchema.safeParse(formData);
-  if (!validation.success) {
-    // Return validation errors for the client to handle
-    return {
-      success: false,
-      error: "Invalid input",
-      details: validation.error.format(),
-    };
-  }
-
-  // Check if user already has 10 themes
-  const userThemes = await db
-    .select()
-    .from(themeTable)
-    .where(eq(themeTable.userId, userId));
-
-  if (userThemes.length >= 10) {
-    return {
-      success: false,
-      error: "Theme limit reached",
-      message: "You cannot have more than 10 themes yet.",
-    };
-  }
-
-  const { name, styles } = validation.data;
-  const newThemeId = cuid();
-  const now = new Date();
-
+export async function createTheme(formData: { name: string; styles: ThemeStyles }) {
   try {
+    const userId = await getCurrentUserId();
+
+    const validation = createThemeSchema.safeParse(formData);
+    if (!validation.success) {
+      throw new ValidationError("Invalid input", validation.error.format());
+    }
+
+    // Check theme limit
+    const userThemes = await db.select().from(themeTable).where(eq(themeTable.userId, userId));
+    if (userThemes.length >= 10) {
+      throw new ThemeLimitError("You cannot have more than 10 themes yet.");
+    }
+
+    const { name, styles } = validation.data;
+    const newThemeId = cuid();
+    const now = new Date();
+
     const [insertedTheme] = await db
       .insert(themeTable)
       .values({
         id: newThemeId,
         userId: userId,
         name: name,
-        styles: styles, // Already validated
+        styles: styles,
         createdAt: now,
         updatedAt: now,
       })
       .returning();
 
-    revalidatePath("/"); // Or a more specific path where themes are displayed
-    return {
-      success: true,
-      theme: insertedTheme,
-    };
+    return insertedTheme;
   } catch (error) {
-    console.error("Error creating theme:", error);
-    return { success: false, error: "Internal Server Error" };
+    logError(error as Error, { action: "createTheme", formData: { name: formData.name } });
+    throw error;
   }
 }
 
-// Action to update an existing theme
-export async function updateTheme(formData: {
-  id: string;
-  name?: string;
-  styles?: ThemeStyles;
-}) {
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
-  const validation = updateThemeSchema.safeParse(formData);
-  if (!validation.success) {
-    return {
-      success: false,
-      error: "Invalid input",
-      details: validation.error.format(),
-    };
-  }
-
-  const { id: themeId, name, styles } = validation.data;
-
-  if (!name && !styles) {
-    return { success: false, error: "No update data provided" };
-  }
-
-  const updateData: Partial<typeof themeTable.$inferInsert> = {
-    updatedAt: new Date(),
-  };
-  if (name) updateData.name = name;
-  if (styles) updateData.styles = styles; // Already validated
-
+export async function updateTheme(formData: { id: string; name?: string; styles?: ThemeStyles }) {
   try {
+    const userId = await getCurrentUserId();
+
+    const validation = updateThemeSchema.safeParse(formData);
+    if (!validation.success) {
+      throw new ValidationError("Invalid input", validation.error.format());
+    }
+
+    const { id: themeId, name, styles } = validation.data;
+
+    if (!name && !styles) {
+      throw new ValidationError("No update data provided");
+    }
+
+    const updateData: Partial<typeof themeTable.$inferInsert> = {
+      updatedAt: new Date(),
+    };
+    if (name) updateData.name = name;
+    if (styles) updateData.styles = styles;
+
     const [updatedTheme] = await db
       .update(themeTable)
       .set(updateData)
@@ -165,45 +152,36 @@ export async function updateTheme(formData: {
       .returning();
 
     if (!updatedTheme) {
-      return { success: false, error: "Theme not found or not owned by user" };
+      throw new ThemeNotFoundError("Theme not found or not owned by user");
     }
 
-    revalidatePath("/"); // Or a more specific path
-    return {
-      success: true,
-      theme: updatedTheme,
-    };
+    return updatedTheme;
   } catch (error) {
-    console.error(`Error updating theme ${themeId}:`, error);
-    return { success: false, error: "Internal Server Error" };
+    logError(error as Error, { action: "updateTheme", themeId: formData.id });
+    throw error;
   }
 }
 
-// Action to delete a theme
 export async function deleteTheme(themeId: string) {
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
-  if (!themeId) {
-    return { success: false, error: "Theme ID required" };
-  }
-
   try {
-    const [deletedInfo] = await db
-      .delete(themeTable)
-      .where(and(eq(themeTable.id, themeId), eq(themeTable.userId, userId)))
-      .returning({ id: themeTable.id });
+    const userId = await getCurrentUserId();
 
-    if (!deletedInfo) {
-      return { success: false, error: "Theme not found or not owned by user" };
+    if (!themeId) {
+      throw new ValidationError("Theme ID required");
     }
 
-    revalidatePath("/dashboard"); // Or a more specific path
-    return { success: true, deletedId: themeId };
+    const [deletedTheme] = await db
+      .delete(themeTable)
+      .where(and(eq(themeTable.id, themeId), eq(themeTable.userId, userId)))
+      .returning({ id: themeTable.id, name: themeTable.name });
+
+    if (!deletedTheme) {
+      throw new ThemeNotFoundError("Theme not found or not owned by user");
+    }
+
+    return deletedTheme;
   } catch (error) {
-    console.error(`Error deleting theme ${themeId}:`, error);
-    return { success: false, error: "Internal Server Error" };
+    logError(error as Error, { action: "deleteTheme", themeId });
+    throw error;
   }
 }

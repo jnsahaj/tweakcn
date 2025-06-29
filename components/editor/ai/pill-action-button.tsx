@@ -4,7 +4,7 @@ import { ComponentProps } from "react";
 
 export interface AIPillActionButtonProps extends ComponentProps<typeof Button> {}
 
-export function AIPillActionButton({
+export function PillActionButton({
   className,
   children,
   disabled,

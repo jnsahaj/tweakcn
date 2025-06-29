@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { AIChatForm } from "./ai-chat-form";
 import { ChatHeading } from "./chat-heading";
 import { SuggestedPillActions } from "./suggested-pill-actions";
-import { buildPrompt } from "@/lib/ai-theme-generator";
+import { buildPrompt } from "@/lib/ai/ai-theme-generator";
 
 export function AIChatHero() {
   const { addUserMessage, addAssistantMessage, clearMessages } = useAIChatStore();
