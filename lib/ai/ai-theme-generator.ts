@@ -1,8 +1,8 @@
-import { defaultThemeState } from "@/config/theme";
 import { useEditorStore } from "@/store/editor-store";
 import { AIPromptData } from "@/types/ai";
 import { Theme } from "@/types/theme";
 import { buildPromptForAPI } from "@/utils/ai/ai-prompt";
+import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
 
 /**
  * Generate a theme with AI using a text prompt
@@ -42,27 +42,20 @@ export async function generateThemeWithAI(prompt: string, options?: { signal?: A
 export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
   const { themeState, setThemeState } = useEditorStore.getState();
 
+  // Merge the generated theme styles with the default theme styles
+  // if the generated theme styles are missing a value, use the default theme styles
+  const mergedStyles = mergeThemeStylesWithDefaults(themeStyles);
+
   if (!document.startViewTransition) {
     setThemeState({
       ...themeState,
-      styles: {
-        ...themeState.styles,
-        light: { ...defaultThemeState.styles.light, ...themeStyles.light },
-        dark: { ...defaultThemeState.styles.dark, ...themeStyles.dark },
-      },
+      styles: mergedStyles,
     });
   } else {
     document.startViewTransition(() => {
       setThemeState({
         ...themeState,
-        styles: {
-          ...themeState.styles,
-          light: {
-            ...defaultThemeState.styles.light,
-            ...themeStyles.light,
-          },
-          dark: { ...defaultThemeState.styles.dark, ...themeStyles.dark },
-        },
+        styles: mergedStyles,
       });
     });
   }
