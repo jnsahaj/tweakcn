@@ -33,12 +33,12 @@ const CREATE_PROMPTS: Prompt[] = [
   {
     displayContent: "Retro Terminal UI, green phosphor glow",
     prompt:
-      "Create a retro terminal theme with black background (dark mode) and grayish background (light mode), use phosphorescent green for text and borders. Use monospace fonts and sharp corners.",
+      "Create a retro terminal theme with black background (dark mode) and grayish background (light mode), use phosphorescent pure green (#22FF22 and shades of it) for text and borders. Use monospace fonts and sharp borders.",
   },
   {
     displayContent: "Monochrome Manga-inspired theme",
     prompt:
-      "Create a Manga-inspired theme. Monochromatic palette (black, off-white, grays), square corners, small contrast solid offset shadows, and high-contrast borders (black on light, off-white on dark). Use a playful font, like Architects daughter.",
+      "Create a Manga-inspired theme. Monochromatic palette only (black, off-white, grays), square corners, small contrast solid offset shadows, and high-contrast borders (black on light, off-white on dark). Use a playful font, like Architects daughter.",
   },
   {
     displayContent: "I want a minimal Ghibli Studio vibe",
