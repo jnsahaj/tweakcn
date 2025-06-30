@@ -1,0 +1,1 @@
+ALTER TABLE "theme" ALTER COLUMN "styles" SET DATA TYPE json USING styles::json;

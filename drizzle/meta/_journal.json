@@ -8,6 +8,13 @@
       "when": 1745600061994,
       "tag": "0000_rare_moira_mactaggert",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751148635088,
+      "tag": "0001_smart_ego",
+      "breakpoints": true
     }
   ]
 }

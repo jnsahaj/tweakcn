@@ -1,15 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CTA } from "@/components/home/cta";
+import { FAQ } from "@/components/home/faq";
+import { Features } from "@/components/home/features";
+import { Footer } from "@/components/footer";
 import { Header } from "@/components/home/header";
 import { Hero } from "@/components/home/hero";
-import { ThemePresetSelector } from "@/components/home/theme-preset-selector";
-import { Features } from "@/components/home/features";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Roadmap } from "@/components/home/roadmap";
-import { FAQ } from "@/components/home/faq";
-import { CTA } from "@/components/home/cta";
-import { Footer } from "@/components/footer";
+import { ReusableThemeSelector } from "@/components/reusable-theme-selector";
+
+interface ThemeSelection {
+  light: Record<string, string>;
+  dark: Record<string, string>;
+}
+
+function AppThemeSwitcher() {
+  const handleThemeSelect = (theme: ThemeSelection) => {
+    console.log('Selected theme:', theme);
+  };
+
+  return (
+    <div className="my-4">
+      <h2 className="text-lg font-semibold mb-2">Select a Theme</h2>
+      <ReusableThemeSelector onThemeSelect={handleThemeSelect} registryUrl="" />
+    </div>
+  );
+}
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,22 +47,22 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-background text-foreground flex min-h-[100dvh] flex-col items-center justify-items-center">
-      <Header
+    <main className="flex min-h-screen flex-col">
+       <Header
         isScrolled={isScrolled}
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
       />
-      <main className="w-full flex-1">
+      <div className="container flex flex-col items-center">
         <Hero />
-        <ThemePresetSelector />
-        <Features />
         <HowItWorks />
+        <Features />
+        <AppThemeSwitcher />
         <Roadmap />
-        <FAQ />
         <CTA />
-      </main>
+        <FAQ />
+      </div>
       <Footer />
-    </div>
+    </main>
   );
 }
