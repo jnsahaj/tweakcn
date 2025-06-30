@@ -5,6 +5,7 @@ import { ThemeStyles, Theme } from "@/types/theme";
 import { toast } from "@/components/ui/use-toast";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import posthog from "posthog-js";
+import { useRouter } from "next/navigation";
 
 function handleMutationError(error: Error, operation: string) {
   console.error(`Theme ${operation} error:`, error);
@@ -144,6 +145,7 @@ export function useUpdateTheme() {
 export function useDeleteTheme() {
   const queryClient = useQueryClient();
   const { unregisterPreset } = useThemePresetStore();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: (themeId: string) => deleteTheme(themeId),
@@ -165,6 +167,7 @@ export function useDeleteTheme() {
         title: "Theme deleted",
         description: `"${data.name}" has been deleted successfully.`,
       });
+      router.refresh();
     },
     onError: (error, _themeId, context) => {
       if (context?.previousThemes) {
