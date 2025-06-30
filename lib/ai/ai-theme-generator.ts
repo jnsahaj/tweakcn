@@ -2,7 +2,7 @@ import { defaultThemeState } from "@/config/theme";
 import { useEditorStore } from "@/store/editor-store";
 import { AIPromptData } from "@/types/ai";
 import { Theme } from "@/types/theme";
-import { buildPromptForAPI } from "@/utils/ai-prompt";
+import { buildPromptForAPI } from "@/utils/ai/ai-prompt";
 
 /**
  * Generate a theme with AI using a text prompt

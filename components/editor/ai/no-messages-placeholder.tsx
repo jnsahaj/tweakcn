@@ -7,8 +7,8 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { AIPromptData } from "@/types/ai";
-import { createCurrentThemePrompt } from "@/utils/ai-prompt";
-import { PROMPTS } from "@/utils/prompts";
+import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
+import { PROMPTS } from "@/utils/ai/prompts";
 import { Blend, PaintRoller, WandSparkles } from "lucide-react";
 import { ComponentProps, Fragment } from "react";
 import TabsTriggerPill from "../theme-preview/tabs-trigger-pill";
@@ -33,12 +33,12 @@ const CREATE_PROMPTS: Prompt[] = [
   {
     displayContent: "Retro Terminal UI, green phosphor glow",
     prompt:
-      "Create a retro terminal theme with black background (in dark mode), phosphorescent green primary and text, and all fonts monospace.",
+      "Create a retro terminal theme with black background (dark mode) and grayish background (light mode), use phosphorescent pure green (#22FF22 and shades of it) for text and borders. Use monospace fonts and sharp borders.",
   },
   {
     displayContent: "Monochrome Manga-inspired theme",
     prompt:
-      "Create a Manga-inspired theme. Monochromatic palette (black, off-white, grays), square corners, small contrast solid offset shadows, and high-contrast borders (black on light, off-white on dark). Use a playful font, like Architects daughter.",
+      "Create a Manga-inspired theme. Monochromatic palette only (black, off-white, grays), square corners, small contrast solid offset shadows, and high-contrast borders (black on light, off-white on dark). Use a playful font, like Architects daughter.",
   },
   {
     displayContent: "I want a minimal Ghibli Studio vibe",

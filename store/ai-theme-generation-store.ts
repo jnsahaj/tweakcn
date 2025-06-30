@@ -1,4 +1,4 @@
-import { generateThemeWithAI } from "@/lib/ai-theme-generator";
+import { generateThemeWithAI } from "@/lib/ai/ai-theme-generator";
 import { ThemeStyles } from "@/types/theme";
 import { create } from "zustand";
 

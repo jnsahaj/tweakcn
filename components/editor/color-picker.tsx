@@ -11,22 +11,20 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
   const [localColor, setLocalColor] = useState(color);
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const animationTimerRef = useRef<NodeJS.Timeout | null>(null);
   const sectionCtx = useContext(SectionContext);
   const { registerColor, unregisterColor, highlightTarget } = useColorControlFocus();
 
-  // Register/unregister this color control with the focus store
   useEffect(() => {
     if (!name) return;
     registerColor(name, rootRef.current);
     return () => unregisterColor(name);
   }, [name, registerColor, unregisterColor]);
 
-  // Update localColor if the prop changes externally
   useEffect(() => {
     setLocalColor(color);
   }, [color]);
 
-  // Create a stable debounced onChange handler
   const debouncedOnChange = useMemo(
     () => debounce((value: string) => onChange(value), 20),
     [onChange]
@@ -38,7 +36,6 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
     debouncedOnChange(newColor);
   };
 
-  // Cleanup debounced function on unmount
   useEffect(() => {
     return () => {
       debouncedOnChange.cancel();
@@ -48,11 +45,15 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
   const isHighlighted = name && highlightTarget === name;
 
   useEffect(() => {
-    if (isHighlighted) {
-      // Trigger animation
-      setShouldAnimate(true);
+    if (animationTimerRef.current) {
+      clearTimeout(animationTimerRef.current);
+      animationTimerRef.current = null;
+    }
 
+    if (isHighlighted) {
+      setShouldAnimate(true);
       sectionCtx?.setIsExpanded(true);
+
       setTimeout(
         () => {
           rootRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -60,21 +61,28 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
         sectionCtx?.isExpanded ? 0 : 100
       );
 
-      // Reset animation after it completes
-      const timer = setTimeout(() => {
+      animationTimerRef.current = setTimeout(() => {
         setShouldAnimate(false);
-      }, 1000); // Duration should match the animation duration
-
-      return () => clearTimeout(timer);
+        animationTimerRef.current = null;
+      }, 1500);
+    } else {
+      setShouldAnimate(false);
     }
-  }, [isHighlighted, sectionCtx]);
+
+    return () => {
+      if (animationTimerRef.current) {
+        clearTimeout(animationTimerRef.current);
+        animationTimerRef.current = null;
+      }
+    };
+  }, [isHighlighted]);
 
   return (
     <div
       ref={rootRef}
       className={cn(
         "mb-3 transition-all duration-300",
-        shouldAnimate && "bg-border/50 -m-1.5 mb-1.5 rounded-sm p-1.5"
+        shouldAnimate && "bg-border/50 ring-primary -m-1.5 mb-1.5 rounded-sm p-1.5 ring-2"
       )}
     >
       <div className="mb-1.5 flex items-center justify-between">

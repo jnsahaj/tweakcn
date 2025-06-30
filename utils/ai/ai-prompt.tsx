@@ -25,13 +25,13 @@ export const buildPromptForAPI = (promptData: AIPromptData) => {
 export const buildAIPromptRender = (promptData: AIPromptData): React.ReactNode => {
   // Create a regex that matches all possible mention patterns from the actual mentions
   const mentionPatterns = promptData.mentions.map(
-    (m) => `@${m.label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`
+    (m) => `@${m.label.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}`
   );
   const mentionRegex = new RegExp(`(${mentionPatterns.join("|")})`, "g");
 
   const parts = promptData.content.split(mentionRegex);
 
-  return parts.map((part, index) => {
+  return parts.flatMap((part, index) => {
     const mention = promptData.mentions.find((m) => `@${m.label}` === part);
     if (mention) {
       return (
@@ -40,7 +40,10 @@ export const buildAIPromptRender = (promptData: AIPromptData): React.ReactNode =
         </span>
       );
     }
-    return part;
+    // Split by \n and interleave <br /> to show line breaks in the messages UI
+    // without this, the line breaks are not shown and the user message looks messy.
+    const lines = part.split("\n");
+    return lines.flatMap((line, i) => (i === 0 ? line : [<br key={`br-${index}-${i}`} />, line]));
   });
 };
 
