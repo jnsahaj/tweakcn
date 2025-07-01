@@ -14,11 +14,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { ColorSelectorTab, usePreferencesStore } from "@/store/preferences-store";
 import { TAILWIND_PALETTE } from "@/utils/registry/tailwind-colors";
 import { Check, LayoutGrid, List } from "lucide-react";
 import { useCallback } from "react";
 import { Separator } from "../ui/separator";
-import { ColorSelectorTab, usePreferencesStore } from "@/store/preferences-store";
 
 type ColorSelectorPopoverProps = {
   currentColor: string;
@@ -61,7 +61,8 @@ export function ColorSelectorPopover({
         <TooltipWrapper asChild label="Tailwind Colors">
           <Button
             variant="ghost"
-            className="group shadown-none bg-input bg-input/25 border-border/20 size-8 rounded border"
+            size="sm"
+            className="group bg-input/25 size-8 rounded border shadow-none"
           >
             <TailwindCSS className="text-foreground group-hover:text-accent-foreground size-4 transition-colors" />
           </Button>
@@ -79,13 +80,13 @@ export function ColorSelectorPopover({
             <TabsList className="bg-transparent">
               <TabsTrigger
                 value="list"
-                className="data-[state=active]:bg-input/25 data-[state=active]:shadow-none"
+                className="data-[state=active]:bg-input/25 size-8 p-0 data-[state=active]:shadow-none"
               >
                 <List className="size-4" />
               </TabsTrigger>
               <TabsTrigger
                 value="palette"
-                className="data-[state=active]:bg-input/25 data-[state=active]:shadow-none"
+                className="data-[state=active]:bg-input/25 size-8 p-0 data-[state=active]:shadow-none"
               >
                 <LayoutGrid className="size-4" />
               </TabsTrigger>
