@@ -21,17 +21,19 @@ export function MoreOptions({ ...props }: MoreOptionsProps) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger {...props} asChild>
+        <DropdownMenuTrigger asChild {...props}>
           <Button variant="ghost" size="icon">
             <MoreVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => setMcpDialogOpen(true)}>
-            <McpIcon className="h-4 w-4" />
-            MCP
+        <DropdownMenuContent align="end" className="text-foreground">
+          <DropdownMenuItem onClick={() => setMcpDialogOpen(true)} asChild>
+            <Button variant="ghost" size="sm" className="w-full justify-start">
+              <McpIcon className="h-4 w-4" />
+              <span className="text-sm">MCP</span>
+            </Button>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild onSelect={(e) => e.preventDefault()}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
             <ContrastChecker currentStyles={themeState.styles[themeState.currentMode]} />
           </DropdownMenuItem>
         </DropdownMenuContent>
