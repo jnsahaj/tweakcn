@@ -52,10 +52,15 @@ export type ReadOnlyColorDisplayProps = {
 
 export type ColorFormat = "hex" | "rgb" | "hsl" | "oklch";
 
-export type ColorSwatchProps = {
-  hex: string;
-  name: string;
-  size?: "sm" | "md" | "lg";
-};
-
-export type ValidShade = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' | '950';
+export type ValidTailwindShade =
+  | "50"
+  | "100"
+  | "200"
+  | "300"
+  | "400"
+  | "500"
+  | "600"
+  | "700"
+  | "800"
+  | "900"
+  | "950";

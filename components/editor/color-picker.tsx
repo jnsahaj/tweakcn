@@ -1,20 +1,18 @@
-// color-picker.tsx
-import React, { useState, useEffect, useMemo, useCallback, useRef, useContext } from "react";
-import { ColorPickerProps, ValidShade } from "@/types";
-import { debounce } from "@/utils/debounce";
 import { Label } from "@/components/ui/label";
-import { tailwindColorShades } from "@/utils/registry/tailwind-colors";
-import { cn } from "@/lib/utils";
 import { DEBOUNCE_DELAY } from "@/lib/constants";
-import { convertColorhexToTailClasses, isValidHexColor } from "@/utils/color-type-checker";
+import { cn } from "@/lib/utils";
 import { useColorControlFocus } from "@/store/color-control-focus-store";
+import { ColorPickerProps } from "@/types";
+import { convertColorToTailwindClasses, isValidHexColor } from "@/utils/color-type-checker";
+import { debounce } from "@/utils/debounce";
+import { TAILWIND_SHADES } from "@/utils/registry/tailwind-colors";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { ColorSelectorPopover } from "./color-selector-popover";
 import { SectionContext } from "./section-context";
-import ColorPopover from "./color-popover";
 
 const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [localColor, setLocalColor] = useState(color);
-  const validShades = useMemo(() => tailwindColorShades as ValidShade[], []);
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const animationTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -31,7 +29,7 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
     if (color !== localColor) {
       setLocalColor(color);
     }
-  }, [color]);
+  }, [color, localColor, setLocalColor]);
 
   const debouncedOnChange = useMemo(
     () =>
@@ -47,14 +45,15 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const newColor = e.target.value;
       setLocalColor(newColor);
-      const convertedColor = convertColorhexToTailClasses(newColor, validShades);
+      const convertedColor = convertColorToTailwindClasses(newColor, TAILWIND_SHADES);
+
       if (convertedColor !== newColor) {
         debouncedOnChange(convertedColor);
       } else {
         debouncedOnChange(newColor);
       }
     },
-    [debouncedOnChange, validShades]
+    [debouncedOnChange]
   );
 
   useEffect(() => {
@@ -62,8 +61,8 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
   }, [debouncedOnChange]);
 
   const convertedColor = useMemo(
-    () => convertColorhexToTailClasses(localColor, validShades),
-    [localColor, validShades]
+    () => convertColorToTailwindClasses(localColor, TAILWIND_SHADES),
+    [localColor]
   );
 
   const isHighlighted = name && highlightTarget === name;
@@ -99,7 +98,7 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
         animationTimerRef.current = null;
       }
     };
-  }, [isHighlighted]);
+  }, [isHighlighted, sectionCtx]);
 
   return (
     <div
@@ -139,7 +138,8 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
           placeholder="Enter color (hex or tailwind class)"
         />
 
-        <ColorPopover
+        <ColorSelectorPopover
+          currentColor={color}
           onChange={onChange}
           setLocalColor={setLocalColor}
         />

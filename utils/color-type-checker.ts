@@ -1,5 +1,5 @@
-import { ValidShade } from "@/types";
-import { tailwindColors } from "./registry/tailwind-colors";
+import { ValidTailwindShade } from "@/types";
+import { TAILWIND_PALETTE } from "./registry/tailwind-colors";
 
 // Validation functions
 export const isValidHexColor = (color: string): boolean => {
@@ -11,9 +11,9 @@ export const isValidTailwindColor = (color: string): boolean => {
 };
 
 // Color conversion utility -> Hex to tailwind color classes
-export const convertColorhexToTailClasses = (
+export const convertColorToTailwindClasses = (
   inputColor: string,
-  validShades: ValidShade[]
+  validShades: ValidTailwindShade[]
 ): string => {
   if (isValidHexColor(inputColor)) {
     return inputColor;
@@ -21,9 +21,9 @@ export const convertColorhexToTailClasses = (
 
   if (isValidTailwindColor(inputColor)) {
     const [name, shade] = inputColor.split("-");
-    if (name in tailwindColors && validShades.includes(shade as ValidShade)) {
-      const colorShades = tailwindColors[name as keyof typeof tailwindColors];
-      return colorShades[shade as ValidShade] || inputColor;
+    if (name in TAILWIND_PALETTE && validShades.includes(shade as ValidTailwindShade)) {
+      const colorShades = TAILWIND_PALETTE[name as keyof typeof TAILWIND_PALETTE];
+      return colorShades[shade as ValidTailwindShade] || inputColor;
     }
   }
   return inputColor;
