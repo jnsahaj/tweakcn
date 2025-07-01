@@ -1,13 +1,13 @@
 "use client";
 
-import { createPortal } from "react-dom";
-import React from "react";
-import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Separator } from "@/components/ui/separator";
 import { useClassNames } from "@/hooks/use-theme-inspector-classnames";
-import InspectorClassItem from "./inspector-class-item";
+import { cn } from "@/lib/utils";
 import { Inspect } from "lucide-react";
-import { Separator } from "../ui/separator";
+import React from "react";
+import { createPortal } from "react-dom";
+import InspectorClassItem from "./inspector-class-item";
 
 interface InspectorState {
   rect: DOMRect | null;
@@ -37,46 +37,44 @@ const InspectorOverlay = ({ inspector, enabled, rootRef }: InspectorOverlayProps
   };
 
   return createPortal(
-    <TooltipProvider delayDuration={400}>
-      <Tooltip open={true} defaultOpen={false}>
-        <TooltipTrigger asChild>
-          <div
-            data-inspector-overlay
-            className={cn(
-              "ring-primary ring-offset-background/90 pointer-events-none absolute z-50 ring-3 ring-offset-2",
-              "transition-all duration-100 ease-in-out"
-            )}
-            style={{
-              top: relativeRect.top,
-              left: relativeRect.left,
-              width: relativeRect.width,
-              height: relativeRect.height,
-            }}
-          />
-        </TooltipTrigger>
-
-        <TooltipContent
+    <HoverCard open={true} defaultOpen={false}>
+      <HoverCardTrigger asChild>
+        <div
           data-inspector-overlay
-          side="top"
-          align="start"
           className={cn(
-            "bg-popover/90 text-popover-foreground pointer-events-auto w-auto max-w-[50vw] space-y-2 rounded-lg border p-2 pb-0 shadow-xl backdrop-blur-lg"
+            "ring-primary ring-offset-background/90 pointer-events-none absolute z-50 ring-3 ring-offset-2",
+            "transition-all duration-100 ease-in-out"
           )}
-          sideOffset={8}
-        >
-          <p className="text-muted-foreground flex items-center gap-1.5 px-1 text-sm">
-            <Inspect className="size-4" />
-            Inspector
-          </p>
-          <Separator />
-          <div className="flex flex-col gap-0.5">
-            {classNames.map((cls) => (
-              <InspectorClassItem key={cls} className={cls} />
-            ))}
-          </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>,
+          style={{
+            top: relativeRect.top,
+            left: relativeRect.left,
+            width: relativeRect.width,
+            height: relativeRect.height,
+          }}
+        />
+      </HoverCardTrigger>
+
+      <HoverCardContent
+        data-inspector-overlay
+        side="top"
+        align="start"
+        className={cn(
+          "bg-popover/85 text-popover-foreground pointer-events-auto relative w-auto max-w-[50vw] rounded-lg border p-0 shadow-xl backdrop-blur-lg"
+        )}
+        sideOffset={8}
+      >
+        <div className="text-muted-foreground flex items-center gap-1.5 px-2 pt-2 text-sm">
+          <Inspect className="size-4" />
+          Inspector
+        </div>
+        <Separator className="my-1" />
+        <div className="flex flex-col gap-1 px-1 pb-2">
+          {classNames.map((cls) => (
+            <InspectorClassItem key={cls} className={cls} />
+          ))}
+        </div>
+      </HoverCardContent>
+    </HoverCard>,
     rootRef.current
   );
 };
