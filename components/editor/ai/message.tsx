@@ -40,8 +40,8 @@ export default function Message({ message, onRetry }: MessageProps) {
         <div className={cn("group/message relative", isAssistant && "w-full")}>
           <p
             className={cn(
-              "bg-red w-fit text-sm",
-              isUser && "bg-muted/80 text-foreground/80 border-border/50! rounded-lg border p-4"
+              "w-fit text-sm",
+              isUser && "bg-card/75 text-card-foreground/90 border-border/75! rounded-lg border p-3"
             )}
           >
             {getDisplayContent()}
