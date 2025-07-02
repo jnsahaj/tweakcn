@@ -15,10 +15,12 @@ interface PreferencesStore {
   colorFormat: ColorFormat;
   packageManager: PackageManager;
   colorSelectorTab: ColorSelectorTab;
+  chatSuggestionsOpen: boolean;
   setTailwindVersion: (version: "3" | "4") => void;
   setColorFormat: (format: ColorFormat) => void;
   setPackageManager: (pm: PackageManager) => void;
   setColorSelectorTab: (tab: ColorSelectorTab) => void;
+  setChatSuggestionsOpen: (open: boolean) => void;
   getAvailableColorFormats: () => readonly ColorFormat[];
 }
 
@@ -29,6 +31,7 @@ export const usePreferencesStore = create<PreferencesStore>()(
       colorFormat: "oklch",
       packageManager: "pnpm",
       colorSelectorTab: "list",
+      chatSuggestionsOpen: true,
       setTailwindVersion: (version: "3" | "4") => {
         const currentFormat = get().colorFormat;
         if (version === "3" && currentFormat === "oklch") {
@@ -52,6 +55,9 @@ export const usePreferencesStore = create<PreferencesStore>()(
       getAvailableColorFormats: () => {
         const version = get().tailwindVersion as "3" | "4";
         return colorFormatsByVersion[version];
+      },
+      setChatSuggestionsOpen: (open: boolean) => {
+        set({ chatSuggestionsOpen: open });
       },
     }),
     {
