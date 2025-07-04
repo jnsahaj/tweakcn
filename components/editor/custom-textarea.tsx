@@ -98,7 +98,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
       Placeholder.configure({
         placeholder: "Describe your theme...",
         emptyEditorClass:
-          "cursor-text before:content-[attr(data-placeholder)] before:absolute before:top-2 before:left-3 before:text-mauve-11 before:opacity-50 before-pointer-events-none",
+          "cursor-text before:content-[attr(data-placeholder)] before:absolute before:inset-x-1 before:top-1 before:opacity-50 before-pointer-events-none",
       }),
       CharacterCount.configure({
         limit: characterLimit,
@@ -108,7 +108,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
     editorProps: {
       attributes: {
         class:
-          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full rounded-md bg-background px-3 py-2 pb-6 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50 max-sm:text-[16px]!",
+          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background px-1 py-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
       },
       handleKeyDown: (view, event) => {
         if (event.key === "Enter" && !event.shiftKey && !aiGenerateLoading) {
