@@ -5,6 +5,7 @@ import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
 import ColorPreview from "../theme-preview/color-preview";
+import { ChatImagePreview } from "./chat-image-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
 import { MessageControls } from "./message-controls";
 
@@ -37,15 +38,20 @@ export default function Message({ message, onRetry }: MessageProps) {
           </div>
         )}
 
-        <div className={cn("group/message relative", isAssistant && "w-full")}>
-          <p
+        <div className={cn("group/message relative flex flex-col gap-1", isAssistant && "w-full")}>
+          {isUser && message.promptData?.image && (
+            <ChatImagePreview imageSrc={message.promptData.image.preview} />
+          )}
+
+          <div
             className={cn(
               "w-fit text-sm",
-              isUser && "bg-card/75 text-card-foreground/90 border-border/75! rounded-lg border p-3"
+              isUser &&
+                "bg-card/75 text-card-foreground/90 border-border/75! self-end rounded-lg border p-3"
             )}
           >
             {getDisplayContent()}
-          </p>
+          </div>
 
           {isAssistant && message.themeStyles && (
             <div className="mt-2">
