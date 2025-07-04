@@ -7,16 +7,23 @@ import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
 /**
  * Generate a theme with AI using a text prompt
  */
-export async function generateThemeWithAI(prompt: string, options?: { signal?: AbortSignal }) {
+export async function generateThemeWithAI(
+  prompt: string,
+  imageFile?: File,
+  options?: { signal?: AbortSignal }
+) {
   if (!prompt.trim()) return null;
 
   try {
+    const formData = new FormData();
+    formData.append("prompt", prompt);
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
     const response = await fetch("/api/generate-theme", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prompt }),
+      body: formData,
       signal: options?.signal,
     });
 
@@ -62,5 +69,8 @@ export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
 }
 
 export function buildPrompt(promptData: AIPromptData) {
-  return buildPromptForAPI(promptData);
+  return {
+    text: buildPromptForAPI(promptData),
+    imageFile: promptData.image?.file,
+  };
 }

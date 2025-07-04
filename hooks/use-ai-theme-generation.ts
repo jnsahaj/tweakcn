@@ -8,9 +8,9 @@ export function useAIThemeGeneration() {
   const cancelThemeGeneration = useAIThemeGenerationStore((state) => state.cancelThemeGeneration);
   const posthog = usePostHog();
 
-  const handleGenerateTheme = async (prompt: string) => {
+  const handleGenerateTheme = async (prompt: string, imageFile?: File) => {
     try {
-      const result = await generateTheme(prompt);
+      const result = await generateTheme(prompt, imageFile);
 
       toast({
         title: "Theme generated",
@@ -19,6 +19,7 @@ export function useAIThemeGeneration() {
 
       posthog.capture("AI_GENERATE_THEME", {
         prompt,
+        includesImage: !!imageFile,
       });
 
       return result; // Return the result from the store
