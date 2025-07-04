@@ -1,7 +1,7 @@
-import { AIPromptData, MentionReference } from "@/types/ai";
+import { getLastGeneratedThemeStyles, useAIChatStore } from "@/store/ai-chat-store";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
-import { getLastGeneratedThemeStyles, useAIChatStore } from "@/store/ai-chat-store";
+import { AIPromptData, MentionReference } from "@/types/ai";
 
 export const getTextContent = (promptData: AIPromptData | null) => {
   if (!promptData) return "";
@@ -30,8 +30,7 @@ export const buildAIPromptRender = (promptData: AIPromptData): React.ReactNode =
   const mentionRegex = new RegExp(`(${mentionPatterns.join("|")})`, "g");
 
   const parts = promptData.content.split(mentionRegex);
-
-  return parts.flatMap((part, index) => {
+  const textContent = parts.flatMap((part, index) => {
     const mention = promptData.mentions.find((m) => `@${m.label}` === part);
     if (mention) {
       return (
@@ -45,6 +44,8 @@ export const buildAIPromptRender = (promptData: AIPromptData): React.ReactNode =
     const lines = part.split("\n");
     return lines.flatMap((line, i) => (i === 0 ? line : [<br key={`br-${index}-${i}`} />, line]));
   });
+
+  return textContent;
 };
 
 export function attachCurrentThemeMention(promptData: AIPromptData): AIPromptData {
@@ -57,7 +58,7 @@ export function attachCurrentThemeMention(promptData: AIPromptData): AIPromptDat
   };
 
   return {
-    content: promptData.content,
+    ...promptData,
     mentions: [...promptData.mentions, mentionReference],
   };
 }
@@ -73,7 +74,7 @@ export function attachLastGeneratedThemeMention(promptData: AIPromptData): AIPro
   };
 
   return {
-    content: promptData.content,
+    ...promptData,
     mentions: [...promptData.mentions, mentionReference],
   };
 }
