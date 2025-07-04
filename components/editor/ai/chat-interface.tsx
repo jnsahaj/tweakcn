@@ -58,7 +58,8 @@ export function ChatInterface() {
       promptData: transformedPromptData,
     });
 
-    const result = await generateTheme(buildPrompt(transformedPromptData));
+    const builtPrompt = buildPrompt(transformedPromptData);
+    const result = await generateTheme(builtPrompt.text, builtPrompt.imageFile);
 
     if (!result) {
       addAssistantMessage({

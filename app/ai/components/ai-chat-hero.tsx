@@ -46,7 +46,8 @@ export function AIChatHero() {
 
     router.push("/editor/theme?tab=ai");
 
-    const result = await generateTheme(buildPrompt(promptData));
+    const builtPrompt = buildPrompt(promptData);
+    const result = await generateTheme(builtPrompt.text, builtPrompt.imageFile);
 
     if (!result) {
       addAssistantMessage({
@@ -76,7 +77,7 @@ export function AIChatHero() {
   });
 
   return (
-    <div className="relative isolate flex w-full flex-1 overflow-hidden">
+    <div className="relative isolate flex w-full flex-1">
       <div className="@container relative isolate z-1 mx-auto flex max-w-[49rem] flex-1 flex-col justify-center px-4">
         <ChatHeading />
 
