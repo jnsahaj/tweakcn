@@ -9,9 +9,16 @@ export type MentionReference = {
   };
 };
 
+export type PromptImage = {
+  file: File;
+  preview: string;
+};
+
+// TODO: `image?: PromptImage` should be `images?: PromptImage[]` to support multiple images
 export type AIPromptData = {
   content: string;
   mentions: MentionReference[];
+  image?: PromptImage;
 };
 
 export type ChatMessage = {
