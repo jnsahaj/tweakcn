@@ -19,11 +19,20 @@ export async function generateMetadata({ params }: ThemePageProps): Promise<Meta
       title: `${theme?.name} - tweakcn`,
       description: `Discover shadcn/ui themes - ${theme?.name} theme`,
       type: "website",
+      images: [
+        {
+          url: "https://tweakcn.com/og-theme.v070425.png",
+          width: 1200,
+          height: 630,
+          alt: `${theme?.name} theme preview for tweakcn`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: `${theme?.name} - tweakcn`,
       description: `Discover shadcn/ui themes - ${theme?.name} theme`,
+      images: ["https://tweakcn.com/og-theme.v070425.png"],
     },
     robots: {
       index: false,
