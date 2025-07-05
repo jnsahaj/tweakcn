@@ -106,11 +106,8 @@ export async function getMyUsageStats(timeframe: Timeframe): Promise<UsageStats>
   }
 }
 
-export async function getMyAllTimeRequestCount(): Promise<number> {
+export async function getMyAllTimeRequestCount(userId: string): Promise<number> {
   try {
-    const userId = await getCurrentUserId();
-
-    // Efficient count query for all-time requests
     const result = await db
       .select({ count: count() })
       .from(aiUsage)

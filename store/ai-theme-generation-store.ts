@@ -11,7 +11,11 @@ interface AIThemeGenerationStore {
   generateTheme: (
     prompt?: string,
     imageFiles?: File[]
-  ) => Promise<{ text: string; theme: ThemeStyles }>;
+  ) => Promise<{
+    text: string;
+    theme: ThemeStyles;
+    subscriptionStatus?: { isSubscribed: boolean; requestsRemaining: number };
+  }>;
   cancelThemeGeneration: () => void;
   resetState: () => void;
 }

@@ -1,4 +1,3 @@
-import { auth } from "@/lib/auth";
 import {
   getMessages,
   requestSchema,
@@ -12,9 +11,10 @@ import { generateText, Output } from "ai";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { recordAIUsage } from "@/actions/ai-usage";
-import { logError } from "@/lib/shared";
-import { requireSubscriptionOrFreeUsage } from "@/lib/subscription";
+import { logError, getCurrentUserId } from "@/lib/shared";
+import { validateSubscriptionAndUsage } from "@/lib/subscription";
 import { handleError } from "@/lib/error-response";
+import { SubscriptionRequiredError } from "@/types/errors";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY,
@@ -36,13 +36,7 @@ const ratelimit = new Ratelimit({
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession(req);
-    if (!session) {
-      return new Response("Unauthorized", {
-        status: 401,
-      });
-    }
-
+    const userId = await getCurrentUserId(req);
     const headersList = await headers();
 
     if (process.env.NODE_ENV !== "development") {
@@ -61,7 +55,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    await requireSubscriptionOrFreeUsage(req);
+    const subscriptionCheck = await validateSubscriptionAndUsage(userId);
+
+    if (!subscriptionCheck.canProceed) {
+      throw new SubscriptionRequiredError(subscriptionCheck.error, {
+        requestsRemaining: subscriptionCheck.requestsRemaining,
+      });
+    }
 
     const formData = await req.formData();
     const { prompt, images: imageFiles } = parseFormData(formData);
@@ -87,9 +87,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return new Response(JSON.stringify(theme), {
-      headers: { "Content-Type": "application/json" },
-    });
+    const updatedSubscriptionStatus = {
+      isSubscribed: subscriptionCheck.isSubscribed,
+      requestsRemaining: subscriptionCheck.isSubscribed
+        ? -1
+        : Math.max(0, subscriptionCheck.requestsRemaining - 1),
+    };
+
+    return new Response(
+      JSON.stringify({
+        ...theme,
+        subscriptionStatus: updatedSubscriptionStatus,
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return handleError(error, { route: "/api/generate-theme" });
   }
