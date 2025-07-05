@@ -1,3 +1,4 @@
+import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/ai/ai-theme-generator";
 import { auth } from "@/lib/auth";
 import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { themeStylePropsSchema } from "@/types/theme";
@@ -24,13 +25,15 @@ const requestSchema = z.object({
     .max(AI_PROMPT_CHARACTER_LIMIT + 5000, {
       message: `Failed to generate theme. Input character limit exceeded.`,
     }),
-  image: z
-    .instanceof(File)
-    .refine((file) => file.type.startsWith("image/"), {
-      message: "File must be an image",
-    })
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: "Image must be smaller than 5MB",
+  images: z
+    .array(
+      z.instanceof(File).refine((file) => file.type.startsWith("image/"), {
+        message: "File must be an image",
+      })
+    )
+    .max(MAX_IMAGE_FILES, { message: `You can upload up to ${MAX_IMAGE_FILES} images.` })
+    .refine((files) => files.every((file) => file.size <= MAX_IMAGE_FILE_SIZE), {
+      message: "Each image must be smaller than 5MB",
     })
     .optional(),
 });
@@ -38,10 +41,11 @@ const requestSchema = z.object({
 // Helper function to parse and validate FormData
 function parseFormData(formData: FormData) {
   const prompt = formData.get("prompt");
-  const imageFile = formData.get("image");
 
+  // Only keep File instances (FormData.getAll can return strings if no file is uploaded)
+  const imageFiles = formData.getAll("images").filter((f): f is File => f instanceof File);
   // Convert FormData to object for validation
-  const data = { prompt, image: imageFile };
+  const data = { prompt, images: imageFiles };
   return requestSchema.parse(data);
 }
 
@@ -96,10 +100,9 @@ export async function POST(req: NextRequest) {
     }
 
     const formData = await req.formData();
-    const { prompt, image: imageFile } = parseFormData(formData);
+    const { prompt, images: imageFiles } = parseFormData(formData);
 
-    const imageBase64 = imageFile ? await getImageBase64(imageFile) : undefined;
-    const messages = getMessages(prompt, imageBase64);
+    const messages = await getMessages(prompt, imageFiles);
 
     // Now, it is possible to add Tools (i.e. a tool to process the image)
     const { experimental_output: theme } = await generateText({
@@ -172,30 +175,49 @@ async function getImageBase64(imageFile: File) {
   return imageBase64;
 }
 
-function getMessages(prompt: string, imageBase64: string | undefined): CoreMessage[] {
-  const messagesWithImage: CoreMessage[] = [
-    {
-      role: "user",
-      content: [
-        { type: "image", image: imageBase64! },
-        {
-          type: "text",
-          text: `Analyze this image and extract the color tokens to create a shadcn/ui theme based on it. ${prompt}`,
-        },
-      ],
-    },
-  ];
+async function getMessages(prompt?: string, imageFiles?: File[]): Promise<CoreMessage[]> {
+  let imageParts: string[] = [];
 
-  const messagesWithPromptOnly: CoreMessage[] = [
-    {
-      role: "user",
-      content: [
-        {
-          type: "text",
-          text: `Create shadcn/ui theme for: ${prompt}`,
-        },
-      ],
-    },
-  ];
-  return imageBase64 ? messagesWithImage : messagesWithPromptOnly;
+  if (imageFiles && imageFiles.length > 0) {
+    imageParts = await Promise.all(
+      imageFiles.map(async (imageFile) => {
+        const result = await getImageBase64(imageFile);
+        return result || "";
+      })
+    );
+    imageParts = imageParts.filter((part) => !!part);
+  }
+
+  // https://ai-sdk.dev/docs/reference/ai-sdk-core/core-message#imagepart
+  const imageContentParts = imageParts.map((imagePart) => ({
+    type: "image" as const,
+    image: imagePart,
+  }));
+
+  if (imageContentParts.length > 0) {
+    return [
+      {
+        role: "user",
+        content: [
+          ...imageContentParts,
+          {
+            type: "text",
+            text: `Analyze these image(s) and extract the color tokens to create a shadcn/ui theme based on them. ${prompt ?? ""}`.trim(),
+          },
+        ],
+      },
+    ];
+  } else {
+    return [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: `Create shadcn/ui theme for: ${prompt}`.trim(),
+          },
+        ],
+      },
+    ];
+  }
 }
