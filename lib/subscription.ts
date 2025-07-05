@@ -1,10 +1,11 @@
+import "server-only";
+
 import { polar } from "@/lib/polar";
 import { getMyAllTimeRequestCount } from "@/actions/ai-usage";
 import { SubscriptionRequiredError } from "@/types/errors";
 import { NextRequest } from "next/server";
 import { getCurrentUserId } from "./shared";
-
-const FREE_TIER_LIMIT = 5;
+import { AI_REQUEST_FREE_TIER_LIMIT } from "./constants";
 
 export interface SubscriptionCheck {
   canProceed: boolean;
@@ -16,16 +17,20 @@ export interface SubscriptionCheck {
 
 export async function validateSubscriptionAndUsage(userId: string): Promise<SubscriptionCheck> {
   try {
-    const customer = await polar.customers.getStateExternal({
-      externalId: userId,
-    });
+    const [customer, requestsUsed] = await Promise.all([
+      polar.customers
+        .getStateExternal({
+          externalId: userId,
+        })
+        // user might not be a customer yet
+        .catch(() => null),
+      getMyAllTimeRequestCount(userId),
+    ]);
 
-    const isSubscribed = !!customer?.activeSubscriptions.find(
+    const isSubscribed = !!customer?.activeSubscriptions?.find(
       (s) =>
         s.status === "active" && s.productId === process.env.NEXT_PUBLIC_TWEAKCN_PLUS_PRODUCT_ID
     );
-
-    const requestsUsed = await getMyAllTimeRequestCount();
 
     if (isSubscribed) {
       return {
@@ -36,8 +41,8 @@ export async function validateSubscriptionAndUsage(userId: string): Promise<Subs
       };
     }
 
-    const requestsRemaining = Math.max(0, FREE_TIER_LIMIT - requestsUsed);
-    const canProceed = requestsUsed < FREE_TIER_LIMIT;
+    const requestsRemaining = Math.max(0, AI_REQUEST_FREE_TIER_LIMIT - requestsUsed);
+    const canProceed = requestsUsed < AI_REQUEST_FREE_TIER_LIMIT;
 
     if (!canProceed) {
       return {
@@ -45,7 +50,7 @@ export async function validateSubscriptionAndUsage(userId: string): Promise<Subs
         isSubscribed: false,
         requestsUsed,
         requestsRemaining: 0,
-        error: `You've reached your free limit of ${FREE_TIER_LIMIT} requests. Please upgrade to continue.`,
+        error: `You've reached your free limit of ${AI_REQUEST_FREE_TIER_LIMIT} requests. Please upgrade to continue.`,
       };
     }
 

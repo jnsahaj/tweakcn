@@ -32,7 +32,11 @@ export async function generateThemeWithAI(
   prompt?: string,
   imageFiles?: File[],
   options?: { signal?: AbortSignal }
-) {
+): Promise<{
+  text: string;
+  theme: Theme["styles"];
+  subscriptionStatus?: { isSubscribed: boolean; requestsRemaining: number };
+}> {
   try {
     const formData = new FormData();
 
@@ -53,7 +57,7 @@ export async function generateThemeWithAI(
     });
 
     if (!response.ok) {
-      handleError(response);
+      await handleError(response);
     }
 
     const result = await response.json();

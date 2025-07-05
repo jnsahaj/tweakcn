@@ -1,33 +1,63 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 
 export function AlertBanner() {
   const { data: session } = authClient.useSession();
-  const isPro = false;
-  const isLoggedIn = !!session;
-  const freeProMessagesLeft = 5;
+  const isLoggedIn = !!session?.user.id;
+
+  const fetchSubscriptionStatus = async () => {
+    const res = await fetch("/api/subscription", { method: "GET" });
+    return res.json();
+  };
+
+  const { data: subscriptionStatus = null } = useQuery({
+    queryKey: ["subscriptionStatus"],
+    queryFn: fetchSubscriptionStatus,
+    enabled: isLoggedIn,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    // Ensure fresh data when manually updated
+    refetchOnWindowFocus: false,
+  });
+
+  const isPro = subscriptionStatus?.isSubscribed ?? false;
+  const freeProMessagesLeft = subscriptionStatus?.requestsRemaining ?? 0;
 
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (isLoggedIn && !isPro && freeProMessagesLeft <= 5) {
-      timer = setTimeout(() => setShowBanner(true), 1000);
+    if (!subscriptionStatus) {
+      setShowBanner(false);
+      return;
+    }
+
+    const { isSubscribed, requestsRemaining } = subscriptionStatus;
+    const shouldShowBanner =
+      isLoggedIn && !isSubscribed && requestsRemaining <= AI_REQUEST_FREE_TIER_LIMIT;
+
+    if (shouldShowBanner) {
+      // Reset the banner state when subscription status changes
+      setShowBanner(false);
+      timer = setTimeout(() => setShowBanner(true), 100);
     } else {
       setShowBanner(false);
     }
 
     return () => clearTimeout(timer);
-  }, [isLoggedIn, isPro, freeProMessagesLeft]);
+  }, [isLoggedIn, subscriptionStatus]);
 
   const getBannerContent = () => {
     if (isLoggedIn && !isPro && freeProMessagesLeft > 0) {
       return (
         <span>
-          You only have {freeProMessagesLeft} Free
+          You have {freeProMessagesLeft} Free
           <span className="text-primary font-medium">{` Pro `}</span>
           messages left.
         </span>
@@ -37,8 +67,8 @@ export function AlertBanner() {
     if (isLoggedIn && !isPro && freeProMessagesLeft <= 0) {
       return (
         <span>
-          Upgrade to <span className="text-primary font-medium">Pro</span> to unlock all features
-          and higher limits.
+          Upgrade to <span className="text-primary font-medium">Pro</span> to unlock unlimited
+          requests.
         </span>
       );
     }
