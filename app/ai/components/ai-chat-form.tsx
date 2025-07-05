@@ -46,17 +46,28 @@ export function AIChatForm({
   };
 
   const handleGenerate = async () => {
-    // TODO: Allow empty content/text prompt message if images are provided
-    if (!promptData?.content) return;
-
+    // Only send images that are not loading, and strip loading property
     const images = selectedImages
       .filter((img) => !img.loading)
       .map(({ file, preview }) => ({ file, preview }));
 
-    handleThemeGeneration({ ...promptData, images });
+    // Allow if there is text, or at least one image
+    if ((!promptData?.content || promptData.content.trim().length === 0) && images.length === 0) {
+      return;
+    }
+
+    handleThemeGeneration({
+      ...promptData,
+      content: promptData?.content ?? "",
+      mentions: promptData?.mentions ?? [],
+      images,
+    });
   };
 
-  const isSendButtonDisabled = !promptData?.content || aiGenerateLoading || isSomeImageUploading;
+  const isSendButtonDisabled =
+    (selectedImages.length === 0 && !promptData?.content?.trim()) ||
+    aiGenerateLoading ||
+    isSomeImageUploading;
 
   return (
     <div className="@container/form relative transition-all contain-layout">
