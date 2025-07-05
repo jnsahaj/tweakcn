@@ -21,12 +21,12 @@ export default function Message({ message, onRetry }: MessageProps) {
 
   const { themeState } = useEditorStore();
 
-  const getDisplayContent = () => {
+  const getDisplayContent = useCallback(() => {
     if (isUser && message.promptData) {
       return buildAIPromptRender(message.promptData);
     }
     return message.content || "";
-  };
+  }, [isUser, message.promptData, message.content]);
 
   const getImages = useCallback(() => {
     if (isUser && message.promptData?.images) {
@@ -36,6 +36,8 @@ export default function Message({ message, onRetry }: MessageProps) {
   }, [isUser, message.promptData]);
 
   const images = getImages();
+  const msgContent = getDisplayContent();
+  const shouldDisplayMsgContent = message.promptData?.content?.trim() != "";
 
   return (
     <div className={cn("flex items-start gap-4", isUser ? "justify-end" : "justify-start")}>
@@ -79,15 +81,18 @@ export default function Message({ message, onRetry }: MessageProps) {
             </div>
           )}
 
-          <div
-            className={cn(
-              "w-fit text-sm",
-              isUser &&
-                "bg-card/75 text-card-foreground/90 border-border/75! self-end rounded-lg border p-3"
-            )}
-          >
-            {getDisplayContent()}
-          </div>
+          {/* Message content */}
+          {shouldDisplayMsgContent && (
+            <div
+              className={cn(
+                "w-fit text-sm",
+                isUser &&
+                  "bg-card/75 text-card-foreground/90 border-border/75! self-end rounded-lg border p-3"
+              )}
+            >
+              {msgContent}
+            </div>
+          )}
 
           {isAssistant && message.themeStyles && (
             <div className="mt-2">
