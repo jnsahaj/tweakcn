@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useScramble } from "use-scramble";
 
 export default function PricingPage() {
