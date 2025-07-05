@@ -3,10 +3,10 @@
 import { z } from "zod";
 import { db } from "@/db";
 import { aiUsage } from "@/db/schema";
-import { eq, and, gte } from "drizzle-orm";
+import { eq, and, gte, count } from "drizzle-orm";
 import cuid from "cuid";
 import { ValidationError } from "@/types/errors";
-import { getCurrentUserId } from "./shared";
+import { getCurrentUserId } from "@/lib/shared";
 
 const getDaysSinceEpoch = (daysAgo: number = 0) =>
   Math.floor(Date.now() / (24 * 60 * 60 * 1000)) - daysAgo;
@@ -102,6 +102,23 @@ export async function getMyUsageStats(timeframe: Timeframe): Promise<UsageStats>
     };
   } catch (error) {
     console.error("Error getting usage stats:", error);
+    throw error;
+  }
+}
+
+export async function getMyAllTimeRequestCount(): Promise<number> {
+  try {
+    const userId = await getCurrentUserId();
+
+    // Efficient count query for all-time requests
+    const result = await db
+      .select({ count: count() })
+      .from(aiUsage)
+      .where(eq(aiUsage.userId, userId));
+
+    return result[0]?.count ?? 0;
+  } catch (error) {
+    console.error("Error getting all-time request count:", error);
     throw error;
   }
 }
