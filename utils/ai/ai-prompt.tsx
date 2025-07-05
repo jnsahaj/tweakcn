@@ -57,10 +57,11 @@ export function attachCurrentThemeMention(promptData: AIPromptData): AIPromptDat
     themeData: currentThemeData,
   };
 
-  return {
+  const promptDataWithMention = {
     ...promptData,
     mentions: [...promptData.mentions, mentionReference],
   };
+  return promptDataWithMention;
 }
 
 export function attachLastGeneratedThemeMention(promptData: AIPromptData): AIPromptData {
@@ -73,10 +74,11 @@ export function attachLastGeneratedThemeMention(promptData: AIPromptData): AIPro
     themeData: lastGeneratedThemeStyles,
   };
 
-  return {
+  const promptDataWithMention = {
     ...promptData,
     mentions: [...promptData.mentions, mentionReference],
   };
+  return promptDataWithMention;
 }
 
 export function createCurrentThemePrompt({ prompt }: { prompt: string }): AIPromptData {
