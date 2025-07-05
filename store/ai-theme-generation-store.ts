@@ -7,9 +7,9 @@ interface AIThemeGenerationStore {
   abortController: AbortController | null;
 
   setLoading: (loading: boolean) => void;
-  // generateTheme now only takes prompt. Callbacks are removed.
+  // generateTheme now only takes an optional prompt and image files. Callbacks are removed.
   generateTheme: (
-    prompt: string,
+    prompt?: string,
     imageFiles?: File[]
   ) => Promise<{ text: string; theme: ThemeStyles }>;
   cancelThemeGeneration: () => void;
@@ -34,9 +34,12 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     }
   },
 
-  generateTheme: async (prompt: string, imageFiles?: File[]) => {
+  generateTheme: async (prompt?: string, imageFiles?: File[]) => {
+    if (!prompt && !imageFiles?.length) {
+      throw new Error("Prompt or image files are required");
+    }
+
     const state = get();
-    if (!prompt.trim()) return; // Or throw new Error("Prompt cannot be empty");
 
     if (state.abortController) {
       state.abortController.abort();
