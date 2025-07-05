@@ -1,4 +1,4 @@
-import { type ThemeStyles, type ThemeStyleProps } from "./theme";
+import { type ThemeStyleProps, type ThemeStyles } from "./theme";
 
 export type MentionReference = {
   id: string;
@@ -14,11 +14,10 @@ export type PromptImage = {
   preview: string;
 };
 
-// TODO: `image?: PromptImage` should be `images?: PromptImage[]` to support multiple images
 export type AIPromptData = {
   content: string;
   mentions: MentionReference[];
-  image?: PromptImage;
+  images?: PromptImage[];
 };
 
 export type ChatMessage = {
