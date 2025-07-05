@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
+import { Link, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
@@ -97,9 +97,11 @@ export function AlertBanner() {
               {getBannerContent()}
             </p>
             <div className="ml-auto flex items-center gap-1">
-              <Button variant="link" size="sm" className="h-fit">
-                Upgrade
-              </Button>
+              <Link href="/pricing">
+                <Button variant="link" size="sm" className="h-fit">
+                  Upgrade
+                </Button>
+              </Link>
 
               <Button
                 variant="ghost"
