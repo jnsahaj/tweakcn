@@ -12,6 +12,8 @@ import { generateText, Output } from "ai";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { recordAIUsage } from "@/actions/ai-usage";
+import { logError } from "@/actions/shared";
 
 // Google AI
 const google = createGoogleGenerativeAI({
@@ -69,13 +71,9 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
     const { prompt, images: imageFiles } = parseFormData(formData);
-
     const messages = await getMessages(prompt, imageFiles);
-    // TODO: Remove this, it's for debugging
-    console.dir(messages, { depth: null });
 
-    // Now, it is possible to add Tools (i.e. a tool to process the image)
-    const { experimental_output: theme } = await generateText({
+    const { experimental_output: theme, usage } = await generateText({
       model,
       experimental_output: Output.object({
         schema: responseSchema,
@@ -83,6 +81,17 @@ export async function POST(req: NextRequest) {
       system: SYSTEM_PROMPT,
       messages,
     });
+
+    if (usage) {
+      try {
+        await recordAIUsage({
+          promptTokens: usage.promptTokens,
+          completionTokens: usage.completionTokens,
+        });
+      } catch (error) {
+        logError(error as Error, { action: "recordAIUsage", usage });
+      }
+    }
 
     return new Response(JSON.stringify(theme), {
       headers: { "Content-Type": "application/json" },
