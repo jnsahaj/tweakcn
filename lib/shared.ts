@@ -1,3 +1,5 @@
+import "server-only";
+
 import { UnauthorizedError } from "@/types/errors";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -15,7 +17,7 @@ export async function getCurrentUserId(req?: NextRequest): Promise<string> {
   return session.user.id;
 }
 
-export function logError(error: Error, context: Record<string, unknown>) {
+export function logError(error: Error, context?: Record<string, unknown>) {
   console.error("Action error:", error, context);
 
   if (error.name === "UnauthorizedError" || error.name === "ValidationError") {
