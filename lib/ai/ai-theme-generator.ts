@@ -3,6 +3,27 @@ import { AIPromptData } from "@/types/ai";
 import { Theme } from "@/types/theme";
 import { buildPromptForAPI } from "@/utils/ai/ai-prompt";
 import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
+import { ApiError, ApiErrorCode } from "@/types/errors";
+
+async function handleError(response: Response) {
+  const contentType = response.headers.get("Content-Type") || "";
+  if (contentType.includes("application/json")) {
+    const { code, message, data } = await response.json();
+    throw new ApiError(
+      (code as ApiErrorCode) ?? "UNKNOWN_ERROR",
+      message ?? "Error",
+      data,
+      response.status
+    );
+  }
+  const text = await response.text();
+  throw new ApiError(
+    "UNKNOWN_ERROR",
+    text || "Failed to generate theme",
+    undefined,
+    response.status
+  );
+}
 
 /**
  * Generate a theme with AI using a text prompt
@@ -32,9 +53,7 @@ export async function generateThemeWithAI(
     });
 
     if (!response.ok) {
-      const errorBody = await response.text();
-      const errorMessage = errorBody || "Failed to generate theme. Please try again.";
-      throw new Error(errorMessage);
+      handleError(response);
     }
 
     const result = await response.json();

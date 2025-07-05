@@ -49,9 +49,19 @@ export const requestSchema = z
       .optional(),
     images: z
       .array(
-        z.instanceof(File).refine((file) => file.type.startsWith("image/"), {
-          message: "File must be an image.",
-        })
+        z
+          .custom<File>((file) => {
+            // Check if we're in a server environment
+            if (typeof File === "undefined") {
+              // Server-side: Check if it's a file-like object
+              return file && typeof file === "object" && "type" in file && "size" in file;
+            }
+            // Client-side: Use instanceof check
+            return file instanceof File;
+          })
+          .refine((file) => file.type.startsWith("image/"), {
+            message: "File must be an image.",
+          })
       )
       .max(MAX_IMAGE_FILES, { message: `You can upload up to ${MAX_IMAGE_FILES} images.` })
       .refine((files) => files.every((file) => file.size <= MAX_IMAGE_FILE_SIZE), {
