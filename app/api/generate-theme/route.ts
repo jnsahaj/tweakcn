@@ -11,29 +11,24 @@ import { kv } from "@vercel/kv";
 import { generateText, Output } from "ai";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
-import { z } from "zod";
 import { recordAIUsage } from "@/actions/ai-usage";
-import { logError } from "@/actions/shared";
+import { logError } from "@/lib/shared";
+import { requireSubscriptionOrFreeUsage } from "@/lib/subscription";
+import { handleError } from "@/lib/error-response";
 
-// Google AI
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
-// TODO: Adjust model depending on the user's tier (free, Pro)
 const model = google("gemini-2.5-pro");
 
-// Helper function to parse and validate FormData
 function parseFormData(formData: FormData) {
   const prompt = formData.get("prompt") || undefined;
-  // Only keep File instances (FormData.getAll can return strings if no file is uploaded)
   const imageFiles = formData.getAll("images").filter((f): f is File => f instanceof File);
-  // Convert FormData to object for validation
   const data = { prompt, images: imageFiles };
   return requestSchema.parse(data);
 }
 
-// Create Rate limit - 5 requests per 60 seconds
 const ratelimit = new Ratelimit({
   redis: kv,
   limiter: Ratelimit.fixedWindow(5, "60s"),
@@ -50,13 +45,10 @@ export async function POST(req: NextRequest) {
 
     const headersList = await headers();
 
-    // Skip rate limiting in development environment
     if (process.env.NODE_ENV !== "development") {
-      // Apply rate limiting based on the request IP
       const ip = headersList.get("x-forwarded-for") ?? "anonymous";
       const { success, limit, reset, remaining } = await ratelimit.limit(ip);
 
-      // Block the request if rate limit exceeded
       if (!success) {
         return new Response("Rate limit exceeded. Please try again later.", {
           status: 429,
@@ -68,6 +60,8 @@ export async function POST(req: NextRequest) {
         });
       }
     }
+
+    await requireSubscriptionOrFreeUsage(req);
 
     const formData = await req.formData();
     const { prompt, images: imageFiles } = parseFormData(formData);
@@ -97,17 +91,6 @@ export async function POST(req: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error(error);
-
-    // Handle Zod validation errors specifically
-    if (error instanceof z.ZodError) {
-      const firstError = error.errors[0];
-      return new Response(firstError.message, {
-        status: 400,
-      });
-    }
-
-    // Consider more specific error handling based on AI SDK errors if needed
-    return new Response("Error generating theme", { status: 500 });
+    return handleError(error, { route: "/api/generate-theme" });
   }
 }

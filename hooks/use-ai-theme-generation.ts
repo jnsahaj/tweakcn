@@ -1,6 +1,7 @@
 import { toast } from "@/components/ui/use-toast";
 import { useAIThemeGenerationStore } from "@/store/ai-theme-generation-store";
 import { usePostHog } from "posthog-js/react";
+import { ApiError } from "@/types/errors";
 
 export function useAIThemeGeneration() {
   const generateTheme = useAIThemeGenerationStore((state) => state.generateTheme);
@@ -30,6 +31,19 @@ export function useAIThemeGeneration() {
           title: "Theme generation cancelled",
           description: "The theme generation was cancelled, no changes were made.",
         });
+      } else if (error instanceof ApiError) {
+        if (error.code === "SUBSCRIPTION_REQUIRED") {
+          toast({
+            title: "Subscription required",
+            description: error.message,
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
       } else {
         const description =
           error instanceof Error ? error.message : "Failed to generate theme. Please try again.";
