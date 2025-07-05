@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
+import { useCallback } from "react";
 import ColorPreview from "../theme-preview/color-preview";
 import { ChatImagePreview } from "./chat-image-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
@@ -27,6 +28,15 @@ export default function Message({ message, onRetry }: MessageProps) {
     return message.content || "";
   };
 
+  const getImages = useCallback(() => {
+    if (isUser && message.promptData?.images) {
+      return message.promptData.images;
+    }
+    return [];
+  }, [isUser, message.promptData]);
+
+  const images = getImages();
+
   return (
     <div className={cn("flex items-start gap-4", isUser ? "justify-end" : "justify-start")}>
       <div
@@ -38,9 +48,35 @@ export default function Message({ message, onRetry }: MessageProps) {
           </div>
         )}
 
-        <div className={cn("group/message relative flex flex-col gap-1", isAssistant && "w-full")}>
-          {isUser && message.promptData?.image && (
-            <ChatImagePreview imageSrc={message.promptData.image.preview} />
+        <div className={cn("group/message relative flex w-full flex-col gap-1")}>
+          {/* Single uploaded image */}
+          {isUser && images.length === 1 && (
+            <div className="self-end overflow-hidden rounded-lg">
+              <ChatImagePreview
+                src={images[0].preview}
+                name={images[0].file.name}
+                alt={images[0].file.name}
+              />
+            </div>
+          )}
+
+          {/* Multiple uploaded images */}
+          {isUser && images.length > 1 && (
+            <div className="flex flex-row items-center justify-end gap-1 self-end">
+              {images.map((image, idx) => (
+                <div
+                  key={idx}
+                  className="aspect-square size-full max-w-32 flex-1 overflow-hidden rounded-lg"
+                >
+                  <ChatImagePreview
+                    className="size-full object-cover"
+                    src={image.preview}
+                    name={image.file.name}
+                    alt={image.file.name}
+                  />
+                </div>
+              ))}
+            </div>
           )}
 
           <div

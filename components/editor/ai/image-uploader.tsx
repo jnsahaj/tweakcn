@@ -1,5 +1,6 @@
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
+import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/ai/ai-theme-generator";
 import { cn } from "@/lib/utils";
 import { ImagePlus } from "lucide-react";
 import { ComponentProps } from "react";
@@ -7,7 +8,6 @@ import { ComponentProps } from "react";
 interface ImageUploaderProps extends ComponentProps<typeof Button> {
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   handleImageSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  aiGenerateLoading: boolean;
 }
 
 export function ImageUploader({
@@ -21,6 +21,9 @@ export function ImageUploader({
     <>
       <input
         type="file"
+        multiple
+        max={MAX_IMAGE_FILES}
+        size={MAX_IMAGE_FILE_SIZE}
         accept="image/*"
         className="hidden"
         aria-label="Upload image for theme generation"
