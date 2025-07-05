@@ -49,7 +49,6 @@ export function ChatInterface() {
     }
 
     let transformedPromptData = promptData;
-
     if (mentionsCount(promptData) === 0) {
       transformedPromptData = attachLastGeneratedThemeMention(promptData);
     }
@@ -59,7 +58,7 @@ export function ChatInterface() {
     });
 
     const builtPrompt = buildPrompt(transformedPromptData);
-    const result = await generateTheme(builtPrompt.text, builtPrompt.imageFile);
+    const result = await generateTheme(builtPrompt.text, builtPrompt.imageFiles);
 
     if (!result) {
       addAssistantMessage({
