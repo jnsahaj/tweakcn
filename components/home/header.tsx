@@ -133,9 +133,9 @@ export function Header({
             className="rounded-full cursor-pointer"
           >
             {theme === "dark" ? (
-              <Sun className="size-[18px]" />
-            ) : (
               <Moon className="size-[18px]" />
+            ) : (
+              <Sun className="size-[18px]" />
             )}
           </Button>
           <Button
