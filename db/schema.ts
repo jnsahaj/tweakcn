@@ -61,3 +61,15 @@ export const theme = pgTable("theme", {
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
+
+export const aiUsage = pgTable("ai_usage", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  modelId: text("model_id").notNull(),
+  promptTokens: text("prompt_tokens").notNull().default("0"),
+  completionTokens: text("completion_tokens").notNull().default("0"),
+  daysSinceEpoch: text("days_since_epoch").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+});
