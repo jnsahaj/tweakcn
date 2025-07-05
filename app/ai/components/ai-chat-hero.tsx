@@ -47,7 +47,7 @@ export function AIChatHero() {
     router.push("/editor/theme?tab=ai");
 
     const builtPrompt = buildPrompt(promptData);
-    const result = await generateTheme(builtPrompt.text, builtPrompt.imageFile);
+    const result = await generateTheme(builtPrompt.text, builtPrompt.imageFiles);
 
     if (!result) {
       addAssistantMessage({
