@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { Link, X } from "lucide-react";
+import { X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
