@@ -8,16 +8,16 @@ import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
  * Generate a theme with AI using a text prompt
  */
 export async function generateThemeWithAI(
-  prompt: string,
+  prompt?: string,
   imageFiles?: File[],
   options?: { signal?: AbortSignal }
 ) {
-  if (!prompt.trim()) return null;
-
   try {
     const formData = new FormData();
 
-    formData.append("prompt", prompt);
+    if (prompt) {
+      formData.append("prompt", prompt);
+    }
 
     if (imageFiles && imageFiles.length > 0) {
       imageFiles.forEach((imageFile) => {
