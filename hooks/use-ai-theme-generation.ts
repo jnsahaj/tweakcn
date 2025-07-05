@@ -8,7 +8,7 @@ export function useAIThemeGeneration() {
   const cancelThemeGeneration = useAIThemeGenerationStore((state) => state.cancelThemeGeneration);
   const posthog = usePostHog();
 
-  const handleGenerateTheme = async (prompt: string, imageFiles?: File[]) => {
+  const handleGenerateTheme = async (prompt?: string, imageFiles?: File[]) => {
     try {
       const result = await generateTheme(prompt, imageFiles);
 
