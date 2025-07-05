@@ -1,5 +1,6 @@
 import { getThemes } from "@/actions/themes";
 import { ThemesList } from "@/app/dashboard/components/themes-list";
+import { UsageStats } from "@/app/dashboard/components/usage-stats";
 import { Button } from "@/components/ui/button";
 import { Palette, Plus } from "lucide-react";
 import Link from "next/link";
@@ -23,6 +24,10 @@ export default async function ProfilePage() {
             <Plus className="size-4" />
           </Button>
         </Link>
+      </div>
+
+      <div className="mb-8">
+        <UsageStats />
       </div>
 
       {sortedThemes.length === 0 ? (
