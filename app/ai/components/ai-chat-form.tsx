@@ -8,14 +8,14 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useImageUpload } from "@/hooks/use-image-upload";
+import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/ai/ai-theme-generator";
 import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { AIPromptData, PromptImage } from "@/types/ai";
+import { AIPromptData } from "@/types/ai";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
-
-// TODO: Reconsider a better way to reuse the AI Form logic, it's basically a copy of the ChatInput component
+import { useState } from "react";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -30,79 +30,61 @@ export function AIChatForm({
   const [promptData, setPromptData] = useState<AIPromptData | null>(null);
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
-  // Image upload state
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageLoading, setImageLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    fileInputRef,
+    selectedImages,
+    handleImageSelect,
+    handleImageRemove,
+    isSomeImageUploading,
+  } = useImageUpload({
+    maxFiles: MAX_IMAGE_FILES,
+    maxFileSize: MAX_IMAGE_FILE_SIZE,
+  });
 
   const handleContentChange = (newPromptData: AIPromptData) => {
-    let image: PromptImage | undefined;
-    if (selectedImage && imagePreview) {
-      image = { file: selectedImage, preview: imagePreview };
-    }
-
-    setPromptData({ ...newPromptData, image });
-  };
-
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) return;
-    if (file.size > 5 * 1024 * 1024) return;
-    setImageLoading(true);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const preview = e.target?.result as string;
-      const imageData = { file, preview };
-      setSelectedImage(file);
-      setImagePreview(preview);
-      setImageLoading(false);
-      if (promptData) {
-        setPromptData({ ...promptData, image: imageData });
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleImageRemove = () => {
-    setSelectedImage(null);
-    setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    if (promptData) {
-      const { image, ...rest } = promptData;
-      setPromptData(rest as AIPromptData);
-    }
+    setPromptData({ ...newPromptData });
   };
 
   const handleGenerate = async () => {
+    // TODO: Allow empty content/text prompt message if images are provided
     if (!promptData?.content) return;
-    handleThemeGeneration(promptData);
+
+    const images = selectedImages
+      .filter((img) => !img.loading)
+      .map(({ file, preview }) => ({ file, preview }));
+
+    handleThemeGeneration({ ...promptData, images });
   };
+
+  const isSendButtonDisabled = !promptData?.content || aiGenerateLoading || isSomeImageUploading;
 
   return (
     <div className="@container/form relative transition-all contain-layout">
       <AlertBanner />
 
-      <div className="bg-background relative z-10 flex size-full min-h-[100px] flex-1 flex-col overflow-hidden rounded-lg border shadow-xs">
-        {imagePreview && (
+      <div className="bg-background relative z-10 flex size-full min-h-[100px] flex-1 flex-col gap-2 overflow-hidden rounded-lg border p-2 shadow-xs">
+        {selectedImages.length > 0 && (
           <div
             className={cn(
-              "relative flex items-center gap-2 px-2",
+              "relative flex items-center gap-2",
               aiGenerateLoading && "pointer-events-none opacity-75"
             )}
           >
-            <HorizontalScrollArea className="w-full pt-1">
-              <UploadedImagePreview
-                imagePreview={imagePreview}
-                handleImageRemove={handleImageRemove}
-              />
+            <HorizontalScrollArea className="w-full">
+              {selectedImages.map((img, idx) => (
+                <UploadedImagePreview
+                  key={idx}
+                  imagePreview={img.preview}
+                  isImageLoading={img.loading}
+                  handleImageRemove={() => handleImageRemove(idx)}
+                />
+              ))}
             </HorizontalScrollArea>
           </div>
         )}
 
         <label className="sr-only">Chat Input</label>
-        <div className={cn("min-h-[60px] p-2 pb-0", aiGenerateLoading && "pointer-events-none")}>
+        <div className={cn("min-h-[60px]", aiGenerateLoading && "pointer-events-none")}>
           <div
             className="bg-muted/40 relative isolate rounded-lg"
             aria-disabled={aiGenerateLoading}
@@ -115,7 +97,7 @@ export function AIChatForm({
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-2 p-2">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex w-full max-w-68 items-center gap-2 overflow-hidden">
             <ThemePresetSelect disabled={aiGenerateLoading} withCycleThemes={false} />
           </div>
@@ -124,9 +106,12 @@ export function AIChatForm({
             <ImageUploader
               fileInputRef={fileInputRef}
               handleImageSelect={handleImageSelect}
-              aiGenerateLoading={aiGenerateLoading}
               onClick={() => fileInputRef.current?.click()}
-              disabled={aiGenerateLoading || imageLoading || !!imagePreview} // TODO: handle disable state correctly
+              disabled={
+                aiGenerateLoading ||
+                selectedImages.some((img) => img.loading) ||
+                selectedImages.length >= MAX_IMAGE_FILES
+              }
             />
 
             {aiGenerateLoading ? (
@@ -144,7 +129,7 @@ export function AIChatForm({
                 size="icon"
                 className="size-8"
                 onClick={handleGenerate}
-                disabled={!promptData?.content || aiGenerateLoading}
+                disabled={isSendButtonDisabled}
               >
                 {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
               </Button>
