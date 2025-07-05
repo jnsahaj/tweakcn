@@ -9,16 +9,20 @@ import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
  */
 export async function generateThemeWithAI(
   prompt: string,
-  imageFile?: File,
+  imageFiles?: File[],
   options?: { signal?: AbortSignal }
 ) {
   if (!prompt.trim()) return null;
 
   try {
     const formData = new FormData();
+
     formData.append("prompt", prompt);
-    if (imageFile) {
-      formData.append("image", imageFile);
+
+    if (imageFiles && imageFiles.length > 0) {
+      imageFiles.forEach((imageFile) => {
+        formData.append("images", imageFile);
+      });
     }
 
     const response = await fetch("/api/generate-theme", {
@@ -71,6 +75,9 @@ export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
 export function buildPrompt(promptData: AIPromptData) {
   return {
     text: buildPromptForAPI(promptData),
-    imageFile: promptData.image?.file,
+    imageFiles: promptData.images?.map((image) => image.file),
   };
 }
+
+export const MAX_IMAGE_FILES = 3;
+export const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5MB
