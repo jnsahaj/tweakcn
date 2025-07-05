@@ -5,20 +5,31 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
+import { ComponentProps } from "react";
 
-export function ChatImagePreview({ imageSrc }: { imageSrc: string }) {
+interface ChatImagePreviewProps extends ComponentProps<typeof Image> {
+  name?: string;
+}
+
+export function ChatImagePreview({ name, src, className, alt, ...props }: ChatImagePreviewProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="group/preview relative isolate cursor-pointer self-end overflow-hidden rounded-lg border">
+        <div className="group/preview relative isolate size-full cursor-pointer overflow-hidden border">
           <Image
             width={300}
             height={300}
-            src={imageSrc}
-            alt="Image preview"
-            className="h-auto max-h-[300px] w-auto max-w-[300px] rounded-lg object-contain"
+            src={src}
+            className={cn(
+              "h-auto max-h-[300px] w-auto max-w-[300px] object-cover object-center",
+              className
+            )}
+            alt={alt || "Image preview"}
+            title={name}
+            {...props}
           />
 
           <div className="bg-accent/75 text-accent-foreground border-border/50! absolute right-2 bottom-2 z-1 flex items-center justify-end rounded-lg border p-1 opacity-0 backdrop-blur transition-opacity group-hover/preview:opacity-100">
@@ -34,7 +45,7 @@ export function ChatImagePreview({ imageSrc }: { imageSrc: string }) {
         <Image
           width={500}
           height={500}
-          src={imageSrc}
+          src={src}
           alt="Full image preview"
           className="h-auto max-h-[80vh] w-auto max-w-[80vw] object-contain"
         />
