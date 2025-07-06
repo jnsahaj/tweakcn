@@ -17,8 +17,8 @@ export function PillActionButton({
         variant="ghost"
         size="sm"
         className={cn(
-          "hover:bg-muted/50 text-muted-foreground hover:text-foreground border-border/80! rounded-full border bg-transparent px-2 font-medium text-nowrap whitespace-nowrap backdrop-blur-md transition-all duration-150 ease-in select-none focus:outline-none",
-          "group-hover/pill:inset-shadow-primary/50 h-7 inset-shadow-2xs inset-shadow-transparent [&>svg]:size-3",
+          "hover:bg-muted/50 text-muted-foreground hover:text-foreground border-border/80! rounded-full border bg-transparent font-medium text-nowrap whitespace-nowrap backdrop-blur-md transition-all duration-150 ease-in select-none focus:outline-none",
+          "group-hover/pill:inset-shadow-primary/50 gap-1.5 inset-shadow-2xs inset-shadow-transparent [&>svg]:size-3",
           className
         )}
         disabled={disabled}
