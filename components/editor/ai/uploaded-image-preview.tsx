@@ -56,7 +56,7 @@ export function UploadedImagePreview({
         </div>
       </HoverCardTrigger>
 
-      <HoverCardContent className="size-fit overflow-hidden p-0" align="start" side="top">
+      <HoverCardContent className="size-fit overflow-hidden p-0" align="center" side="top">
         <div className="size-full overflow-hidden">
           <Image
             width={300}
