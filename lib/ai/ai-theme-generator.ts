@@ -1,9 +1,9 @@
 import { useEditorStore } from "@/store/editor-store";
 import { AIPromptData } from "@/types/ai";
+import { ApiError, ApiErrorCode } from "@/types/errors";
 import { Theme } from "@/types/theme";
 import { buildPromptForAPI } from "@/utils/ai/ai-prompt";
 import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
-import { ApiError, ApiErrorCode } from "@/types/errors";
 
 async function handleError(response: Response) {
   const contentType = response.headers.get("Content-Type") || "";
@@ -101,6 +101,3 @@ export function buildPrompt(promptData: AIPromptData) {
     imageFiles: promptData.images?.map((image) => image.file),
   };
 }
-
-export const MAX_IMAGE_FILES = 3;
-export const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024; // 5MB

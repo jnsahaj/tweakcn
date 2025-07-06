@@ -1,6 +1,6 @@
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
-import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/ai/ai-theme-generator";
+import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ImagePlus } from "lucide-react";
 import { ComponentProps } from "react";
