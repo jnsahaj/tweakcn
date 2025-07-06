@@ -1,13 +1,13 @@
 "use client";
 
 import { createCheckout } from "@/actions/checkout";
+import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { authClient } from "@/lib/auth-client";
 
 export function CheckoutButton() {
   const router = useRouter();
@@ -49,7 +49,7 @@ export function CheckoutButton() {
 
   return (
     <Button
-      className="from-primary to-primary/90 hover:shadow-primary/25 h-12 w-full bg-gradient-to-r text-base font-medium transition-all duration-200 hover:shadow-lg"
+      className="from-primary to-primary/75 hover:shadow-primary/25 h-12 w-full bg-gradient-to-r text-base font-medium transition-all duration-200 hover:shadow-lg"
       size="lg"
       onClick={handleOpenCheckout}
       disabled={isPending}
