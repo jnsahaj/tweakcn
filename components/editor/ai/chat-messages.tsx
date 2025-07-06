@@ -11,11 +11,45 @@ type ChatMessagesProps = {
   onRetry: (messageIndex: number) => void;
 };
 
+const FEEDBACK_MESSAGES = [
+  "Generating", // 0-9s
+  "Tweaking color tokens", // 10-19s
+  "This might take some time", // 20-29s
+  "Generating a good theme takes time", // 30-39s
+  "Still working on your theme", // 40-49s
+  "Almost there", // 50s+
+];
+
 export function ChatMessages({ onRetry }: ChatMessagesProps) {
   const [isScrollTop, setIsScrollTop] = useState(true);
   const { messages } = useAIChat();
   const { loading: isAIGenerating } = useAIThemeGeneration();
   const previousMessages = useRef<ChatMessageType[]>(messages);
+
+  const [elapsedTimeGenerating, setElapsedTimeGenerating] = useState(0);
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (isAIGenerating) {
+      setElapsedTimeGenerating(0);
+
+      interval = setInterval(() => {
+        setElapsedTimeGenerating((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setElapsedTimeGenerating(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isAIGenerating]);
+
+  const feedbackIndex = Math.min(
+    Math.floor(elapsedTimeGenerating / 10),
+    FEEDBACK_MESSAGES.length - 1
+  );
+  const feedbackText = FEEDBACK_MESSAGES[feedbackIndex];
 
   const messagesStartRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -75,7 +109,7 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
               </div>
 
               <p className="inline-flex animate-pulse gap-0.25 delay-150">
-                <span className="text-sm">Generating</span>
+                <span className="text-sm">{feedbackText}</span>
                 <span className="animate-bounce delay-100">.</span>
                 <span className="animate-bounce delay-200">.</span>
                 <span className="animate-bounce delay-300">.</span>
