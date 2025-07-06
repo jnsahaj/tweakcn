@@ -1,3 +1,8 @@
+import { recordAIUsage } from "@/actions/ai-usage";
+import { handleError } from "@/lib/error-response";
+import { getCurrentUserId, logError } from "@/lib/shared";
+import { validateSubscriptionAndUsage } from "@/lib/subscription";
+import { SubscriptionRequiredError } from "@/types/errors";
 import {
   getMessages,
   requestSchema,
@@ -10,11 +15,6 @@ import { kv } from "@vercel/kv";
 import { generateText, Output } from "ai";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
-import { recordAIUsage } from "@/actions/ai-usage";
-import { logError, getCurrentUserId } from "@/lib/shared";
-import { validateSubscriptionAndUsage } from "@/lib/subscription";
-import { handleError } from "@/lib/error-response";
-import { SubscriptionRequiredError } from "@/types/errors";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY,
