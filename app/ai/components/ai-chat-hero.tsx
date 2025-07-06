@@ -4,6 +4,7 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { toast } from "@/hooks/use-toast";
+import { buildPrompt } from "@/lib/ai/ai-theme-generator";
 import { authClient } from "@/lib/auth-client";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
@@ -12,7 +13,6 @@ import { useRouter } from "next/navigation";
 import { AIChatForm } from "./ai-chat-form";
 import { ChatHeading } from "./chat-heading";
 import { SuggestedPillActions } from "./suggested-pill-actions";
-import { buildPrompt } from "@/lib/ai/ai-theme-generator";
 
 export function AIChatHero() {
   const { addUserMessage, addAssistantMessage, clearMessages } = useAIChatStore();
@@ -82,13 +82,13 @@ export function AIChatHero() {
         <ChatHeading />
 
         {/* Chat form input and suggestions */}
-        <div className="relative mx-auto flex w-full flex-col">
+        <div className="relative mx-auto flex w-full flex-col gap-2">
           <div className="relative isolate z-10 w-full">
             <AIChatForm handleThemeGeneration={handleRedirectAndThemeGeneration} />
           </div>
 
           {/* Quick suggestions */}
-          <HorizontalScrollArea className="mx-auto pt-4 pb-2">
+          <HorizontalScrollArea className="mx-auto py-2">
             <SuggestedPillActions handleThemeGeneration={handleRedirectAndThemeGeneration} />
           </HorizontalScrollArea>
         </div>
