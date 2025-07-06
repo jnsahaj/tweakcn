@@ -3,7 +3,7 @@
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useImageUpload } from "@/hooks/use-image-upload";
-import { MAX_IMAGE_FILE_SIZE } from "@/lib/ai/ai-theme-generator";
+import { MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
 import { AIPromptData } from "@/types/ai";
 import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
 import { PROMPTS } from "@/utils/ai/prompts";
