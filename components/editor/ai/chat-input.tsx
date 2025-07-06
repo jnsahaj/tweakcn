@@ -6,15 +6,18 @@ import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useImageUpload } from "@/hooks/use-image-upload";
+import { useDocumentDragAndDropIntent } from "@/hooks/useDocumentDragAndDropIntent";
 import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/ai/ai-theme-generator";
 import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { AIPromptData } from "@/types/ai";
+import { convertFileArrayToFileList } from "@/utils/file-upload";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { AlertBanner } from "./alert-banner";
+import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
 import { ImageUploader } from "./image-uploader";
 import { UploadedImagePreview } from "./uploaded-image-preview";
 
@@ -28,10 +31,9 @@ export function ChatInput({
 }: {
   handleThemeGeneration: (promptData: AIPromptData | null) => Promise<void>;
 }) {
+  const { messages, clearMessages } = useAIChatStore();
   const [promptData, setPromptData] = useState<AIPromptData | null>(null);
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
-
-  const { messages, clearMessages } = useAIChatStore();
 
   const {
     fileInputRef,
@@ -44,6 +46,8 @@ export function ChatInput({
     maxFiles: MAX_IMAGE_FILES,
     maxFileSize: MAX_IMAGE_FILE_SIZE,
   });
+
+  const { isUserDragging } = useDocumentDragAndDropIntent();
 
   const handleContentChange = (newPromptData: AIPromptData) => {
     setPromptData({ ...newPromptData });
@@ -71,6 +75,19 @@ export function ChatInput({
     clearSelectedImages();
   };
 
+  const handleImageDrop = (files: File[]) => {
+    if (!files || files.length === 0) return;
+
+    // We want the dropped files to be treated as if they were selected from the regular file input
+    // to perform the same logic and validations, so we create a synthetic event with the files.
+    // - "react-dropzone" works with File[], while `handleImageSelect` expects a `HTMLInputElement` with a FileList
+    const syntheticEvent = {
+      target: { files: convertFileArrayToFileList(files) },
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    handleImageSelect(syntheticEvent);
+  };
+
   const isSendButtonDisabled =
     (selectedImages.length === 0 && !promptData?.content?.trim()) ||
     aiGenerateLoading ||
@@ -80,11 +97,20 @@ export function ChatInput({
     <div className="relative transition-all contain-layout">
       <AlertBanner />
 
-      <div className="bg-background relative z-10 flex size-full min-h-[100px] flex-1 flex-col gap-2 overflow-hidden rounded-lg border p-2 shadow-xs">
-        {selectedImages.length > 0 && (
+      <div className="bg-background relative isolate z-10 flex size-full min-h-[100px] flex-1 flex-col gap-2 overflow-hidden rounded-lg border p-2 shadow-xs">
+        {isUserDragging && (
+          <div className={cn("flex h-16 items-center rounded-lg")}>
+            <DragAndDropImageUploader
+              onDrop={handleImageDrop}
+              disabled={aiGenerateLoading || selectedImages.some((img) => img.loading)}
+            />
+          </div>
+        )}
+
+        {selectedImages.length > 0 && !isUserDragging && (
           <div
             className={cn(
-              "relative flex items-center gap-2",
+              "relative flex h-16 items-center rounded-lg",
               aiGenerateLoading && "pointer-events-none opacity-75"
             )}
           >
