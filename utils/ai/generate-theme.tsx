@@ -1,5 +1,4 @@
-import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/ai/ai-theme-generator";
-import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
+import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { themeStylePropsSchema } from "@/types/theme";
 import { CoreUserMessage, ImagePart, TextPart, UserContent } from "ai";
 import { z } from "zod";
