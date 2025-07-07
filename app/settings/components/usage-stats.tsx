@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis } from "recharts";
-import { Activity } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getMyUsageStats, getMyUsageChartData } from "@/actions/ai-usage";
 
 type Timeframe = "1d" | "7d" | "30d";
@@ -76,40 +76,48 @@ export function UsageStats() {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div>
-          <CardTitle className="text-base font-medium">AI Usage</CardTitle>
-          <CardDescription>Track your AI theme generation requests</CardDescription>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Activity className="text-muted-foreground h-4 w-4" />
-          <Select value={timeframe} onValueChange={(value: Timeframe) => setTimeframe(value)}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1d">Last 24 hours</SelectItem>
-              <SelectItem value="7d">Last 7 days</SelectItem>
-              <SelectItem value="30d">Last 30 days</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {loading ? (
-          <div className="flex h-[200px] items-center justify-center">
-            <div className="text-muted-foreground text-sm">Loading...</div>
-          </div>
-        ) : (
-          <>
-            <div className="mb-4 flex items-center space-x-2">
-              <div className="text-2xl font-bold">{stats?.requests || 0}</div>
-              <div className="text-muted-foreground text-sm">
-                requests in {timeframeLabels[timeframe].toLowerCase()}
-              </div>
-            </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-end">
+        <Select value={timeframe} onValueChange={(value: Timeframe) => setTimeframe(value)}>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1d">Last 24 hours</SelectItem>
+            <SelectItem value="7d">Last 7 days</SelectItem>
+            <SelectItem value="30d">Last 30 days</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
+      <Card>
+        <CardHeader className="pb-4">
+          {loading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+          ) : (
+            <div className="space-y-1">
+              <div className="text-3xl font-bold tracking-tight">{stats?.requests || 0}</div>
+              <p className="text-muted-foreground text-sm">
+                requests in {timeframeLabels[timeframe].toLowerCase()}
+              </p>
+            </div>
+          )}
+        </CardHeader>
+        <CardContent className="pt-0">
+          {loading ? (
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-4 w-12" />
+              </div>
+              <Skeleton className="h-[200px] w-full rounded-md" />
+            </div>
+          ) : chartData.length > 0 ? (
             <ChartContainer config={chartConfig} className="h-[200px] w-full">
               <BarChart data={chartData}>
                 <XAxis
@@ -117,6 +125,7 @@ export function UsageStats() {
                   tickFormatter={(value) => formatDate(value, timeframe)}
                   axisLine={false}
                   tickLine={false}
+                  className="text-xs"
                 />
                 <YAxis hide />
                 <ChartTooltip
@@ -126,13 +135,22 @@ export function UsageStats() {
                 <Bar
                   dataKey="totalRequests"
                   fill="var(--color-totalRequests)"
-                  radius={[2, 2, 0, 0]}
+                  radius={[4, 4, 0, 0]}
                 />
               </BarChart>
             </ChartContainer>
-          </>
-        )}
-      </CardContent>
-    </Card>
+          ) : (
+            <div className="flex h-[200px] items-center justify-center">
+              <div className="text-center">
+                <p className="text-muted-foreground text-sm">No usage data available</p>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Make some AI requests to see your usage statistics
+                </p>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

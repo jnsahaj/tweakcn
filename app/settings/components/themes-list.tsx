@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import type { Theme } from "@/types/theme";
 import { ThemeCard } from "./theme-card";
-import { Search, ArrowUpDown, Layers } from "lucide-react";
+import { Search, ArrowUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -16,10 +16,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ThemesListProps {
   themes: Theme[];
-  totalCount: number;
 }
 
-export function ThemesList({ themes, totalCount }: ThemesListProps) {
+export function ThemesList({ themes }: ThemesListProps) {
   const [filteredThemes, setFilteredThemes] = useState<Theme[]>(themes);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("newest");
@@ -50,29 +49,20 @@ export function ThemesList({ themes, totalCount }: ThemesListProps) {
   return (
     <div className="space-y-6">
       <div className="bg-card rounded-lg border p-4">
-        <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:justify-between md:gap-4 mb-6">
-          <div className="flex flex-wrap gap-2 items-center">
-            <div className="flex items-center gap-2 bg-accent px-3 py-1.5 rounded-full text-accent-foreground">
-              <Layers className="h-4 w-4" />
-              <span className="font-medium">{totalCount}</span>
-              <span className="font-normal">
-                theme{totalCount === 1 ? "" : "s"}
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-row gap-2 w-full md:w-auto">
+        <div className="mb-6 flex flex-col space-y-4 md:flex-row md:justify-between md:gap-4 md:space-y-0">
+          <div className="ml-auto flex w-full flex-row gap-2 md:w-auto">
             <div className="relative w-full">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
               <Input
                 placeholder="Search themes..."
-                className="pl-8 w-full"
+                className="w-full pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <Select value={sortOption} onValueChange={setSortOption}>
-              <SelectTrigger className="w-full w-[80px] md:w-[180px] gap-2">
-                <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+              <SelectTrigger className="w-[80px] w-full gap-2 md:w-[180px]">
+                <ArrowUpDown className="text-muted-foreground h-4 w-4" />
                 {!isMobile && <SelectValue placeholder="Sort by" />}
               </SelectTrigger>
               <SelectContent>
@@ -85,15 +75,15 @@ export function ThemesList({ themes, totalCount }: ThemesListProps) {
         </div>
 
         {filteredThemes.length === 0 && searchTerm ? (
-          <div className="text-center py-12">
-            <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium mb-2">No themes found</h3>
+          <div className="py-12 text-center">
+            <Search className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+            <h3 className="mb-2 text-lg font-medium">No themes found</h3>
             <p className="text-muted-foreground">
               No themes match your search term &quot;{searchTerm}&quot;
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredThemes.map((theme: Theme) => (
               <ThemeCard key={theme.id} theme={theme} />
             ))}
