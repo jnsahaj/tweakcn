@@ -1,19 +1,12 @@
 import "server-only";
 
-import { polar } from "@/lib/polar";
 import { getMyAllTimeRequestCount } from "@/actions/ai-usage";
+import { polar } from "@/lib/polar";
 import { SubscriptionRequiredError } from "@/types/errors";
+import { SubscriptionCheck } from "@/types/subscription";
 import { NextRequest } from "next/server";
-import { getCurrentUserId } from "./shared";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "./constants";
-
-export interface SubscriptionCheck {
-  canProceed: boolean;
-  isSubscribed: boolean;
-  requestsUsed: number;
-  requestsRemaining: number;
-  error?: string;
-}
+import { getCurrentUserId } from "./shared";
 
 export async function validateSubscriptionAndUsage(userId: string): Promise<SubscriptionCheck> {
   try {
@@ -37,7 +30,7 @@ export async function validateSubscriptionAndUsage(userId: string): Promise<Subs
         canProceed: true,
         isSubscribed: true,
         requestsUsed,
-        requestsRemaining: -1, // Unlimited for subscribers
+        requestsRemaining: Infinity, // Unlimited for subscribers
       };
     }
 
