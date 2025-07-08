@@ -14,7 +14,6 @@ import { useDocumentDragAndDropIntent } from "@/hooks/useDocumentDragAndDropInte
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { AIPromptData } from "@/types/ai";
-import { convertFileArrayToFileList } from "@/utils/file-upload";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
@@ -35,7 +34,7 @@ export function AIChatForm({
   const {
     fileInputRef,
     selectedImages,
-    handleImageSelect,
+    handleImagesUpload,
     handleImageRemove,
     isSomeImageUploading,
   } = useImageUpload({
@@ -68,19 +67,6 @@ export function AIChatForm({
     });
   };
 
-  const handleImageDrop = (files: File[]) => {
-    if (!files || files.length === 0) return;
-
-    // We want the dropped files to be treated as if they were selected from the regular file input
-    // to perform the same logic and validations, so we create a synthetic event with the files.
-    // - "react-dropzone" works with File[], while `handleImageSelect` expects a `HTMLInputElement` with a FileList
-    const syntheticEvent = {
-      target: { files: convertFileArrayToFileList(files) },
-    } as React.ChangeEvent<HTMLInputElement>;
-
-    handleImageSelect(syntheticEvent);
-  };
-
   const isSendButtonDisabled =
     (selectedImages.length === 0 && !promptData?.content?.trim()) ||
     aiGenerateLoading ||
@@ -94,7 +80,7 @@ export function AIChatForm({
         {isUserDragging && (
           <div className={cn("flex h-16 items-center rounded-lg")}>
             <DragAndDropImageUploader
-              onDrop={handleImageDrop}
+              onDrop={handleImagesUpload}
               disabled={aiGenerateLoading || selectedImages.some((img) => img.loading)}
             />
           </div>
@@ -130,6 +116,7 @@ export function AIChatForm({
               onContentChange={handleContentChange}
               onGenerate={handleGenerate}
               characterLimit={AI_PROMPT_CHARACTER_LIMIT}
+              onImagesPaste={handleImagesUpload}
             />
           </div>
         </div>
@@ -148,7 +135,7 @@ export function AIChatForm({
           <div className="flex items-center gap-2">
             <ImageUploader
               fileInputRef={fileInputRef}
-              handleImageSelect={handleImageSelect}
+              onImagesUpload={handleImagesUpload}
               onClick={() => fileInputRef.current?.click()}
               disabled={
                 aiGenerateLoading ||
