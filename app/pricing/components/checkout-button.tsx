@@ -3,12 +3,13 @@
 import { createCheckout } from "@/actions/checkout";
 import { Button } from "@/components/ui/button";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
-import { useSubscription } from "@/hooks/use-subscription";
+import { SUBSCRIPTION_STATUS_QUERY_KEY, useSubscription } from "@/hooks/use-subscription";
 import { toast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
-import { Loader } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Gem, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ComponentProps, useTransition } from "react";
 
@@ -24,7 +25,9 @@ export function CheckoutButton({ disabled, className, ...props }: CheckoutButton
     handleOpenCheckout();
   });
 
+  const queryClient = useQueryClient();
   const { subscriptionStatus } = useSubscription();
+  const isPro = subscriptionStatus?.isSubscribed ?? false;
 
   const handleOpenCheckout = async () => {
     if (!session) {
@@ -49,14 +52,16 @@ export function CheckoutButton({ disabled, className, ...props }: CheckoutButton
         return;
       }
 
+      queryClient.invalidateQueries({ queryKey: [SUBSCRIPTION_STATUS_QUERY_KEY] });
       router.push(res.url);
     });
   };
 
   return (
     <Button
+      variant={isPro ? "ghost" : "default"}
       disabled={isPending || disabled}
-      className={cn("", className)}
+      className={cn(isPro ? "border" : "", className)}
       {...props}
       onClick={handleOpenCheckout}
     >
@@ -65,6 +70,11 @@ export function CheckoutButton({ disabled, className, ...props }: CheckoutButton
           <Loader className="size-4 animate-spin" />
           Redirecting to Checkout
         </div>
+      ) : isPro ? (
+        <span className="flex items-center gap-1.5">
+          <Gem />
+          {`You're Subscribed to Pro`}
+        </span>
       ) : (
         "Upgrade to Pro"
       )}
