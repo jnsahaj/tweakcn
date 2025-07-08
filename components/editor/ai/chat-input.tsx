@@ -27,7 +27,10 @@ const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea
 export function ChatInput({
   handleThemeGeneration,
 }: {
-  handleThemeGeneration: (promptData: AIPromptData | null) => Promise<void>;
+  handleThemeGeneration: (
+    promptData: AIPromptData | null,
+    handlers?: { onThemeGenerateInvoked?: () => void }
+  ) => Promise<void>;
 }) {
   const { messages, clearMessages } = useAIChatStore();
   const [promptData, setPromptData] = useState<AIPromptData | null>(null);
@@ -62,23 +65,20 @@ export function ChatInput({
       return;
     }
 
-    // TODO: Check
-    // This gets executed, this executes the auth check and the subscription check,
-    // opening the modal if needed before proceeding or early returning
-    handleThemeGeneration({
-      ...promptData,
-      content: promptData?.content ?? "",
-      mentions: promptData?.mentions ?? [],
-      images,
-    });
-
-    // TODO: Check
-    // This block executes regardless of the result of `handleThemeGeneration`
-    // These execute at the same time, it does not wait for `handleThemeGeneration` to finish
-    // But it cant wait because the prompt and image will freeze there until the generation is done
-    // either completed or cancelled
-    setPromptData(null);
-    clearSelectedImages();
+    handleThemeGeneration(
+      {
+        ...promptData,
+        content: promptData?.content ?? "",
+        mentions: promptData?.mentions ?? [],
+        images,
+      },
+      {
+        onThemeGenerateInvoked() {
+          setPromptData(null);
+          clearSelectedImages();
+        },
+      }
+    );
   };
 
   const isSendButtonDisabled =
