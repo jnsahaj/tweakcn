@@ -29,16 +29,19 @@ export function ChatInterface() {
   const { generateTheme } = useAIThemeGeneration();
   const { messages, addUserMessage, addAssistantMessage, resetMessagesUpToIndex } =
     useAIChatStore();
-  const { data: session } = authClient.useSession();
-  const { openAuthDialog } = useAuthStore();
-
   const hasMessages = messages.length > 0;
+
+  const { openAuthDialog } = useAuthStore();
+  const { data: session } = authClient.useSession();
 
   const handleThemeGeneration = async (promptData: AIPromptData | null) => {
     if (!session) {
       openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { promptData });
       return;
     }
+
+    // TODO: Check
+    // Ideally we should check the subscription status here, and open the modal if needed...
 
     if (!promptData) {
       toast({
