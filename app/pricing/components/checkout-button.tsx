@@ -2,31 +2,36 @@
 
 import { createCheckout } from "@/actions/checkout";
 import { Button } from "@/components/ui/button";
+import { usePostLoginAction } from "@/hooks/use-post-login-action";
+import { useSubscription } from "@/hooks/use-subscription";
 import { toast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
-import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/auth-store";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { ComponentProps, useTransition } from "react";
 
-export function CheckoutButton() {
+interface CheckoutButtonProps extends ComponentProps<typeof Button> {}
+
+export function CheckoutButton({ disabled, className, ...props }: CheckoutButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { data: session } = authClient.useSession();
+  const { openAuthDialog } = useAuthStore();
 
-  const fetchSubscriptionStatus = async () => {
-    const res = await fetch("/api/subscription", { method: "GET" });
-    return res.json();
-  };
-
-  const { data: subscriptionStatus = null } = useQuery({
-    queryKey: ["subscriptionStatus"],
-    queryFn: fetchSubscriptionStatus,
-    enabled: !!session?.user.id,
-    staleTime: 1000 * 60 * 5,
+  usePostLoginAction("CHECKOUT", () => {
+    handleOpenCheckout();
   });
 
+  const { subscriptionStatus } = useSubscription();
+
   const handleOpenCheckout = async () => {
+    if (!session) {
+      openAuthDialog("signup", "CHECKOUT");
+      return;
+    }
+
     if (subscriptionStatus?.isSubscribed) {
       router.push("/dashboard");
       return;
@@ -34,6 +39,7 @@ export function CheckoutButton() {
 
     startTransition(async () => {
       const res = await createCheckout();
+
       if ("error" in res || !res.url) {
         toast({
           title: "Error",
@@ -49,14 +55,14 @@ export function CheckoutButton() {
 
   return (
     <Button
-      className="from-primary to-primary/75 hover:shadow-primary/25 h-12 w-full bg-gradient-to-r text-base font-medium transition-all duration-200 hover:shadow-lg"
-      size="lg"
+      disabled={isPending || disabled}
+      className={cn("", className)}
+      {...props}
       onClick={handleOpenCheckout}
-      disabled={isPending}
     >
       {isPending ? (
         <div className="flex items-center gap-2">
-          <Loader className="h-4 w-4 animate-spin" />
+          <Loader className="size-4 animate-spin" />
           Redirecting to Checkout
         </div>
       ) : (
