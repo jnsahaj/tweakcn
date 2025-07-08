@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,16 +10,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AnimatePresence, motion } from "motion/react";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
+import { useSubscription } from "@/hooks/use-subscription";
+import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/store/auth-store";
+import { Gem, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
 
 export function UserProfileDropdown() {
   const { data: session, isPending } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const posthog = usePostHog();
+
+  const { subscriptionStatus } = useSubscription();
+  const isPro = subscriptionStatus?.isSubscribed ?? false;
 
   return (
     <AnimatePresence mode="wait">
@@ -66,18 +70,33 @@ export function UserProfileDropdown() {
         >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
+              <Button variant="ghost" className="0 relative isolate size-8 rounded-full">
+                <Avatar className="size-8">
                   <AvatarImage src={session.user.image || ""} alt={session.user.name || ""} />
                   <AvatarFallback>{session.user.name?.[0] || "U"}</AvatarFallback>
                 </Avatar>
+
+                {isPro && (
+                  <div className="bg-accent absolute top-0 left-0 z-1 flex size-4 -translate-x-1/4 -translate-y-1/4 items-center justify-center rounded-full">
+                    <Gem className="text-accent-foreground size-3!" />
+                  </div>
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm leading-none font-medium">{session.user.name}</p>
-                  <p className="text-muted-foreground text-xs leading-none">{session.user.email}</p>
+                  <p className="text-sm font-medium">
+                    {session.user.name}{" "}
+                    {isPro && (
+                      <span className="bg-accent text-accent-foreground inline-flex w-fit items-center gap-0.5 rounded-md px-1 py-0.5 text-xs leading-tight font-medium">
+                        <Gem className="size-2.5" /> Pro
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-muted-foreground text-xs leading-tight">
+                    {session.user.email}
+                  </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
