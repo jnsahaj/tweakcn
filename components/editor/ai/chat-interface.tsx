@@ -13,6 +13,8 @@ import { attachLastGeneratedThemeMention, mentionsCount } from "@/utils/ai/ai-pr
 import dynamic from "next/dynamic";
 import { ChatInput } from "./chat-input";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
+import { useSubscription } from "@/hooks/use-subscription";
+import { useGoProDialogStore } from "@/store/go-pro-dialog-store";
 
 const ChatMessages = dynamic(() => import("./chat-messages").then((mod) => mod.ChatMessages), {
   ssr: false,
@@ -34,14 +36,35 @@ export function ChatInterface() {
   const { openAuthDialog } = useAuthStore();
   const { data: session } = authClient.useSession();
 
-  const handleThemeGeneration = async (promptData: AIPromptData | null) => {
+  const { subscriptionStatus } = useSubscription();
+  const { openGoProDialog } = useGoProDialogStore();
+
+  const checkValidSubscription = () => {
+    if (!subscriptionStatus) return;
+    const { isSubscribed, requestsRemaining } = subscriptionStatus;
+
+    if (isSubscribed) return true;
+
+    if (requestsRemaining <= 0) {
+      openGoProDialog();
+      return false;
+    }
+
+    return true; // Allow if not subscribed but still has requests left
+  };
+
+  const handleThemeGeneration = async (
+    promptData: AIPromptData | null,
+    handlers?: { onThemeGenerateInvoked?: () => void }
+  ) => {
     if (!session) {
       openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { promptData });
       return;
     }
 
-    // TODO: Check
-    // Ideally we should check the subscription status here, and open the modal if needed...
+    if (!checkValidSubscription()) {
+      return;
+    }
 
     if (!promptData) {
       toast({
@@ -61,6 +84,7 @@ export function ChatInterface() {
     });
 
     const builtPrompt = buildPrompt(transformedPromptData);
+    handlers?.onThemeGenerateInvoked?.();
     const result = await generateTheme(builtPrompt.text, builtPrompt.imageFiles);
 
     if (!result) {
@@ -89,11 +113,13 @@ export function ChatInterface() {
       return;
     }
 
-    // Reset messages up to the retry point (remove the user message and any subsequent messages)
-    resetMessagesUpToIndex(messageIndex);
-
     // Resend the prompt
-    await handleThemeGeneration(messageToRetry.promptData);
+    await handleThemeGeneration(messageToRetry.promptData, {
+      onThemeGenerateInvoked() {
+        // Reset messages up to the retry point (remove the user message and any subsequent messages)
+        resetMessagesUpToIndex(messageIndex);
+      },
+    });
   };
 
   usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ promptData }) => {
