@@ -1,58 +1,40 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useSubscription } from "@/hooks/use-subscription";
 import { authClient } from "@/lib/auth-client";
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 
 export function AlertBanner() {
+  const [showBanner, setShowBanner] = useState(false);
+
   const { data: session } = authClient.useSession();
   const isLoggedIn = !!session?.user.id;
-
-  const fetchSubscriptionStatus = async () => {
-    const res = await fetch("/api/subscription", { method: "GET" });
-    return res.json();
-  };
-
-  const { data: subscriptionStatus = null } = useQuery({
-    queryKey: ["subscriptionStatus"],
-    queryFn: fetchSubscriptionStatus,
-    enabled: isLoggedIn,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    // Ensure fresh data when manually updated
-    refetchOnWindowFocus: false,
-  });
+  const { subscriptionStatus, isPending } = useSubscription();
 
   const isPro = subscriptionStatus?.isSubscribed ?? false;
   const freeProMessagesLeft = subscriptionStatus?.requestsRemaining ?? 0;
 
-  const [showBanner, setShowBanner] = useState(false);
-
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (!subscriptionStatus) {
-      setShowBanner(false);
-      return;
-    }
 
-    const { isSubscribed, requestsRemaining } = subscriptionStatus;
     const shouldShowBanner =
-      isLoggedIn && !isSubscribed && requestsRemaining <= AI_REQUEST_FREE_TIER_LIMIT;
+      isLoggedIn && !isPro && freeProMessagesLeft <= AI_REQUEST_FREE_TIER_LIMIT;
 
     if (shouldShowBanner) {
-      // Reset the banner state when subscription status changes
-      setShowBanner(false);
-      timer = setTimeout(() => setShowBanner(true), 100);
+      if (showBanner) return;
+
+      timer = setTimeout(() => setShowBanner(true), 1000);
     } else {
       setShowBanner(false);
     }
 
     return () => clearTimeout(timer);
-  }, [isLoggedIn, subscriptionStatus]);
+  }, [isLoggedIn, isPro, freeProMessagesLeft]);
 
   const getBannerContent = () => {
     if (isLoggedIn && !isPro && freeProMessagesLeft > 0) {
@@ -75,7 +57,7 @@ export function AlertBanner() {
     }
   };
 
-  if (isPro) return null;
+  if (isPro || isPending) return null;
 
   return (
     <div className="@container/alert-banner relative">
