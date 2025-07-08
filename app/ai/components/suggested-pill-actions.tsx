@@ -17,7 +17,7 @@ export function SuggestedPillActions({
 }) {
   const { loading: aiIsGenerating } = useAIThemeGeneration();
 
-  const { fileInputRef, selectedImages, handleImageSelect, canUploadMore, isSomeImageUploading } =
+  const { fileInputRef, selectedImages, handleImagesUpload, canUploadMore, isSomeImageUploading } =
     useImageUpload({
       maxFiles: 1,
       maxFileSize: MAX_IMAGE_FILE_SIZE,
@@ -32,7 +32,7 @@ export function SuggestedPillActions({
         images: [selectedImages[0]],
       });
     }
-  }, [selectedImages, isSomeImageUploading]);
+  }, [selectedImages, isSomeImageUploading, handleThemeGeneration]);
 
   const handleSetPrompt = async (prompt: string) => {
     const promptData = createCurrentThemePrompt({ prompt });
@@ -45,18 +45,24 @@ export function SuggestedPillActions({
     }
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = event.target.files;
+    if (!fileList) return;
+
+    const files = Array.from(fileList);
+    handleImagesUpload(files);
+  };
+
   return (
     <>
-      <PillActionButton
-        onClick={handleImageButtonClick}
-        disabled={!canUploadMore || isSomeImageUploading}
-      >
+      <PillActionButton onClick={handleImageButtonClick} disabled={aiIsGenerating}>
         <input
           type="file"
           accept="image/*"
           multiple={false}
           ref={fileInputRef}
-          onChange={handleImageSelect}
+          onChange={handleImageUpload}
+          disabled={aiIsGenerating}
           style={{ display: "none" }}
         />
         <ImageIcon /> From an Image

@@ -14,12 +14,11 @@ export function useImageUpload({ maxFiles, maxFileSize }: UseImageUploadOptions)
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
+  const handleImagesUpload = (files: File[]) => {
+    if (!files || files.length === 0) return;
 
     const totalImages = selectedImages.length;
-    let fileArray = Array.from(files);
+    let fileArray = files;
 
     if (totalImages + fileArray.length > maxFiles) {
       toast({
@@ -76,7 +75,7 @@ export function useImageUpload({ maxFiles, maxFileSize }: UseImageUploadOptions)
   return {
     fileInputRef,
     selectedImages,
-    handleImageSelect,
+    handleImagesUpload,
     handleImageRemove,
     clearSelectedImages,
     canUploadMore,
