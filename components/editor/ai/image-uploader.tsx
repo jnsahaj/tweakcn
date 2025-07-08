@@ -7,16 +7,24 @@ import { ComponentProps } from "react";
 
 interface ImageUploaderProps extends ComponentProps<typeof Button> {
   fileInputRef: React.RefObject<HTMLInputElement | null>;
-  handleImageSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onImagesUpload: (files: File[]) => void;
 }
 
 export function ImageUploader({
   fileInputRef,
-  handleImageSelect,
+  onImagesUpload,
   disabled,
   className,
   ...props
 }: ImageUploaderProps) {
+  const handleImagesUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = event.target.files;
+    if (!fileList) return;
+
+    const files = Array.from(fileList);
+    onImagesUpload(files);
+  };
+
   return (
     <>
       <input
@@ -28,7 +36,7 @@ export function ImageUploader({
         className="hidden"
         aria-label="Upload image for theme generation"
         ref={fileInputRef}
-        onChange={handleImageSelect}
+        onChange={handleImagesUpload}
         disabled={disabled}
       />
       <TooltipWrapper label="Attach image" asChild>
