@@ -62,6 +62,9 @@ export function ChatInput({
       return;
     }
 
+    // TODO: Check
+    // This gets executed, this executes the auth check and the subscription check,
+    // opening the modal if needed before proceeding or early returning
     handleThemeGeneration({
       ...promptData,
       content: promptData?.content ?? "",
@@ -69,6 +72,11 @@ export function ChatInput({
       images,
     });
 
+    // TODO: Check
+    // This block executes regardless of the result of `handleThemeGeneration`
+    // These execute at the same time, it does not wait for `handleThemeGeneration` to finish
+    // But it cant wait because the prompt and image will freeze there until the generation is done
+    // either completed or cancelled
     setPromptData(null);
     clearSelectedImages();
   };

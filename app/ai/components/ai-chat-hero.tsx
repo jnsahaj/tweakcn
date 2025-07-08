@@ -18,6 +18,7 @@ export function AIChatHero() {
   const { addUserMessage, addAssistantMessage, clearMessages } = useAIChatStore();
   const router = useRouter();
   const { generateTheme } = useAIThemeGeneration();
+
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
 
@@ -28,6 +29,9 @@ export function AIChatHero() {
       }
       return;
     }
+
+    // TODO: Check
+    // Ideally we should check the subscription status here, and open the modal if needed...
 
     if (!promptData) {
       toast({
