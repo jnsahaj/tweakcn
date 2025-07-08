@@ -18,6 +18,7 @@ interface CustomTextareaProps {
   onContentChange: (promptData: AIPromptData) => void;
   onGenerate?: () => void;
   characterLimit?: number;
+  onImagesPaste?: (files: File[]) => void;
 }
 
 // Utility function to extract text content (user prompt) and theme mentions from the JSON content
@@ -81,6 +82,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   onContentChange,
   onGenerate,
   characterLimit,
+  onImagesPaste,
 }) => {
   const { loading: aiGenerateLoading } = useAIThemeGeneration();
   const { toast } = useToast();
@@ -137,6 +139,18 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
 
         const clipboardData = event.clipboardData;
         if (!clipboardData) return false;
+
+        // Check for image files
+        if (onImagesPaste) {
+          const files = Array.from(clipboardData.files);
+          const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+
+          if (imageFiles.length > 0) {
+            event.preventDefault();
+            onImagesPaste(imageFiles);
+            return true;
+          }
+        }
 
         const pastedText = clipboardData.getData("text/plain");
         const currentCharacterCount = editor?.storage.characterCount.characters() || 0;
