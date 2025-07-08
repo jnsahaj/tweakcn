@@ -3237,6 +3237,95 @@ export const defaultPresets: Record<string, ThemePreset> = {
     },
   },
 
+  basecamp: {
+    label: "Basecamp",
+    createdAt: "2025-04-21",
+    styles: {
+      light: {
+        background: "#ffffff",
+        foreground: "#333333",
+        card: "#ffffff",
+        "card-foreground": "#333333",
+        popover: "#ffffff",
+        "popover-foreground": "#333333",
+        primary: "#1ab37f",
+        "primary-foreground": "#ffffff",
+        secondary: "#f6f6f6",
+        "secondary-foreground": "#555555",
+        muted: "#f6f6f6",
+        "muted-foreground": "#888888",
+        accent: "#e5f5f0",
+        "accent-foreground": "#1ab37f",
+        destructive: "#d9534f",
+        "destructive-foreground": "#ffffff",
+        border: "#e5e5e5",
+        input: "#ffffff",
+        ring: "#1ab37f",
+        "chart-1": "#1ab37f",
+        "chart-2": "#00a068",
+        "chart-3": "#008c5a",
+        "chart-4": "#555555",
+        "chart-5": "#888888",
+        radius: "0.375rem",
+        sidebar: "#f6f6f6",
+        "sidebar-foreground": "#333333",
+        "sidebar-primary": "#1ab37f",
+        "sidebar-primary-foreground": "#ffffff",
+        "sidebar-accent": "#e5f5f0",
+        "sidebar-accent-foreground": "#1ab37f",
+        "sidebar-border": "#e5e5e5",
+        "sidebar-ring": "#1ab37f",
+        "font-sans": "Inter, sans-serif",
+        "font-serif": "Georgia, serif",
+        "font-mono": "monospace",
+        "shadow-color": "hsl(0 0% 0%)",
+        "shadow-opacity": "0.1",
+        "shadow-blur": "4px",
+        "shadow-spread": "0px",
+        "shadow-offset-x": "0px",
+        "shadow-offset-y": "2px",
+      },
+      dark: {
+        background: "#1f1f1f",
+        foreground: "#e5e5e5",
+        card: "#2a2a2a",
+        "card-foreground": "#e5e5e5",
+        popover: "#2a2a2a",
+        "popover-foreground": "#e5e5e5",
+        primary: "#1dd694",
+        "primary-foreground": "#1f1f1f",
+        secondary: "#333333",
+        "secondary-foreground": "#cccccc",
+        muted: "#2a2a2a",
+        "muted-foreground": "#a0a0a0",
+        accent: "#2f4f43",
+        "accent-foreground": "#1dd694",
+        destructive: "#f07167",
+        "destructive-foreground": "#1f1f1f",
+        border: "#404040",
+        input: "#333333",
+        ring: "#1dd694",
+        "chart-1": "#1dd694",
+        "chart-2": "#25e0a0",
+        "chart-3": "#3ffab0",
+        "chart-4": "#cccccc",
+        "chart-5": "#a0a0a0",
+        radius: "0.375rem",
+        sidebar: "#2a2a2a",
+        "sidebar-foreground": "#e5e5e5",
+        "sidebar-primary": "#1dd694",
+        "sidebar-primary-foreground": "#1f1f1f",
+        "sidebar-accent": "#2f4f43",
+        "sidebar-accent-foreground": "#1dd694",
+        "sidebar-border": "#404040",
+        "sidebar-ring": "#1dd694",
+        "font-sans": "Inter, sans-serif",
+        "font-serif": "Georgia, serif",
+        "font-mono": "monospace",
+      },
+    },
+  },
+
   mono: {
     label: "Mono",
     createdAt: "2025-04-20",
@@ -3318,6 +3407,463 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "sidebar-accent-foreground": "#fafafa",
         "sidebar-border": "#ffffff",
         "sidebar-ring": "#525252",
+      },
+    },
+  },
+
+  "galactic-glitch": {
+    label: "Galactic Glitch",
+    createdAt: "2025-05-01", // Example date
+    styles: {
+      light: {
+        background: "#f0f8ff", // Alice Blue - almost white
+        foreground: "#ff00ff", // Magenta - glitchy text
+        card: "#e6e6fa", // Lavender - soft card background
+        "card-foreground": "#00ffff", // Cyan - glitchy card text
+        popover: "#ffffff", // White popover
+        "popover-foreground": "#39ff14", // Neon Green popover text
+        primary: "#ff1493", // Deep Pink primary
+        "primary-foreground": "#000000", // Black text on primary
+        secondary: "#00fa9a", // Medium Spring Green secondary
+        "secondary-foreground": "#8a2be2", // Blue Violet text on secondary
+        muted: "#f5f5dc", // Beige muted background
+        "muted-foreground": "#ff4500", // Orange Red muted text
+        accent: "#ffd700", // Gold accent
+        "accent-foreground": "#4b0082", // Indigo text on accent
+        destructive: "#dc143c", // Crimson destructive
+        "destructive-foreground": "#ffff00", // Yellow text on destructive
+        border: "#ff00ff", // Magenta border
+        input: "#00ffff", // Cyan input background
+        ring: "#39ff14", // Neon Green ring
+        "chart-1": "#ff1493", // Deep Pink
+        "chart-2": "#00fa9a", // Medium Spring Green
+        "chart-3": "#ffd700", // Gold
+        "chart-4": "#00ffff", // Cyan
+        "chart-5": "#ff00ff", // Magenta
+        radius: "0.1rem", // Very sharp radius
+        sidebar: "#f0ffff", // Azure sidebar
+        "sidebar-foreground": "#ff1493", // Deep Pink sidebar text
+        "sidebar-primary": "#00ffff", // Cyan sidebar primary
+        "sidebar-primary-foreground": "#000000", // Black text on sidebar primary
+        "sidebar-accent": "#ff00ff", // Magenta sidebar accent
+        "sidebar-accent-foreground": "#ffffff", // White text on sidebar accent
+        "sidebar-border": "#39ff14", // Neon Green sidebar border
+        "sidebar-ring": "#ffd700", // Gold sidebar ring
+        "font-sans": "'Press Start 2P', cursive", // Pixelated font
+        "font-serif": "'VT323', monospace", // Another retro font
+        "font-mono": "'Pixelify Sans', sans-serif", // Monospaced pixel font
+        "shadow-color": "hsl(300 100% 50% / 0.5)", // Magenta shadow
+        "shadow-opacity": "1.0",
+        "shadow-blur": "0px",
+        "shadow-spread": "0px",
+        "shadow-offset-x": "2px",
+        "shadow-offset-y": "2px",
+      },
+      dark: {
+        background: "#00001a", // Very dark blue background
+        foreground: "#00ff00", // Lime green text
+        card: "#1a1a2e", // Dark purple card
+        "card-foreground": "#ff00ff", // Magenta card text
+        popover: "#0d0d1a", // Darker popover
+        "popover-foreground": "#00ffff", // Cyan popover text
+        primary: "#ffff00", // Yellow primary
+        "primary-foreground": "#000000", // Black text on primary
+        secondary: "#ff4500", // Orange Red secondary
+        "secondary-foreground": "#ffffff", // White text on secondary
+        muted: "#2a0d2a", // Dark magenta muted
+        "muted-foreground": "#7fff00", // Chartreuse muted text
+        accent: "#1e90ff", // Dodger Blue accent
+        "accent-foreground": "#f0e68c", // Khaki text on accent
+        destructive: "#00ff00", // Lime green destructive
+        "destructive-foreground": "#000000", // Black text on destructive
+        border: "#00ffff", // Cyan border
+        input: "#ff00ff", // Magenta input background
+        ring: "#ffff00", // Yellow ring
+        "chart-1": "#ffff00", // Yellow
+        "chart-2": "#ff4500", // Orange Red
+        "chart-3": "#1e90ff", // Dodger Blue
+        "chart-4": "#00ff00", // Lime
+        "chart-5": "#ff00ff", // Magenta
+        radius: "0.1rem", // Very sharp radius
+        sidebar: "#000000", // Black sidebar
+        "sidebar-foreground": "#00ff00", // Lime sidebar text
+        "sidebar-primary": "#ffff00", // Yellow sidebar primary
+        "sidebar-primary-foreground": "#000000", // Black text on sidebar primary
+        "sidebar-accent": "#ff00ff", // Magenta sidebar accent
+        "sidebar-accent-foreground": "#00ffff", // Cyan text on sidebar accent
+        "sidebar-border": "#00ff00", // Lime sidebar border
+        "sidebar-ring": "#1e90ff", // Dodger Blue sidebar ring
+        "font-sans": "'Orbitron', sans-serif", // Futuristic font
+        "font-serif": "'Audiowide', cursive", // Another futuristic font
+        "font-mono": "'Nova Square', cursive", // Monospaced blocky font
+        "shadow-color": "hsl(120 100% 50% / 0.6)", // Lime shadow
+      },
+    },
+  },
+
+  "brutalist-concrete": {
+    label: "Brutalist Concrete",
+    createdAt: "2025-05-02", // Example date
+    styles: {
+      light: {
+        background: "#e5e7eb", // Cool Gray 200
+        foreground: "#111827", // Gray 900
+        card: "#f9fafb", // Gray 50
+        "card-foreground": "#111827", // Gray 900
+        popover: "#ffffff", // White
+        "popover-foreground": "#111827", // Gray 900
+        primary: "#4b5563", // Gray 600
+        "primary-foreground": "#ffffff", // White
+        secondary: "#9ca3af", // Gray 400
+        "secondary-foreground": "#111827", // Gray 900
+        muted: "#d1d5db", // Gray 300
+        "muted-foreground": "#4b5563", // Gray 600
+        accent: "#6b7280", // Gray 500
+        "accent-foreground": "#ffffff", // White
+        destructive: "#111827", // Gray 900 (Black)
+        "destructive-foreground": "#ffffff", // White
+        border: "#111827", // Gray 900 (Black)
+        input: "#d1d5db", // Gray 300
+        ring: "#4b5563", // Gray 600
+        "chart-1": "#4b5563", // Gray 600
+        "chart-2": "#6b7280", // Gray 500
+        "chart-3": "#9ca3af", // Gray 400
+        "chart-4": "#d1d5db", // Gray 300
+        "chart-5": "#111827", // Gray 900
+        radius: "0rem", // No radius
+        sidebar: "#d1d5db", // Gray 300
+        "sidebar-foreground": "#111827", // Gray 900
+        "sidebar-primary": "#4b5563", // Gray 600
+        "sidebar-primary-foreground": "#ffffff", // White
+        "sidebar-accent": "#9ca3af", // Gray 400
+        "sidebar-accent-foreground": "#111827", // Gray 900
+        "sidebar-border": "#111827", // Gray 900 (Black)
+        "sidebar-ring": "#4b5563", // Gray 600
+        "font-sans": "'Space Grotesk', sans-serif", // Bold sans-serif
+        "font-serif": "'Space Grotesk', sans-serif",
+        "font-mono": "'Space Mono', monospace", // Monospaced
+        "shadow-color": "hsl(0 0% 0%)",
+        "shadow-opacity": "1",
+        "shadow-blur": "0px",
+        "shadow-spread": "0px",
+        "shadow-offset-x": "5px",
+        "shadow-offset-y": "5px",
+      },
+      dark: {
+        background: "#111827", // Gray 900
+        foreground: "#f9fafb", // Gray 50
+        card: "#1f2937", // Gray 800
+        "card-foreground": "#f9fafb", // Gray 50
+        popover: "#111827", // Gray 900
+        "popover-foreground": "#f9fafb", // Gray 50
+        primary: "#9ca3af", // Gray 400
+        "primary-foreground": "#111827", // Gray 900
+        secondary: "#4b5563", // Gray 600
+        "secondary-foreground": "#f9fafb", // Gray 50
+        muted: "#374151", // Gray 700
+        "muted-foreground": "#9ca3af", // Gray 400
+        accent: "#6b7280", // Gray 500
+        "accent-foreground": "#111827", // Gray 900
+        destructive: "#f9fafb", // Gray 50 (White)
+        "destructive-foreground": "#111827", // Gray 900 (Black)
+        border: "#f9fafb", // Gray 50 (White)
+        input: "#4b5563", // Gray 600
+        ring: "#9ca3af", // Gray 400
+        "chart-1": "#9ca3af", // Gray 400
+        "chart-2": "#6b7280", // Gray 500
+        "chart-3": "#4b5563", // Gray 600
+        "chart-4": "#374151", // Gray 700
+        "chart-5": "#f9fafb", // Gray 50
+        radius: "0rem", // No radius
+        sidebar: "#1f2937", // Gray 800
+        "sidebar-foreground": "#f9fafb", // Gray 50
+        "sidebar-primary": "#9ca3af", // Gray 400
+        "sidebar-primary-foreground": "#111827", // Gray 900
+        "sidebar-accent": "#6b7280", // Gray 500
+        "sidebar-accent-foreground": "#111827", // Gray 900
+        "sidebar-border": "#f9fafb", // Gray 50 (White)
+        "sidebar-ring": "#9ca3af", // Gray 400
+        "font-sans": "'Space Grotesk', sans-serif",
+        "font-serif": "'Space Grotesk', sans-serif",
+        "font-mono": "'Space Mono', monospace",
+        "shadow-color": "hsl(0 0% 100%)", // White shadow
+        "shadow-opacity": "1",
+        "shadow-blur": "0px",
+        "shadow-spread": "0px",
+        "shadow-offset-x": "5px",
+        "shadow-offset-y": "5px",
+      },
+    },
+  },
+
+  "google-modern": {
+    label: "Google Modern",
+    createdAt: "2025-05-03", // Example date
+    styles: {
+      light: {
+        background: "#f8f9fa", // Very light grey, almost white
+        foreground: "#202124", // Dark grey text
+        card: "#ffffff", // White cards
+        "card-foreground": "#202124", // Dark grey text on cards
+        popover: "#ffffff", // White popovers
+        "popover-foreground": "#202124", // Dark grey text on popovers
+        primary: "#1a73e8", // Google Blue
+        "primary-foreground": "#ffffff", // White text on primary
+        secondary: "#e8f0fe", // Lighter blue secondary background
+        "secondary-foreground": "#174ea6", // Darker blue text on secondary
+        muted: "#f1f3f4", // Light grey muted background
+        "muted-foreground": "#5f6368", // Medium grey muted text
+        accent: "#d2e3fc", // Very light blue accent background
+        "accent-foreground": "#1967d2", // Medium blue accent text
+        destructive: "#d93025", // Google Red
+        "destructive-foreground": "#ffffff", // White text on destructive
+        border: "#dadce0", // Light grey border
+        input: "#f1f3f4", // Light grey input background
+        ring: "#1a73e8", // Google Blue ring
+        "chart-1": "#4285f4", // Google Blue
+        "chart-2": "#34a853", // Google Green
+        "chart-3": "#fbbc05", // Google Yellow
+        "chart-4": "#ea4335", // Google Red
+        "chart-5": "#174ea6", // Darker Google Blue
+        radius: "0.75rem", // Rounded corners
+        sidebar: "#ffffff", // White sidebar
+        "sidebar-foreground": "#3c4043", // Dark grey sidebar text
+        "sidebar-primary": "#1a73e8", // Google Blue sidebar primary
+        "sidebar-primary-foreground": "#ffffff", // White text on sidebar primary
+        "sidebar-accent": "#e8f0fe", // Light blue sidebar accent
+        "sidebar-accent-foreground": "#1967d2", // Medium blue text on sidebar accent
+        "sidebar-border": "#dadce0", // Light grey sidebar border
+        "sidebar-ring": "#1a73e8", // Google Blue sidebar ring
+        "font-sans": "Roboto, sans-serif",
+        "font-serif": "Roboto Slab, serif",
+        "font-mono": "Roboto Mono, monospace",
+        "shadow-color": "hsl(210 17% 60% / 0.2)",
+        "shadow-opacity": "0.2",
+        "shadow-blur": "8px",
+        "shadow-spread": "0px",
+        "shadow-offset-x": "0px",
+        "shadow-offset-y": "4px",
+      },
+      dark: {
+        background: "#202124", // Dark grey background
+        foreground: "#e8eaed", // Light grey text
+        card: "#292a2d", // Slightly lighter dark grey card
+        "card-foreground": "#e8eaed", // Light grey text on card
+        popover: "#292a2d", // Slightly lighter dark grey popover
+        "popover-foreground": "#e8eaed", // Light grey text on popover
+        primary: "#8ab4f8", // Lighter Google Blue
+        "primary-foreground": "#202124", // Dark grey text on primary
+        secondary: "#3c4043", // Medium dark grey secondary background
+        "secondary-foreground": "#bdc1c6", // Lighter grey text on secondary
+        muted: "#292a2d", // Slightly lighter dark grey muted background
+        "muted-foreground": "#9aa0a6", // Medium grey muted text
+        accent: "#3c4043", // Medium dark grey accent background
+        "accent-foreground": "#8ab4f8", // Lighter Google Blue accent text
+        destructive: "#f28b82", // Lighter Google Red
+        "destructive-foreground": "#202124", // Dark grey text on destructive
+        border: "#3c4043", // Medium dark grey border
+        input: "#3c4043", // Medium dark grey input background
+        ring: "#8ab4f8", // Lighter Google Blue ring
+        "chart-1": "#8ab4f8", // Lighter Google Blue
+        "chart-2": "#81c995", // Lighter Google Green
+        "chart-3": "#fdd663", // Lighter Google Yellow
+        "chart-4": "#f28b82", // Lighter Google Red
+        "chart-5": "#aecbfa", // Even Lighter Google Blue
+        radius: "0.75rem", // Rounded corners
+        sidebar: "#292a2d", // Slightly lighter dark grey sidebar
+        "sidebar-foreground": "#e8eaed", // Light grey sidebar text
+        "sidebar-primary": "#8ab4f8", // Lighter Google Blue sidebar primary
+        "sidebar-primary-foreground": "#202124", // Dark grey text on sidebar primary
+        "sidebar-accent": "#3c4043", // Medium dark grey sidebar accent
+        "sidebar-accent-foreground": "#8ab4f8", // Lighter Google Blue text on sidebar accent
+        "sidebar-border": "#3c4043", // Medium dark grey sidebar border
+        "sidebar-ring": "#8ab4f8", // Lighter Google Blue sidebar ring
+        "font-sans": "Roboto, sans-serif",
+        "font-serif": "Roboto Slab, serif",
+        "font-mono": "Roboto Mono, monospace",
+      },
+    },
+  },
+  "glassmorphism-like": {
+    label: "Glassmorphism Like",
+    createdAt: "2025-05-05", // Example date
+    styles: {
+      light: {
+        background: "hsl(210 30% 95% / 0.9)", // Very light blue, slightly transparent
+        foreground: "hsl(215 20% 35%)", // Muted dark blue/gray
+        card: "hsl(0 0% 100% / 0.6)", // White, fairly transparent card
+        "card-foreground": "hsl(215 25% 27%)", // Darker muted blue/gray
+        popover: "hsl(0 0% 100% / 0.8)", // White, more opaque popover
+        "popover-foreground": "hsl(215 25% 27%)",
+        primary: "hsl(220 80% 60%)", // Vibrant blue
+        "primary-foreground": "hsl(0 0% 100%)", // White
+        secondary: "hsl(210 40% 90% / 0.5)", // Lighter blue, semi-transparent
+        "secondary-foreground": "hsl(220 40% 40%)", // Muted mid-blue
+        muted: "hsl(210 30% 95% / 0.4)", // Very light blue, more transparent
+        "muted-foreground": "hsl(210 20% 55%)", // Lighter muted blue/gray
+        accent: "hsl(260 70% 80% / 0.3)", // Light purple, very transparent accent
+        "accent-foreground": "hsl(260 50% 40%)", // Muted purple
+        destructive: "hsl(0 70% 60% / 0.7)", // Red, slightly transparent
+        "destructive-foreground": "hsl(0 0% 100%)", // White
+        border: "hsl(0 0% 100% / 0.2)", // Very faint white border
+        input: "hsl(0 0% 100% / 0.4)", // Semi-transparent white input
+        ring: "hsl(220 80% 70%)", // Lighter vibrant blue ring
+        "chart-1": "hsl(220 80% 60%)", // Vibrant blue
+        "chart-2": "hsl(190 70% 55%)", // Cyan blue
+        "chart-3": "hsl(260 60% 65%)", // Purple
+        "chart-4": "hsl(340 80% 70%)", // Pink
+        "chart-5": "hsl(210 30% 70%)", // Muted light blue/gray
+        radius: "0.75rem", // Generous radius for soft edges
+        sidebar: "hsl(210 40% 98% / 0.7)", // Very light blue, slightly transparent sidebar
+        "sidebar-foreground": "hsl(215 20% 35%)",
+        "sidebar-primary": "hsl(220 80% 60%)",
+        "sidebar-primary-foreground": "hsl(0 0% 100%)",
+        "sidebar-accent": "hsl(260 70% 80% / 0.4)",
+        "sidebar-accent-foreground": "hsl(260 50% 40%)",
+        "sidebar-border": "hsl(0 0% 100% / 0.3)", // Faint white border
+        "sidebar-ring": "hsl(220 80% 70%)",
+        "font-sans": "'Inter', sans-serif",
+        "font-serif": "'Lora', serif",
+        "font-mono": "'Fira Code', monospace",
+        "shadow-color": "hsl(220 40% 10% / 0.1)", // Subtle dark shadow
+        "shadow-opacity": "0.1",
+        "shadow-blur": "15px", // More blur for diffusion
+        "shadow-spread": "-5px", // Contract shadow slightly
+        "shadow-offset-x": "0px",
+        "shadow-offset-y": "5px",
+      },
+      dark: {
+        background: "hsl(225 20% 15% / 0.9)", // Dark desaturated blue, slightly transparent
+        foreground: "hsl(210 40% 90%)", // Light blue/gray text
+        card: "hsl(220 25% 20% / 0.6)", // Darker blue/gray, fairly transparent card
+        "card-foreground": "hsl(210 40% 95%)", // Very light text
+        popover: "hsl(220 25% 18% / 0.8)", // Darker, more opaque popover
+        "popover-foreground": "hsl(210 40% 95%)",
+        primary: "hsl(220 80% 70%)", // Lighter vibrant blue
+        "primary-foreground": "hsl(225 20% 15%)", // Dark background color for contrast
+        secondary: "hsl(220 20% 25% / 0.5)", // Dark blue/gray, semi-transparent
+        "secondary-foreground": "hsl(210 30% 80%)", // Lighter muted text
+        muted: "hsl(220 20% 18% / 0.4)", // Darker, more transparent muted
+        "muted-foreground": "hsl(210 20% 60%)", // Muted gray/blue
+        accent: "hsl(260 50% 60% / 0.3)", // Muted purple, very transparent accent
+        "accent-foreground": "hsl(260 50% 90%)", // Light purple text
+        destructive: "hsl(0 70% 65% / 0.7)", // Lighter red, slightly transparent
+        "destructive-foreground": "hsl(0 0% 100%)", // White
+        border: "hsl(0 0% 100% / 0.1)", // Very faint white border
+        input: "hsl(220 25% 25% / 0.4)", // Dark semi-transparent input
+        ring: "hsl(220 80% 75%)", // Slightly lighter blue ring
+        "chart-1": "hsl(220 80% 70%)",
+        "chart-2": "hsl(190 70% 65%)",
+        "chart-3": "hsl(260 60% 75%)",
+        "chart-4": "hsl(340 80% 75%)",
+        "chart-5": "hsl(210 30% 75%)",
+        radius: "0.75rem",
+        sidebar: "hsl(225 20% 12% / 0.7)", // Very dark blue, slightly transparent sidebar
+        "sidebar-foreground": "hsl(210 40% 90%)",
+        "sidebar-primary": "hsl(220 80% 70%)",
+        "sidebar-primary-foreground": "hsl(225 20% 15%)",
+        "sidebar-accent": "hsl(260 50% 60% / 0.4)",
+        "sidebar-accent-foreground": "hsl(260 50% 90%)",
+        "sidebar-border": "hsl(0 0% 100% / 0.15)", // Faint white border
+        "sidebar-ring": "hsl(220 80% 75%)",
+        "font-sans": "'Inter', sans-serif",
+        "font-serif": "'Lora', serif",
+        "font-mono": "'Fira Code', monospace",
+        "shadow-color": "hsl(0 0% 0% / 0.2)", // Slightly more prominent dark shadow
+        "shadow-opacity": "0.2",
+        "shadow-blur": "20px",
+        "shadow-spread": "-5px",
+        "shadow-offset-x": "0px",
+        "shadow-offset-y": "8px",
+      },
+    },
+  },
+
+  "openai-tts-demo": {
+    label: "OpenAI TTS Demo",
+    createdAt: "2024-07-26", // Use current date or adjust as needed
+    styles: {
+      light: {
+        background: "#f8f9fa", // Very light grey
+        foreground: "#333333", // Dark grey text
+        card: "#ffffff", // White cards
+        "card-foreground": "#333333",
+        popover: "#ffffff",
+        "popover-foreground": "#333333",
+        primary: "#ff5722", // Bright Orange (Play button)
+        "primary-foreground": "#ffffff", // White text on orange
+        secondary: "#606060", // Dark Gray (Download/Share buttons)
+        "secondary-foreground": "#ffffff", // White text on gray
+        muted: "#f9fafb", // Very light gray for muted elements
+        "muted-foreground": "#6b7280", // Medium gray muted text
+        accent: "#ffeadd", // Light orange accent (e.g., selection dot bg)
+        "accent-foreground": "#b33e1a", // Darker orange text on accent
+        destructive: "#ef4444", // Standard red
+        "destructive-foreground": "#ffffff",
+        border: "#e5e7eb", // Light gray border
+        input: "#ffffff", // White input background
+        ring: "#ff5722", // Orange focus ring
+        "chart-1": "#ff5722", // Primary Orange
+        "chart-2": "#606060", // Secondary Gray
+        "chart-3": "#ff8c5a", // Lighter Orange
+        "chart-4": "#a0a0a0", // Lighter Gray
+        "chart-5": "#b33e1a", // Darker Orange
+        radius: "0.5rem", // Moderate rounded corners
+        sidebar: "#f3f4f6", // Slightly darker light gray for sidebar
+        "sidebar-foreground": "#333333",
+        "sidebar-primary": "#ff5722",
+        "sidebar-primary-foreground": "#ffffff",
+        "sidebar-accent": "#ffeadd",
+        "sidebar-accent-foreground": "#b33e1a",
+        "sidebar-border": "#e5e7eb",
+        "sidebar-ring": "#ff5722",
+        "font-sans": "Inter, sans-serif", // Clean sans-serif
+        "font-serif": "Source Serif 4, serif",
+        "font-mono": "JetBrains Mono, monospace",
+        "shadow-color": "hsl(0 0% 0%)",
+        "shadow-opacity": "0.1",
+        "shadow-blur": "3px",
+        "shadow-spread": "0px",
+        "shadow-offset-x": "0px",
+        "shadow-offset-y": "1px",
+      },
+      dark: {
+        background: "#171717", // Dark background
+        foreground: "#e5e5e5", // Light text
+        card: "#262626", // Darker card background
+        "card-foreground": "#e5e5e5",
+        popover: "#262626",
+        "popover-foreground": "#e5e5e5",
+        primary: "#ff6d3f", // Slightly lighter orange for dark mode
+        "primary-foreground": "#ffffff",
+        secondary: "#a0a0a0", // Lighter gray for secondary buttons
+        "secondary-foreground": "#171717", // Dark text for contrast
+        muted: "#262626",
+        "muted-foreground": "#a3a3a3",
+        accent: "#b33e1a", // Darker orange accent background
+        "accent-foreground": "#ffeadd", // Light text on accent
+        destructive: "#ef4444",
+        "destructive-foreground": "#ffffff",
+        border: "#404040", // Medium dark border
+        input: "#404040", // Medium dark input background
+        ring: "#ff6d3f", // Lighter orange focus ring
+        "chart-1": "#ff6d3f",
+        "chart-2": "#a0a0a0",
+        "chart-3": "#ff8c5a",
+        "chart-4": "#707070",
+        "chart-5": "#e05d38",
+        radius: "0.5rem",
+        sidebar: "#171717",
+        "sidebar-foreground": "#e5e5e5",
+        "sidebar-primary": "#ff6d3f",
+        "sidebar-primary-foreground": "#ffffff",
+        "sidebar-accent": "#b33e1a",
+        "sidebar-accent-foreground": "#ffeadd",
+        "sidebar-border": "#404040",
+        "sidebar-ring": "#ff6d3f",
+        "font-sans": "Inter, sans-serif",
+        "font-serif": "Source Serif 4, serif",
+        "font-mono": "JetBrains Mono, monospace",
       },
     },
   },
