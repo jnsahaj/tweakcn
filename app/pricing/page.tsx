@@ -140,10 +140,7 @@ export default function PricingPage() {
                 </ul>
               </CardContent>
               <CardFooter>
-                <CheckoutButton
-                  size="lg"
-                  className="from-primary to-primary/75 hover:shadow-primary/25 h-12 w-full bg-gradient-to-r text-base font-medium transition-all duration-200 hover:shadow-lg"
-                />
+                <CheckoutButton size="lg" className="h-12 w-full text-base font-medium" />
               </CardFooter>
             </div>
           </Card>
