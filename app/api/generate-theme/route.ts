@@ -3,6 +3,7 @@ import { handleError } from "@/lib/error-response";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
 import { SubscriptionRequiredError } from "@/types/errors";
+import { SubscriptionStatus } from "@/types/subscription";
 import {
   getMessages,
   requestSchema,
@@ -87,22 +88,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const updatedSubscriptionStatus = {
+    const updatedSubscriptionStatus: SubscriptionStatus = {
       isSubscribed: subscriptionCheck.isSubscribed,
       requestsRemaining: subscriptionCheck.isSubscribed
-        ? -1
+        ? Infinity
         : Math.max(0, subscriptionCheck.requestsRemaining - 1),
+      requestsUsed: subscriptionCheck.requestsUsed + 1,
     };
 
-    return new Response(
-      JSON.stringify({
-        ...theme,
-        subscriptionStatus: updatedSubscriptionStatus,
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const response = {
+      ...theme,
+      subscriptionStatus: updatedSubscriptionStatus,
+    };
+
+    return new Response(JSON.stringify(response), {
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     return handleError(error, { route: "/api/generate-theme" });
   }

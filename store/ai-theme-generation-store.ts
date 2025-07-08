@@ -1,4 +1,5 @@
 import { generateThemeWithAI } from "@/lib/ai/ai-theme-generator";
+import { SubscriptionStatus } from "@/types/subscription";
 import { ThemeStyles } from "@/types/theme";
 import { create } from "zustand";
 
@@ -14,7 +15,7 @@ interface AIThemeGenerationStore {
   ) => Promise<{
     text: string;
     theme: ThemeStyles;
-    subscriptionStatus?: { isSubscribed: boolean; requestsRemaining: number };
+    subscriptionStatus?: SubscriptionStatus;
   }>;
   cancelThemeGeneration: () => void;
   resetState: () => void;
