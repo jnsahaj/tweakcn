@@ -1,6 +1,7 @@
 import { useEditorStore } from "@/store/editor-store";
 import { AIPromptData } from "@/types/ai";
 import { ApiError, ApiErrorCode } from "@/types/errors";
+import { SubscriptionStatus } from "@/types/subscription";
 import { Theme } from "@/types/theme";
 import { buildPromptForAPI } from "@/utils/ai/ai-prompt";
 import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
@@ -35,7 +36,7 @@ export async function generateThemeWithAI(
 ): Promise<{
   text: string;
   theme: Theme["styles"];
-  subscriptionStatus?: { isSubscribed: boolean; requestsRemaining: number };
+  subscriptionStatus?: SubscriptionStatus;
 }> {
   try {
     const formData = new FormData();
