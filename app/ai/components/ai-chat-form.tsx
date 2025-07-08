@@ -10,7 +10,7 @@ import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useImageUpload } from "@/hooks/use-image-upload";
-import { useDocumentDragAndDropIntent } from "@/hooks/useDocumentDragAndDropIntent";
+import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { AIPromptData } from "@/types/ai";
