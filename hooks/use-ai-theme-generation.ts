@@ -4,6 +4,7 @@ import { usePostHog } from "posthog-js/react";
 import { ApiError } from "@/types/errors";
 import { useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
+import { SUBSCRIPTION_STATUS_QUERY_KEY } from "./use-subscription";
 
 export function useAIThemeGeneration() {
   const generateTheme = useAIThemeGenerationStore((state) => state.generateTheme);
@@ -18,7 +19,7 @@ export function useAIThemeGeneration() {
       const result = await generateTheme(prompt, imageFiles);
 
       if (result.subscriptionStatus && session?.user.id) {
-        queryClient.setQueryData(["subscriptionStatus"], result.subscriptionStatus);
+        queryClient.setQueryData([SUBSCRIPTION_STATUS_QUERY_KEY], result.subscriptionStatus);
       }
 
       toast({
