@@ -4,32 +4,10 @@ import { NoiseEffect } from "@/components/effects/noise-effect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { FREE_SUB_FEATURES, PRO_SUB_FEATURES } from "@/utils/subscription";
 import { Calendar, Check, Circle, Mail } from "lucide-react";
 import Link from "next/link";
 import { CheckoutButton } from "./components/checkout-button";
-
-type Feature = {
-  description: string;
-  status: "done" | "pending";
-};
-
-const FREE_FEATURES: Feature[] = [
-  { description: "Full theme customization", status: "done" },
-  { description: "5 AI generated themes", status: "done" },
-  { description: "Save and share up to 10 themes", status: "done" },
-  { description: "Import theme using CSS variables", status: "done" },
-  { description: "Export theme via CSS variables", status: "done" },
-  { description: "Export theme via Shadcn Registry Command", status: "done" },
-  { description: "Contrast checker", status: "done" },
-];
-
-const PRO_FEATURES: Feature[] = [
-  { description: "Save and share unlimited themes", status: "done" },
-  { description: "Unlimited AI generated themes", status: "done" },
-  { description: "Generate beautiful themes from images", status: "done" },
-  { description: "Priority support", status: "done" },
-  { description: "Save your own fonts and colors", status: "pending" },
-];
 
 export default function PricingPage() {
   return (
@@ -67,7 +45,7 @@ export default function PricingPage() {
             </CardHeader>
             <CardContent className="flex-1 pt-6">
               <ul className="space-y-3">
-                {FREE_FEATURES.map((feature, index) => (
+                {FREE_SUB_FEATURES.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <div className="bg-primary/15 flex items-center justify-center rounded-full p-1">
                       {feature.status === "done" ? (
@@ -113,7 +91,7 @@ export default function PricingPage() {
                   Everything in Free, plus:
                 </p>
                 <ul className="space-y-3">
-                  {PRO_FEATURES.map((feature, index) => (
+                  {PRO_SUB_FEATURES.map((feature, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <div
                         className={cn(
