@@ -12,7 +12,7 @@ export default async function ThemesPage() {
   });
 
   return (
-    <div className="container mx-auto">
+    <div>
       <SettingsHeader title="Your Themes" description="View and manage your themes" />
       {sortedThemes.length === 0 ? (
         <div className="bg-card flex flex-col items-center justify-center rounded-xl border p-8 py-16 text-center shadow-sm">

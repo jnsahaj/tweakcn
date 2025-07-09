@@ -13,7 +13,7 @@ import {
 import { useSubscription } from "@/hooks/use-subscription";
 import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/store/auth-store";
-import { Gem, Loader2 } from "lucide-react";
+import { BookLock, Gem, Loader2, LogOut, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
@@ -85,11 +85,11 @@ export function UserProfileDropdown() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">
+                <div className="flex flex-col space-y-0.5">
+                  <p className="text-sm leading-tight font-medium">
                     {session.user.name}{" "}
                     {isPro && (
-                      <span className="bg-accent text-accent-foreground inline-flex w-fit items-center gap-0.5 rounded-md px-1 py-0.5 text-xs leading-tight font-medium">
+                      <span className="bg-accent text-accent-foreground inline-flex w-fit items-center gap-1 rounded-md px-1 py-0.5 text-xs leading-tight font-medium">
                         <Gem className="size-2.5" /> Pro
                       </span>
                     )}
@@ -99,9 +99,18 @@ export function UserProfileDropdown() {
                   </p>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
-                <Link href="/settings">Settings</Link>
+                <Link href="/settings">
+                  <Settings /> Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-border opacity-80" />
+              <DropdownMenuItem asChild>
+                <Link href="/privacy-policy">
+                  <BookLock />
+                  Privacy Policy
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={async () => {
@@ -109,7 +118,7 @@ export function UserProfileDropdown() {
                   await authClient.signOut();
                 }}
               >
-                Log out
+                <LogOut /> Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
