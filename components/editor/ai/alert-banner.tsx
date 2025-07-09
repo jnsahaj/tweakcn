@@ -70,10 +70,10 @@ export function AlertBanner() {
         )}
       >
         <div className="overflow-hidden">
-          <div className="bg-muted text-muted-foreground flex items-center justify-between gap-2 rounded-t-lg px-3 py-1 text-xs">
+          <div className="bg-muted text-muted-foreground flex items-center justify-between gap-2 rounded-t-lg px-3 py-1.5 text-xs">
             <p
               className={cn(
-                "text-pretty @2xl/alert-banner:py-1.5 @2xl/alert-banner:text-sm",
+                "text-pretty @2xl/alert-banner:text-sm",
                 showBanner ? "opacity-100" : "opacity-0"
               )}
             >
@@ -81,7 +81,7 @@ export function AlertBanner() {
             </p>
             <div className="ml-auto flex items-center gap-1">
               <Link href="/pricing">
-                <Button variant="link" size="sm" className="h-fit">
+                <Button variant="link" size="sm" className="h-fit @2xl/alert-banner:text-sm">
                   Upgrade
                 </Button>
               </Link>
@@ -89,7 +89,7 @@ export function AlertBanner() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-5 [&>svg]:size-3"
+                className="size-4 [&>svg]:size-3"
                 onClick={() => setShowBanner(false)}
               >
                 <X />
