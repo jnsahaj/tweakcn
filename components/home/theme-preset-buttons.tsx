@@ -1,11 +1,12 @@
 "use client";
 
-import { motion } from "motion/react";
+import { AnimationOptions, AnimationPlaybackControls, motion, TargetAndTransition, useAnimate } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
 import { cn } from "@/lib/utils";
 import { colorFormatter } from "@/utils/color-converter";
 import { ThemeEditorState } from "@/types/editor";
+import { useEffect, useRef } from "react";
 
 // ColorBox component remains internal to ThemePresetButtons
 const ColorBox = ({ color }: { color: string }) => {
@@ -66,8 +67,6 @@ export function ThemePresetButtons({
     const totalWidth = numPresetsInRow * (buttonWidthPx + gapPx);
     const duration = numPresetsInRow * baseDurationPerItem;
 
-    // Alternate direction for the middle row
-    // Stagger start slightly for visual effect
     const initialOffset = 0;
 
     return {
@@ -77,7 +76,7 @@ export function ThemePresetButtons({
       animate: { x: [initialOffset, initialOffset - totalWidth] }, // Animate based on original set width, starting from offset
       transition: {
         duration,
-        ease: "linear",
+        ease: "linear" as const,
         repeat: Infinity,
       },
       style: { x: initialOffset }, // Apply initial offset
@@ -105,13 +104,10 @@ export function ThemePresetButtons({
       }}
     >
       {rowsData.map((rowData) => (
-        <motion.div
+        <AnimatedRow
           key={rowData!.key}
-          className="flex"
-          style={rowData!.style} // Apply dynamic styles like initial offset
-          animate={rowData!.animate}
-          transition={rowData!.transition}
-          whileHover={{ animationPlayState: "paused" }} // Pause row on hover
+          target={rowData!.animate}
+          options={rowData!.transition}
         >
           {/* Inner div necessary for spacing when using justify-content */}
           <div className="flex flex-shrink-0" style={{ gap: `${gapPx}px` }}>
@@ -159,8 +155,34 @@ export function ThemePresetButtons({
               );
             })}
           </div>
-        </motion.div>
+        </AnimatedRow>
       ))}
+    </motion.div>
+  );
+}
+
+interface AnimatedRowProps {
+  children: React.ReactNode;
+  target: TargetAndTransition;
+  options: AnimationOptions;
+}
+
+function AnimatedRow({ children, target, options }: AnimatedRowProps) {
+  const [scope, animate] = useAnimate();
+  const controls = useRef<AnimationPlaybackControls | null>(null);
+
+  useEffect(() => {
+    controls.current = animate(scope.current, target, options);
+  });
+
+  return (
+    <motion.div
+      ref={scope}
+      className="flex"
+      onHoverStart={() => controls.current?.pause()}
+      onHoverEnd={() => controls.current?.play()}
+    >
+      {children}
     </motion.div>
   );
 }
