@@ -16,15 +16,23 @@ import { useAuthStore } from "@/store/auth-store";
 import { BookLock, Gem, Loader2, LogOut, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 
 export function UserProfileDropdown() {
   const { data: session, isPending } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const posthog = usePostHog();
+  const router = useRouter();
 
   const { subscriptionStatus } = useSubscription();
   const isPro = subscriptionStatus?.isSubscribed ?? false;
+
+  const handleLogOut = async () => {
+    posthog.reset();
+    await authClient.signOut();
+    router.refresh();
+  };
 
   return (
     <AnimatePresence mode="wait">
@@ -112,12 +120,7 @@ export function UserProfileDropdown() {
                   Privacy Policy
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={async () => {
-                  posthog.reset();
-                  await authClient.signOut();
-                }}
-              >
+              <DropdownMenuItem onClick={handleLogOut}>
                 <LogOut /> Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
