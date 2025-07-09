@@ -10,6 +10,7 @@ import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { useGithubStars } from "@/hooks/use-github-stars";
 import { formatCompactNumber } from "@/utils/format";
 import Link from "next/link";
+import { GetProCTA } from "./get-pro-cta";
 
 export function Header() {
   const { stargazersCount } = useGithubStars("jnsahaj", "tweakcn");
@@ -24,6 +25,8 @@ export function Header() {
           </Link>
         </div>
         <div className="flex items-center gap-3.5">
+          <GetProCTA className="h-8" />
+
           <SocialLink
             href="https://github.com/jnsahaj/tweakcn"
             className="flex items-center gap-2 text-sm font-bold"
