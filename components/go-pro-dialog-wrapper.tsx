@@ -39,20 +39,20 @@ function GoProDialog({ isOpen, onClose }: GoProDialogProps) {
       <DialogContent className="gap-0 overflow-hidden rounded-lg border p-0 md:max-w-2xl lg:max-w-4xl">
         <div className="flex flex-col md:flex-row">
           {/* Left section: content */}
-          <section className="w-full space-y-12 border-r md:w-2/3 lg:w-1/2">
+          <section className="w-full space-y-8 border-r md:w-2/3 lg:w-1/2">
             <DialogHeader className="px-6 pt-6">
               <DialogTitle>Go Pro </DialogTitle>
               <DialogDescription>{`Unlock all of tweakcn's features`}</DialogDescription>
             </DialogHeader>
 
-            <div className="px-6">
+            <div className="space-y-6 px-6">
               <ul className="space-y-3">
                 {PRO_SUB_FEATURES.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <div
                       className={cn(
                         "flex items-center justify-center rounded-full p-1",
-                        feature.status === "done" ? "bg-primary/15" : "bg-muted-foreground/25"
+                        feature.status === "done" ? "bg-primary/15" : "bg-muted"
                       )}
                     >
                       {feature.status === "done" ? (
@@ -61,17 +61,15 @@ function GoProDialog({ isOpen, onClose }: GoProDialogProps) {
                         <Calendar className="text-muted-foreground size-3 stroke-2" />
                       )}
                     </div>
-                    <span
-                      className={cn(
-                        "text-sm",
-                        feature.status === "done" ? "text-foreground" : "text-muted-foreground"
-                      )}
-                    >
+                    <span className={cn("text-sm", feature.status === "done" ? "" : "opacity-60")}>
                       {feature.description}
                     </span>
                   </li>
                 ))}
               </ul>
+
+              <p className="text-muted-foreground text-sm">{`Don't worry, full theme customization is still yours, for free. Upgrade to Pro to take it
+  to the next level, cancel anytime.`}</p>
             </div>
 
             <DialogFooter className="bg-muted/30 relative border-t p-6">
@@ -82,7 +80,7 @@ function GoProDialog({ isOpen, onClose }: GoProDialogProps) {
                   </Link>
                 </Button>
                 <Button variant="ghost" onClick={onClose}>
-                  Maybe later
+                  Maybe Later
                 </Button>
               </div>
             </DialogFooter>
