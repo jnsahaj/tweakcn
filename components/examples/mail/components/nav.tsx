@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -26,8 +25,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
           isCollapsed ? (
             <Tooltip key={index} delayDuration={0}>
               <TooltipTrigger asChild>
-                <Link
-                  href="#"
+                <button
                   className={cn(
                     buttonVariants({ variant: link.variant, size: "icon" }),
                     "h-9 w-9",
@@ -37,7 +35,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                 >
                   <link.icon className="h-4 w-4" />
                   <span className="sr-only">{link.title}</span>
-                </Link>
+                </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="flex items-center gap-4">
                 {link.title}
@@ -47,9 +45,8 @@ export function Nav({ links, isCollapsed }: NavProps) {
               </TooltipContent>
             </Tooltip>
           ) : (
-            <Link
+            <button
               key={index}
-              href="#"
               className={cn(
                 buttonVariants({ variant: link.variant, size: "sm" }),
                 link.variant === "default" &&
@@ -70,7 +67,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                   {link.label}
                 </span>
               )}
-            </Link>
+            </button>
           )
         )}
       </nav>
