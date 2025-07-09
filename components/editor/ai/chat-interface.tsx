@@ -3,18 +3,18 @@
 import { toast } from "@/components/ui/use-toast";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
+import { useSubscription } from "@/hooks/use-subscription";
 import { buildPrompt } from "@/lib/ai/ai-theme-generator";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
+import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { AIPromptData } from "@/types/ai";
 import { attachLastGeneratedThemeMention, mentionsCount } from "@/utils/ai/ai-prompt";
 import dynamic from "next/dynamic";
 import { ChatInput } from "./chat-input";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
-import { useSubscription } from "@/hooks/use-subscription";
-import { useGoProDialogStore } from "@/store/go-pro-dialog-store";
 
 const ChatMessages = dynamic(() => import("./chat-messages").then((mod) => mod.ChatMessages), {
   ssr: false,
@@ -37,7 +37,7 @@ export function ChatInterface() {
   const { data: session } = authClient.useSession();
 
   const { subscriptionStatus } = useSubscription();
-  const { openGoProDialog } = useGoProDialogStore();
+  const { openGetProDialog } = useGetProDialogStore();
 
   const checkValidSubscription = () => {
     if (!subscriptionStatus) return;
@@ -46,7 +46,7 @@ export function ChatInterface() {
     if (isSubscribed) return true;
 
     if (requestsRemaining <= 0) {
-      openGoProDialog();
+      openGetProDialog();
       return false;
     }
 

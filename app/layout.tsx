@@ -1,5 +1,5 @@
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
-import { GoProDialogWrapper } from "@/components/go-pro-dialog-wrapper";
+import { GetProDialogWrapper } from "@/components/get-pro-dialog-wrapper";
 import { PostHogInit } from "@/components/posthog-init";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <ThemeProvider defaultTheme="light">
                 <TooltipProvider>
                   <AuthDialogWrapper />
-                  <GoProDialogWrapper />
+                  <GetProDialogWrapper />
                   <Toaster />
                   {children}
                 </TooltipProvider>
