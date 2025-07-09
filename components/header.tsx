@@ -1,26 +1,26 @@
 "use client";
 
-import Link from "next/link";
-import GitHubIcon from "@/assets/github.svg";
-import TwitterIcon from "@/assets/twitter.svg";
 import DiscordIcon from "@/assets/discord.svg";
+import GitHubIcon from "@/assets/github.svg";
 import Logo from "@/assets/logo.svg";
-import { useGithubStars } from "@/hooks/use-github-stars";
+import TwitterIcon from "@/assets/twitter.svg";
 import { SocialLink } from "@/components/social-link";
 import { Separator } from "@/components/ui/separator";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
+import { useGithubStars } from "@/hooks/use-github-stars";
 import { formatCompactNumber } from "@/utils/format";
+import Link from "next/link";
 
 export function Header() {
   const { stargazersCount } = useGithubStars("jnsahaj", "tweakcn");
 
   return (
     <header className="border-b">
-      <div className="p-4 flex items-center gap-2 justify-between">
+      <div className="flex items-center justify-between gap-2 p-4">
         <div className="flex items-center gap-1">
           <Link href="/" className="flex items-center gap-2">
             <Logo className="size-6" title="tweakcn" />
-            <span className="font-bold hidden md:block">tweakcn</span>
+            <span className="hidden font-bold md:block">tweakcn</span>
           </Link>
         </div>
         <div className="flex items-center gap-3.5">
@@ -33,10 +33,10 @@ export function Header() {
           </SocialLink>
           <Separator orientation="vertical" className="h-8" />
           <div className="flex items-center gap-3.5">
-            <div className="hidden md:flex items-center gap-3.5">
+            <div className="hidden items-center gap-3.5 md:flex">
               <SocialLink
                 href="https://github.com/sponsors/jnsahaj"
-                className="flex items-center gap-1.5 px-2 py-1 rounded-md border hover:border-pink-500 hover:text-pink-500 transition-colors"
+                className="flex items-center gap-1.5 rounded-md border px-2 py-1 transition-colors hover:border-pink-500 hover:text-pink-500"
               >
                 <span className="text-sm font-medium">Sponsor</span>
               </SocialLink>
