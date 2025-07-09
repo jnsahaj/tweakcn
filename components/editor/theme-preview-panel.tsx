@@ -1,18 +1,19 @@
 "use client";
 
 import ShadcnBlocksLogo from "@/assets/shadcnblocks.svg";
-import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsList } from "@/components/ui/tabs";
-import { TabsContent as TabsContentPrimitive } from "@radix-ui/react-tabs";
 import { useFullscreen } from "@/hooks/use-fullscreen";
+import { useThemeInspector } from "@/hooks/use-theme-inspector";
 import { cn } from "@/lib/utils";
 import { ThemeEditorPreviewProps } from "@/types/theme";
-import { Maximize, Minimize, Moon, MoreVertical, Sun, Inspect } from "lucide-react";
+import { TabsContent as TabsContentPrimitive } from "@radix-ui/react-tabs";
+import { Inspect, Maximize, Minimize, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { lazy, useState } from "react";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
+import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
 import {
   DropdownMenu,
@@ -20,11 +21,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import InspectorOverlay from "./inspector-overlay";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
-import { useThemeInspector } from "@/hooks/use-theme-inspector";
-import InspectorOverlay from "./inspector-overlay";
 
 const DemoCards = lazy(() => import("@/components/examples/cards"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
@@ -36,7 +36,6 @@ const TypographyDemo = lazy(() => import("@/components/examples/typography/typog
 
 const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
-  const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("cards");
 
   const {
@@ -51,11 +50,6 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
   if (!styles || !styles[currentMode]) {
     return null;
   }
-
-  const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { clientX: x, clientY: y } = event;
-    toggleTheme({ x, y });
-  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -114,20 +108,11 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
 
             <div className="flex items-center gap-0.5">
               {isFullscreen && (
-                <TooltipWrapper label="Toggle Theme" asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleThemeToggle}
-                    className="group size-8"
-                  >
-                    {theme === "light" ? (
-                      <Sun className="transition-all group-hover:scale-120" />
-                    ) : (
-                      <Moon className="transition-all group-hover:scale-120" />
-                    )}
-                  </Button>
-                </TooltipWrapper>
+                <ThemeToggle
+                  variant="ghost"
+                  size="icon"
+                  className="group size-8 hover:[&>svg]:scale-120 hover:[&>svg]:transition-all"
+                />
               )}
               {/* Inspector toggle button */}
               <TooltipWrapper label="Toggle Inspector" asChild>

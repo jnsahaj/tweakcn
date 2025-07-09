@@ -1,17 +1,3 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  ChevronDown,
-  Heart,
-  Moon,
-  Search,
-  Settings,
-  Shuffle,
-  Sun,
-} from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
@@ -26,7 +12,20 @@ import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { ThemePreset } from "@/types/theme";
 import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronDown,
+  Heart,
+  Search,
+  Settings,
+  Shuffle,
+} from "lucide-react";
 import Link from "next/link";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ThemeToggle } from "../theme-toggle";
+import { TooltipWrapper } from "../tooltip-wrapper";
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
   withCycleThemes?: boolean;
@@ -76,35 +75,15 @@ const ThemeControls = () => {
     applyThemePreset(presetNames[random]);
   }, [presetNames, applyThemePreset]);
 
-  const { theme, toggleTheme } = useTheme();
-  const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { clientX: x, clientY: y } = event;
-    toggleTheme({ x, y });
-  };
-
   return (
     <div className="flex gap-1">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={handleThemeToggle}>
-            {theme === "light" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p className="text-xs">Toggle theme</p>
-        </TooltipContent>
-      </Tooltip>
+      <ThemeToggle variant="ghost" size="icon" className="size-7" />
 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={randomize}>
-            <Shuffle className="h-3.5 w-3.5" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p className="text-xs">Random theme</p>
-        </TooltipContent>
-      </Tooltip>
+      <TooltipWrapper label="Random theme" asChild>
+        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={randomize}>
+          <Shuffle className="h-3.5 w-3.5" />
+        </Button>
+      </TooltipWrapper>
     </div>
   );
 };
