@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useGoProDialogStore } from "@/store/go-pro-dialog-store";
+import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { ChatMessage } from "@/types/ai";
 import { ThemeStyles } from "@/types/theme";
 import { PRO_SUB_FEATURES } from "@/utils/subscription";
@@ -22,18 +22,18 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { NoiseEffect } from "./effects/noise-effect";
 
-export function GoProDialogWrapper() {
-  const { isOpen, closeGoProDialog } = useGoProDialogStore();
+export function GetProDialogWrapper() {
+  const { isOpen, closeGetProDialog } = useGetProDialogStore();
 
-  return <GoProDialog isOpen={isOpen} onClose={closeGoProDialog} />;
+  return <GetProDialog isOpen={isOpen} onClose={closeGetProDialog} />;
 }
 
-interface GoProDialogProps {
+interface GetProDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-function GoProDialog({ isOpen, onClose }: GoProDialogProps) {
+function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="gap-0 overflow-hidden rounded-lg border p-0 md:max-w-2xl lg:max-w-4xl">
@@ -41,7 +41,7 @@ function GoProDialog({ isOpen, onClose }: GoProDialogProps) {
           {/* Left section: content */}
           <section className="w-full space-y-8 border-r md:w-2/3 lg:w-1/2">
             <DialogHeader className="px-6 pt-6">
-              <DialogTitle>Go Pro </DialogTitle>
+              <DialogTitle>Get Pro </DialogTitle>
               <DialogDescription>{`Unlock all of tweakcn's features`}</DialogDescription>
             </DialogHeader>
 
