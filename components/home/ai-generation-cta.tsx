@@ -4,7 +4,7 @@ import { AIChatDemo } from "@/components/examples/ai-chat-demo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 
@@ -24,34 +24,48 @@ export function AIGenerationCTA() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className="justify-left relative flex flex-col items-start space-y-4"
+                className="space-y-8"
               >
-                <Badge
-                  className="mb-4 rounded-full px-4 py-1.5 text-sm font-medium shadow-sm transition-none"
-                  variant="secondary"
-                >
-                  <span className="text-primary mr-1">✦</span> Pro Features
-                </Badge>
-                <h2 className="from-foreground to-foreground/80 gap-2 bg-gradient-to-r bg-clip-text text-3xl leading-tight font-bold tracking-tight text-pretty text-transparent md:text-4xl lg:text-5xl">
-                  Generate Themes With
-                  <FrameHighlight className="text-primary">AI</FrameHighlight>
-                  in Seconds
-                </h2>
-                <p className="text-muted-foreground mb-8 text-base leading-relaxed text-pretty md:text-lg">
-                  Create stunning ready-to-use themes. Just provide an image or text prompt, and our
-                  AI does the rest.
-                </p>
+                <div className="justify-left relative flex flex-col items-start gap-4">
+                  <Badge
+                    className="rounded-full px-4 py-1.5 text-sm font-medium shadow-sm transition-none"
+                    variant="secondary"
+                  >
+                    <span className="text-primary mr-1">✦</span> Pro Features
+                  </Badge>
+                  <h2 className="from-foreground to-foreground/80 gap-2 bg-gradient-to-r bg-clip-text text-3xl font-bold tracking-tight text-pretty text-transparent md:text-4xl lg:text-5xl">
+                    Generate Themes With
+                    <FrameHighlight className="text-primary">AI</FrameHighlight>
+                    in Seconds
+                  </h2>
+                  <p className="text-muted-foreground text-base leading-relaxed text-pretty md:text-lg">
+                    Create stunning ready-to-use themes. Just provide an image or text prompt, and
+                    our AI does the rest.
+                  </p>
+                </div>
 
-                <div className="flex flex-col gap-4 sm:flex-row">
+                <div className="flex w-fit flex-col gap-4">
                   <Button
                     asChild
                     size="lg"
                     className="border-primary/20 hover:border-primary/50 h-12 cursor-pointer rounded-full px-8 text-base transition-transform duration-250 hover:translate-y-[-2px]"
                   >
-                    <Link href="/editor/theme?tab=ai">
+                    <Link href="/ai">
                       Try it Free <ArrowRight className="ml-2" />
                     </Link>
                   </Button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-6">
+                  {["Theme Preview", "Checkpoint Restoration", "Image Uploads"].map((feature) => (
+                    <div
+                      key={feature}
+                      className="text-muted-foreground flex items-center gap-2 text-sm"
+                    >
+                      <Check className="text-primary size-5" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
                 </div>
               </motion.div>
             </div>
@@ -63,9 +77,8 @@ export function AIGenerationCTA() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className=""
               >
-                <div className="border-border/50! relative h-[500px] overflow-hidden rounded-lg border-2 mask-b-from-80% mask-b-to-90% backdrop-blur-xs">
+                <div className="border-border/50! hover:border-border! relative h-[500px] overflow-hidden rounded-lg border-2 mask-b-from-85% backdrop-blur-xs transition-all delay-150 duration-300">
                   <NoiseEffect />
 
                   <AIChatDemo disabled={false} className="pb-16" />
