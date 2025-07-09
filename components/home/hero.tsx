@@ -1,13 +1,27 @@
+import ShadcnLogo from "@/assets/shadcn.svg";
+import { Spotlight } from "@/components/effects/spotlight";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Check, Copy, Circle, Eye, Palette } from "lucide-react";
+import { ArrowRight, Check, Circle, Copy, Eye, Palette } from "lucide-react";
+import { motion } from "motion/react";
 import Link from "next/link";
-import ShadcnLogo from "@/assets/shadcn.svg";
 
 export function Hero() {
   return (
     <section className="relative isolate container mx-auto w-full py-20 md:py-32 lg:py-40">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <Spotlight
+          className="top-0 left-0 -translate-x-1/3 -translate-y-1/3 opacity-50"
+          fill="white"
+        />
+      </motion.div>
+
       <div className="relative z-10 px-4 md:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Left Column - Text Content */}
