@@ -19,6 +19,11 @@ const faqs = [
       "Yes, tweakcn is completely free to use. We may introduce premium features in the future, but the core functionality will always remain free.",
   },
   {
+    question: "What is tweakcn Pro and what does it include?",
+    answer:
+      "tweakcn Pro is a premium subscription service available for $8 per month. It unlocks all of tweakcn's advanced features, including powerful AI theme generation. You can cancel your subscription at any time and still benefit from the core functionality.",
+  },
+  {
     question: "How do I customise a shadcn/ui theme?",
     answer:
       "You can customise a shadcn/ui theme by selecting the a preset theme you want to use from the dropdown menu and then adjusting the colors to you liking. Once you are happy with the theme, you can export the code by either copying it or running the command to apply the theme to your project automatically.",
@@ -54,18 +59,18 @@ export function FAQ() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
+          className="mb-12 flex flex-col items-center justify-center space-y-4 text-center"
         >
           <Badge
             className="rounded-full px-4 py-1.5 text-sm font-medium shadow-sm"
             variant="secondary"
           >
-            <span className="mr-1 text-primary">✦</span> FAQ
+            <span className="text-primary mr-1">✦</span> FAQ
           </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
+          <h2 className="from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
             Frequently Asked Questions
           </h2>
-          <p className="max-w-[800px] text-muted-foreground md:text-lg">
+          <p className="text-muted-foreground max-w-[800px] md:text-lg">
             Find answers to common questions about tweakcn.
           </p>
         </motion.div>
@@ -80,11 +85,8 @@ export function FAQ() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
               >
-                <AccordionItem
-                  value={`item-${i}`}
-                  className="border-b border-border/40 py-2 group"
-                >
-                  <AccordionTrigger className="text-left font-medium hover:no-underline group-hover:text-primary transition-colors">
+                <AccordionItem value={`item-${i}`} className="border-border/40 group border-b py-2">
+                  <AccordionTrigger className="group-hover:text-primary text-left font-medium transition-colors hover:no-underline">
                     {faq.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground">

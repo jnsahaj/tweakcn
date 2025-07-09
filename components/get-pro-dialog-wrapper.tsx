@@ -1,6 +1,5 @@
 "use client";
 
-import Message from "@/components/editor/ai/message";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,17 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
-import { ChatMessage } from "@/types/ai";
-import { ThemeStyles } from "@/types/theme";
 import { PRO_SUB_FEATURES } from "@/utils/subscription";
-import { defaultPresets } from "@/utils/theme-presets";
 import { Calendar, Check } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 import { NoiseEffect } from "./effects/noise-effect";
+import { AIChatDemo } from "./examples/ai-chat-demo";
 
 export function GetProDialogWrapper() {
   const { isOpen, closeGetProDialog } = useGetProDialogStore();
@@ -41,7 +36,7 @@ function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
           {/* Left section: content */}
           <section className="w-full space-y-8 border-r md:w-2/3 lg:w-1/2">
             <DialogHeader className="px-6 pt-6">
-              <DialogTitle>Get Pro </DialogTitle>
+              <DialogTitle>Get Pro</DialogTitle>
               <DialogDescription>{`Unlock all of tweakcn's features`}</DialogDescription>
             </DialogHeader>
 
@@ -106,8 +101,8 @@ function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
             <div className="bg-primary/15 absolute right-0 bottom-0 -z-10 size-70 translate-x-1/2 translate-y-1/2 rounded-full blur-3xl" />
             {/* ----Background effects---- */}
 
-            <div className="absolute top-6 left-6 z-10 flex items-center justify-center lg:inset-6">
-              <ChatPreview />
+            <div className="absolute top-6 left-6 z-10 flex items-center justify-center overflow-hidden rounded-lg border lg:inset-6">
+              <AIChatDemo />
             </div>
           </section>
         </div>
@@ -115,101 +110,3 @@ function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
     </Dialog>
   );
 }
-
-function ChatPreview() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    // We want to disable all focusable selectors
-    const focusables = ref.current.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    focusables.forEach((el) => {
-      (el as HTMLElement).setAttribute("tabindex", "-1");
-      if ("disabled" in el) (el as HTMLButtonElement).disabled = true;
-    });
-  }, []);
-
-  return (
-    <div
-      className="bg-background/50 flex h-full w-full min-w-[350px] origin-top-left flex-col overflow-hidden rounded-lg border shadow-lg backdrop-blur-lg max-lg:scale-80"
-      aria-hidden="true"
-      tabIndex={-1}
-    >
-      {/* Scrollable parent */}
-      <ScrollArea className="flex-1">
-        {/* Non-interactive chat content */}
-        <div
-          ref={ref}
-          className="pointer-events-none flex flex-col gap-4 p-4 select-none"
-          aria-hidden="true"
-        >
-          {PLACEHOLDER_MESSAGES.map((msg) => (
-            <Message key={msg.id} message={msg} onRetry={() => {}} />
-          ))}
-        </div>
-      </ScrollArea>
-    </div>
-  );
-}
-
-const PLACEHOLDER_MESSAGES: ChatMessage[] = [
-  {
-    id: "1",
-    role: "user",
-    timestamp: 1,
-    content: "Can you generate a theme from this image?",
-    promptData: {
-      content: "Generate a theme from this image.",
-      mentions: [],
-      images: [
-        {
-          file: { name: "og-image.v050725.png" } as File,
-          preview: "/og-image.v050725.png",
-        },
-      ],
-    },
-  },
-  {
-    id: "2",
-    role: "assistant",
-    timestamp: 2,
-    content:
-      "I've generated a Midnight Bloom theme based on your image. It features deep purples and blues for a calming, modern look.",
-    themeStyles: defaultPresets["midnight-bloom"].styles as ThemeStyles,
-    promptData: undefined,
-  },
-  {
-    id: "3",
-    role: "user",
-    timestamp: 3,
-    content: "Can you generate a theme inspired by @Twitter?",
-    promptData: undefined,
-  },
-  {
-    id: "4",
-    role: "assistant",
-    timestamp: 4,
-    content:
-      "Alright, I've whipped up a Twitter-inspired theme. Expect bright blues and clean contrasts for a social, energetic vibe.",
-    themeStyles: defaultPresets["twitter"].styles as ThemeStyles,
-    promptData: undefined,
-  },
-  {
-    id: "5",
-    role: "user",
-    timestamp: 5,
-    content: "How about a @Supabase theme?",
-    promptData: undefined,
-  },
-  {
-    id: "6",
-    role: "assistant",
-    timestamp: 6,
-    content:
-      "I've generated a Supabase theme for you. It uses fresh greens and dark backgrounds for a modern, developer-friendly feel.",
-    themeStyles: defaultPresets["supabase"].styles as ThemeStyles,
-    promptData: undefined,
-  },
-];
