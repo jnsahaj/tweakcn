@@ -21,7 +21,7 @@ export function SettingsSidebar() {
 
   return (
     <aside className="w-64 shrink-0">
-      <nav className="space-y-2">
+      <nav className="space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -29,7 +29,7 @@ export function SettingsSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "hover:bg-muted flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                "hover:bg-muted flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive && "bg-muted"
               )}
             >
