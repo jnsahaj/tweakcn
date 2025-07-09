@@ -173,7 +173,7 @@ function AnimatedRow({ children, target, options }: AnimatedRowProps) {
 
   useEffect(() => {
     controls.current = animate(scope.current, target, options);
-  });
+  }, [target, options, animate, scope]);
 
   return (
     <motion.div
