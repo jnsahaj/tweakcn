@@ -1,9 +1,9 @@
 import { useEditorStore } from "@/store/editor-store";
-import { AIPromptData } from "@/types/ai";
+import { ChatMessage } from "@/types/ai";
 import { ApiError, ApiErrorCode } from "@/types/errors";
 import { SubscriptionStatus } from "@/types/subscription";
 import { Theme } from "@/types/theme";
-import { buildPromptForAPI } from "@/utils/ai/ai-prompt";
+import { convertChatMessagesToCoreMessages } from "@/utils/ai/message-converter";
 import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
 
 async function handleError(response: Response) {
@@ -30,8 +30,7 @@ async function handleError(response: Response) {
  * Generate a theme with AI using a text prompt
  */
 export async function generateThemeWithAI(
-  prompt?: string,
-  imageFiles?: File[],
+  messages: ChatMessage[],
   options?: { signal?: AbortSignal }
 ): Promise<{
   text: string;
@@ -39,21 +38,14 @@ export async function generateThemeWithAI(
   subscriptionStatus?: SubscriptionStatus;
 }> {
   try {
-    const formData = new FormData();
-
-    if (prompt) {
-      formData.append("prompt", prompt);
-    }
-
-    if (imageFiles && imageFiles.length > 0) {
-      imageFiles.forEach((imageFile) => {
-        formData.append("images", imageFile);
-      });
-    }
+    const coreMessages = await convertChatMessagesToCoreMessages(messages);
 
     const response = await fetch("/api/generate-theme", {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messages: coreMessages }),
       signal: options?.signal,
     });
 
@@ -94,11 +86,4 @@ export function applyGeneratedTheme(themeStyles: Theme["styles"]) {
       });
     });
   }
-}
-
-export function buildPrompt(promptData: AIPromptData) {
-  return {
-    text: buildPromptForAPI(promptData),
-    imageFiles: promptData.images?.map((image) => image.file),
-  };
 }

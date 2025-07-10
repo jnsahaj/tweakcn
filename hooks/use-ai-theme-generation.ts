@@ -5,6 +5,7 @@ import { ApiError } from "@/types/errors";
 import { useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { SUBSCRIPTION_STATUS_QUERY_KEY } from "./use-subscription";
+import { ChatMessage } from "@/types/ai";
 
 export function useAIThemeGeneration() {
   const generateTheme = useAIThemeGenerationStore((state) => state.generateTheme);
@@ -14,9 +15,9 @@ export function useAIThemeGeneration() {
   const queryClient = useQueryClient();
   const { data: session } = authClient.useSession();
 
-  const handleGenerateTheme = async (prompt?: string, imageFiles?: File[]) => {
+  const handleGenerateTheme = async (messages: ChatMessage[]) => {
     try {
-      const result = await generateTheme(prompt, imageFiles);
+      const result = await generateTheme(messages);
 
       if (result.subscriptionStatus && session?.user.id) {
         queryClient.setQueryData([SUBSCRIPTION_STATUS_QUERY_KEY], result.subscriptionStatus);
@@ -27,10 +28,13 @@ export function useAIThemeGeneration() {
         description: "Your AI-generated theme has been applied",
       });
 
+      const lastUserMessage = messages.filter((m) => m.role === "user").pop();
+
       posthog.capture("AI_GENERATE_THEME", {
-        prompt,
-        includesImage: imageFiles && imageFiles.length > 0,
-        imageCount: imageFiles?.length,
+        prompt: lastUserMessage?.promptData?.content,
+        includesImage:
+          lastUserMessage?.promptData?.images && lastUserMessage.promptData.images.length > 0,
+        imageCount: lastUserMessage?.promptData?.images?.length,
       });
 
       return result; // Return the result from the store

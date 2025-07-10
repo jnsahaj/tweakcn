@@ -1,4 +1,3 @@
-import { getLastGeneratedThemeStyles, useAIChatStore } from "@/store/ai-chat-store";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { AIPromptData, MentionReference } from "@/types/ai";
@@ -7,11 +6,6 @@ import { JSONContent } from "@tiptap/react";
 export const getTextContent = (promptData: AIPromptData | null) => {
   if (!promptData) return "";
   return promptData.content;
-};
-
-export const mentionsCount = (promptData: AIPromptData | null) => {
-  if (!promptData) return 0;
-  return promptData.mentions.length;
 };
 
 export const buildPromptForAPI = (promptData: AIPromptData) => {
@@ -56,23 +50,6 @@ export function attachCurrentThemeMention(promptData: AIPromptData): AIPromptDat
     id: "editor:current-changes",
     label: "Current Theme",
     themeData: currentThemeData,
-  };
-
-  const promptDataWithMention = {
-    ...promptData,
-    mentions: [...promptData.mentions, mentionReference],
-  };
-  return promptDataWithMention;
-}
-
-export function attachLastGeneratedThemeMention(promptData: AIPromptData): AIPromptData {
-  const lastGeneratedThemeStyles = getLastGeneratedThemeStyles(useAIChatStore.getState().messages);
-  if (!lastGeneratedThemeStyles) return promptData;
-
-  const mentionReference: MentionReference = {
-    id: "ai:last-generated-theme",
-    label: "Last Generated Theme",
-    themeData: lastGeneratedThemeStyles,
   };
 
   const promptDataWithMention = {

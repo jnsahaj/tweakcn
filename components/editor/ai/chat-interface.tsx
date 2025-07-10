@@ -4,14 +4,12 @@ import { toast } from "@/components/ui/use-toast";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { useSubscription } from "@/hooks/use-subscription";
-import { buildPrompt } from "@/lib/ai/ai-theme-generator";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { AIPromptData } from "@/types/ai";
-import { attachLastGeneratedThemeMention, mentionsCount } from "@/utils/ai/ai-prompt";
 import dynamic from "next/dynamic";
 import { ChatInput } from "./chat-input";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
@@ -74,18 +72,14 @@ export function ChatInterface() {
       return;
     }
 
-    let transformedPromptData = promptData;
-    if (mentionsCount(promptData) === 0) {
-      transformedPromptData = attachLastGeneratedThemeMention(promptData);
-    }
-
     addUserMessage({
-      promptData: transformedPromptData,
+      promptData,
     });
 
-    const builtPrompt = buildPrompt(transformedPromptData);
     handlers?.onThemeGenerateInvoked?.();
-    const result = await generateTheme(builtPrompt.text, builtPrompt.imageFiles);
+
+    const updatedMessages = useAIChatStore.getState().messages;
+    const result = await generateTheme(updatedMessages);
 
     if (!result) {
       addAssistantMessage({
@@ -113,13 +107,9 @@ export function ChatInterface() {
       return;
     }
 
-    // Resend the prompt
-    await handleThemeGeneration(messageToRetry.promptData, {
-      onThemeGenerateInvoked() {
-        // Reset messages up to the retry point (remove the user message and any subsequent messages)
-        resetMessagesUpToIndex(messageIndex);
-      },
-    });
+    // Reset messages up to the retry point (remove the user message and any subsequent messages)
+    resetMessagesUpToIndex(messageIndex);
+    await handleThemeGeneration(messageToRetry.promptData);
   };
 
   usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ promptData }) => {

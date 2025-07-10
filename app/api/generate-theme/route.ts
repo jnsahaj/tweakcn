@@ -4,12 +4,7 @@ import { getCurrentUserId, logError } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
 import { SubscriptionRequiredError } from "@/types/errors";
 import { SubscriptionStatus } from "@/types/subscription";
-import {
-  getMessages,
-  requestSchema,
-  responseSchema,
-  SYSTEM_PROMPT,
-} from "@/utils/ai/generate-theme";
+import { requestSchema, responseSchema, SYSTEM_PROMPT } from "@/utils/ai/generate-theme";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
@@ -22,13 +17,6 @@ const google = createGoogleGenerativeAI({
 });
 
 const model = google("gemini-2.5-pro");
-
-function parseFormData(formData: FormData) {
-  const prompt = formData.get("prompt") || undefined;
-  const imageFiles = formData.getAll("images").filter((f): f is File => f instanceof File);
-  const data = { prompt, images: imageFiles };
-  return requestSchema.parse(data);
-}
 
 const ratelimit = new Ratelimit({
   redis: kv,
@@ -64,9 +52,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const formData = await req.formData();
-    const { prompt, images: imageFiles } = parseFormData(formData);
-    const messages = await getMessages(prompt, imageFiles);
+    const { messages } = requestSchema.parse(await req.json());
 
     const { experimental_output: theme, usage } = await generateText({
       model,

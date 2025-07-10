@@ -1,6 +1,6 @@
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { themeStylePropsSchema } from "@/types/theme";
-import { CoreUserMessage, ImagePart, TextPart, UserContent } from "ai";
+import { coreMessageSchema } from "ai";
 import { z } from "zod";
 
 export const SYSTEM_PROMPT = `# Role
@@ -38,43 +38,9 @@ export const SYSTEM_PROMPT = `# Role
     # Text Description
     Fill the \`text\` field in a friendly way, for example: "I've generated..." or "Alright, I've whipped up..."`;
 
-export const requestSchema = z
-  .object({
-    prompt: z
-      .string()
-      .max(AI_PROMPT_CHARACTER_LIMIT + 5000, {
-        message: `Failed to generate theme. Input character limit exceeded.`,
-      })
-      .optional(),
-    images: z
-      .array(
-        z
-          .custom<File>((file) => {
-            // Check if we're in a server environment
-            if (typeof File === "undefined") {
-              // Server-side: Check if it's a file-like object
-              return file && typeof file === "object" && "type" in file && "size" in file;
-            }
-            // Client-side: Use instanceof check
-            return file instanceof File;
-          })
-          .refine((file) => file.type.startsWith("image/"), {
-            message: "File must be an image.",
-          })
-      )
-      .max(MAX_IMAGE_FILES, { message: `You can upload up to ${MAX_IMAGE_FILES} images.` })
-      .refine((files) => files.every((file) => file.size <= MAX_IMAGE_FILE_SIZE), {
-        message: "Each image must be smaller than 5MB.",
-      })
-      .optional(),
-  })
-  .refine(
-    (data) =>
-      (data.prompt && data.prompt.trim().length > 0) || (data.images && data.images.length > 0),
-    {
-      message: "You must provide either a prompt, at least one image, or both.",
-    }
-  );
+export const requestSchema = z.object({
+  messages: z.array(coreMessageSchema),
+});
 
 // Create a new schema based on themeStylePropsSchema excluding 'spacing'
 const themeStylePropsWithoutSpacing = themeStylePropsSchema.omit({
@@ -89,46 +55,3 @@ export const responseSchema = z.object({
     dark: themeStylePropsWithoutSpacing,
   }),
 });
-
-export async function getImageBase64(imageFile: File) {
-  if (!imageFile) return;
-
-  const arrayBuffer = await imageFile.arrayBuffer();
-  const base64 = Buffer.from(arrayBuffer).toString("base64");
-  const imageBase64 = `data:${imageFile.type};base64,${base64}`;
-  return imageBase64;
-}
-
-export async function getMessages(
-  prompt?: string,
-  imageFiles?: File[]
-): Promise<CoreUserMessage[]> {
-  const content: UserContent = [];
-
-  // Add image parts
-  if (imageFiles && imageFiles.length > 0) {
-    const imageParts = await Promise.all(
-      imageFiles.map(async (imageFile): Promise<ImagePart | null> => {
-        const result = await getImageBase64(imageFile);
-        return result ? { type: "image", image: result } : null;
-      })
-    );
-    content.push(...imageParts.filter((part): part is ImagePart => part !== null));
-  }
-
-  // Add text part
-  if (prompt && prompt.trim().length > 0) {
-    const textPart: TextPart = {
-      type: "text",
-      text: prompt.trim(),
-    };
-    content.push(textPart);
-  }
-
-  const userMessage: CoreUserMessage = {
-    role: "user",
-    content,
-  };
-
-  return [userMessage];
-}
