@@ -4,7 +4,6 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { toast } from "@/hooks/use-toast";
-import { buildPrompt } from "@/lib/ai/ai-theme-generator";
 import { authClient } from "@/lib/auth-client";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAuthStore } from "@/store/auth-store";
@@ -50,8 +49,8 @@ export function AIChatHero() {
 
     router.push("/editor/theme?tab=ai");
 
-    const builtPrompt = buildPrompt(promptData);
-    const result = await generateTheme(builtPrompt.text, builtPrompt.imageFiles);
+    const updatedMessages = useAIChatStore.getState().messages;
+    const result = await generateTheme(updatedMessages);
 
     if (!result) {
       addAssistantMessage({

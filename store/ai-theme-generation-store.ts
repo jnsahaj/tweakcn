@@ -1,4 +1,5 @@
 import { generateThemeWithAI } from "@/lib/ai/ai-theme-generator";
+import { ChatMessage } from "@/types/ai";
 import { SubscriptionStatus } from "@/types/subscription";
 import { ThemeStyles } from "@/types/theme";
 import { create } from "zustand";
@@ -9,10 +10,7 @@ interface AIThemeGenerationStore {
 
   setLoading: (loading: boolean) => void;
   // generateTheme now only takes an optional prompt and image files. Callbacks are removed.
-  generateTheme: (
-    prompt?: string,
-    imageFiles?: File[]
-  ) => Promise<{
+  generateTheme: (messages: ChatMessage[]) => Promise<{
     text: string;
     theme: ThemeStyles;
     subscriptionStatus?: SubscriptionStatus;
@@ -39,9 +37,9 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     }
   },
 
-  generateTheme: async (prompt?: string, imageFiles?: File[]) => {
-    if (!prompt && !imageFiles?.length) {
-      throw new Error("Prompt or image files are required");
+  generateTheme: async (messages: ChatMessage[]) => {
+    if (messages.length === 0) {
+      throw new Error("Messages are required");
     }
 
     const state = get();
@@ -54,7 +52,7 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     set({ loading: true, abortController });
 
     try {
-      const response = await generateThemeWithAI(prompt, imageFiles, {
+      const response = await generateThemeWithAI(messages, {
         signal: abortController.signal,
       });
       return response;
