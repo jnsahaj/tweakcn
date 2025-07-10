@@ -17,7 +17,7 @@ export function SuggestedPillActions({
 }) {
   const { loading: aiIsGenerating } = useAIThemeGeneration();
 
-  const { fileInputRef, selectedImages, handleImagesUpload, canUploadMore, isSomeImageUploading } =
+  const { fileInputRef, uploadedImages, handleImagesUpload, canUploadMore, isSomeImageUploading } =
     useImageUpload({
       maxFiles: 1,
       maxFileSize: MAX_IMAGE_FILE_SIZE,
@@ -25,14 +25,14 @@ export function SuggestedPillActions({
 
   // Automatically send prompt when an image is selected and loaded
   useEffect(() => {
-    if (selectedImages.length > 0 && !isSomeImageUploading) {
+    if (uploadedImages.length > 0 && !isSomeImageUploading) {
       handleThemeGeneration({
         content: "", // No text prompt
         mentions: [], // No mentions
-        images: [selectedImages[0]],
+        images: [uploadedImages[0]],
       });
     }
-  }, [selectedImages, isSomeImageUploading, handleThemeGeneration]);
+  }, [uploadedImages, isSomeImageUploading]);
 
   const handleSetPrompt = async (prompt: string) => {
     const promptData = createCurrentThemePrompt({ prompt });
