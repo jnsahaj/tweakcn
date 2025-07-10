@@ -1,10 +1,10 @@
-import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "motion/react";
 
 const faqs = [
@@ -24,9 +24,9 @@ const faqs = [
       "tweakcn Pro is a premium subscription service available for $8 per month. It unlocks all of tweakcn's advanced features, including powerful AI theme generation. You can cancel your subscription at any time and still benefit from the core functionality.",
   },
   {
-    question: "How do I customise a shadcn/ui theme?",
+    question: "How do I customize a shadcn/ui theme?",
     answer:
-      "You can customise a shadcn/ui theme by selecting the a preset theme you want to use from the dropdown menu and then adjusting the colors to you liking. Once you are happy with the theme, you can export the code by either copying it or running the command to apply the theme to your project automatically.",
+      "You can customize a shadcn/ui theme by selecting the a preset theme you want to use from the dropdown menu and then adjusting the colors to you liking. Once you are happy with the theme, you can export the code by either copying it or running the command to apply the theme to your project automatically.",
   },
   {
     question: "Does tweakcn support Tailwind CSS v4?",
