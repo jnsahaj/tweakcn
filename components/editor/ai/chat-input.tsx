@@ -5,15 +5,17 @@ import { Loading } from "@/components/loading";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { useImageUpload } from "@/hooks/use-image-upload";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
+import { useImageUpload } from "@/hooks/use-image-upload";
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
+import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
 import { AIPromptData } from "@/types/ai";
+import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
+import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useState } from "react";
 import { AlertBanner } from "./alert-banner";
 import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
 import { ImageUploader } from "./image-uploader";
@@ -33,74 +35,83 @@ export function ChatInput({
   ) => Promise<void>;
 }) {
   const { messages, clearMessages } = useAIChatStore();
-  const [promptData, setPromptData] = useState<AIPromptData | null>(null);
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
+  const { isUserDragging } = useDocumentDragAndDropIntent();
+
+  // Zustand store for input persistence. We are not persisting the uploaded images, yet.
+  const { editorContentDraft, setEditorContentDraft, clearLocalDraft } = useAILocalDraftStore();
+
+  // Derive promptData from editorContent.
+  const promptData = convertJSONContentToPromptData(
+    editorContentDraft || { type: "doc", content: [] }
+  );
+
+  // Images uploads are local. We should upload them using a remote storage as soon as the user uploads them
+  // We should persist the image public URL and submit the public URL to the theme generation API.
   const {
     fileInputRef,
-    selectedImages,
+    uploadedImages,
     handleImagesUpload,
     handleImageRemove,
-    clearSelectedImages,
+    clearUploadedImages,
     isSomeImageUploading,
   } = useImageUpload({
     maxFiles: MAX_IMAGE_FILES,
     maxFileSize: MAX_IMAGE_FILE_SIZE,
   });
 
-  const { isUserDragging } = useDocumentDragAndDropIntent();
-
-  const handleContentChange = (newPromptData: AIPromptData) => {
-    setPromptData({ ...newPromptData });
-  };
+  const isEmptyPrompt =
+    uploadedImages.length === 0 &&
+    (!promptData?.content?.trim() || promptData.content.length === 0);
 
   const handleGenerate = async () => {
     // Only send images that are not loading, and strip loading property
-    const images = selectedImages
+    const images = uploadedImages
       .filter((img) => !img.loading)
       .map(({ file, preview }) => ({ file, preview }));
 
-    // Allow if there is text, or at least one image
-    if ((!promptData?.content || promptData.content.trim().length === 0) && images.length === 0) {
-      return;
-    }
+    // Proceed only if there is text, or at least one image
+    if (isEmptyPrompt && images.length === 0) return;
 
-    handleThemeGeneration(
-      {
-        ...promptData,
-        content: promptData?.content ?? "",
-        mentions: promptData?.mentions ?? [],
-        images,
+    const promptDataToSend = {
+      ...promptData,
+      content: promptData?.content ?? "",
+      mentions: promptData?.mentions ?? [],
+      images,
+    };
+
+    handleThemeGeneration(promptDataToSend, {
+      onThemeGenerateInvoked() {
+        clearUploadedImages();
+        clearLocalDraft();
       },
-      {
-        onThemeGenerateInvoked() {
-          setPromptData(null);
-          clearSelectedImages();
-        },
-      }
-    );
+    });
   };
 
-  const isSendButtonDisabled =
-    (selectedImages.length === 0 && !promptData?.content?.trim()) ||
-    aiGenerateLoading ||
-    isSomeImageUploading;
+  const handleContentChange = (jsonContent: JSONContent) => {
+    setEditorContentDraft(jsonContent);
+  };
+
+  const handleNewChat = () => {
+    clearMessages();
+    clearLocalDraft();
+    clearUploadedImages();
+  };
 
   return (
     <div className="relative transition-all contain-layout">
       <AlertBanner />
-
       <div className="bg-background relative isolate z-10 flex size-full min-h-[100px] flex-1 flex-col gap-2 overflow-hidden rounded-lg border p-2 shadow-xs">
         {isUserDragging && (
           <div className={cn("flex h-16 items-center rounded-lg")}>
             <DragAndDropImageUploader
               onDrop={handleImagesUpload}
-              disabled={aiGenerateLoading || selectedImages.some((img) => img.loading)}
+              disabled={aiGenerateLoading || uploadedImages.some((img) => img.loading)}
             />
           </div>
         )}
-
-        {selectedImages.length > 0 && !isUserDragging && (
+        {uploadedImages.length > 0 && !isUserDragging && (
           <div
             className={cn(
               "relative flex h-16 items-center rounded-lg",
@@ -108,7 +119,7 @@ export function ChatInput({
             )}
           >
             <HorizontalScrollArea className="w-full">
-              {selectedImages.map((img, idx) => (
+              {uploadedImages.map((img, idx) => (
                 <UploadedImagePreview
                   key={idx}
                   imagePreview={img.preview}
@@ -119,7 +130,6 @@ export function ChatInput({
             </HorizontalScrollArea>
           </div>
         )}
-
         <div className="min-h-[60px]">
           <label className="sr-only">Chat Input</label>
           <div className="bg-muted/40 relative isolate rounded-lg">
@@ -129,16 +139,16 @@ export function ChatInput({
               key={messages.length}
               characterLimit={AI_PROMPT_CHARACTER_LIMIT}
               onImagesPaste={handleImagesUpload}
+              initialEditorContent={editorContentDraft}
             />
           </div>
         </div>
-
         <div className="@container/form flex items-center justify-between gap-2">
           <TooltipWrapper label="Create new chat" asChild>
             <Button
               variant="outline"
               size="sm"
-              onClick={clearMessages}
+              onClick={handleNewChat}
               disabled={aiGenerateLoading || messages.length === 0}
               className="flex items-center gap-1.5 shadow-none"
             >
@@ -154,8 +164,8 @@ export function ChatInput({
               onClick={() => fileInputRef.current?.click()}
               disabled={
                 aiGenerateLoading ||
-                selectedImages.some((img) => img.loading) ||
-                selectedImages.length >= MAX_IMAGE_FILES
+                uploadedImages.some((img) => img.loading) ||
+                uploadedImages.length >= MAX_IMAGE_FILES
               }
             />
 
@@ -177,7 +187,7 @@ export function ChatInput({
                   size="sm"
                   className="size-8 shadow-none"
                   onClick={handleGenerate}
-                  disabled={isSendButtonDisabled}
+                  disabled={isEmptyPrompt || isSomeImageUploading || aiGenerateLoading}
                 >
                   {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
                 </Button>

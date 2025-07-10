@@ -4,9 +4,6 @@ import { suggestion } from "@/components/editor/mention-suggestion";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { useEditorStore } from "@/store/editor-store";
-import { useThemePresetStore } from "@/store/theme-preset-store";
-import { AIPromptData, MentionReference } from "@/types/ai";
 import CharacterCount from "@tiptap/extension-character-count";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -15,80 +12,24 @@ import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect } from "react";
 
 interface CustomTextareaProps {
-  onContentChange: (promptData: AIPromptData) => void;
+  onContentChange: (jsonContent: JSONContent) => void;
   onGenerate?: () => void;
   characterLimit?: number;
   onImagesPaste?: (files: File[]) => void;
+  initialEditorContent?: JSONContent | null;
 }
-
-// Utility function to extract text content (user prompt) and theme mentions from the JSON content
-// we need both separate to create the prompt data to send to the AI
-// we also need to handle the line breaks correctly, both in copy/paste and while typing directly
-const extractTextContentAndMentions = (
-  node: JSONContent
-): { content: string; mentions: MentionReference[] } => {
-  const textArr: string[] = [];
-  const mentionsArr: MentionReference[] = [];
-
-  // This is a recursive function that walks through the JSON content (even nested) and extracts the text content and mentions
-  const walk = (n: JSONContent) => {
-    if (n.type === "text") {
-      textArr.push(n.text || "");
-    }
-    if (n.type === "mention") {
-      textArr.push(`@${n.attrs?.label}`);
-      const id = n.attrs?.id;
-      const label = n.attrs?.label;
-      let themeData;
-      if (id === "editor:current-changes") {
-        themeData = useEditorStore.getState().themeState.styles;
-      } else {
-        const preset = useThemePresetStore.getState().getPreset(id);
-        themeData = preset?.styles || { light: {}, dark: {} };
-      }
-      mentionsArr.push({ id, label, themeData });
-    }
-    if (n.type === "hardBreak") {
-      textArr.push("\n");
-    }
-    if (n.content) {
-      n.content.forEach((child) => walk(child));
-    }
-  };
-
-  const blocks = node.content;
-  if (Array.isArray(blocks) && blocks.length > 0) {
-    blocks.forEach((block, idx) => {
-      walk(block);
-      if (idx < blocks.length - 1) {
-        textArr.push("\n");
-      }
-    });
-  } else {
-    walk(node);
-  }
-
-  const formattedText = textArr.join("").replace(/\\n/g, "\n");
-
-  return { content: formattedText, mentions: mentionsArr };
-};
-
-const convertJSONContentToPromptData = (jsonContent: JSONContent): AIPromptData => {
-  const { content, mentions } = extractTextContentAndMentions(jsonContent);
-  return { content, mentions };
-};
 
 const CustomTextarea: React.FC<CustomTextareaProps> = ({
   onContentChange,
   onGenerate,
   characterLimit,
   onImagesPaste,
+  initialEditorContent,
 }) => {
   const { loading: aiGenerateLoading } = useAIThemeGeneration();
   const { toast } = useToast();
 
   const editor = useEditor({
-    immediatelyRender: false,
     extensions: [
       StarterKit,
       Mention.configure({
@@ -169,10 +110,13 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         return false;
       },
     },
+    content: initialEditorContent || "",
+    onCreate: ({ editor }) => {
+      editor.commands.focus("end");
+    },
     onUpdate: ({ editor }) => {
       const jsonContent = editor.getJSON();
-      const promptData = convertJSONContentToPromptData(jsonContent);
-      onContentChange(promptData);
+      onContentChange(jsonContent);
     },
   });
 

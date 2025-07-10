@@ -10,14 +10,14 @@ interface UseImageUploadOptions {
 }
 
 export function useImageUpload({ maxFiles, maxFileSize }: UseImageUploadOptions) {
-  const [selectedImages, setSelectedImages] = useState<PromptImageWithLoading[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<PromptImageWithLoading[]>([]);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImagesUpload = (files: File[]) => {
     if (!files || files.length === 0) return;
 
-    const totalImages = selectedImages.length;
+    const totalImages = uploadedImages.length;
     let fileArray = files;
 
     if (totalImages + fileArray.length > maxFiles) {
@@ -40,13 +40,13 @@ export function useImageUpload({ maxFiles, maxFileSize }: UseImageUploadOptions)
         preview: "",
         loading: true,
       };
-      setSelectedImages((prev) => [...prev, uploadingImagePlaceholder]);
+      setUploadedImages((prev) => [...prev, uploadingImagePlaceholder]);
 
       const reader = new FileReader();
       reader.onload = (e) => {
         const preview = e.target?.result as string;
 
-        setSelectedImages((prev) => {
+        setUploadedImages((prev) => {
           // Find the first image with this file and loading: true and update it
           const idx = prev.findIndex((img) => img.file === file && img.loading === true);
           if (idx === -1) return prev;
@@ -60,24 +60,24 @@ export function useImageUpload({ maxFiles, maxFileSize }: UseImageUploadOptions)
   };
 
   const handleImageRemove = (index: number) => {
-    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
     if (fileInputRef.current) fileInputRef.current.value = ""; // Reset the file input
   };
 
-  const clearSelectedImages = () => {
-    setSelectedImages([]);
+  const clearUploadedImages = () => {
+    setUploadedImages([]);
     if (fileInputRef.current) fileInputRef.current.value = ""; // Reset the file input
   };
 
-  const isSomeImageUploading = selectedImages.some((img) => img.loading);
-  const canUploadMore = selectedImages.length < maxFiles && !isSomeImageUploading;
+  const isSomeImageUploading = uploadedImages.some((img) => img.loading);
+  const canUploadMore = uploadedImages.length < maxFiles && !isSomeImageUploading;
 
   return {
     fileInputRef,
-    selectedImages,
+    uploadedImages,
     handleImagesUpload,
     handleImageRemove,
-    clearSelectedImages,
+    clearUploadedImages,
     canUploadMore,
     isSomeImageUploading,
   };

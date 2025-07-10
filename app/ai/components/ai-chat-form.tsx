@@ -9,14 +9,16 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { useImageUpload } from "@/hooks/use-image-upload";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
+import { useImageUpload } from "@/hooks/use-image-upload";
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
 import { AIPromptData } from "@/types/ai";
+import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
+import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useState } from "react";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -28,12 +30,11 @@ export function AIChatForm({
 }: {
   handleThemeGeneration: (promptData: AIPromptData | null) => void;
 }) {
-  const [promptData, setPromptData] = useState<AIPromptData | null>(null);
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
   const {
     fileInputRef,
-    selectedImages,
+    uploadedImages,
     handleImagesUpload,
     handleImageRemove,
     isSomeImageUploading,
@@ -44,20 +45,26 @@ export function AIChatForm({
 
   const { isUserDragging } = useDocumentDragAndDropIntent();
 
-  const handleContentChange = (newPromptData: AIPromptData) => {
-    setPromptData({ ...newPromptData });
-  };
+  // Zustand store for input persistence. We are not persisting the uploaded images, yet.
+  const { editorContentDraft, setEditorContentDraft, clearLocalDraft } = useAILocalDraftStore();
+
+  // Derive promptData from editorContent.
+  const promptData = convertJSONContentToPromptData(
+    editorContentDraft || { type: "doc", content: [] }
+  );
+
+  const isEmptyPrompt =
+    uploadedImages.length === 0 &&
+    (!promptData?.content?.trim() || promptData.content.length === 0);
 
   const handleGenerate = async () => {
     // Only send images that are not loading, and strip loading property
-    const images = selectedImages
+    const images = uploadedImages
       .filter((img) => !img.loading)
       .map(({ file, preview }) => ({ file, preview }));
 
-    // Allow if there is text, or at least one image
-    if ((!promptData?.content || promptData.content.trim().length === 0) && images.length === 0) {
-      return;
-    }
+    // Proceed only if there is text, or at least one image
+    if (isEmptyPrompt && images.length === 0) return;
 
     handleThemeGeneration({
       ...promptData,
@@ -65,12 +72,13 @@ export function AIChatForm({
       mentions: promptData?.mentions ?? [],
       images,
     });
+
+    clearLocalDraft();
   };
 
-  const isSendButtonDisabled =
-    (selectedImages.length === 0 && !promptData?.content?.trim()) ||
-    aiGenerateLoading ||
-    isSomeImageUploading;
+  const handleContentChange = (jsonContent: JSONContent) => {
+    setEditorContentDraft(jsonContent);
+  };
 
   return (
     <div className="@container/form relative transition-all contain-layout">
@@ -81,12 +89,12 @@ export function AIChatForm({
           <div className={cn("flex h-16 items-center rounded-lg")}>
             <DragAndDropImageUploader
               onDrop={handleImagesUpload}
-              disabled={aiGenerateLoading || selectedImages.some((img) => img.loading)}
+              disabled={aiGenerateLoading || uploadedImages.some((img) => img.loading)}
             />
           </div>
         )}
 
-        {selectedImages.length > 0 && !isUserDragging && (
+        {uploadedImages.length > 0 && !isUserDragging && (
           <div
             className={cn(
               "relative flex h-16 items-center rounded-lg",
@@ -94,7 +102,7 @@ export function AIChatForm({
             )}
           >
             <HorizontalScrollArea className="w-full">
-              {selectedImages.map((img, idx) => (
+              {uploadedImages.map((img, idx) => (
                 <UploadedImagePreview
                   key={idx}
                   imagePreview={img.preview}
@@ -117,6 +125,7 @@ export function AIChatForm({
               onGenerate={handleGenerate}
               characterLimit={AI_PROMPT_CHARACTER_LIMIT}
               onImagesPaste={handleImagesUpload}
+              initialEditorContent={editorContentDraft}
             />
           </div>
         </div>
@@ -139,8 +148,8 @@ export function AIChatForm({
               onClick={() => fileInputRef.current?.click()}
               disabled={
                 aiGenerateLoading ||
-                selectedImages.some((img) => img.loading) ||
-                selectedImages.length >= MAX_IMAGE_FILES
+                uploadedImages.some((img) => img.loading) ||
+                uploadedImages.length >= MAX_IMAGE_FILES
               }
             />
 
@@ -159,7 +168,7 @@ export function AIChatForm({
                 size="icon"
                 className="size-8"
                 onClick={handleGenerate}
-                disabled={isSendButtonDisabled}
+                disabled={isEmptyPrompt || isSomeImageUploading || aiGenerateLoading}
               >
                 {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
               </Button>
