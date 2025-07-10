@@ -20,11 +20,20 @@ export const SliderWithInput = ({
   label: string;
   unit?: string;
 }) => {
-  const [localValue, setLocalValue] = useState(value);
+  const [localValue, setLocalValue] = useState(value.toString());
 
   useEffect(() => {
-    setLocalValue(value);
+    setLocalValue(value.toString());
   }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    setLocalValue(raw);
+    const num = parseFloat(raw.replace(',', '.'));
+    if (!isNaN(num)) {
+      onChange(Math.max(min, Math.min(max, num)));
+    }
+  };
 
   return (
     <div className="mb-3">
@@ -40,11 +49,8 @@ export const SliderWithInput = ({
             id={`input-${label.replace(/\s+/g, "-").toLowerCase()}`}
             type="number"
             value={localValue}
-            onChange={(e) => {
-              const newValue = Number(e.target.value);
-              setLocalValue(newValue);
-              onChange(newValue);
-            }}
+            onChange={handleChange}
+            onBlur={() => setLocalValue(value.toString())}
             min={min}
             max={max}
             step={step}
@@ -55,13 +61,14 @@ export const SliderWithInput = ({
       </div>
       <Slider
         id={`slider-${label.replace(/\s+/g, "-").toLowerCase()}`}
-        value={[localValue]}
+        value={[value]}
         min={min}
         max={max}
         step={step}
         onValueChange={(values) => {
-          setLocalValue(values[0]);
-          onChange(values[0]);
+          const newValue = values[0];
+          setLocalValue(newValue.toString());
+          onChange(newValue);
         }}
         className="py-1"
       />
