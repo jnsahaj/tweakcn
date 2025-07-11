@@ -7,10 +7,15 @@ export type PromptImageWithLoading = PromptImage & { loading: boolean };
 interface UseImageUploadOptions {
   maxFiles: number;
   maxFileSize: number;
+  initialImages?: PromptImageWithLoading[];
 }
 
-export function useImageUpload({ maxFiles, maxFileSize }: UseImageUploadOptions) {
-  const [uploadedImages, setUploadedImages] = useState<PromptImageWithLoading[]>([]);
+export function useImageUpload({
+  maxFiles,
+  maxFileSize,
+  initialImages = [],
+}: UseImageUploadOptions) {
+  const [uploadedImages, setUploadedImages] = useState<PromptImageWithLoading[]>(initialImages);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,22 +41,21 @@ export function useImageUpload({ maxFiles, maxFileSize }: UseImageUploadOptions)
       if (file.size > maxFileSize) return;
 
       const uploadingImagePlaceholder: PromptImageWithLoading = {
-        file,
-        preview: "",
+        url: "",
         loading: true,
       };
       setUploadedImages((prev) => [...prev, uploadingImagePlaceholder]);
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        const preview = e.target?.result as string;
+        const url = e.target?.result as string;
 
         setUploadedImages((prev) => {
-          // Find the first image with this file and loading: true and update it
-          const idx = prev.findIndex((img) => img.file === file && img.loading === true);
+          // Find the first image with loading: true and update it
+          const idx = prev.findIndex((img) => img.loading === true && img.url === "");
           if (idx === -1) return prev;
           const updated = [...prev];
-          updated[idx] = { file, preview, loading: false };
+          updated[idx] = { url, loading: false };
           return updated;
         });
       };
@@ -78,6 +82,7 @@ export function useImageUpload({ maxFiles, maxFileSize }: UseImageUploadOptions)
     handleImagesUpload,
     handleImageRemove,
     clearUploadedImages,
+    setUploadedImages,
     canUploadMore,
     isSomeImageUploading,
   };

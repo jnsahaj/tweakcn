@@ -30,6 +30,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   const { toast } = useToast();
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Mention.configure({
