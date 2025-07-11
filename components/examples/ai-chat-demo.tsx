@@ -74,8 +74,7 @@ const CHAT_PLACEHOLDER_MESSAGES: ChatMessage[] = [
       mentions: [],
       images: [
         {
-          file: { name: "og-image.v050725.png" } as File,
-          preview: "/og-image.v050725.png",
+          url: "/og-image.v050725.png",
         },
       ],
     },

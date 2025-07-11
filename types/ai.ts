@@ -10,8 +10,7 @@ export type MentionReference = {
 };
 
 export type PromptImage = {
-  file: File;
-  preview: string;
+  url: string;
 };
 
 export type AIPromptData = {

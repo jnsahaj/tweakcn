@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { useImageUpload } from "@/hooks/use-image-upload";
+import { useMounted } from "@/hooks/use-mounted";
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
@@ -19,6 +20,7 @@ import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useEffect } from "react";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -30,7 +32,16 @@ export function AIChatForm({
 }: {
   handleThemeGeneration: (promptData: AIPromptData | null) => void;
 }) {
+  const isMounted = useMounted();
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
+
+  const {
+    editorContentDraft,
+    setEditorContentDraft,
+    clearLocalDraft,
+    imagesDraft,
+    setImagesDraft,
+  } = useAILocalDraftStore();
 
   const {
     fileInputRef,
@@ -38,17 +49,27 @@ export function AIChatForm({
     handleImagesUpload,
     handleImageRemove,
     isSomeImageUploading,
+    setUploadedImages,
   } = useImageUpload({
     maxFiles: MAX_IMAGE_FILES,
     maxFileSize: MAX_IMAGE_FILE_SIZE,
   });
 
+  // Syncs imagesDraft with uploadedImages every time the local images (uploadedImages) change
+  useEffect(() => {
+    if (!isMounted) return;
+    setImagesDraft(uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url })));
+  }, [uploadedImages, isMounted]);
+
+  // This only syncs uploadedImages with imagesDraft when the component mounts
+  useEffect(() => {
+    if (!isMounted) return;
+    setUploadedImages(imagesDraft.map(({ url }) => ({ url, loading: false })));
+  }, [isMounted]);
+
   const { isUserDragging } = useDocumentDragAndDropIntent();
 
-  // Zustand store for input persistence. We are not persisting the uploaded images, yet.
-  const { editorContentDraft, setEditorContentDraft, clearLocalDraft } = useAILocalDraftStore();
-
-  // Derive promptData from editorContent.
+  // Derive promptData from editorContent
   const promptData = convertJSONContentToPromptData(
     editorContentDraft || { type: "doc", content: [] }
   );
@@ -59,9 +80,7 @@ export function AIChatForm({
 
   const handleGenerate = async () => {
     // Only send images that are not loading, and strip loading property
-    const images = uploadedImages
-      .filter((img) => !img.loading)
-      .map(({ file, preview }) => ({ file, preview }));
+    const images = uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url }));
 
     // Proceed only if there is text, or at least one image
     if (isEmptyPrompt && images.length === 0) return;
@@ -105,7 +124,7 @@ export function AIChatForm({
               {uploadedImages.map((img, idx) => (
                 <UploadedImagePreview
                   key={idx}
-                  imagePreview={img.preview}
+                  src={img.url}
                   isImageLoading={img.loading}
                   handleImageRemove={() => handleImageRemove(idx)}
                 />

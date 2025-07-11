@@ -8,13 +8,13 @@ import { Loader, X } from "lucide-react";
 import Image from "next/image";
 
 interface ImagePreviewProps {
-  imagePreview: string;
+  src: string;
   isImageLoading: boolean;
   handleImageRemove: () => void;
 }
 
 export function UploadedImagePreview({
-  imagePreview,
+  src,
   isImageLoading,
   handleImageRemove,
 }: ImagePreviewProps) {
@@ -38,7 +38,7 @@ export function UploadedImagePreview({
           <Image
             width={40}
             height={40}
-            src={imagePreview}
+            src={src}
             alt="Image preview"
             className="size-full rounded-sm object-cover"
           />
@@ -61,7 +61,7 @@ export function UploadedImagePreview({
           <Image
             width={300}
             height={300}
-            src={imagePreview}
+            src={src}
             alt="Image preview"
             className="h-auto max-h-[300px] w-auto max-w-[300px] object-contain"
           />

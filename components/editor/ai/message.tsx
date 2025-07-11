@@ -54,11 +54,7 @@ export default function Message({ message, onRetry }: MessageProps) {
           {/* Single uploaded image */}
           {isUser && images.length === 1 && (
             <div className="self-end overflow-hidden rounded-lg">
-              <ChatImagePreview
-                src={images[0].preview}
-                name={images[0].file.name}
-                alt={images[0].file.name}
-              />
+              <ChatImagePreview src={images[0].url} alt="Image preview" />
             </div>
           )}
 
@@ -72,9 +68,8 @@ export default function Message({ message, onRetry }: MessageProps) {
                 >
                   <ChatImagePreview
                     className="size-full object-cover"
-                    src={image.preview}
-                    name={image.file.name}
-                    alt={image.file.name}
+                    src={image.url}
+                    alt="Image preview"
                   />
                 </div>
               ))}
