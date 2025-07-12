@@ -65,6 +65,8 @@ export function AIChatForm({
   useEffect(() => {
     if (!isMounted) return;
     setUploadedImages(imagesDraft.map(({ url }) => ({ url, loading: false })));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMounted]);
 
   const { isUserDragging } = useDocumentDragAndDropIntent();
