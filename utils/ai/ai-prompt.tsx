@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
-import { AIPromptData, MentionReference } from "@/types/ai";
+import { AIPromptData, MentionReference, PromptImage } from "@/types/ai";
 import { JSONContent } from "@tiptap/react";
 
 export const getTextContent = (promptData: AIPromptData | null) => {
@@ -162,4 +162,81 @@ export function extractTextContentAndMentions(node: JSONContent): {
 export function convertJSONContentToPromptData(jsonContent: JSONContent): AIPromptData {
   const { content, mentions } = extractTextContentAndMentions(jsonContent);
   return { content, mentions };
+}
+
+/**
+ * Converts AIPromptData (content + mentions) to JSONContent for initializing the editor.
+ * Mentions are inserted as inline nodes, and line breaks are preserved as hardBreak nodes.
+ * This matches the structure produced by Tiptap for multi-line content.
+ */
+export function convertPromptDataToJSONContent(promptData: AIPromptData): JSONContent {
+  const { content, mentions } = promptData;
+  const mentionMap = new Map(mentions.map((m) => [m.label, m]));
+  // Regex to match @mentions (e.g., @Current Theme)
+  const mentionRegex = /@([\w\s\-:]+)/g;
+
+  // Split content into lines, preserving empty lines
+  const lines = content.split(/\n/);
+  const nodes: any[] = [];
+
+  lines.forEach((line, lineIdx) => {
+    let lastIndex = 0;
+    let match;
+    // Find all mentions in the line
+    while ((match = mentionRegex.exec(line)) !== null) {
+      const [fullMatch, label] = match;
+      const mention = mentionMap.get(label);
+      // Add text before the mention
+      if (match.index > lastIndex) {
+        nodes.push({ type: "text", text: line.slice(lastIndex, match.index) });
+      }
+      // Add the mention node
+      if (mention) {
+        nodes.push({
+          type: "mention",
+          attrs: {
+            id: mention.id,
+            label: mention.label,
+          },
+        });
+      } else {
+        // Fallback: treat as plain text
+        nodes.push({ type: "text", text: fullMatch });
+      }
+      lastIndex = match.index + fullMatch.length;
+    }
+    // Add any remaining text after the last mention
+    if (lastIndex < line.length) {
+      nodes.push({ type: "text", text: line.slice(lastIndex) });
+    }
+    // Add hardBreak if not the last line (to preserve line breaks)
+    if (lineIdx < lines.length - 1) {
+      nodes.push({ type: "hardBreak" });
+    }
+  });
+
+  // If the content is empty, ensure at least one empty text node
+  if (nodes.length === 0) {
+    nodes.push({ type: "text", text: "" });
+  }
+
+  return {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: nodes,
+      },
+    ],
+  };
+}
+
+export function isEmptyPromptData(
+  promptData?: AIPromptData,
+  uploadedImages?: PromptImage[]
+): boolean {
+  const isEmptyPromptDataContent = !promptData?.content?.trim() || promptData?.content.length === 0;
+  const isEmptyPromptDataImages = !!uploadedImages && uploadedImages.length === 0;
+
+  return isEmptyPromptDataImages && isEmptyPromptDataContent;
 }

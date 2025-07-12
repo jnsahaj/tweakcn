@@ -1,28 +1,40 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAIChat } from "@/hooks/use-ai-chat";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { cn } from "@/lib/utils";
-import { type ChatMessage as ChatMessageType } from "@/types/ai";
+import { AIPromptData, type ChatMessage as ChatMessageType } from "@/types/ai";
 import { useEffect, useRef, useState } from "react";
 import { LoadingLogo } from "./loading-logo";
 import Message from "./message";
 
 type ChatMessagesProps = {
+  messages: ChatMessageType[];
   onRetry: (messageIndex: number) => void;
+  onEdit: (messageIndex: number) => void;
+  onEditSubmit: (messageIndex: number, newPromptData: AIPromptData) => void;
+  onEditCancel: () => void;
+  editingMessageIndex?: number | null;
 };
 
 const FEEDBACK_MESSAGES = [
-  "Generating", // 0-9s
-  "Tweaking color tokens", // 10-19s
-  "This might take some time", // 20-29s
-  "Generating a good theme takes time", // 30-39s
-  "Still working on your theme", // 40-49s
-  "Almost there", // 50s+
+  "Generating", // 0-7s
+  "Tweaking color tokens", // 8-15s
+  "This might take some time", // 16-23s
+  "Generating a good theme takes time", // 24-31s
+  "Still working on your theme", // 32-39s
+  "Almost there", // 40s+
 ];
 
-export function ChatMessages({ onRetry }: ChatMessagesProps) {
+const ROTATION_INTERVAL_IN_SECONDS = 8;
+
+export function ChatMessages({
+  messages,
+  onRetry,
+  onEdit,
+  onEditSubmit,
+  onEditCancel,
+  editingMessageIndex,
+}: ChatMessagesProps) {
   const [isScrollTop, setIsScrollTop] = useState(true);
-  const { messages } = useAIChat();
   const { loading: isAIGenerating } = useAIThemeGeneration();
   const previousMessages = useRef<ChatMessageType[]>(messages);
 
@@ -46,7 +58,7 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
   }, [isAIGenerating]);
 
   const feedbackIndex = Math.min(
-    Math.floor(elapsedTimeGenerating / 10),
+    Math.floor(elapsedTimeGenerating / ROTATION_INTERVAL_IN_SECONDS),
     FEEDBACK_MESSAGES.length - 1
   );
   const feedbackText = FEEDBACK_MESSAGES[feedbackIndex];
@@ -98,7 +110,15 @@ export function ChatMessages({ onRetry }: ChatMessagesProps) {
         <div ref={messagesStartRef} />
         <div className="flex flex-col gap-8 text-pretty wrap-anywhere">
           {messages.map((message, index) => (
-            <Message key={message.id} message={message} onRetry={() => onRetry(index)} />
+            <Message
+              key={message.id}
+              message={message}
+              onRetry={() => onRetry(index)}
+              isEditing={editingMessageIndex === index}
+              onEdit={() => onEdit(index)}
+              onEditSubmit={(newPromptData) => onEditSubmit(index, newPromptData)}
+              onEditCancel={onEditCancel}
+            />
           ))}
 
           {/* Loading message when AI is generating */}

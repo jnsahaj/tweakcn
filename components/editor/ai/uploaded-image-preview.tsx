@@ -11,12 +11,14 @@ interface ImagePreviewProps {
   src: string;
   isImageLoading: boolean;
   handleImageRemove: () => void;
+  showPreviewOnHover?: boolean;
 }
 
 export function UploadedImagePreview({
   src,
   isImageLoading,
   handleImageRemove,
+  showPreviewOnHover = true,
 }: ImagePreviewProps) {
   if (isImageLoading) {
     return (
@@ -56,17 +58,19 @@ export function UploadedImagePreview({
         </div>
       </HoverCardTrigger>
 
-      <HoverCardContent className="size-fit overflow-hidden p-0" align="center" side="top">
-        <div className="size-full overflow-hidden">
-          <Image
-            width={300}
-            height={300}
-            src={src}
-            alt="Image preview"
-            className="h-auto max-h-[300px] w-auto max-w-[300px] object-contain"
-          />
-        </div>
-      </HoverCardContent>
+      {showPreviewOnHover && (
+        <HoverCardContent className="size-fit overflow-hidden p-0" align="center" side="top">
+          <div className="size-full overflow-hidden">
+            <Image
+              width={300}
+              height={300}
+              src={src}
+              alt="Image preview"
+              className="h-auto max-h-[300px] w-auto max-w-[300px] object-contain"
+            />
+          </div>
+        </HoverCardContent>
+      )}
     </HoverCard>
   );
 }
