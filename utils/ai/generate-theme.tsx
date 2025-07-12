@@ -1,4 +1,3 @@
-import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { themeStylePropsSchema } from "@/types/theme";
 import { coreMessageSchema } from "ai";
 import { z } from "zod";

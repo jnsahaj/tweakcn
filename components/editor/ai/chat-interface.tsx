@@ -11,6 +11,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { AIPromptData } from "@/types/ai";
 import dynamic from "next/dynamic";
+import React from "react";
 import { ChatInput } from "./chat-input";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
 
@@ -36,6 +37,8 @@ export function ChatInterface() {
 
   const { subscriptionStatus } = useSubscription();
   const { openGetProDialog } = useGetProDialogStore();
+
+  const [editingMessageIndex, setEditingMessageIndex] = React.useState<number | null>(null);
 
   const checkValidSubscription = () => {
     if (!subscriptionStatus) return;
@@ -97,6 +100,7 @@ export function ChatInterface() {
   };
 
   const handleRetry = async (messageIndex: number) => {
+    setEditingMessageIndex(null);
     const messageToRetry = messages[messageIndex];
 
     if (!messageToRetry || messageToRetry.role !== "user" || !messageToRetry.promptData) {
@@ -107,9 +111,24 @@ export function ChatInterface() {
       return;
     }
 
-    // Reset messages up to the retry point (remove the user message and any subsequent messages)
+    // Reset messages up to the retry point
     resetMessagesUpToIndex(messageIndex);
-    await handleThemeGeneration(messageToRetry.promptData);
+    handleThemeGeneration(messageToRetry.promptData);
+  };
+
+  const handleEdit = (messageIndex: number) => {
+    setEditingMessageIndex(messageIndex);
+  };
+
+  const handleEditCancel = () => {
+    setEditingMessageIndex(null);
+  };
+
+  const handleEditSubmit = async (messageIndex: number, newPromptData: AIPromptData) => {
+    // Reset messages up to the edited message
+    resetMessagesUpToIndex(messageIndex);
+    setEditingMessageIndex(null);
+    handleThemeGeneration(newPromptData);
   };
 
   usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ promptData }) => {
@@ -117,14 +136,21 @@ export function ChatInterface() {
   });
 
   return (
-    <section className="@container relative isolate z-1 mx-auto flex h-full w-full max-w-[49rem] flex-1 flex-col justify-center">
+    <section className="@container relative isolate z-1 mx-auto flex size-full max-w-[49rem] flex-1 flex-col justify-center">
       <div
         className={cn(
           "relative flex w-full flex-1 flex-col overflow-y-hidden transition-all duration-300 ease-out"
         )}
       >
         {hasMessages ? (
-          <ChatMessages onRetry={handleRetry} />
+          <ChatMessages
+            messages={messages}
+            onRetry={handleRetry}
+            onEdit={handleEdit}
+            onEditSubmit={handleEditSubmit}
+            onEditCancel={handleEditCancel}
+            editingMessageIndex={editingMessageIndex}
+          />
         ) : (
           <div className="animate-in fade-in-50 zoom-in-95 relative isolate px-4 pt-8 duration-300 ease-out sm:pt-16 md:pt-24">
             <NoMessagesPlaceholder handleThemeGeneration={handleThemeGeneration} />
@@ -133,18 +159,17 @@ export function ChatInterface() {
       </div>
 
       {/* Chat form input and suggestions */}
-      <div className="relative mx-auto flex w-full flex-col px-4 pb-4">
-        <div className="relative isolate z-10 w-full">
-          <div
-            className={cn(
-              "transition-all ease-out",
-              hasMessages ? "scale-100 opacity-100" : "h-0 scale-80 opacity-0"
-            )}
-          >
-            <ClosableSuggestedPillActions handleThemeGeneration={handleThemeGeneration} />
-          </div>
-          <ChatInput handleThemeGeneration={handleThemeGeneration} />
+      <div className="relative isolate z-10 mx-auto w-full px-4 pb-4">
+        <div
+          className={cn(
+            "transition-all ease-out",
+            hasMessages ? "scale-100 opacity-100" : "h-0 scale-80 opacity-0"
+          )}
+        >
+          <ClosableSuggestedPillActions handleThemeGeneration={handleThemeGeneration} />
         </div>
+
+        <ChatInput handleThemeGeneration={handleThemeGeneration} />
       </div>
     </section>
   );

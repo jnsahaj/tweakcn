@@ -16,6 +16,7 @@ import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useEffect } from "react";
 import { AlertBanner } from "./alert-banner";
 import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
 import { ImageUploader } from "./image-uploader";
@@ -39,16 +40,15 @@ export function ChatInput({
 
   const { isUserDragging } = useDocumentDragAndDropIntent();
 
-  // Zustand store for input persistence. We are not persisting the uploaded images, yet.
-  const { editorContentDraft, setEditorContentDraft, clearLocalDraft } = useAILocalDraftStore();
+  // Images uploads are local. We should upload them to a remote storage as soon as the user uploads them.
+  const {
+    editorContentDraft,
+    setEditorContentDraft,
+    clearLocalDraft,
+    imagesDraft,
+    setImagesDraft,
+  } = useAILocalDraftStore();
 
-  // Derive promptData from editorContent.
-  const promptData = convertJSONContentToPromptData(
-    editorContentDraft || { type: "doc", content: [] }
-  );
-
-  // Images uploads are local. We should upload them using a remote storage as soon as the user uploads them
-  // We should persist the image public URL and submit the public URL to the theme generation API.
   const {
     fileInputRef,
     uploadedImages,
@@ -59,7 +59,18 @@ export function ChatInput({
   } = useImageUpload({
     maxFiles: MAX_IMAGE_FILES,
     maxFileSize: MAX_IMAGE_FILE_SIZE,
+    initialImages: imagesDraft.map(({ url }) => ({ url, loading: false })),
   });
+
+  // Sync the imagesDraft with the local uploadedImages
+  useEffect(() => {
+    setImagesDraft(uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url })));
+  }, [uploadedImages]);
+
+  // Derive promptData from editorContent
+  const promptData = convertJSONContentToPromptData(
+    editorContentDraft || { type: "doc", content: [] }
+  );
 
   const isEmptyPrompt =
     uploadedImages.length === 0 &&
@@ -67,9 +78,7 @@ export function ChatInput({
 
   const handleGenerate = async () => {
     // Only send images that are not loading, and strip loading property
-    const images = uploadedImages
-      .filter((img) => !img.loading)
-      .map(({ file, preview }) => ({ file, preview }));
+    const images = uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url }));
 
     // Proceed only if there is text, or at least one image
     if (isEmptyPrompt && images.length === 0) return;
@@ -122,7 +131,7 @@ export function ChatInput({
               {uploadedImages.map((img, idx) => (
                 <UploadedImagePreview
                   key={idx}
-                  imagePreview={img.preview}
+                  src={img.url}
                   isImageLoading={img.loading}
                   handleImageRemove={() => handleImageRemove(idx)}
                 />

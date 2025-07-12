@@ -7,16 +7,19 @@ import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { ThemeStyles } from "@/types/theme";
 import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
-import { Goal, RefreshCw } from "lucide-react";
+import { Edit, Goal, RefreshCw } from "lucide-react";
 
 type MessageControlsProps = {
   message: ChatMessageType;
-  onRetry: () => void;
+  onRetry?: () => void;
+  onEdit?: () => void;
+  isEditing: boolean;
 };
 
-export function MessageControls({ message, onRetry }: MessageControlsProps) {
+export function MessageControls({ message, onRetry, onEdit, isEditing }: MessageControlsProps) {
   const isUser = message.role === "user";
   const isAssistant = message.role === "assistant";
+
   const { loading: isAIGenerating } = useAIThemeGeneration();
   const { themeState, setThemeState } = useEditorStore();
 
@@ -36,42 +39,71 @@ export function MessageControls({ message, onRetry }: MessageControlsProps) {
     return message.content || "";
   };
 
-  return (
-    <div
-      className={cn(
-        "mt-2 flex gap-2 opacity-0 transition-opacity duration-300 ease-out group-hover/message:opacity-100",
-        isUser ? "justify-end" : "justify-start"
-      )}
-    >
-      {isUser && (
-        <TooltipWrapper label="Retry this prompt" asChild>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="size-6 [&>svg]:size-3.5"
-            disabled={isAIGenerating}
-            onClick={onRetry}
-          >
-            <RefreshCw />
-          </Button>
-        </TooltipWrapper>
-      )}
+  if (isUser) {
+    return (
+      <div
+        className={cn(
+          "flex gap-2 opacity-0 transition-opacity duration-300 ease-out group-hover/message:opacity-100",
+          "justify-end"
+        )}
+      >
+        {onRetry && (
+          <TooltipWrapper label="Retry this prompt" asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-6 [&>svg]:size-3.5"
+              disabled={isAIGenerating}
+              onClick={onRetry}
+            >
+              <RefreshCw />
+            </Button>
+          </TooltipWrapper>
+        )}
 
-      <CopyButton textToCopy={getCopyContent()} />
+        {onEdit && (
+          <TooltipWrapper label="Edit this prompt" asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-6 [&>svg]:size-3.5"
+              disabled={isAIGenerating || isEditing}
+              onClick={onEdit}
+            >
+              <Edit />
+            </Button>
+          </TooltipWrapper>
+        )}
 
-      {isAssistant && message.themeStyles && (
-        <TooltipWrapper label="Reset to this checkpoint" asChild>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="size-6 [&>svg]:size-3.5"
-            disabled={isAIGenerating}
-            onClick={() => handleResetThemeToMessageCheckpoint(message.themeStyles)}
-          >
-            <Goal />
-          </Button>
-        </TooltipWrapper>
-      )}
-    </div>
-  );
+        <CopyButton textToCopy={getCopyContent()} />
+      </div>
+    );
+  }
+
+  if (isAssistant) {
+    return (
+      <div
+        className={cn(
+          "flex gap-2 opacity-0 transition-opacity duration-300 ease-out group-hover/message:opacity-100",
+          "justify-start"
+        )}
+      >
+        <CopyButton textToCopy={getCopyContent()} />
+
+        {message.themeStyles && (
+          <TooltipWrapper label="Reset to this checkpoint" asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="size-6 [&>svg]:size-3.5"
+              disabled={isAIGenerating}
+              onClick={() => handleResetThemeToMessageCheckpoint(message.themeStyles)}
+            >
+              <Goal />
+            </Button>
+          </TooltipWrapper>
+        )}
+      </div>
+    );
+  }
 }

@@ -17,6 +17,7 @@ interface CustomTextareaProps {
   characterLimit?: number;
   onImagesPaste?: (files: File[]) => void;
   initialEditorContent?: JSONContent | null;
+  className?: string;
 }
 
 const CustomTextarea: React.FC<CustomTextareaProps> = ({
@@ -25,11 +26,13 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   characterLimit,
   onImagesPaste,
   initialEditorContent,
+  className,
 }) => {
   const { loading: aiGenerateLoading } = useAIThemeGeneration();
   const { toast } = useToast();
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Mention.configure({
@@ -50,8 +53,10 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
     autofocus: !aiGenerateLoading,
     editorProps: {
       attributes: {
-        class:
-          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background px-1 py-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
+        class: cn(
+          "min-w-0 min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background px-1 py-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
+          className
+        ),
       },
       handleKeyDown: (view, event) => {
         if (event.key === "Enter" && !event.shiftKey && !aiGenerateLoading) {

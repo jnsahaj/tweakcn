@@ -8,15 +8,17 @@ import { Loader, X } from "lucide-react";
 import Image from "next/image";
 
 interface ImagePreviewProps {
-  imagePreview: string;
+  src: string;
   isImageLoading: boolean;
   handleImageRemove: () => void;
+  showPreviewOnHover?: boolean;
 }
 
 export function UploadedImagePreview({
-  imagePreview,
+  src,
   isImageLoading,
   handleImageRemove,
+  showPreviewOnHover = true,
 }: ImagePreviewProps) {
   if (isImageLoading) {
     return (
@@ -38,7 +40,7 @@ export function UploadedImagePreview({
           <Image
             width={40}
             height={40}
-            src={imagePreview}
+            src={src}
             alt="Image preview"
             className="size-full rounded-sm object-cover"
           />
@@ -56,17 +58,19 @@ export function UploadedImagePreview({
         </div>
       </HoverCardTrigger>
 
-      <HoverCardContent className="size-fit overflow-hidden p-0" align="center" side="top">
-        <div className="size-full overflow-hidden">
-          <Image
-            width={300}
-            height={300}
-            src={imagePreview}
-            alt="Image preview"
-            className="h-auto max-h-[300px] w-auto max-w-[300px] object-contain"
-          />
-        </div>
-      </HoverCardContent>
+      {showPreviewOnHover && (
+        <HoverCardContent className="size-fit overflow-hidden p-0" align="center" side="top">
+          <div className="size-full overflow-hidden">
+            <Image
+              width={300}
+              height={300}
+              src={src}
+              alt="Image preview"
+              className="h-auto max-h-[300px] w-auto max-w-[300px] object-contain"
+            />
+          </div>
+        </HoverCardContent>
+      )}
     </HoverCard>
   );
 }

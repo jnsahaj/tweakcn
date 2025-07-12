@@ -32,6 +32,8 @@ export function SuggestedPillActions({
         images: [uploadedImages[0]],
       });
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadedImages, isSomeImageUploading]);
 
   const handleSetPrompt = async (prompt: string) => {

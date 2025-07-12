@@ -34,6 +34,7 @@ export function AlertBanner() {
     }
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, isPro, freeProMessagesLeft]);
 
   const getBannerContent = () => {
