@@ -4,7 +4,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { theme as themeTable } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import cuid from "cuid";
+import { createId } from "@paralleldrive/cuid2";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { themeStylesSchema, type ThemeStyles } from "@/types/theme";
@@ -30,7 +30,7 @@ async function getCurrentUserId(): Promise<string> {
 }
 
 // Log errors for observability
-function logError(error: Error, context: Record<string, any>) {
+function logError(error: Error, context: Record<string, unknown>) {
   console.error("Theme action error:", error, context);
 
   // TODO: Add server-side error reporting to PostHog or your preferred service
@@ -102,7 +102,7 @@ export async function createTheme(formData: { name: string; styles: ThemeStyles 
     }
 
     const { name, styles } = validation.data;
-    const newThemeId = cuid();
+    const newThemeId = createId();
     const now = new Date();
 
     const [insertedTheme] = await db
