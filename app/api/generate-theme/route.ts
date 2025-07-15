@@ -61,6 +61,7 @@ export async function POST(req: NextRequest) {
       }),
       system: SYSTEM_PROMPT,
       messages,
+      abortSignal: req.signal,
     });
 
     if (usage) {
@@ -91,6 +92,9 @@ export async function POST(req: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      return new Response("Request aborted by user", { status: 499 });
+    }
     return handleError(error, { route: "/api/generate-theme" });
   }
 }
