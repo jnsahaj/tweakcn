@@ -6,11 +6,14 @@ import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
+import { useGuards } from "@/hooks/use-guards";
 import { useImageUpload } from "@/hooks/use-image-upload";
+import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
+import { usePreferencesStore } from "@/store/preferences-store";
 import { AIPromptData } from "@/types/ai";
 import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
 import { JSONContent } from "@tiptap/react";
@@ -27,18 +30,24 @@ const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea
   loading: () => <Loading className="min-h-[60px] w-full rounded-lg" />,
 });
 
+type ThemeGenerationPayload = {
+  promptData: AIPromptData | null;
+  options: {
+    shouldClearLocalDraft?: boolean;
+  };
+};
+
 export function ChatInput({
-  handleThemeGeneration,
+  onGenerateTheme,
 }: {
-  handleThemeGeneration: (
-    promptData: AIPromptData | null,
-    handlers?: { onThemeGenerateInvoked?: () => void }
-  ) => Promise<void>;
+  onGenerateTheme: (promptData: AIPromptData | null) => Promise<void>;
 }) {
   const { messages, clearMessages } = useAIChatStore();
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
-
   const { isUserDragging } = useDocumentDragAndDropIntent();
+  const { setChatSuggestionsOpen } = usePreferencesStore();
+
+  const { checkValidSession, checkValidSubscription } = useGuards();
 
   // Images uploads are local. We should upload them to a remote storage as soon as the user uploads them.
   const {
@@ -76,28 +85,6 @@ export function ChatInput({
     uploadedImages.length === 0 &&
     (!promptData?.content?.trim() || promptData.content.length === 0);
 
-  const handleGenerate = async () => {
-    // Only send images that are not loading, and strip loading property
-    const images = uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url }));
-
-    // Proceed only if there is text, or at least one image
-    if (isEmptyPrompt && images.length === 0) return;
-
-    const promptDataToSend = {
-      ...promptData,
-      content: promptData?.content ?? "",
-      mentions: promptData?.mentions ?? [],
-      images,
-    };
-
-    handleThemeGeneration(promptDataToSend, {
-      onThemeGenerateInvoked() {
-        clearUploadedImages();
-        clearLocalDraft();
-      },
-    });
-  };
-
   const handleContentChange = (jsonContent: JSONContent) => {
     setEditorContentDraft(jsonContent);
   };
@@ -106,7 +93,46 @@ export function ChatInput({
     clearMessages();
     clearLocalDraft();
     clearUploadedImages();
+    setChatSuggestionsOpen(true);
   };
+
+  const generateTheme = async (payload: ThemeGenerationPayload) => {
+    const { promptData, options } = payload;
+
+    if (options.shouldClearLocalDraft) {
+      clearLocalDraft();
+      clearUploadedImages();
+    }
+
+    onGenerateTheme(promptData);
+  };
+
+  const handleGenerateSubmit = async () => {
+    // Only send images that are not loading, and strip loading property
+    const images = uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url }));
+
+    // Proceed only if there is text, or at least one image
+    if (isEmptyPrompt && images.length === 0) return;
+
+    const payload: ThemeGenerationPayload = {
+      promptData: {
+        ...promptData,
+        images,
+      },
+      options: {
+        shouldClearLocalDraft: true,
+      },
+    };
+
+    if (!checkValidSession("signup", "AI_GENERATE_FROM_CHAT", payload)) return;
+    if (!checkValidSubscription()) return;
+
+    generateTheme(payload);
+  };
+
+  usePostLoginAction("AI_GENERATE_FROM_CHAT", (payload) => {
+    generateTheme(payload);
+  });
 
   return (
     <div className="relative transition-all contain-layout">
@@ -144,7 +170,7 @@ export function ChatInput({
           <div className="bg-muted/40 relative isolate rounded-lg">
             <CustomTextarea
               onContentChange={handleContentChange}
-              onGenerate={handleGenerate}
+              onGenerate={handleGenerateSubmit}
               key={messages.length}
               characterLimit={AI_PROMPT_CHARACTER_LIMIT}
               onImagesPaste={handleImagesUpload}
@@ -195,7 +221,7 @@ export function ChatInput({
                 <Button
                   size="sm"
                   className="size-8 shadow-none"
-                  onClick={handleGenerate}
+                  onClick={handleGenerateSubmit}
                   disabled={isEmptyPrompt || isSomeImageUploading || aiGenerateLoading}
                 >
                   {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
