@@ -73,6 +73,7 @@
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.42.0",
     "embla-carousel-react": "^8.6.0",
+    "idb-keyval": "^6.2.2",
     "input-otp": "^1.4.2",
     "isbot": "^5.1.26",
     "lexical": "^0.31.0",

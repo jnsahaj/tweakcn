@@ -1,6 +1,7 @@
 import { JSONContent } from "@tiptap/react";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { idbStorage } from "./idb-storage";
 
 interface AILocalDraftStore {
   editorContentDraft: JSONContent | null;
@@ -21,6 +22,7 @@ export const useAILocalDraftStore = create<AILocalDraftStore>()(
     }),
     {
       name: "ai-local-draft-store",
+      storage: createJSONStorage(() => idbStorage),
     }
   )
 );
