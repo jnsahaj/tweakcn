@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "npm run generate-theme-registry && next build",
+    "dev": "next dev --turbopack",
+    "build": "npm run generate-theme-registry && next build --turbopack",
     "start": "next start",
     "lint": "next lint",
     "generate-theme-registry": "tsx scripts/generate-theme-registry.ts && tsx scripts/generate-registry.ts",
