@@ -1,6 +1,7 @@
 import { AssistantMessage, ChatMessage, UserMessage } from "@/types/ai";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { idbStorage } from "./idb-storage";
 
 interface AIChatStore {
   messages: ChatMessage[];
@@ -59,6 +60,7 @@ export const useAIChatStore = create<AIChatStore>()(
     }),
     {
       name: "ai-chat-storage",
+      storage: createJSONStorage(() => idbStorage),
     }
   )
 );
