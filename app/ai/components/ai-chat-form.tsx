@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { useImageUpload } from "@/hooks/use-image-upload";
-import { useMounted } from "@/hooks/use-mounted";
+import { createSyncedImageUploadReducer } from "@/hooks/use-image-upload-reducer";
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
@@ -20,7 +20,7 @@ import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import { useReducer } from "react";
 
 const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
   ssr: false,
@@ -32,7 +32,6 @@ export function AIChatForm({
 }: {
   handleThemeGeneration: (promptData: AIPromptData | null) => void;
 }) {
-  const isMounted = useMounted();
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
 
   const {
@@ -43,31 +42,18 @@ export function AIChatForm({
     setImagesDraft,
   } = useAILocalDraftStore();
 
-  const {
-    fileInputRef,
-    uploadedImages,
-    handleImagesUpload,
-    handleImageRemove,
-    isSomeImageUploading,
-    setUploadedImages,
-  } = useImageUpload({
-    maxFiles: MAX_IMAGE_FILES,
-    maxFileSize: MAX_IMAGE_FILE_SIZE,
-  });
+  const [uploadedImages, dispatch] = useReducer(
+    createSyncedImageUploadReducer(setImagesDraft),
+    imagesDraft.map(({ url }) => ({ url, loading: false }))
+  );
 
-  // Syncs imagesDraft with uploadedImages every time the local images (uploadedImages) change
-  useEffect(() => {
-    if (!isMounted) return;
-    setImagesDraft(uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url })));
-  }, [uploadedImages, isMounted]);
-
-  // This only syncs uploadedImages with imagesDraft when the component mounts
-  useEffect(() => {
-    if (!isMounted) return;
-    setUploadedImages(imagesDraft.map(({ url }) => ({ url, loading: false })));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMounted]);
+  const { fileInputRef, handleImagesUpload, handleImageRemove, isSomeImageUploading } =
+    useImageUpload({
+      maxFiles: MAX_IMAGE_FILES,
+      maxFileSize: MAX_IMAGE_FILE_SIZE,
+      images: uploadedImages,
+      dispatch,
+    });
 
   const { isUserDragging } = useDocumentDragAndDropIntent();
 
