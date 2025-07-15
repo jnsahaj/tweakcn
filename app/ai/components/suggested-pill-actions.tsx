@@ -3,12 +3,13 @@
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useImageUpload } from "@/hooks/use-image-upload";
+import { imageUploadReducer } from "@/hooks/use-image-upload-reducer";
 import { MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
 import { AIPromptData } from "@/types/ai";
 import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
 import { PROMPTS } from "@/utils/ai/prompts";
 import { ImageIcon, Sparkles } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useReducer } from "react";
 
 export function SuggestedPillActions({
   handleThemeGeneration,
@@ -17,11 +18,14 @@ export function SuggestedPillActions({
 }) {
   const { loading: aiIsGenerating } = useAIThemeGeneration();
 
-  const { fileInputRef, uploadedImages, handleImagesUpload, canUploadMore, isSomeImageUploading } =
-    useImageUpload({
-      maxFiles: 1,
-      maxFileSize: MAX_IMAGE_FILE_SIZE,
-    });
+  const [uploadedImages, dispatch] = useReducer(imageUploadReducer, []);
+
+  const { fileInputRef, handleImagesUpload, canUploadMore, isSomeImageUploading } = useImageUpload({
+    maxFiles: 1,
+    maxFileSize: MAX_IMAGE_FILE_SIZE,
+    images: uploadedImages,
+    dispatch,
+  });
 
   // Automatically send prompt when an image is selected and loaded
   useEffect(() => {

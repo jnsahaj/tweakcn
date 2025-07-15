@@ -8,6 +8,7 @@ import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { useGuards } from "@/hooks/use-guards";
 import { useImageUpload } from "@/hooks/use-image-upload";
+import { createSyncedImageUploadReducer } from "@/hooks/use-image-upload-reducer";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,7 @@ import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
 import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import { useReducer } from "react";
 import { AlertBanner } from "./alert-banner";
 import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
 import { ImageUploader } from "./image-uploader";
@@ -58,9 +59,13 @@ export function ChatInput({
     setImagesDraft,
   } = useAILocalDraftStore();
 
+  const [uploadedImages, dispatch] = useReducer(
+    createSyncedImageUploadReducer(setImagesDraft),
+    imagesDraft.map(({ url }) => ({ url, loading: false }))
+  );
+
   const {
     fileInputRef,
-    uploadedImages,
     handleImagesUpload,
     handleImageRemove,
     clearUploadedImages,
@@ -68,13 +73,9 @@ export function ChatInput({
   } = useImageUpload({
     maxFiles: MAX_IMAGE_FILES,
     maxFileSize: MAX_IMAGE_FILE_SIZE,
-    initialImages: imagesDraft.map(({ url }) => ({ url, loading: false })),
+    images: uploadedImages,
+    dispatch,
   });
-
-  // Sync the imagesDraft with the local uploadedImages
-  useEffect(() => {
-    setImagesDraft(uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url })));
-  }, [uploadedImages]);
 
   // Derive promptData from editorContent
   const promptData = convertJSONContentToPromptData(

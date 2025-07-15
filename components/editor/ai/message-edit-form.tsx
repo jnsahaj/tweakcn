@@ -3,6 +3,7 @@ import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { useImageUpload } from "@/hooks/use-image-upload";
+import { imageUploadReducer } from "@/hooks/use-image-upload-reducer";
 import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILES, MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { AIPromptData, type ChatMessage as ChatMessageType } from "@/types/ai";
@@ -13,7 +14,7 @@ import {
 } from "@/utils/ai/ai-prompt";
 import { JSONContent } from "@tiptap/react";
 import { Check, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 import CustomTextarea from "../custom-textarea";
 import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
 import { ImageUploader } from "./image-uploader";
@@ -33,9 +34,13 @@ export function MessageEditForm({ message, onEditSubmit, onEditCancel }: Message
     return convertPromptDataToJSONContent(promptData);
   });
 
+  const [uploadedImages, dispatch] = useReducer(
+    imageUploadReducer,
+    promptData?.images ? promptData.images.map((img) => ({ ...img, loading: false })) : []
+  );
+
   const {
     fileInputRef,
-    uploadedImages,
     handleImagesUpload,
     handleImageRemove,
     isSomeImageUploading,
@@ -43,9 +48,8 @@ export function MessageEditForm({ message, onEditSubmit, onEditCancel }: Message
   } = useImageUpload({
     maxFiles: MAX_IMAGE_FILES,
     maxFileSize: MAX_IMAGE_FILE_SIZE,
-    initialImages: promptData?.images
-      ? promptData.images.map((img) => ({ ...img, loading: false }))
-      : [],
+    images: uploadedImages,
+    dispatch,
   });
 
   const newPromptData = useMemo(
