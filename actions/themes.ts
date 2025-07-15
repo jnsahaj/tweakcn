@@ -15,6 +15,7 @@ import {
   ThemeNotFoundError,
   ThemeLimitError,
 } from "@/types/errors";
+import { MAX_FREE_THEMES } from "@/lib/constants";
 
 // Helper to get user ID with better error handling
 async function getCurrentUserId(): Promise<string> {
@@ -97,8 +98,8 @@ export async function createTheme(formData: { name: string; styles: ThemeStyles 
 
     // Check theme limit
     const userThemes = await db.select().from(themeTable).where(eq(themeTable.userId, userId));
-    if (userThemes.length >= 10) {
-      throw new ThemeLimitError("You cannot have more than 10 themes yet.");
+    if (userThemes.length >= MAX_FREE_THEMES) {
+      throw new ThemeLimitError(`You cannot have more than ${MAX_FREE_THEMES} themes yet.`);
     }
 
     const { name, styles } = validation.data;
