@@ -312,7 +312,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                     heading={
                       <div className="flex w-full items-center justify-between">
                         <span>Saved Themes</span>
-                        <Link href="/dashboard">
+                        <Link href="/settings/themes">
                           <Button
                             variant="link"
                             size="sm"
