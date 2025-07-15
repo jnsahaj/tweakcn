@@ -8,6 +8,39 @@ import { FREE_SUB_FEATURES, PRO_SUB_FEATURES } from "@/utils/subscription";
 import { Calendar, Check, Circle, Mail } from "lucide-react";
 import Link from "next/link";
 import { CheckoutButton } from "./components/checkout-button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
+
+const pricingFaqs = [
+  {
+    question: "Can I use tweakcn for free?",
+    answer: `Yes! tweakcn provides a comprehensive free tier that includes theme customization, access to preset themes, and up to ${AI_REQUEST_FREE_TIER_LIMIT} free AI-generated themes. You can build and export themes without any payment required.`,
+  },
+  {
+    question: "Does tweakcn offer a free trial for the Pro plan?",
+    answer: `No, there are no free trials. However, you get access to generate up to ${AI_REQUEST_FREE_TIER_LIMIT} themes with AI, plus unlimited manual theme customization using the free visual editor.`,
+  },
+  {
+    question: "What happens to saved themes when downgrading to free?",
+    answer:
+      "All your created themes remain yours forever. When you downgrade from Pro, you keep full access to all themes you've built, but you'll be limited to the free tier's AI generation quota and features.",
+  },
+  {
+    question: "Can I cancel or switch at any time?",
+    answer:
+      "Yes! You have complete control over your subscription. Cancel anytime through your account settings, and you'll retain Pro access until your current billing period ends before automatically switching to the free tier.",
+  },
+  {
+    question: "How secure is the payment?",
+    answer:
+      "We use Polar for secure payment processing, which handles all transactions with industry-standard encryption. Your payment details are never stored on our servers.",
+  },
+];
 
 export default function PricingPage() {
   return (
@@ -18,7 +51,7 @@ export default function PricingPage() {
         <div className="bg-secondary/10 absolute bottom-0 left-0 size-80 -translate-x-1/2 translate-y-1/2 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative container mx-auto space-y-16 px-4 py-20 md:px-6">
+      <div className="relative container mx-auto space-y-28 px-4 py-20 md:px-6">
         {/* Header Section */}
         <div className="space-y-2 text-center">
           <h1 className="from-foreground to-foreground/50 bg-gradient-to-r bg-clip-text text-5xl font-bold tracking-tight text-pretty text-transparent md:text-6xl">
@@ -122,6 +155,37 @@ export default function PricingPage() {
               </CardFooter>
             </div>
           </Card>
+        </div>
+
+        {/* FAQs Section */}
+        <div className="mx-auto max-w-4xl space-y-8">
+          <div className="space-y-2 text-center">
+            <h2 className="from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
+              FAQs
+            </h2>
+            <p className="text-muted-foreground mx-auto max-w-2xl text-base md:text-lg">
+              Here&apos;s everything you may want to know. For any other info just{" "}
+              <Link href="mailto:sahaj@tweakcn.com" className="text-primary hover:underline">
+                reach us
+              </Link>
+              .
+            </p>
+          </div>
+
+          <Accordion type="single" collapsible className="w-full">
+            {pricingFaqs.map((faq, i) => (
+              <AccordionItem
+                key={i}
+                value={`item-${i}`}
+                className="border-border/40 group border-b py-2"
+              >
+                <AccordionTrigger className="group-hover:text-primary text-left font-medium transition-colors hover:no-underline">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
 
         {/* Bottom Section */}
