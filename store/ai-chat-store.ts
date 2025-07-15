@@ -1,5 +1,4 @@
 import { AssistantMessage, ChatMessage, UserMessage } from "@/types/ai";
-import { ThemeStyles } from "@/types/theme";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
