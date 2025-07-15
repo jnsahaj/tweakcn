@@ -1,29 +1,35 @@
 import "server-only";
 
 import { getMyAllTimeRequestCount } from "@/actions/ai-usage";
-import { polar } from "@/lib/polar";
 import { SubscriptionRequiredError } from "@/types/errors";
 import { SubscriptionCheck } from "@/types/subscription";
 import { NextRequest } from "next/server";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "./constants";
 import { getCurrentUserId } from "./shared";
+import { db } from "@/db";
+import { subscription } from "@/db/schema";
+import { and, eq } from "drizzle-orm";
+
+async function getMyActiveSubscription(
+  userId: string
+): Promise<typeof subscription.$inferSelect | null> {
+  const sub = await db
+    .select()
+    .from(subscription)
+    .where(and(eq(subscription.userId, userId), eq(subscription.status, "active")));
+  return sub[0];
+}
 
 export async function validateSubscriptionAndUsage(userId: string): Promise<SubscriptionCheck> {
   try {
-    const [customer, requestsUsed] = await Promise.all([
-      polar.customers
-        .getStateExternal({
-          externalId: userId,
-        })
-        // user might not be a customer yet
-        .catch(() => null),
+    const [activeSubscription, requestsUsed] = await Promise.all([
+      getMyActiveSubscription(userId),
       getMyAllTimeRequestCount(userId),
     ]);
 
-    const isSubscribed = !!customer?.activeSubscriptions?.find(
-      (s) =>
-        s.status === "active" && s.productId === process.env.NEXT_PUBLIC_TWEAKCN_PLUS_PRODUCT_ID
-    );
+    const isSubscribed =
+      !!activeSubscription &&
+      activeSubscription?.productId === process.env.NEXT_PUBLIC_TWEAKCN_PRO_PRODUCT_ID;
 
     if (isSubscribed) {
       return {

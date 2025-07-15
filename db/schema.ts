@@ -1,5 +1,5 @@
 import { ThemeStyles } from "@/types/theme";
-import { pgTable, json, timestamp, boolean, text } from "drizzle-orm/pg-core";
+import { pgTable, json, timestamp, boolean, text, integer } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -72,4 +72,30 @@ export const aiUsage = pgTable("ai_usage", {
   completionTokens: text("completion_tokens").notNull().default("0"),
   daysSinceEpoch: text("days_since_epoch").notNull(),
   createdAt: timestamp("created_at").notNull(),
+});
+
+export const subscription = pgTable("subscription", {
+  id: text("id").primaryKey(),
+  createdAt: timestamp("createdAt").notNull(),
+  modifiedAt: timestamp("modifiedAt"),
+  amount: integer("amount").notNull(),
+  currency: text("currency").notNull(),
+  recurringInterval: text("recurringInterval").notNull(),
+  status: text("status").notNull(),
+  currentPeriodStart: timestamp("currentPeriodStart").notNull(),
+  currentPeriodEnd: timestamp("currentPeriodEnd").notNull(),
+  cancelAtPeriodEnd: boolean("cancelAtPeriodEnd").notNull().default(false),
+  canceledAt: timestamp("canceledAt"),
+  startedAt: timestamp("startedAt").notNull(),
+  endsAt: timestamp("endsAt"),
+  endedAt: timestamp("endedAt"),
+  customerId: text("customerId").notNull(),
+  productId: text("productId").notNull(),
+  discountId: text("discountId"),
+  checkoutId: text("checkoutId").notNull(),
+  customerCancellationReason: text("customerCancellationReason"),
+  customerCancellationComment: text("customerCancellationComment"),
+  metadata: text("metadata"), // JSON string
+  customFieldData: text("customFieldData"), // JSON string
+  userId: text("userId").references(() => user.id),
 });
