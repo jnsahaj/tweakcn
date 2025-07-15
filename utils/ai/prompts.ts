@@ -10,7 +10,7 @@ export const PROMPTS = {
       "Generate a minimalist theme palette. All surfaces color tokens should use subtle variations of the same base color, with enough contrast to distinguish them when they are next to each other. For brand colors, keep original color palette. Minimize borders and shadows. For borders, use a subtle grayscale color. Typography should be clean, modern, and easy to read.",
   },
   brutalist: {
-    label: "Make it Brutalist",
+    label: "Brutalist Vibe",
     prompt:
       "Make it brutalist style. Set 'radius' to '0px'. The 'border' color should strongly contrast with the 'background' color. For shadows, use a 'shadow-color' that also contrasts sharply with the 'background', set 'shadow-blur' to '0px', 'shadow-opacity' to '100%', and use 'shadow-offset', and 'shadow-spread' to create a hard offset shadow effect, do not exceed 4px. Keep original color palette, and make colors slightly more vibrant.",
   },
