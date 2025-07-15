@@ -36,7 +36,7 @@ export function CheckoutButton({ disabled, className, ...props }: CheckoutButton
     }
 
     if (subscriptionStatus?.isSubscribed) {
-      router.push("/dashboard");
+      router.push("/settings");
       return;
     }
 
