@@ -1,35 +1,20 @@
 "use client";
 
-import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
-import { Loading } from "@/components/loading";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { useGuards } from "@/hooks/use-guards";
-import { useImageUpload } from "@/hooks/use-image-upload";
-import { createSyncedImageUploadReducer } from "@/hooks/use-image-upload-reducer";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
-import { AI_PROMPT_CHARACTER_LIMIT, MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
+import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
-import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import { AIPromptData } from "@/types/ai";
-import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
-import { JSONContent } from "@tiptap/react";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
-import dynamic from "next/dynamic";
-import { useReducer } from "react";
 import { AlertBanner } from "./alert-banner";
-import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
 import { ImageUploader } from "./image-uploader";
-import { UploadedImagePreview } from "./uploaded-image-preview";
-
-const CustomTextarea = dynamic(() => import("@/components/editor/custom-textarea"), {
-  ssr: false,
-  loading: () => <Loading className="min-h-[60px] w-full rounded-lg" />,
-});
+import { useAIChatForm } from "@/hooks/use-ai-chat-form";
+import { AIChatFormBody } from "./ai-chat-form-body";
 
 type ThemeGenerationPayload = {
   promptData: AIPromptData | null;
@@ -45,50 +30,23 @@ export function ChatInput({
 }) {
   const { messages, clearMessages } = useAIChatStore();
   const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
-  const { isUserDragging } = useDocumentDragAndDropIntent();
   const { setChatSuggestionsOpen } = usePreferencesStore();
-
   const { checkValidSession, checkValidSubscription } = useGuards();
 
-  // Images uploads are local. We should upload them to a remote storage as soon as the user uploads them.
   const {
     editorContentDraft,
-    setEditorContentDraft,
+    handleContentChange,
+    promptData,
+    isEmptyPrompt,
     clearLocalDraft,
-    imagesDraft,
-    setImagesDraft,
-  } = useAILocalDraftStore();
-
-  const [uploadedImages, dispatch] = useReducer(
-    createSyncedImageUploadReducer(setImagesDraft),
-    imagesDraft.map(({ url }) => ({ url, loading: false }))
-  );
-
-  const {
+    uploadedImages,
     fileInputRef,
     handleImagesUpload,
     handleImageRemove,
     clearUploadedImages,
     isSomeImageUploading,
-  } = useImageUpload({
-    maxFiles: MAX_IMAGE_FILES,
-    maxFileSize: MAX_IMAGE_FILE_SIZE,
-    images: uploadedImages,
-    dispatch,
-  });
-
-  // Derive promptData from editorContent
-  const promptData = convertJSONContentToPromptData(
-    editorContentDraft || { type: "doc", content: [] }
-  );
-
-  const isEmptyPrompt =
-    uploadedImages.length === 0 &&
-    (!promptData?.content?.trim() || promptData.content.length === 0);
-
-  const handleContentChange = (jsonContent: JSONContent) => {
-    setEditorContentDraft(jsonContent);
-  };
+    isUserDragging,
+  } = useAIChatForm();
 
   const handleNewChat = () => {
     clearMessages();
@@ -139,46 +97,17 @@ export function ChatInput({
     <div className="relative transition-all contain-layout">
       <AlertBanner />
       <div className="bg-background relative isolate z-10 flex size-full min-h-[100px] flex-1 flex-col gap-2 overflow-hidden rounded-lg border p-2 shadow-xs">
-        {isUserDragging && (
-          <div className={cn("flex h-16 items-center rounded-lg")}>
-            <DragAndDropImageUploader
-              onDrop={handleImagesUpload}
-              disabled={aiGenerateLoading || uploadedImages.some((img) => img.loading)}
-            />
-          </div>
-        )}
-        {uploadedImages.length > 0 && !isUserDragging && (
-          <div
-            className={cn(
-              "relative flex h-16 items-center rounded-lg",
-              aiGenerateLoading && "pointer-events-none opacity-75"
-            )}
-          >
-            <HorizontalScrollArea className="w-full">
-              {uploadedImages.map((img, idx) => (
-                <UploadedImagePreview
-                  key={idx}
-                  src={img.url}
-                  isImageLoading={img.loading}
-                  handleImageRemove={() => handleImageRemove(idx)}
-                />
-              ))}
-            </HorizontalScrollArea>
-          </div>
-        )}
-        <div className="min-h-[60px]">
-          <label className="sr-only">Chat Input</label>
-          <div className="bg-muted/40 relative isolate rounded-lg">
-            <CustomTextarea
-              onContentChange={handleContentChange}
-              onGenerate={handleGenerateSubmit}
-              key={messages.length}
-              characterLimit={AI_PROMPT_CHARACTER_LIMIT}
-              onImagesPaste={handleImagesUpload}
-              initialEditorContent={editorContentDraft}
-            />
-          </div>
-        </div>
+        <AIChatFormBody
+          isUserDragging={isUserDragging}
+          aiGenerateLoading={aiGenerateLoading}
+          uploadedImages={uploadedImages}
+          handleImagesUpload={handleImagesUpload}
+          handleImageRemove={handleImageRemove}
+          handleContentChange={handleContentChange}
+          handleGenerate={handleGenerateSubmit}
+          initialEditorContent={editorContentDraft ?? undefined}
+          textareaKey={messages.length}
+        />
         <div className="@container/form flex items-center justify-between gap-2">
           <TooltipWrapper label="Create new chat" asChild>
             <Button
