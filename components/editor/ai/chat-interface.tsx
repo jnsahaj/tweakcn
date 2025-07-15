@@ -2,13 +2,10 @@
 
 import { toast } from "@/components/ui/use-toast";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useGuards } from "@/hooks/use-guards";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
-import { useSubscription } from "@/hooks/use-subscription";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
-import { useAuthStore } from "@/store/auth-store";
-import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { AIPromptData } from "@/types/ai";
 import dynamic from "next/dynamic";
 import React from "react";
@@ -31,42 +28,12 @@ export function ChatInterface() {
   const { messages, addUserMessage, addAssistantMessage, resetMessagesUpToIndex } =
     useAIChatStore();
   const hasMessages = messages.length > 0;
-
-  const { openAuthDialog } = useAuthStore();
-  const { data: session } = authClient.useSession();
-
-  const { subscriptionStatus } = useSubscription();
-  const { openGetProDialog } = useGetProDialogStore();
+  const { checkValidSession, checkValidSubscription } = useGuards();
 
   const [editingMessageIndex, setEditingMessageIndex] = React.useState<number | null>(null);
 
-  const checkValidSubscription = () => {
-    if (!subscriptionStatus) return;
-    const { isSubscribed, requestsRemaining } = subscriptionStatus;
-
-    if (isSubscribed) return true;
-
-    if (requestsRemaining <= 0) {
-      openGetProDialog();
-      return false;
-    }
-
-    return true; // Allow if not subscribed but still has requests left
-  };
-
-  const handleThemeGeneration = async (
-    promptData: AIPromptData | null,
-    handlers?: { onThemeGenerateInvoked?: () => void }
-  ) => {
-    if (!session) {
-      openAuthDialog("signup", "AI_GENERATE_FROM_CHAT", { promptData });
-      return;
-    }
-
-    if (!checkValidSubscription()) {
-      return;
-    }
-
+  // Core logic
+  const handleGenerateThemeCore = async (promptData: AIPromptData | null) => {
     if (!promptData) {
       toast({
         title: "Error",
@@ -78,8 +45,6 @@ export function ChatInterface() {
     addUserMessage({
       promptData,
     });
-
-    handlers?.onThemeGenerateInvoked?.();
 
     const updatedMessages = useAIChatStore.getState().messages;
     const result = await generateTheme(updatedMessages);
@@ -99,7 +64,17 @@ export function ChatInterface() {
     });
   };
 
+  const handleGenerateFromSuggestion = async (promptData: AIPromptData | null) => {
+    if (!checkValidSession("signup", "AI_GENERATE_FROM_CHAT_SUGGESTION", { promptData })) return;
+    if (!checkValidSubscription()) return;
+
+    handleGenerateThemeCore(promptData);
+  };
+
   const handleRetry = async (messageIndex: number) => {
+    if (!checkValidSession("signup", "AI_GENERATE_RETRY", { messageIndex })) return;
+    if (!checkValidSubscription()) return;
+
     setEditingMessageIndex(null);
     const messageToRetry = messages[messageIndex];
 
@@ -113,10 +88,12 @@ export function ChatInterface() {
 
     // Reset messages up to the retry point
     resetMessagesUpToIndex(messageIndex);
-    handleThemeGeneration(messageToRetry.promptData);
+    handleGenerateThemeCore(messageToRetry.promptData);
   };
 
   const handleEdit = (messageIndex: number) => {
+    if (!checkValidSession()) return; // Simply act as an early return
+
     setEditingMessageIndex(messageIndex);
   };
 
@@ -124,15 +101,28 @@ export function ChatInterface() {
     setEditingMessageIndex(null);
   };
 
-  const handleEditSubmit = async (messageIndex: number, newPromptData: AIPromptData) => {
+  const handleEditSubmit = async (messageIndex: number, promptData: AIPromptData) => {
+    if (!checkValidSession("signup", "AI_GENERATE_EDIT", { messageIndex, promptData })) {
+      return;
+    }
+    if (!checkValidSubscription()) return;
+
     // Reset messages up to the edited message
     resetMessagesUpToIndex(messageIndex);
     setEditingMessageIndex(null);
-    handleThemeGeneration(newPromptData);
+    handleGenerateThemeCore(promptData);
   };
 
-  usePostLoginAction("AI_GENERATE_FROM_CHAT", ({ promptData }) => {
-    handleThemeGeneration(promptData);
+  usePostLoginAction("AI_GENERATE_FROM_CHAT_SUGGESTION", ({ promptData }) => {
+    handleGenerateFromSuggestion(promptData);
+  });
+
+  usePostLoginAction("AI_GENERATE_RETRY", ({ messageIndex }) => {
+    handleRetry(messageIndex);
+  });
+
+  usePostLoginAction("AI_GENERATE_EDIT", ({ messageIndex, promptData }) => {
+    handleEditSubmit(messageIndex, promptData);
   });
 
   return (
@@ -153,7 +143,7 @@ export function ChatInterface() {
           />
         ) : (
           <div className="animate-in fade-in-50 zoom-in-95 relative isolate px-4 pt-8 duration-300 ease-out sm:pt-16 md:pt-24">
-            <NoMessagesPlaceholder handleThemeGeneration={handleThemeGeneration} />
+            <NoMessagesPlaceholder onGenerateTheme={handleGenerateFromSuggestion} />
           </div>
         )}
       </div>
@@ -166,10 +156,10 @@ export function ChatInterface() {
             hasMessages ? "scale-100 opacity-100" : "h-0 scale-80 opacity-0"
           )}
         >
-          <ClosableSuggestedPillActions handleThemeGeneration={handleThemeGeneration} />
+          <ClosableSuggestedPillActions onGenerateTheme={handleGenerateFromSuggestion} />
         </div>
 
-        <ChatInput handleThemeGeneration={handleThemeGeneration} />
+        <ChatInput onGenerateTheme={handleGenerateThemeCore} />
       </div>
     </section>
   );

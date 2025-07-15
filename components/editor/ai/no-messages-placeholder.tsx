@@ -5,9 +5,8 @@ import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { useThemePresetStore } from "@/store/theme-preset-store";
 import { AIPromptData } from "@/types/ai";
-import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
+import { createCurrentThemePrompt, createPromptDataFromPreset } from "@/utils/ai/ai-prompt";
 import { PROMPTS } from "@/utils/ai/prompts";
 import { Blend, PaintRoller, WandSparkles } from "lucide-react";
 import { ComponentProps, Fragment } from "react";
@@ -80,33 +79,10 @@ const VARIANT_PROMPTS: Prompt[] = [
   },
 ];
 
-// This can be moved to the ai-prompt utils
-const createPromptDataFromPreset = (prompt: string, presetName: string): AIPromptData => {
-  const preset = useThemePresetStore.getState().getPreset(presetName);
-
-  if (!preset) {
-    throw new Error(`Preset "${presetName}" not found`);
-  }
-
-  return {
-    content: prompt,
-    mentions: [
-      {
-        id: presetName,
-        label: preset.label ?? presetName,
-        themeData: {
-          light: preset.styles.light || {},
-          dark: preset.styles.dark || {},
-        },
-      },
-    ],
-  };
-};
-
 export function NoMessagesPlaceholder({
-  handleThemeGeneration,
+  onGenerateTheme,
 }: {
-  handleThemeGeneration: (promptData: AIPromptData | null) => void;
+  onGenerateTheme: (promptData: AIPromptData | null) => void;
 }) {
   const { data: session } = authClient.useSession();
   const { loading: isGenerating } = useAIThemeGeneration();
@@ -116,7 +92,7 @@ export function NoMessagesPlaceholder({
 
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-4">
-      <h2 className="text-[clamp(22px,6cqw,32px)] font-semibold tracking-tighter text-pretty">
+      <h2 className="text-[clamp(18px,5cqw,28px)] leading-tight font-semibold tracking-tighter text-pretty">
         {heading}
       </h2>
 
@@ -144,7 +120,7 @@ export function NoMessagesPlaceholder({
               <PromptButton
                 disabled={isGenerating}
                 onClick={() =>
-                  handleThemeGeneration({
+                  onGenerateTheme({
                     content: prompt.prompt,
                     mentions: [],
                   })
@@ -163,9 +139,7 @@ export function NoMessagesPlaceholder({
               <PromptButton
                 disabled={isGenerating}
                 onClick={() =>
-                  handleThemeGeneration(
-                    createPromptDataFromPreset(prompt.prompt, prompt.basePreset)
-                  )
+                  onGenerateTheme(createPromptDataFromPreset(prompt.prompt, prompt.basePreset))
                 }
               >
                 {prompt.displayContent}
@@ -180,9 +154,7 @@ export function NoMessagesPlaceholder({
             <Fragment key={`variant-${index}`}>
               <PromptButton
                 disabled={isGenerating}
-                onClick={() =>
-                  handleThemeGeneration(createCurrentThemePrompt({ prompt: prompt.prompt }))
-                }
+                onClick={() => onGenerateTheme(createCurrentThemePrompt({ prompt: prompt.prompt }))}
               >
                 {prompt.displayContent}
               </PromptButton>

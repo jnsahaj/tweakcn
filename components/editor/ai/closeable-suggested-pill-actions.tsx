@@ -11,16 +11,16 @@ import { Sparkles, X } from "lucide-react";
 import { PillActionButton } from "./pill-action-button";
 
 export function ClosableSuggestedPillActions({
-  handleThemeGeneration,
+  onGenerateTheme,
 }: {
-  handleThemeGeneration: (promptData: AIPromptData | null) => Promise<void>;
+  onGenerateTheme: (promptData: AIPromptData | null) => Promise<void>;
 }) {
   const { loading: aiIsGenerating } = useAIThemeGeneration();
   const { chatSuggestionsOpen, setChatSuggestionsOpen } = usePreferencesStore();
 
   const handleSetPrompt = async (prompt: string) => {
     const promptData = createCurrentThemePrompt({ prompt });
-    handleThemeGeneration(promptData);
+    onGenerateTheme(promptData);
   };
 
   if (!chatSuggestionsOpen) return null;
