@@ -55,7 +55,15 @@ export function AIChatDemo({
           tabIndex={-1}
         >
           {CHAT_PLACEHOLDER_MESSAGES.map((msg) => (
-            <Message key={msg.id} message={msg} onRetry={() => {}} />
+            <Message
+              key={msg.id}
+              message={msg}
+              onRetry={() => {}}
+              isEditing={false}
+              onEdit={() => {}}
+              onEditSubmit={() => {}}
+              onEditCancel={() => {}}
+            />
           ))}
         </div>
       </ScrollArea>
