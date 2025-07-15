@@ -42,19 +42,14 @@ export default function Message({
               message={message}
               isEditing={isEditing}
               parentRef={parentRef}
+              onRetry={onRetry}
+              onEdit={onEdit}
               onEditSubmit={onEditSubmit}
               onEditCancel={onEditCancel}
             />
           )}
 
           {isAssistant && <AssistantMessage message={message} />}
-
-          <MessageControls
-            message={message}
-            onRetry={onRetry}
-            onEdit={onEdit}
-            isEditing={isEditing}
-          />
         </div>
       </div>
     </div>
@@ -86,6 +81,8 @@ function AssistantMessage({ message }: AssistantMessageProps) {
             </ScrollArea>
           </ChatThemePreview>
         )}
+
+        <MessageControls message={message} />
       </div>
     </div>
   );
@@ -95,6 +92,8 @@ interface UserMessageProps {
   message: ChatMessageType;
   isEditing: boolean;
   parentRef: React.RefObject<HTMLDivElement | null>;
+  onRetry: () => void;
+  onEdit: () => void;
   onEditSubmit: (newPromptData: AIPromptData) => void;
   onEditCancel: () => void;
 }
@@ -103,6 +102,8 @@ function UserMessage({
   message,
   isEditing,
   parentRef,
+  onRetry,
+  onEdit,
   onEditSubmit,
   onEditCancel,
 }: UserMessageProps) {
@@ -180,18 +181,22 @@ function UserMessage({
   }
 
   return (
-    <div className="relative flex flex-col gap-1">
-      {msgImages}
+    <div className="space-y-2">
+      <div className="relative flex flex-col gap-1">
+        {msgImages}
 
-      {shouldDisplayMsgContent && (
-        <div
-          className={cn(
-            "bg-card/75 text-card-foreground/90 border-border/75! w-fit self-end rounded-lg border p-3 text-sm"
-          )}
-        >
-          {msgContent}
-        </div>
-      )}
+        {shouldDisplayMsgContent && (
+          <div
+            className={cn(
+              "bg-card/75 text-card-foreground/90 border-border/75! w-fit self-end rounded-lg border p-3 text-sm"
+            )}
+          >
+            {msgContent}
+          </div>
+        )}
+      </div>
+
+      <MessageControls message={message} onRetry={onRetry} onEdit={onEdit} isEditing={isEditing} />
     </div>
   );
 }
