@@ -7,13 +7,13 @@ import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
 import { ThemeStyles } from "@/types/theme";
 import { mergeThemeStylesWithDefaults } from "@/utils/theme-styles";
-import { Edit, Goal, RefreshCw } from "lucide-react";
+import { Edit, History, RefreshCw } from "lucide-react";
 
 type MessageControlsProps = {
   message: ChatMessageType;
   onRetry?: () => void;
   onEdit?: () => void;
-  isEditing: boolean;
+  isEditing?: boolean;
 };
 
 export function MessageControls({ message, onRetry, onEdit, isEditing }: MessageControlsProps) {
@@ -48,7 +48,7 @@ export function MessageControls({ message, onRetry, onEdit, isEditing }: Message
         )}
       >
         {onRetry && (
-          <TooltipWrapper label="Retry this prompt" asChild>
+          <TooltipWrapper label="Retry" asChild>
             <Button
               size="icon"
               variant="ghost"
@@ -62,7 +62,7 @@ export function MessageControls({ message, onRetry, onEdit, isEditing }: Message
         )}
 
         {onEdit && (
-          <TooltipWrapper label="Edit this prompt" asChild>
+          <TooltipWrapper label="Edit" asChild>
             <Button
               size="icon"
               variant="ghost"
@@ -91,7 +91,7 @@ export function MessageControls({ message, onRetry, onEdit, isEditing }: Message
         <CopyButton textToCopy={getCopyContent()} />
 
         {message.themeStyles && (
-          <TooltipWrapper label="Reset to this checkpoint" asChild>
+          <TooltipWrapper label="Restore checkpoint" asChild>
             <Button
               size="icon"
               variant="ghost"
@@ -99,7 +99,7 @@ export function MessageControls({ message, onRetry, onEdit, isEditing }: Message
               disabled={isAIGenerating}
               onClick={() => handleResetThemeToMessageCheckpoint(message.themeStyles)}
             >
-              <Goal />
+              <History />
             </Button>
           </TooltipWrapper>
         )}
