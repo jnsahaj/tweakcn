@@ -39,7 +39,6 @@ export function AIChatDemo({
       )}
       aria-hidden="true"
       tabIndex={-1}
-      style={{ pointerEvents: disabled ? "none" : "auto" }}
     >
       {/* Scrollable parent */}
       <ScrollArea className="flex-1">
