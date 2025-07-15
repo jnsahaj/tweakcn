@@ -106,6 +106,28 @@ export function createPromptDataFromMentions(content: string, mentionIds: string
   };
 }
 
+export function createPromptDataFromPreset(prompt: string, presetName: string): AIPromptData {
+  const preset = useThemePresetStore.getState().getPreset(presetName);
+
+  if (!preset) {
+    throw new Error(`Preset "${presetName}" not found`);
+  }
+
+  return {
+    content: prompt,
+    mentions: [
+      {
+        id: presetName,
+        label: preset.label ?? presetName,
+        themeData: {
+          light: preset.styles.light || {},
+          dark: preset.styles.dark || {},
+        },
+      },
+    ],
+  };
+}
+
 // Utility function to extract text content (user prompt) and theme mentions from the JSON content
 // we need both separate to create the prompt data to send to the AI
 // we also need to handle the line breaks correctly, both in copy/paste and while typing directly
