@@ -42,13 +42,9 @@ const MODEL_CONFIG = {
   name: "Gemini 2.5 Pro",
 };
 
-// Server Actions
-export async function recordAIUsage(
-  input: { promptTokens?: number; completionTokens?: number },
-  userId?: string
-) {
+export async function recordAIUsage(input: { promptTokens?: number; completionTokens?: number }) {
   try {
-    const finalUserId = userId || (await getCurrentUserId());
+    const userId = await getCurrentUserId();
 
     const validation = recordUsageSchema.safeParse(input);
     if (!validation.success) {
@@ -65,7 +61,7 @@ export async function recordAIUsage(
       .insert(aiUsage)
       .values({
         id: usageId,
-        userId: finalUserId,
+        userId,
         modelId: MODEL_CONFIG.id,
         promptTokens: promptTokens.toString(),
         completionTokens: completionTokens.toString(),
@@ -77,21 +73,6 @@ export async function recordAIUsage(
     return insertedUsage;
   } catch (error) {
     console.error("Error recording usage:", error);
-    throw error;
-  }
-}
-
-export async function recordAICancelledRequest(
-  input: { promptTokens?: number; completionTokens?: number } = {
-    promptTokens: 0,
-    completionTokens: 0,
-  },
-  userId?: string
-) {
-  try {
-    return await recordAIUsage(input, userId);
-  } catch (error) {
-    console.error(`Error recording cancelled request for user: ${userId}`, error);
     throw error;
   }
 }

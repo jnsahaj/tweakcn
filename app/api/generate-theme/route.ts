@@ -1,4 +1,4 @@
-import { recordAICancelledRequest, recordAIUsage } from "@/actions/ai-usage";
+import { recordAIUsage } from "@/actions/ai-usage";
 import { handleError } from "@/lib/error-response";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
@@ -82,26 +82,9 @@ export async function POST(req: NextRequest) {
       error instanceof Error &&
       (error.name === "AbortError" || error.name === "ResponseAborted")
     ) {
-      try {
-        const userId = await getCurrentUserId(req);
-        console.log("Recording cancelled request, userId:", userId);
-
-        // TODO: `promptTokens` should *ideally* be set to the number of tokens in the last user message
-        await recordAICancelledRequest(
-          {
-            promptTokens: 0,
-            completionTokens: 0,
-          },
-          userId
-        );
-      } catch (e) {
-        logError(e as Error, {
-          message: "Failed to record cancelled request",
-          route: "/api/generate-theme",
-        });
-      }
       return new Response("Request aborted by user", { status: 499 });
     }
+
     return handleError(error, { route: "/api/generate-theme" });
   }
 }
