@@ -1,9 +1,8 @@
-import { recordAIUsage } from "@/actions/ai-usage";
+import { recordAICancelledRequest, recordAIUsage } from "@/actions/ai-usage";
 import { handleError } from "@/lib/error-response";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
 import { SubscriptionRequiredError } from "@/types/errors";
-import { SubscriptionStatus } from "@/types/subscription";
 import { requestSchema, responseSchema, SYSTEM_PROMPT } from "@/utils/ai/generate-theme";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Ratelimit } from "@upstash/ratelimit";
@@ -54,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     const { messages } = requestSchema.parse(await req.json());
 
-    const { experimental_output: theme, usage } = await generateText({
+    const { experimental_output: result, usage } = await generateText({
       model,
       experimental_output: Output.object({
         schema: responseSchema,
@@ -75,24 +74,32 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const updatedSubscriptionStatus: SubscriptionStatus = {
-      isSubscribed: subscriptionCheck.isSubscribed,
-      requestsRemaining: subscriptionCheck.isSubscribed
-        ? Infinity
-        : Math.max(0, subscriptionCheck.requestsRemaining - 1),
-      requestsUsed: subscriptionCheck.requestsUsed + 1,
-    };
-
-    const response = {
-      ...theme,
-      subscriptionStatus: updatedSubscriptionStatus,
-    };
-
-    return new Response(JSON.stringify(response), {
+    return new Response(JSON.stringify(result), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    if (error instanceof Error && error.name === "AbortError") {
+    if (
+      error instanceof Error &&
+      (error.name === "AbortError" || error.name === "ResponseAborted")
+    ) {
+      try {
+        const userId = await getCurrentUserId(req);
+        console.log("Recording cancelled request, userId:", userId);
+
+        // TODO: `promptTokens` should *ideally* be set to the number of tokens in the last user message
+        await recordAICancelledRequest(
+          {
+            promptTokens: 0,
+            completionTokens: 0,
+          },
+          userId
+        );
+      } catch (e) {
+        logError(e as Error, {
+          message: "Failed to record cancelled request",
+          route: "/api/generate-theme",
+        });
+      }
       return new Response("Request aborted by user", { status: 499 });
     }
     return handleError(error, { route: "/api/generate-theme" });

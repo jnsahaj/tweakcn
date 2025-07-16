@@ -47,21 +47,20 @@ export function ChatInterface() {
     });
 
     const updatedMessages = useAIChatStore.getState().messages;
-    const result = await generateTheme(updatedMessages);
+    const response = await generateTheme(updatedMessages);
 
-    if (!result) {
+    if (response.success) {
+      const { data: result } = response;
+
       addAssistantMessage({
-        content: "Failed to generate theme.",
+        content: result.text ?? "Here's the theme I generated for you.",
+        themeStyles: result.theme,
       });
-      return;
+    } else {
+      addAssistantMessage({
+        content: response.message ?? "Failed to generate theme.",
+      });
     }
-
-    addAssistantMessage({
-      content:
-        result?.text ??
-        (result?.theme ? "Here's the theme I generated for you." : "Failed to generate theme."),
-      themeStyles: result?.theme,
-    });
   };
 
   const handleGenerateFromSuggestion = async (promptData: AIPromptData | null) => {
