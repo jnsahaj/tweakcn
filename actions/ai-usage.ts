@@ -43,9 +43,12 @@ const MODEL_CONFIG = {
 };
 
 // Server Actions
-export async function recordAIUsage(input: { promptTokens?: number; completionTokens?: number }) {
+export async function recordAIUsage(
+  input: { promptTokens?: number; completionTokens?: number },
+  userId?: string
+) {
   try {
-    const userId = await getCurrentUserId();
+    const finalUserId = userId || (await getCurrentUserId());
 
     const validation = recordUsageSchema.safeParse(input);
     if (!validation.success) {
@@ -62,7 +65,7 @@ export async function recordAIUsage(input: { promptTokens?: number; completionTo
       .insert(aiUsage)
       .values({
         id: usageId,
-        userId,
+        userId: finalUserId,
         modelId: MODEL_CONFIG.id,
         promptTokens: promptTokens.toString(),
         completionTokens: completionTokens.toString(),
@@ -74,6 +77,21 @@ export async function recordAIUsage(input: { promptTokens?: number; completionTo
     return insertedUsage;
   } catch (error) {
     console.error("Error recording usage:", error);
+    throw error;
+  }
+}
+
+export async function recordAICancelledRequest(
+  input: { promptTokens?: number; completionTokens?: number } = {
+    promptTokens: 0,
+    completionTokens: 0,
+  },
+  userId?: string
+) {
+  try {
+    return await recordAIUsage(input, userId);
+  } catch (error) {
+    console.error(`Error recording cancelled request for user: ${userId}`, error);
     throw error;
   }
 }

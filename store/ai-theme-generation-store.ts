@@ -13,7 +13,6 @@ interface AIThemeGenerationStore {
   generateTheme: (messages: ChatMessage[]) => Promise<{
     text: string;
     theme: ThemeStyles;
-    subscriptionStatus?: SubscriptionStatus;
   }>;
   cancelThemeGeneration: () => void;
   resetState: () => void;
