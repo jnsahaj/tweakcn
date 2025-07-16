@@ -66,8 +66,18 @@ function AssistantMessage({ message }: AssistantMessageProps) {
 
   return (
     <div className="flex items-start gap-1.5">
-      <div className="border-border/50! bg-foreground relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none">
-        <Logo className="text-background size-full p-0.5" />
+      <div
+        className={cn(
+          "border-border/50! bg-foreground relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none",
+          message.isError && "bg-destructive"
+        )}
+      >
+        <Logo
+          className={cn(
+            "text-background size-full p-0.5",
+            message.isError && "text-destructive-foreground"
+          )}
+        />
       </div>
       <div className="relative flex flex-col gap-2">
         <div className="w-fit text-sm">{msgContent}</div>
