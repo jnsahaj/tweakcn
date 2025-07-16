@@ -1,46 +1,20 @@
 "use client";
 
 import { NoiseEffect } from "@/components/effects/noise-effect";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { FREE_SUB_FEATURES, PRO_SUB_FEATURES } from "@/utils/subscription";
-import { Calendar, Check, Circle, Mail } from "lucide-react";
-import Link from "next/link";
-import { CheckoutButton } from "./components/checkout-button";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
-
-const pricingFaqs = [
-  {
-    question: "Can I use tweakcn for free?",
-    answer: `Yes! tweakcn provides a comprehensive free tier that includes theme customization, access to preset themes, and up to ${AI_REQUEST_FREE_TIER_LIMIT} free AI-generated themes. You can build and export themes without any payment required.`,
-  },
-  {
-    question: "Does tweakcn offer a free trial for the Pro plan?",
-    answer: `No, there are no free trials. However, you get access to generate up to ${AI_REQUEST_FREE_TIER_LIMIT} themes with AI, plus unlimited manual theme customization using the free visual editor.`,
-  },
-  {
-    question: "What happens to saved themes when downgrading to free?",
-    answer:
-      "All your created themes remain yours forever. When you downgrade from Pro, you keep full access to all themes you've built, but you'll be limited to the free tier's AI generation quota and features.",
-  },
-  {
-    question: "Can I cancel or switch at any time?",
-    answer:
-      "Yes! You have complete control over your subscription. Cancel anytime through your account settings, and you'll retain Pro access until your current billing period ends before automatically switching to the free tier.",
-  },
-  {
-    question: "How secure is the payment?",
-    answer:
-      "We use Polar for secure payment processing, which handles all transactions with industry-standard encryption. Your payment details are never stored on our servers.",
-  },
-];
+import { cn } from "@/lib/utils";
+import { FREE_SUB_FEATURES, PRO_SUB_FEATURES } from "@/utils/subscription";
+import { Calendar, Check, Circle, Mail } from "lucide-react";
+import Link from "next/link";
+import { CheckoutButton } from "./components/checkout-button";
 
 export default function PricingPage() {
   return (
@@ -53,17 +27,17 @@ export default function PricingPage() {
 
       <div className="relative container mx-auto space-y-28 px-4 py-20 md:px-6">
         {/* Header Section */}
-        <div className="space-y-2 text-center">
+        <section className="space-y-2 text-center">
           <h1 className="from-foreground to-foreground/50 bg-gradient-to-r bg-clip-text text-5xl font-bold tracking-tight text-pretty text-transparent md:text-6xl">
             Choose your perfect plan
           </h1>
           <p className="text-muted-foreground mx-auto max-w-3xl text-base text-balance md:text-lg">
             Start building beautiful themes for free. Upgrade to Pro when you&apos;re ready.
           </p>
-        </div>
+        </section>
 
         {/* Pricing Cards */}
-        <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-2 lg:gap-12">
+        <section className="mx-auto grid max-w-5xl gap-8 md:grid-cols-2 lg:gap-12">
           {/* Free Plan */}
           <Card className="group relative flex flex-col overflow-hidden border-2 transition-all duration-300">
             <CardHeader className="space-y-2 border-b">
@@ -155,16 +129,16 @@ export default function PricingPage() {
               </CardFooter>
             </div>
           </Card>
-        </div>
+        </section>
 
         {/* FAQs Section */}
-        <div className="mx-auto max-w-4xl space-y-8">
+        <section className="mx-auto max-w-3xl space-y-8">
           <div className="space-y-2 text-center">
             <h2 className="from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
               FAQs
             </h2>
-            <p className="text-muted-foreground mx-auto max-w-2xl text-base md:text-lg">
-              Here&apos;s everything you may want to know. For any other info just{" "}
+            <p className="text-muted-foreground mx-auto max-w-2xl text-base text-balance md:text-lg">
+              Here&apos;s everything you may want to know. For any other info, just{" "}
               <Link href="mailto:sahaj@tweakcn.com" className="text-primary hover:underline">
                 reach us
               </Link>
@@ -173,7 +147,7 @@ export default function PricingPage() {
           </div>
 
           <Accordion type="single" collapsible className="w-full">
-            {pricingFaqs.map((faq, i) => (
+            {PRICING_FAQS.map((faq, i) => (
               <AccordionItem
                 key={i}
                 value={`item-${i}`}
@@ -186,7 +160,7 @@ export default function PricingPage() {
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
+        </section>
 
         {/* Bottom Section */}
         <div className="text-center">
@@ -206,3 +180,33 @@ export default function PricingPage() {
     </div>
   );
 }
+
+const PRICING_FAQS = [
+  {
+    question: "What do I get when I upgrade to Pro?",
+    answer: `You get unlimited AI-generated themes, AI theme generation from images, unlimited saved themes, priority support, and more features coming soon. We're developing new features for Pro users!`,
+  },
+  {
+    question: "Can I still use tweakcn for free?",
+    answer: `Yes! tweakcn provides a comprehensive free tier that includes theme customization, access to preset themes, and up to ${AI_REQUEST_FREE_TIER_LIMIT} free AI-generated themes. You can build and export themes without any payment required.`,
+  },
+  {
+    question: "Does tweakcn offer a free trial for the Pro plan?",
+    answer: `No, there are no free trials. However, you get access to generate up to ${AI_REQUEST_FREE_TIER_LIMIT} themes with AI, plus unlimited manual theme customization using the free visual editor.`,
+  },
+  {
+    question: "What happens to saved themes when downgrading to free?",
+    answer:
+      "All your created themes remain yours forever. When you downgrade from Pro, you keep full access to all themes you've built, but you'll be limited to the free tier's AI generation quota and features.",
+  },
+  {
+    question: "Can I cancel or switch at any time?",
+    answer:
+      "Yes! You have complete control over your subscription. Cancel anytime through your account settings, and you'll retain Pro access until your current billing period ends before automatically switching to the free tier.",
+  },
+  {
+    question: "How secure is the payment?",
+    answer:
+      "We use Polar for secure payment processing, which handles all transactions with industry-standard encryption. Your payment details are never stored on our servers.",
+  },
+];
