@@ -1,23 +1,23 @@
 "use client";
 
+import { AIChatFormBody } from "@/components/editor/ai/ai-chat-form-body";
 import { AlertBanner } from "@/components/editor/ai/alert-banner";
 import { ImageUploader } from "@/components/editor/ai/image-uploader";
 import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import { Button } from "@/components/ui/button";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIChatForm } from "@/hooks/use-ai-chat-form";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { AIPromptData } from "@/types/ai";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
-import { useAIChatForm } from "@/hooks/use-ai-chat-form";
-import { AIChatFormBody } from "@/components/editor/ai/ai-chat-form-body";
 
 export function AIChatForm({
   handleThemeGeneration,
 }: {
   handleThemeGeneration: (promptData: AIPromptData | null) => void;
 }) {
-  const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
+  const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGenerationCore();
   const {
     editorContentDraft,
     handleContentChange,

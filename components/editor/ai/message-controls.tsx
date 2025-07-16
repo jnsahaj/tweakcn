@@ -1,7 +1,7 @@
 import { CopyButton } from "@/components/copy-button";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { type ChatMessage as ChatMessageType } from "@/types/ai";
@@ -20,7 +20,7 @@ export function MessageControls({ message, onRetry, onEdit, isEditing }: Message
   const isUser = message.role === "user";
   const isAssistant = message.role === "assistant";
 
-  const { loading: isAIGenerating } = useAIThemeGeneration();
+  const { loading: isAIGenerating } = useAIThemeGenerationCore();
   const { themeState, setThemeState } = useEditorStore();
 
   const handleResetThemeToMessageCheckpoint = (themeStyles?: ThemeStyles) => {

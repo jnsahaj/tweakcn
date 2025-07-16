@@ -1,9 +1,9 @@
 "use client";
 
-import { toast } from "@/components/ui/use-toast";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIGenerateTheme } from "@/hooks/use-ai-generate-theme";
 import { useGuards } from "@/hooks/use-guards";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { AIPromptData } from "@/types/ai";
@@ -24,51 +24,18 @@ const NoMessagesPlaceholder = dynamic(
 );
 
 export function ChatInterface() {
-  const { generateTheme } = useAIThemeGeneration();
-  const { messages, addUserMessage, addAssistantMessage, resetMessagesUpToIndex } =
-    useAIChatStore();
-  const hasMessages = messages.length > 0;
+  const { messages, resetMessagesUpToIndex } = useAIChatStore();
+  const { generateTheme } = useAIGenerateTheme();
   const { checkValidSession, checkValidSubscription } = useGuards();
 
+  const hasMessages = messages.length > 0;
   const [editingMessageIndex, setEditingMessageIndex] = React.useState<number | null>(null);
-
-  // Core logic
-  const handleGenerateThemeCore = async (promptData: AIPromptData | null) => {
-    if (!promptData) {
-      toast({
-        title: "Error",
-        description: "Failed to generate theme. Please try again.",
-      });
-      return;
-    }
-
-    addUserMessage({
-      promptData,
-    });
-
-    const updatedMessages = useAIChatStore.getState().messages;
-    const response = await generateTheme(updatedMessages);
-
-    if (response.success) {
-      const { data: result } = response;
-
-      addAssistantMessage({
-        content: result.text ?? "Here's the theme I generated for you.",
-        themeStyles: result.theme,
-      });
-    } else {
-      addAssistantMessage({
-        content: response.message ?? "Failed to generate theme.",
-        isError: !!response.error,
-      });
-    }
-  };
 
   const handleGenerateFromSuggestion = async (promptData: AIPromptData | null) => {
     if (!checkValidSession("signup", "AI_GENERATE_FROM_CHAT_SUGGESTION", { promptData })) return;
     if (!checkValidSubscription()) return;
 
-    handleGenerateThemeCore(promptData);
+    generateTheme(promptData);
   };
 
   const handleRetry = async (messageIndex: number) => {
@@ -88,7 +55,7 @@ export function ChatInterface() {
 
     // Reset messages up to the retry point
     resetMessagesUpToIndex(messageIndex);
-    handleGenerateThemeCore(messageToRetry.promptData);
+    generateTheme(messageToRetry.promptData);
   };
 
   const handleEdit = (messageIndex: number) => {
@@ -110,7 +77,7 @@ export function ChatInterface() {
     // Reset messages up to the edited message
     resetMessagesUpToIndex(messageIndex);
     setEditingMessageIndex(null);
-    handleGenerateThemeCore(promptData);
+    generateTheme(promptData);
   };
 
   usePostLoginAction("AI_GENERATE_FROM_CHAT_SUGGESTION", ({ promptData }) => {
@@ -159,7 +126,7 @@ export function ChatInterface() {
           <ClosableSuggestedPillActions onGenerateTheme={handleGenerateFromSuggestion} />
         </div>
 
-        <ChatInput onGenerateTheme={handleGenerateThemeCore} />
+        <ChatInput onGenerateTheme={generateTheme} />
       </div>
     </section>
   );
