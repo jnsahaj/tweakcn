@@ -1,7 +1,7 @@
 "use client";
 
 import { suggestion } from "@/components/editor/mention-suggestion";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import CharacterCount from "@tiptap/extension-character-count";
@@ -28,7 +28,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   initialEditorContent,
   className,
 }) => {
-  const { loading: aiGenerateLoading } = useAIThemeGeneration();
+  const { loading: aiGenerateLoading } = useAIThemeGenerationCore();
   const { toast } = useToast();
 
   const editor = useEditor({

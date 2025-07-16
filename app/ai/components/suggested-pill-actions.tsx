@@ -1,7 +1,7 @@
 "use client";
 
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useImageUpload } from "@/hooks/use-image-upload";
 import { imageUploadReducer } from "@/hooks/use-image-upload-reducer";
 import { MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
@@ -16,7 +16,7 @@ export function SuggestedPillActions({
 }: {
   handleThemeGeneration: (promptData: AIPromptData | null) => void;
 }) {
-  const { loading: aiIsGenerating } = useAIThemeGeneration();
+  const { loading: aiIsGenerating } = useAIThemeGenerationCore();
 
   const [uploadedImages, dispatch] = useReducer(imageUploadReducer, []);
 

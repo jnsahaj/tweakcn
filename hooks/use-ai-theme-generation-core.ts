@@ -11,14 +11,14 @@ type AIThemeGenerationResult =
   | { success: true; data: { text: string; theme: ThemeStyles } }
   | { success: false; error: Error; message: string };
 
-export function useAIThemeGeneration() {
+export function useAIThemeGenerationCore() {
   const generateTheme = useAIThemeGenerationStore((state) => state.generateTheme);
   const loading = useAIThemeGenerationStore((state) => state.loading);
   const cancelThemeGeneration = useAIThemeGenerationStore((state) => state.cancelThemeGeneration);
   const posthog = usePostHog();
   const queryClient = useQueryClient();
 
-  const handleGenerateTheme = async (messages: ChatMessage[]): Promise<AIThemeGenerationResult> => {
+  const generateThemeCore = async (messages: ChatMessage[]): Promise<AIThemeGenerationResult> => {
     try {
       const result = await generateTheme(messages);
 
@@ -74,7 +74,7 @@ export function useAIThemeGeneration() {
   };
 
   return {
-    generateTheme: handleGenerateTheme,
+    generateThemeCore,
     loading,
     cancelThemeGeneration,
   };

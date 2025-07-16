@@ -1,5 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { cn } from "@/lib/utils";
 import { AIPromptData, type ChatMessage as ChatMessageType } from "@/types/ai";
 import { useEffect, useRef, useState } from "react";
@@ -35,7 +35,7 @@ export function ChatMessages({
   editingMessageIndex,
 }: ChatMessagesProps) {
   const [isScrollTop, setIsScrollTop] = useState(true);
-  const { loading: isAIGenerating } = useAIThemeGeneration();
+  const { loading: isAIGenerating } = useAIThemeGenerationCore();
   const previousMessages = useRef<ChatMessageType[]>(messages);
 
   const [elapsedTimeGenerating, setElapsedTimeGenerating] = useState(0);
@@ -102,7 +102,7 @@ export function ChatMessages({
       {/* Top fade out effect when scrolling */}
       <div
         className={cn(
-          "via-background/50 from-background pointer-events-none absolute top-0 right-0 left-0 z-20 h-8 bg-gradient-to-b to-transparent opacity-100 transition-opacity ease-out",
+          "via-background/50 from-background pointer-events-none absolute top-0 right-0 left-0 z-20 h-6 bg-gradient-to-b to-transparent opacity-100 transition-opacity ease-out",
           isScrollTop ? "opacity-0" : "opacity-100"
         )}
       />
