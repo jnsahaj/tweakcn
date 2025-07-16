@@ -54,7 +54,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
     editorProps: {
       attributes: {
         class: cn(
-          "min-w-0 min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background px-1 py-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
+          "min-w-0 min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background p-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
           className
         ),
       },

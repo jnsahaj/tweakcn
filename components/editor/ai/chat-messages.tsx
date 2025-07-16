@@ -108,7 +108,7 @@ export function ChatMessages({
       />
       <div className="relative size-full flex-1 px-6 pt-2 pb-8">
         <div ref={messagesStartRef} />
-        <div className="flex flex-col gap-8 text-pretty wrap-anywhere">
+        <div className="flex flex-col gap-8 wrap-anywhere">
           {messages.map((message, index) => (
             <Message
               key={message.id}

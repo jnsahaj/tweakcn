@@ -35,8 +35,11 @@ export default function Message({
 
   return (
     <div className={cn("flex w-full items-start gap-4", isUser ? "justify-end" : "justify-start")}>
-      <div className={cn("flex w-full max-w-[90%] items-start")} ref={parentRef}>
-        <div className={cn("group/message relative flex w-full flex-col gap-2 overflow-hidden")}>
+      <div className={cn("flex w-full max-w-[90%] items-start")}>
+        <div
+          className={cn("group/message relative flex w-full flex-col gap-2 overflow-hidden")}
+          ref={parentRef}
+        >
           {isUser && (
             <UserMessage
               message={message}
