@@ -26,6 +26,7 @@ export type ChatMessage = {
   promptData?: AIPromptData;
   content?: string;
   themeStyles?: ThemeStyles;
+  isError?: boolean;
 };
 
 export type UserMessage = {
@@ -35,4 +36,5 @@ export type UserMessage = {
 export type AssistantMessage = {
   content: string;
   themeStyles?: ThemeStyles;
+  isError?: boolean;
 };

@@ -59,6 +59,7 @@ export function ChatInterface() {
     } else {
       addAssistantMessage({
         content: response.message ?? "Failed to generate theme.",
+        isError: !!response.error,
       });
     }
   };
