@@ -12,7 +12,7 @@ export async function CustomerPortalLink() {
   }
 
   const result = await polar.customerSessions.create({
-    customerExternalId: session?.user.id,
+    externalCustomerId: session?.user.id,
   });
 
   const customerPortalLink = result.customerPortalUrl;
