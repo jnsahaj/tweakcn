@@ -45,6 +45,7 @@ export const useAIChatStore = create<AIChatStore>()(
           id: crypto.randomUUID(),
           content: message.content,
           themeStyles: message.themeStyles,
+          isError: message.isError,
           role: "assistant",
           timestamp: Date.now(),
         };
