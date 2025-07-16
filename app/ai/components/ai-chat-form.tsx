@@ -7,6 +7,7 @@ import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import { Button } from "@/components/ui/button";
 import { useAIChatForm } from "@/hooks/use-ai-chat-form";
 import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
+import { useGuards } from "@/hooks/use-guards";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { AIPromptData } from "@/types/ai";
@@ -32,7 +33,11 @@ export function AIChatForm({
     isUserDragging,
   } = useAIChatForm();
 
+  const { checkValidSession, checkValidSubscription } = useGuards();
+
   const handleGenerate = async () => {
+    if (!checkValidSession() || !checkValidSubscription()) return; // Act as an early return
+
     // Only send images that are not loading, and strip loading property
     const images = uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url }));
 
@@ -63,6 +68,7 @@ export function AIChatForm({
           handleContentChange={handleContentChange}
           handleGenerate={handleGenerate}
           initialEditorContent={editorContentDraft ?? undefined}
+          textareaKey={editorContentDraft ? "with-draft" : "no-draft"}
         />
 
         <div className="flex items-center justify-between gap-2">

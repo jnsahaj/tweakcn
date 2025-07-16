@@ -8,7 +8,8 @@ export type ImageUploadAction =
   | { type: "ADD"; payload: { url: string; file: File }[] }
   | { type: "REMOVE"; payload: { index: number } }
   | { type: "CLEAR" }
-  | { type: "UPDATE_URL"; payload: { tempUrl: string; finalUrl: string } };
+  | { type: "UPDATE_URL"; payload: { tempUrl: string; finalUrl: string } }
+  | { type: "INITIALIZE"; payload: { url: string }[] };
 
 interface UseImageUploadOptions {
   maxFiles: number;

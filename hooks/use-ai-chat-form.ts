@@ -7,7 +7,7 @@ import { MAX_IMAGE_FILES, MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
 import { JSONContent } from "@tiptap/react";
-import { useReducer } from "react";
+import { useReducer, useEffect, useRef } from "react";
 
 export function useAIChatForm() {
   const {
@@ -18,10 +18,23 @@ export function useAIChatForm() {
     setImagesDraft,
   } = useAILocalDraftStore();
 
+  const hasInitialized = useRef(false);
+
   const [uploadedImages, dispatch] = useReducer(
     createSyncedImageUploadReducer(setImagesDraft),
-    imagesDraft.map(({ url }) => ({ url, loading: false }))
+    [] // Always start with empty array to avoid stale initial state
   );
+
+  // Initialize uploadedImages from persisted draft once
+  useEffect(() => {
+    if (!hasInitialized.current && imagesDraft.length > 0) {
+      hasInitialized.current = true;
+      dispatch({
+        type: "INITIALIZE",
+        payload: imagesDraft.map(({ url }) => ({ url })),
+      });
+    }
+  }, [imagesDraft]);
 
   const {
     fileInputRef,

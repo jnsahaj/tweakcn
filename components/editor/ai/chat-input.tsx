@@ -102,7 +102,7 @@ export function ChatInput({
           handleContentChange={handleContentChange}
           handleGenerate={handleGenerateSubmit}
           initialEditorContent={editorContentDraft ?? undefined}
-          textareaKey={messages.length}
+          textareaKey={editorContentDraft ? "with-draft" : "no-draft"}
         />
         <div className="@container/form flex items-center justify-between gap-2">
           <TooltipWrapper label="Create new chat" asChild>

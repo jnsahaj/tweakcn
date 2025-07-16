@@ -26,6 +26,9 @@ export const imageUploadReducer: Reducer<PromptImageWithLoading[], ImageUploadAc
     case "CLEAR": {
       return [];
     }
+    case "INITIALIZE": {
+      return action.payload.map(({ url }) => ({ url, loading: false }));
+    }
     default:
       return state;
   }
@@ -36,9 +39,11 @@ export const createSyncedImageUploadReducer = (
 ): Reducer<PromptImageWithLoading[], ImageUploadAction> => {
   return (state, action) => {
     const newState = imageUploadReducer(state, action);
+    // Only sync user actions, not initialization
     if (action.type === "UPDATE_URL" || action.type === "REMOVE" || action.type === "CLEAR") {
       setImagesDraft(newState.filter((img) => !img.loading).map(({ url }) => ({ url })));
     }
+    // Note: INITIALIZE intentionally doesn't sync back to avoid circular updates
     return newState;
   };
 };
