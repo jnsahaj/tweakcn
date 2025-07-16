@@ -14,7 +14,7 @@ import {
   DEFAULT_FONT_SERIF,
   defaultThemeState,
 } from "@/config/theme";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useControlsTabFromUrl, type ControlTab } from "@/hooks/use-controls-tab-from-url";
 import { useEditorStore } from "@/store/editor-store";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
@@ -39,7 +39,7 @@ const ThemeControlPanel = ({
 }: ThemeEditorControlsProps) => {
   const { themeState } = useEditorStore();
   const { tab, handleSetTab } = useControlsTabFromUrl();
-  const { loading: aiGenerationLoading } = useAIThemeGeneration();
+  const { loading: aiGenerationLoading } = useAIThemeGenerationCore();
 
   const currentStyles = React.useMemo(
     () => ({

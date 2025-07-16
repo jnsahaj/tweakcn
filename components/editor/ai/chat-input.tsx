@@ -2,20 +2,18 @@
 
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIChatForm } from "@/hooks/use-ai-chat-form";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useGuards } from "@/hooks/use-guards";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
-import { usePreferencesStore } from "@/store/preferences-store";
 import { AIPromptData } from "@/types/ai";
 import { ArrowUp, Loader, Plus, StopCircle } from "lucide-react";
+import { AIChatFormBody } from "./ai-chat-form-body";
 import { AlertBanner } from "./alert-banner";
 import { ImageUploader } from "./image-uploader";
-import { useAIChatForm } from "@/hooks/use-ai-chat-form";
-import { AIChatFormBody } from "./ai-chat-form-body";
-
 type ThemeGenerationPayload = {
   promptData: AIPromptData | null;
   options: {
@@ -29,8 +27,7 @@ export function ChatInput({
   onGenerateTheme: (promptData: AIPromptData | null) => Promise<void>;
 }) {
   const { messages, clearMessages } = useAIChatStore();
-  const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGeneration();
-  const { setChatSuggestionsOpen } = usePreferencesStore();
+  const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGenerationCore();
   const { checkValidSession, checkValidSubscription } = useGuards();
 
   const {
@@ -52,7 +49,6 @@ export function ChatInput({
     clearMessages();
     clearLocalDraft();
     clearUploadedImages();
-    setChatSuggestionsOpen(true);
   };
 
   const generateTheme = async (payload: ThemeGenerationPayload) => {
