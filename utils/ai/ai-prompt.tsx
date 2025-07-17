@@ -193,51 +193,125 @@ export function convertJSONContentToPromptData(jsonContent: JSONContent): AIProm
  */
 export function convertPromptDataToJSONContent(promptData: AIPromptData): JSONContent {
   const { content, mentions } = promptData;
-  const mentionMap = new Map(mentions.map((m) => [m.label, m]));
-  // Regex to match @mentions (e.g., @Current Theme)
-  const mentionRegex = /@([\w\s\-:]+)/g;
 
-  // Split content into lines, preserving empty lines
+  if (!content) {
+    return {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "" }],
+        },
+      ],
+    };
+  }
+
+  // If no mentions, just return the content as text
+  if (!mentions || mentions.length === 0) {
+    const lines = content.split(/\n/);
+    const nodes: any[] = [];
+
+    lines.forEach((line, lineIdx) => {
+      if (line) {
+        nodes.push({ type: "text", text: line });
+      }
+      if (lineIdx < lines.length - 1) {
+        nodes.push({ type: "hardBreak" });
+      }
+    });
+
+    if (nodes.length === 0) {
+      nodes.push({ type: "text", text: "" });
+    }
+
+    return {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: nodes,
+        },
+      ],
+    };
+  }
+
+  // Process content with mentions using direct string search
   const lines = content.split(/\n/);
   const nodes: any[] = [];
 
   lines.forEach((line, lineIdx) => {
-    let lastIndex = 0;
-    let match;
-    // Find all mentions in the line
-    while ((match = mentionRegex.exec(line)) !== null) {
-      const [fullMatch, label] = match;
-      const mention = mentionMap.get(label);
-      // Add text before the mention
-      if (match.index > lastIndex) {
-        nodes.push({ type: "text", text: line.slice(lastIndex, match.index) });
-      }
-      // Add the mention node
-      if (mention) {
-        nodes.push({
-          type: "mention",
-          attrs: {
-            id: mention.id,
-            label: mention.label,
-          },
+    let remainingLine = line;
+    let processedLength = 0;
+
+    // Find all mention positions in the line
+    const mentionPositions: Array<{ index: number; mention: MentionReference; length: number }> =
+      [];
+
+    mentions.forEach((mention) => {
+      const mentionText = `@${mention.label}`;
+      let searchIndex = 0;
+
+      while (true) {
+        const foundIndex = remainingLine.indexOf(mentionText, searchIndex);
+        if (foundIndex === -1) break;
+
+        mentionPositions.push({
+          index: foundIndex,
+          mention,
+          length: mentionText.length,
         });
-      } else {
-        // Fallback: treat as plain text
-        nodes.push({ type: "text", text: fullMatch });
+
+        searchIndex = foundIndex + mentionText.length;
       }
-      lastIndex = match.index + fullMatch.length;
-    }
+    });
+
+    // Sort mention positions by index
+    mentionPositions.sort((a, b) => a.index - b.index);
+
+    // Process the line with mentions
+    let currentIndex = 0;
+
+    mentionPositions.forEach(({ index, mention, length }) => {
+      // Add text before mention
+      if (index > currentIndex) {
+        const textBefore = line.slice(currentIndex, index);
+        if (textBefore) {
+          nodes.push({ type: "text", text: textBefore });
+        }
+      }
+
+      // Add mention node
+      nodes.push({
+        type: "mention",
+        attrs: {
+          id: mention.id,
+          label: mention.label,
+        },
+      });
+
+      currentIndex = index + length;
+    });
+
     // Add any remaining text after the last mention
-    if (lastIndex < line.length) {
-      nodes.push({ type: "text", text: line.slice(lastIndex) });
+    if (currentIndex < line.length) {
+      const textAfter = line.slice(currentIndex);
+      if (textAfter) {
+        nodes.push({ type: "text", text: textAfter });
+      }
     }
-    // Add hardBreak if not the last line (to preserve line breaks)
+
+    // If no mentions found in this line, add the entire line as text
+    if (mentionPositions.length === 0 && line) {
+      nodes.push({ type: "text", text: line });
+    }
+
+    // Add hardBreak if not the last line
     if (lineIdx < lines.length - 1) {
       nodes.push({ type: "hardBreak" });
     }
   });
 
-  // If the content is empty, ensure at least one empty text node
+  // If no nodes were created, ensure at least one empty text node
   if (nodes.length === 0) {
     nodes.push({ type: "text", text: "" });
   }
