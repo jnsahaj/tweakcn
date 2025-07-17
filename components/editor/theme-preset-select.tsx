@@ -326,7 +326,8 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                             size="sm"
                             className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 p-0 text-xs"
                           >
-                            <Settings />
+                            <span>Manage</span>
+                            <Settings className="size-3.5!" />
                           </Button>
                         </Link>
                       </div>
