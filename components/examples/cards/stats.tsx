@@ -84,7 +84,7 @@ export function CardsStats() {
           </ChartContainer>
         </CardContent>
       </Card>
-      <Card className="relative flex flex-col pb-0 @5xl:hidden @7xl:flex">
+      <Card className="relative flex flex-col overflow-hidden pb-0 @5xl:hidden @7xl:flex">
         <CardHeader>
           <CardDescription>Subscriptions</CardDescription>
           <CardTitle className="text-3xl">+2,350</CardTitle>
