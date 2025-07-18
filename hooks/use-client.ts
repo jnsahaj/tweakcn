@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 
 export function useClient(){
 
-    const [isClient,setIsClinet] = useState(false)
+    const [isClient,setIsClient] = useState(false)
 
     useEffect(() => {
         
-        setIsClinet(true)
+        setIsClient(true)
     },[])
 
     return isClient;
