@@ -2,14 +2,14 @@
 import { useClient } from "@/hooks/use-client"
 import { useEditorStore } from "@/store/editor-store"
 import { defaultPresets } from "@/utils/theme-presets"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 
 
 export const ThemeHotKeyHandler = ({children}:{children:React.ReactNode}) => {
 
     const { themeState, applyThemePreset } = useEditorStore()
     
-      const availableThemes = Object.keys(defaultPresets)
+      const availableThemes = useMemo(() => Object.keys(defaultPresets),[])
       const isClient = useClient()
     
       const applyRandomTheme = () => {
@@ -50,7 +50,7 @@ export const ThemeHotKeyHandler = ({children}:{children:React.ReactNode}) => {
           return () => {
             window.removeEventListener('keydown', handleKeySpaceStroke);
           };
-        }, [isClient, themeState.preset, availableThemes]);
+        }, [isClient, themeState.preset]);
 
     return (
         <div>
