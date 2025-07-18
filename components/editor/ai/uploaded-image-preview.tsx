@@ -22,7 +22,7 @@ export function UploadedImagePreview({
 }: ImagePreviewProps) {
   if (isImageLoading) {
     return (
-      <div className="bg-muted inset-0 flex size-14 items-center justify-center">
+      <div className="bg-muted flex size-14 items-center justify-center rounded-md border">
         <Loader className="text-muted-foreground size-4 animate-spin" />
       </div>
     );
