@@ -1,5 +1,11 @@
 import { useToast } from "@/components/ui/use-toast";
+import { MAX_SVG_FILE_SIZE } from "@/lib/constants";
 import { PromptImage } from "@/types/ai";
+import {
+  ALLOWED_IMAGE_TYPES,
+  optimizeSvgContent,
+  validateSvgContent,
+} from "@/utils/ai/image-upload";
 import { useRef } from "react";
 
 export type PromptImageWithLoading = PromptImage & { loading: boolean };
@@ -7,6 +13,7 @@ export type PromptImageWithLoading = PromptImage & { loading: boolean };
 export type ImageUploadAction =
   | { type: "ADD"; payload: { url: string; file: File }[] }
   | { type: "REMOVE"; payload: { index: number } }
+  | { type: "REMOVE_BY_URL"; payload: { url: string } }
   | { type: "CLEAR" }
   | { type: "UPDATE_URL"; payload: { tempUrl: string; finalUrl: string } }
   | { type: "INITIALIZE"; payload: { url: string }[] };
@@ -38,7 +45,14 @@ export function useImageUpload({ maxFiles, maxFileSize, images, dispatch }: UseI
     }
 
     const validFiles = fileArray.filter((file) => {
-      if (!file.type.startsWith("image/")) return false;
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        toast({
+          title: "Unsupported file type",
+          description: `"${file.name}" is not supported. Please use JPG, PNG, WebP, or SVG files.`,
+        });
+        return false;
+      }
+
       if (file.size > maxFileSize) {
         toast({
           title: "File too large",
@@ -60,12 +74,71 @@ export function useImageUpload({ maxFiles, maxFileSize, images, dispatch }: UseI
 
     filesWithTempUrls.forEach(({ url: tempUrl, file }) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        const finalUrl = e.target?.result as string;
+
+      const handleSuccess = (result: string) => {
+        let finalUrl: string;
+
+        if (file.type === "image/svg+xml") {
+          try {
+            const isValidSvg = validateSvgContent(result);
+            if (!isValidSvg) {
+              toast({
+                title: "Potentially unsafe SVG",
+                description: `"${file.name}" may contain unsafe content but will be processed anyway.`,
+              });
+            }
+
+            const optimizedSvg = optimizeSvgContent(result);
+            const encodedSvg = encodeURIComponent(optimizedSvg);
+
+            if (encodedSvg.length > MAX_SVG_FILE_SIZE) {
+              handleError();
+              return;
+            }
+
+            finalUrl = `data:image/svg+xml,${encodedSvg}`;
+          } catch (error) {
+            handleError();
+            return;
+          }
+        } else {
+          finalUrl = result;
+        }
+
         dispatch({ type: "UPDATE_URL", payload: { tempUrl, finalUrl } });
         URL.revokeObjectURL(tempUrl);
       };
-      reader.readAsDataURL(file);
+
+      const handleError = () => {
+        toast({
+          title: "File read error",
+          description: `Failed to read "${file.name}". Please try again.`,
+        });
+
+        dispatch({
+          type: "REMOVE_BY_URL",
+          payload: { url: tempUrl },
+        });
+        URL.revokeObjectURL(tempUrl);
+      };
+
+      reader.onload = (e) => {
+        const result = e.target?.result;
+        if (!result || typeof result !== "string") {
+          handleError();
+          return;
+        }
+        handleSuccess(result);
+      };
+
+      reader.onerror = handleError;
+      reader.onabort = handleError;
+
+      if (file.type === "image/svg+xml") {
+        reader.readAsText(file);
+      } else {
+        reader.readAsDataURL(file);
+      }
     });
   };
 

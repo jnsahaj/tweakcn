@@ -1,6 +1,6 @@
 import { ChatMessage } from "@/types/ai";
 import { buildPromptForAPI } from "@/utils/ai/ai-prompt";
-import { CoreMessage, ImagePart, TextPart, UserContent } from "ai";
+import { CoreMessage, TextPart, UserContent } from "ai";
 
 export async function convertChatMessagesToCoreMessages(
   messages: ChatMessage[]
@@ -12,15 +12,36 @@ export async function convertChatMessagesToCoreMessages(
       const content: UserContent = [];
       const { promptData } = message;
 
-      // Add image parts
       if (promptData.images && promptData.images.length > 0) {
-        const imageParts = promptData.images.map(
-          (image): ImagePart => ({
-            type: "image",
-            image: image.url,
-          })
-        );
-        content.push(...imageParts);
+        promptData.images.forEach((image) => {
+          if (image.url.startsWith("data:image/svg+xml")) {
+            try {
+              const dataUrlPart = image.url.split(",")[1];
+              let svgMarkup: string;
+
+              if (image.url.includes("base64")) {
+                svgMarkup = atob(dataUrlPart);
+              } else {
+                svgMarkup = decodeURIComponent(dataUrlPart);
+              }
+
+              content.push({
+                type: "text",
+                text: `Here is an SVG image for analysis:\n\`\`\`svg\n${svgMarkup}\n\`\`\``,
+              });
+            } catch (error) {
+              content.push({
+                type: "image",
+                image: image.url,
+              });
+            }
+          } else {
+            content.push({
+              type: "image",
+              image: image.url,
+            });
+          }
+        });
       }
 
       // Add text part

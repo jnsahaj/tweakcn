@@ -2,6 +2,7 @@ import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { ALLOWED_IMAGE_TYPES } from "@/utils/ai/image-upload";
 import { ImagePlus } from "lucide-react";
 import { ComponentProps } from "react";
 
@@ -32,7 +33,7 @@ export function ImageUploader({
         multiple
         max={MAX_IMAGE_FILES}
         size={MAX_IMAGE_FILE_SIZE}
-        accept="image/*"
+        accept={ALLOWED_IMAGE_TYPES.join(",")}
         className="hidden"
         aria-label="Upload image for theme generation"
         ref={fileInputRef}

@@ -18,7 +18,13 @@ export function DragAndDropImageUploader({
     multiple: true,
     noClick: true,
     disabled,
-    accept: { "image/*": [] },
+    accept: {
+      "image/jpeg": [],
+      "image/jpg": [],
+      "image/png": [],
+      "image/webp": [],
+      "image/svg+xml": [],
+    },
   });
 
   return (
