@@ -18,13 +18,13 @@ export function ChatImagePreview({ name, src, className, alt, ...props }: ChatIm
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="group/preview relative isolate size-full cursor-pointer overflow-hidden border">
+        <div className="group/preview relative isolate size-full cursor-pointer overflow-hidden rounded-lg border">
           <Image
-            width={300}
-            height={300}
+            width={250}
+            height={250}
             src={src}
             className={cn(
-              "h-auto max-h-[300px] w-auto max-w-[300px] object-cover object-center",
+              "h-auto max-h-[250px] w-auto max-w-[250px] object-cover object-center",
               className
             )}
             alt={alt || "Image preview"}

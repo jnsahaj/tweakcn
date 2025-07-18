@@ -152,7 +152,7 @@ function UserMessage({
 
     if (images.length === 1) {
       return (
-        <div className="self-end overflow-hidden rounded-lg">
+        <div className="self-end">
           <ChatImagePreview src={images[0].url} alt="Image preview" />
         </div>
       );
@@ -160,10 +160,7 @@ function UserMessage({
       return (
         <div className="flex flex-row items-center justify-end gap-1 self-end">
           {images.map((image, idx) => (
-            <div
-              key={idx}
-              className="aspect-square size-full max-w-32 flex-1 overflow-hidden rounded-lg"
-            >
+            <div key={idx} className="aspect-square size-full max-w-32 flex-1">
               <ChatImagePreview
                 className="size-full object-cover"
                 src={image.url}
