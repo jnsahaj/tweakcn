@@ -63,6 +63,7 @@
 }
 
 * {
+  color-scheme: light dark;
   border-color: var(--color-border);
 }
 
