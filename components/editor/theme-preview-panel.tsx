@@ -2,25 +2,24 @@
 
 import ShadcnBlocksLogo from "@/assets/shadcnblocks.svg";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Tabs, TabsList } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useFullscreen } from "@/hooks/use-fullscreen";
 import { useThemeInspector } from "@/hooks/use-theme-inspector";
 import { cn } from "@/lib/utils";
 import { ThemeEditorPreviewProps } from "@/types/theme";
-import { TabsContent as TabsContentPrimitive } from "@radix-ui/react-tabs";
 import { Inspect, Maximize, Minimize, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { lazy, useState } from "react";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
 import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import InspectorOverlay from "./inspector-overlay";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
@@ -157,19 +156,19 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
             onMouseLeave={handleMouseLeave}
           >
             <div className="flex h-full flex-1 flex-col">
-              <TabsContentPrimitive value="cards" className="m-0 h-full">
+              <TabsContent value="cards" className="m-0 h-full">
                 <ExamplesPreviewContainer>
                   <DemoCards />
                 </ExamplesPreviewContainer>
-              </TabsContentPrimitive>
+              </TabsContent>
 
-              <TabsContentPrimitive value="dashboard" className="@container mt-0 h-full space-y-6">
+              <TabsContent value="dashboard" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1400px]">
                   <DemoDashboard />
                 </ExamplesPreviewContainer>
-              </TabsContentPrimitive>
+              </TabsContent>
 
-              <TabsContentPrimitive value="pricing" className="@container mt-0 h-full space-y-6">
+              <TabsContent value="pricing" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer>
                   <div className="absolute top-4 right-4 z-10">
                     <Link
@@ -194,35 +193,35 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                   </div>
                   <DemoPricing />
                 </ExamplesPreviewContainer>
-              </TabsContentPrimitive>
+              </TabsContent>
 
-              <TabsContentPrimitive value="mail" className="@container mt-0 h-full space-y-6">
+              <TabsContent value="mail" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMail />
                 </ExamplesPreviewContainer>
-              </TabsContentPrimitive>
+              </TabsContent>
 
-              <TabsContentPrimitive value="tasks" className="@container mt-0 h-full space-y-6">
+              <TabsContent value="tasks" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoTasks />
                 </ExamplesPreviewContainer>
-              </TabsContentPrimitive>
+              </TabsContent>
 
-              <TabsContentPrimitive value="music" className="@container mt-0 h-full space-y-6">
+              <TabsContent value="music" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMusic />
                 </ExamplesPreviewContainer>
-              </TabsContentPrimitive>
+              </TabsContent>
 
-              <TabsContentPrimitive value="typography" className="space-y-6 p-4">
+              <TabsContent value="typography" className="space-y-6 p-4">
                 <ExamplesPreviewContainer>
                   <TypographyDemo />
                 </ExamplesPreviewContainer>
-              </TabsContentPrimitive>
+              </TabsContent>
 
-              <TabsContentPrimitive value="colors" className="space-y-6 p-4">
+              <TabsContent value="colors" className="space-y-6 p-4">
                 <ColorPreview styles={styles} currentMode={currentMode} />
-              </TabsContentPrimitive>
+              </TabsContent>
 
               <ScrollBar orientation="horizontal" />
             </div>
