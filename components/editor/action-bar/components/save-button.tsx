@@ -13,10 +13,7 @@ export function SaveButton({ isSaving, disabled, className, ...props }: SaveButt
       <Button
         variant="ghost"
         size="sm"
-        className={cn(
-          "text-muted-foreground hover:text-foreground hover:bg-accent/50 h-8 gap-1.5 px-2",
-          className
-        )}
+        className={cn(className)}
         disabled={isSaving || disabled}
         {...props}
       >

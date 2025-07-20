@@ -14,13 +14,13 @@ import {
   DEFAULT_FONT_SERIF,
   defaultThemeState,
 } from "@/config/theme";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useControlsTabFromUrl, type ControlTab } from "@/hooks/use-controls-tab-from-url";
 import { useEditorStore } from "@/store/editor-store";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
 import { getAppliedThemeFont, monoFonts, sansSerifFonts, serifFonts } from "@/utils/theme-fonts";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
-import { AIInterface } from "./ai/ai-interface";
+import { ChatInterface } from "./ai/chat-interface";
 import ColorPicker from "./color-picker";
 import ControlSection from "./control-section";
 import HslAdjustmentControls from "./hsl-adjustment-controls";
@@ -39,7 +39,7 @@ const ThemeControlPanel = ({
 }: ThemeEditorControlsProps) => {
   const { themeState } = useEditorStore();
   const { tab, handleSetTab } = useControlsTabFromUrl();
-  const { loading: aiGenerationLoading } = useAIThemeGeneration();
+  const { loading: aiGenerationLoading } = useAIThemeGenerationCore();
 
   const currentStyles = React.useMemo(
     () => ({
@@ -470,7 +470,7 @@ const ThemeControlPanel = ({
           </TabsContent>
 
           <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
-            <AIInterface />
+            <ChatInterface />
           </TabsContent>
         </Tabs>
       </div>

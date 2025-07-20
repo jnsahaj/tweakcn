@@ -1,16 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Footer } from "@/components/footer";
+import { AIGenerationCTA } from "@/components/home/ai-generation-cta";
+import { CTA } from "@/components/home/cta";
+import { FAQ } from "@/components/home/faq";
+import { Features } from "@/components/home/features";
 import { Header } from "@/components/home/header";
 import { Hero } from "@/components/home/hero";
-import { ThemePresetSelector } from "@/components/home/theme-preset-selector";
-import { Features } from "@/components/home/features";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Roadmap } from "@/components/home/roadmap";
 import { Testimonials } from "@/components/home/testimonials";
 import { FAQ } from "@/components/home/faq";
 import { CTA } from "@/components/home/cta";
 import { Footer } from "@/components/footer";
+import { ThemePresetSelector } from "@/components/home/theme-preset-selector";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,6 +44,7 @@ export default function Home() {
         <Hero />
         <ThemePresetSelector />
         <Features />
+        <AIGenerationCTA />
         <HowItWorks />
         <Roadmap />
         <Testimonials />

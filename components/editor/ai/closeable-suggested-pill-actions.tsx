@@ -2,41 +2,41 @@
 
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Button } from "@/components/ui/button";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { PROMPTS } from "@/utils/prompts";
-import { createCurrentThemePrompt } from "@/utils/ai-prompt";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
+import { usePreferencesStore } from "@/store/preferences-store";
 import { AIPromptData } from "@/types/ai";
+import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
+import { PROMPTS } from "@/utils/ai/prompts";
 import { Sparkles, X } from "lucide-react";
-import { useState } from "react";
-import { AIPillActionButton } from "./ai-pill-action-button";
+import { PillActionButton } from "./pill-action-button";
 
 export function ClosableSuggestedPillActions({
-  handleThemeGeneration,
+  onGenerateTheme,
 }: {
-  handleThemeGeneration: (promptData: AIPromptData | null) => void;
+  onGenerateTheme: (promptData: AIPromptData | null) => Promise<void>;
 }) {
-  const [hasClosedSuggestions, setHasClosedSuggestions] = useState(false);
-  const { loading: aiIsGenerating } = useAIThemeGeneration();
+  const { loading: aiIsGenerating } = useAIThemeGenerationCore();
+  const { chatSuggestionsOpen, setChatSuggestionsOpen } = usePreferencesStore();
 
   const handleSetPrompt = async (prompt: string) => {
     const promptData = createCurrentThemePrompt({ prompt });
-    handleThemeGeneration(promptData);
+    onGenerateTheme(promptData);
   };
 
-  if (hasClosedSuggestions) return null;
+  if (!chatSuggestionsOpen) return null;
 
   return (
     <div className="relative flex flex-col items-center justify-center">
       {/* Fade out effect when scrolling */}
-      <div className="via-background/50 from-background pointer-events-none absolute -top-8 right-0 left-0 z-20 h-8 bg-gradient-to-t to-transparent opacity-100 transition-opacity ease-out" />
+      <div className="via-background/50 from-background pointer-events-none absolute -top-6 right-0 left-0 z-20 h-6 bg-gradient-to-t to-transparent opacity-100 transition-opacity ease-out" />
 
-      <div className="flex w-full items-center justify-between gap-4">
-        <h3 className="text-muted-foreground text-xs">Suggestions</h3>
+      <div className="text-muted-foreground flex w-full items-center justify-between gap-4">
+        <h3 className="text-xs">Suggestions</h3>
         <Button
           variant="ghost"
           size="icon"
           className="size-6 [&>svg]:size-3"
-          onClick={() => setHasClosedSuggestions(true)}
+          onClick={() => setChatSuggestionsOpen(false)}
         >
           <X />
         </Button>
@@ -44,13 +44,13 @@ export function ClosableSuggestedPillActions({
 
       <HorizontalScrollArea className="pt-1 pb-2">
         {Object.entries(PROMPTS).map(([key, { label, prompt }]) => (
-          <AIPillActionButton
+          <PillActionButton
             key={key}
             onClick={() => handleSetPrompt(prompt)}
             disabled={aiIsGenerating}
           >
             <Sparkles /> {label}
-          </AIPillActionButton>
+          </PillActionButton>
         ))}
       </HorizontalScrollArea>
     </div>

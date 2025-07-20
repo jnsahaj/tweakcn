@@ -1,17 +1,19 @@
 "use client";
 
 import ShadcnBlocksLogo from "@/assets/shadcnblocks.svg";
-import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+import { Tabs, TabsList } from "@/components/ui/tabs";
 import { useFullscreen } from "@/hooks/use-fullscreen";
+import { useThemeInspector } from "@/hooks/use-theme-inspector";
 import { cn } from "@/lib/utils";
 import { ThemeEditorPreviewProps } from "@/types/theme";
-import { Maximize, Minimize, Moon, MoreVertical, Sun } from "lucide-react";
+import { TabsContent as TabsContentPrimitive } from "@radix-ui/react-tabs";
+import { Inspect, Maximize, Minimize, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { lazy, useState } from "react";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
+import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
 import {
   DropdownMenu,
@@ -19,6 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import InspectorOverlay from "./inspector-overlay";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
@@ -33,17 +36,20 @@ const TypographyDemo = lazy(() => import("@/components/examples/typography/typog
 
 const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
-  const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("cards");
+
+  const {
+    rootRef,
+    inspector,
+    inspectorEnabled,
+    handleMouseMove,
+    handleMouseLeave,
+    toggleInspector,
+  } = useThemeInspector();
 
   if (!styles || !styles[currentMode]) {
     return null;
   }
-
-  const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { clientX: x, clientY: y } = event;
-    toggleTheme({ x, y });
-  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -100,23 +106,29 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               </DropdownMenu>
             </TabsList>
 
-            <div className="flex items-center gap-0">
+            <div className="flex items-center gap-0.5">
               {isFullscreen && (
-                <TooltipWrapper label="Toggle Theme" asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleThemeToggle}
-                    className="group size-8"
-                  >
-                    {theme === "light" ? (
-                      <Sun className="transition-all group-hover:scale-120" />
-                    ) : (
-                      <Moon className="transition-all group-hover:scale-120" />
-                    )}
-                  </Button>
-                </TooltipWrapper>
+                <ThemeToggle
+                  variant="ghost"
+                  size="icon"
+                  className="group size-8 hover:[&>svg]:scale-120 hover:[&>svg]:transition-all"
+                />
               )}
+              {/* Inspector toggle button */}
+              <TooltipWrapper label="Toggle Inspector" asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleInspector}
+                  className={cn(
+                    "group h-8 w-8",
+                    inspectorEnabled && "bg-accent text-accent-foreground w-auto"
+                  )}
+                >
+                  <Inspect className="transition-all group-hover:scale-120" />
+                  {inspectorEnabled && <span className="text-xs tracking-wide uppercase">on</span>}
+                </Button>
+              </TooltipWrapper>
               <TooltipWrapper
                 label={isFullscreen ? "Exit full screen" : "Full screen"}
                 className="hidden md:inline-flex"
@@ -137,21 +149,26 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
             </div>
           </HorizontalScrollArea>
 
-          <ScrollArea className="relative m-4 mt-1 flex flex-1 flex-col overflow-hidden rounded-lg border">
+          <ScrollArea
+            className="relative m-4 mt-1 flex flex-1 flex-col overflow-hidden rounded-lg border"
+            ref={rootRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
             <div className="flex h-full flex-1 flex-col">
-              <TabsContent value="cards" className="m-0 h-full">
+              <TabsContentPrimitive value="cards" className="m-0 h-full">
                 <ExamplesPreviewContainer>
                   <DemoCards />
                 </ExamplesPreviewContainer>
-              </TabsContent>
+              </TabsContentPrimitive>
 
-              <TabsContent value="dashboard" className="@container mt-0 h-full space-y-6">
+              <TabsContentPrimitive value="dashboard" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1400px]">
                   <DemoDashboard />
                 </ExamplesPreviewContainer>
-              </TabsContent>
+              </TabsContentPrimitive>
 
-              <TabsContent value="pricing" className="@container mt-0 h-full space-y-6">
+              <TabsContentPrimitive value="pricing" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer>
                   <div className="absolute top-4 right-4 z-10">
                     <Link
@@ -176,41 +193,43 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                   </div>
                   <DemoPricing />
                 </ExamplesPreviewContainer>
-              </TabsContent>
+              </TabsContentPrimitive>
 
-              <TabsContent value="mail" className="@container mt-0 h-full space-y-6">
+              <TabsContentPrimitive value="mail" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMail />
                 </ExamplesPreviewContainer>
-              </TabsContent>
+              </TabsContentPrimitive>
 
-              <TabsContent value="tasks" className="@container mt-0 h-full space-y-6">
+              <TabsContentPrimitive value="tasks" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoTasks />
                 </ExamplesPreviewContainer>
-              </TabsContent>
+              </TabsContentPrimitive>
 
-              <TabsContent value="music" className="@container mt-0 h-full space-y-6">
+              <TabsContentPrimitive value="music" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMusic />
                 </ExamplesPreviewContainer>
-              </TabsContent>
+              </TabsContentPrimitive>
 
-              <TabsContent value="typography" className="space-y-6 p-4">
+              <TabsContentPrimitive value="typography" className="space-y-6 p-4">
                 <ExamplesPreviewContainer>
                   <TypographyDemo />
                 </ExamplesPreviewContainer>
-              </TabsContent>
+              </TabsContentPrimitive>
 
-              <TabsContent value="colors" className="space-y-6 p-4">
+              <TabsContentPrimitive value="colors" className="space-y-6 p-4">
                 <ColorPreview styles={styles} currentMode={currentMode} />
-              </TabsContent>
+              </TabsContentPrimitive>
 
               <ScrollBar orientation="horizontal" />
             </div>
           </ScrollArea>
         </Tabs>
       </div>
+
+      <InspectorOverlay inspector={inspector} enabled={inspectorEnabled} rootRef={rootRef} />
     </>
   );
 };

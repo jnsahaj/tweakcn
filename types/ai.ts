@@ -1,4 +1,4 @@
-import { type ThemeStyles, type ThemeStyleProps } from "./theme";
+import { type ThemeStyleProps, type ThemeStyles } from "./theme";
 
 export type MentionReference = {
   id: string;
@@ -9,9 +9,14 @@ export type MentionReference = {
   };
 };
 
+export type PromptImage = {
+  url: string;
+};
+
 export type AIPromptData = {
   content: string;
   mentions: MentionReference[];
+  images?: PromptImage[];
 };
 
 export type ChatMessage = {
@@ -21,6 +26,7 @@ export type ChatMessage = {
   promptData?: AIPromptData;
   content?: string;
   themeStyles?: ThemeStyles;
+  isError?: boolean;
 };
 
 export type UserMessage = {
@@ -30,4 +36,5 @@ export type UserMessage = {
 export type AssistantMessage = {
   content: string;
   themeStyles?: ThemeStyles;
+  isError?: boolean;
 };

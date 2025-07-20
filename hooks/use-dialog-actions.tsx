@@ -1,19 +1,18 @@
-import { usePostHog } from "posthog-js/react";
-import { createContext, ReactNode, useContext, useState } from "react";
-
 import { CodePanelDialog } from "@/components/editor/code-panel-dialog";
 import CssImportDialog from "@/components/editor/css-import-dialog";
 import { ShareDialog } from "@/components/editor/share-dialog";
 import { ThemeSaveDialog } from "@/components/editor/theme-save-dialog";
 import { toast } from "@/components/ui/use-toast";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
-import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { useCreateTheme } from "@/hooks/themes";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
+import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/store/auth-store";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { parseCssInput } from "@/utils/parse-css-input";
+import { usePostHog } from "posthog-js/react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 interface DialogActionsContextType {
   // Dialog states
@@ -54,7 +53,7 @@ function useDialogActionsStore(): DialogActionsContextType {
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const createThemeMutation = useCreateTheme();
-  const { loading: aiGenerateLoading } = useAIThemeGeneration();
+  const { loading: aiGenerateLoading } = useAIThemeGenerationCore();
   const posthog = usePostHog();
 
   usePostLoginAction("SAVE_THEME", () => {

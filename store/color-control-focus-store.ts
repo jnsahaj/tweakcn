@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import { DEFAULT_TAB, useControlsTabFromUrl } from "@/hooks/use-controls-tab-from-url";
+
 export type FocusColorId =
   | "background"
   | "foreground"
@@ -87,10 +89,19 @@ export const useColorControlFocusStore = create<ColorControlFocusState>((set, ge
  * Hook that exposes helper functions for color control focus behaviour.
  */
 export const useColorControlFocus = () => {
+  const { handleSetTab } = useControlsTabFromUrl();
+
+  const focusColor = (name: FocusColorId) => {
+    handleSetTab(DEFAULT_TAB);
+    requestAnimationFrame(() => {
+      useColorControlFocusStore.getState().focusColor(name);
+    });
+  };
+
   return {
     registerColor: useColorControlFocusStore((s) => s.registerColor),
     unregisterColor: useColorControlFocusStore((s) => s.unregisterColor),
     highlightTarget: useColorControlFocusStore((s) => s.highlightTarget),
-    focusColor: useColorControlFocusStore((s) => s.focusColor),
+    focusColor,
   } as const;
 };

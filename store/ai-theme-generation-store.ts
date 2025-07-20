@@ -1,4 +1,6 @@
-import { generateThemeWithAI } from "@/lib/ai-theme-generator";
+import { generateThemeWithAI } from "@/lib/ai/ai-theme-generator";
+import { ChatMessage } from "@/types/ai";
+import { SubscriptionStatus } from "@/types/subscription";
 import { ThemeStyles } from "@/types/theme";
 import { create } from "zustand";
 
@@ -7,8 +9,11 @@ interface AIThemeGenerationStore {
   abortController: AbortController | null;
 
   setLoading: (loading: boolean) => void;
-  // generateTheme now only takes prompt. Callbacks are removed.
-  generateTheme: (prompt: string) => Promise<{ text: string; theme: ThemeStyles }>;
+  // generateTheme now only takes an optional prompt and image files. Callbacks are removed.
+  generateTheme: (messages: ChatMessage[]) => Promise<{
+    text: string;
+    theme: ThemeStyles;
+  }>;
   cancelThemeGeneration: () => void;
   resetState: () => void;
 }
@@ -31,9 +36,12 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     }
   },
 
-  generateTheme: async (prompt: string) => {
+  generateTheme: async (messages: ChatMessage[]) => {
+    if (messages.length === 0) {
+      throw new Error("Messages are required");
+    }
+
     const state = get();
-    if (!prompt.trim()) return; // Or throw new Error("Prompt cannot be empty");
 
     if (state.abortController) {
       state.abortController.abort();
@@ -43,7 +51,7 @@ export const useAIThemeGenerationStore = create<AIThemeGenerationStore>()((set, 
     set({ loading: true, abortController });
 
     try {
-      const response = await generateThemeWithAI(prompt, {
+      const response = await generateThemeWithAI(messages, {
         signal: abortController.signal,
       });
       return response;

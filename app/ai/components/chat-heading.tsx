@@ -1,7 +1,7 @@
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 
 export function ChatHeading() {
-  const { loading: aiGenerateLoading } = useAIThemeGeneration();
+  const { loading: aiGenerateLoading } = useAIThemeGenerationCore();
 
   return (
     <h1

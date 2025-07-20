@@ -5,19 +5,13 @@ import { ThemeEditorState } from "@/types/editor";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { ColorFormat } from "../../types";
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-} from "../ui/select";
+import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "../ui/select";
 import { usePostHog } from "posthog-js/react";
 import { useEditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import { generateThemeCode } from "@/utils/theme-style-generator";
 import { useThemePresetStore } from "@/store/theme-preset-store";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { useDialogActions } from "@/hooks/use-dialog-actions";
 
 interface CodePanelProps {
   themeEditorState: ThemeEditorState;
@@ -27,32 +21,23 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   const [registryCopied, setRegistryCopied] = useState(false);
   const [copied, setCopied] = useState(false);
   const posthog = usePostHog();
+  const { handleSaveClick } = useDialogActions();
 
   const preset = useEditorStore((state) => state.themeState.preset);
   const colorFormat = usePreferencesStore((state) => state.colorFormat);
   const tailwindVersion = usePreferencesStore((state) => state.tailwindVersion);
   const packageManager = usePreferencesStore((state) => state.packageManager);
   const setColorFormat = usePreferencesStore((state) => state.setColorFormat);
-  const setTailwindVersion = usePreferencesStore(
-    (state) => state.setTailwindVersion
-  );
-  const setPackageManager = usePreferencesStore(
-    (state) => state.setPackageManager
-  );
+  const setTailwindVersion = usePreferencesStore((state) => state.setTailwindVersion);
+  const setPackageManager = usePreferencesStore((state) => state.setPackageManager);
   const hasUnsavedChanges = useEditorStore((state) => state.hasUnsavedChanges);
 
   const isSavedPreset = useThemePresetStore(
     (state) => preset && state.getPreset(preset)?.source === "SAVED"
   );
-  const getAvailableColorFormats = usePreferencesStore(
-    (state) => state.getAvailableColorFormats
-  );
+  const getAvailableColorFormats = usePreferencesStore((state) => state.getAvailableColorFormats);
 
-  const code = generateThemeCode(
-    themeEditorState,
-    colorFormat,
-    tailwindVersion
-  );
+  const code = generateThemeCode(themeEditorState, colorFormat, tailwindVersion);
 
   const getRegistryCommand = (preset: string) => {
     const url = isSavedPreset
@@ -72,9 +57,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
 
   const copyRegistryCommand = async () => {
     try {
-      await navigator.clipboard.writeText(
-        getRegistryCommand(preset ?? "default")
-      );
+      await navigator.clipboard.writeText(getRegistryCommand(preset ?? "default"));
       setRegistryCopied(true);
       setTimeout(() => setRegistryCopied(false), 2000);
       captureCopyEvent("COPY_REGISTRY_COMMAND");
@@ -107,72 +90,75 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
     return preset && preset !== "default" && !hasUnsavedChanges();
   }, [preset, hasUnsavedChanges]);
 
+  const PackageManagerHeader = ({ actionButton }: { actionButton: React.ReactNode }) => (
+    <div className="flex border-b">
+      {(["pnpm", "npm", "yarn", "bun"] as const).map((pm) => (
+        <button
+          key={pm}
+          onClick={() => setPackageManager(pm)}
+          className={`px-3 py-1.5 text-sm font-medium ${
+            packageManager === pm
+              ? "bg-muted text-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {pm}
+        </button>
+      ))}
+      {actionButton}
+    </div>
+  );
+
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex-none mb-4">
+    <div className="flex h-full flex-col">
+      <div className="mb-4 flex-none">
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">Theme Code</h2>
         </div>
-        {showRegistryCommand ? (
-          <div className="mt-4 rounded-md overflow-hidden border">
-            <div className="flex border-b">
-              {(["pnpm", "npm", "yarn", "bun"] as const).map((pm) => (
-                <button
-                  key={pm}
-                  onClick={() => setPackageManager(pm)}
-                  className={`px-3 py-1.5 text-sm font-medium ${
-                    packageManager === pm
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+        <div className="mt-4 overflow-hidden rounded-md border">
+          <PackageManagerHeader
+            actionButton={
+              showRegistryCommand ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={copyRegistryCommand}
+                  className="ml-auto h-8"
+                  aria-label={registryCopied ? "Copied to clipboard" : "Copy to clipboard"}
                 >
-                  {pm}
-                </button>
-              ))}
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={copyRegistryCommand}
-                className="h-8 ml-auto"
-                aria-label={
-                  registryCopied ? "Copied to clipboard" : "Copy to clipboard"
-                }
-              >
-                {registryCopied ? (
-                  <Check className="size-4" />
-                ) : (
-                  <Copy className="size-4" />
-                )}
-              </Button>
-            </div>
-            <div className="p-2 bg-muted/50 flex justify-between items-center">
+                  {registryCopied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleSaveClick()}
+                  className="ml-auto h-8 gap-1"
+                  aria-label="Save theme"
+                >
+                  <Heart className="size-4" />
+                  <span className="sr-only sm:not-sr-only">Save</span>
+                </Button>
+              )
+            }
+          />
+          <div className="bg-muted/50 flex items-center justify-between p-2">
+            {showRegistryCommand ? (
               <ScrollArea className="w-full">
-                <div className="whitespace-nowrap overflow-y-hidden pb-2">
-                  <code className="text-sm font-mono">
-                    {getRegistryCommand(preset as string)}
-                  </code>
+                <div className="overflow-y-hidden pb-2 whitespace-nowrap">
+                  <code className="font-mono text-sm">{getRegistryCommand(preset as string)}</code>
                 </div>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
-            </div>
-          </div>
-        ) : (
-          <Alert className="mt-4">
-            <AlertTitle>You have unsaved changes.</AlertTitle>
-            <AlertDescription className="flex flex-col gap-2 mt-2">
-              <div className="flex items-center gap-1">
-                <div className="flex items-center gap-1 px-2 py-0.5 border rounded-md">
-                  <Heart className="size-3.5" />
-                  <span>Save</span>
-                </div>
-                your theme to get the registry command.
+            ) : (
+              <div className="text-muted-foreground text-sm">
+                Save your theme to get the registry command
               </div>
-            </AlertDescription>
-          </Alert>
-        )}
+            )}
+          </div>
+        </div>
       </div>
-      <div className="flex items-center gap-2 mb-4 ">
+      <div className="mb-4 flex items-center gap-2">
         <Select
           value={tailwindVersion}
           onValueChange={(value: "3" | "4") => {
@@ -182,7 +168,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             }
           }}
         >
-          <SelectTrigger className="w-fit focus:ring-transparent focus:border-none bg-muted/50 outline-hidden border-none gap-1">
+          <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
             <SelectValue className="focus:ring-transparent" />
           </SelectTrigger>
           <SelectContent>
@@ -190,11 +176,8 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             <SelectItem value="4">Tailwind v4</SelectItem>
           </SelectContent>
         </Select>
-        <Select
-          value={colorFormat}
-          onValueChange={(value: ColorFormat) => setColorFormat(value)}
-        >
-          <SelectTrigger className="w-fit focus:ring-transparent focus:border-none bg-muted/50 outline-hidden border-none gap-1">
+        <Select value={colorFormat} onValueChange={(value: ColorFormat) => setColorFormat(value)}>
+          <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
             <SelectValue className="focus:ring-transparent" />
           </SelectTrigger>
           <SelectContent>
@@ -206,7 +189,10 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           </SelectContent>
         </Select>
       </div>
-      <Tabs defaultValue="index.css" className="flex-1 min-h-0 flex flex-col rounded-lg border overflow-hidden">
+      <Tabs
+        defaultValue="index.css"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border"
+      >
         <div className="bg-muted/50 flex flex-none items-center justify-between border-b px-4 py-2">
           <TabsList className="h-8 bg-transparent p-0">
             <TabsTrigger value="index.css" className="h-7 px-3 text-sm font-medium">
@@ -237,10 +223,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           </div>
         </div>
 
-        <TabsContent
-          value="index.css"
-          className="overflow-hidden"
-        >
+        <TabsContent value="index.css" className="overflow-hidden">
           <ScrollArea className="relative h-full">
             <pre className="h-full p-4 text-sm">
               <code>{code}</code>

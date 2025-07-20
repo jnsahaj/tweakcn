@@ -96,14 +96,13 @@ const generateThemeVariables = (
     getShadowMap({ styles: themeStyles, currentMode: mode })
   );
   const spacingVar =
-    mode === "light" && themeStyles["light"].spacing !== defaultLightThemeStyles.spacing
-      ? `\n  --spacing: ${themeStyles["light"].spacing};`
+    mode === "light"
+      ? `\n  --spacing: ${themeStyles["light"].spacing ?? defaultLightThemeStyles.spacing};`
       : "";
 
   const trackingVars =
-    mode === "light" &&
-    themeStyles["light"]["letter-spacing"] !== defaultLightThemeStyles["letter-spacing"]
-      ? `\n  --tracking-normal: ${themeStyles["light"]["letter-spacing"]};`
+    mode === "light"
+      ? `\n  --tracking-normal: ${themeStyles["light"]["letter-spacing"] ?? defaultLightThemeStyles["letter-spacing"]};`
       : "";
 
   return (

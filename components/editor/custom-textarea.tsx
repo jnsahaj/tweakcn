@@ -1,12 +1,9 @@
 "use client";
 
 import { suggestion } from "@/components/editor/mention-suggestion";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { useEditorStore } from "@/store/editor-store";
-import { useThemePresetStore } from "@/store/theme-preset-store";
-import { AIPromptData, MentionReference } from "@/types/ai";
 import CharacterCount from "@tiptap/extension-character-count";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -15,56 +12,23 @@ import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect } from "react";
 
 interface CustomTextareaProps {
-  onContentChange: (promptData: AIPromptData) => void;
+  onContentChange: (jsonContent: JSONContent) => void;
   onGenerate?: () => void;
   characterLimit?: number;
+  onImagesPaste?: (files: File[]) => void;
+  initialEditorContent?: JSONContent | null;
+  className?: string;
 }
-
-const convertJSONContentToPromptData = (jsonContent: JSONContent): AIPromptData => {
-  const content =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jsonContent.content?.[0]?.content?.reduce((text: string, node: any) => {
-      if (node.type === "text") return text + node.text;
-      if (node.type === "mention") return text + `@${node.attrs?.label}`;
-      return text;
-    }, "") || "";
-
-  const mentions: MentionReference[] =
-    jsonContent.content?.[0]?.content
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ?.filter((node: any) => node.type === "mention")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ?.map((mention: any) => {
-        const id = mention.attrs?.id;
-        const label = mention.attrs?.label;
-
-        let themeData;
-        if (id === "editor:current-changes") {
-          themeData = useEditorStore.getState().themeState.styles;
-        } else {
-          const preset = useThemePresetStore.getState().getPreset(id);
-          themeData = preset?.styles || { light: {}, dark: {} };
-        }
-
-        return {
-          id,
-          label,
-          themeData,
-        };
-      }) || [];
-
-  return {
-    content,
-    mentions,
-  };
-};
 
 const CustomTextarea: React.FC<CustomTextareaProps> = ({
   onContentChange,
   onGenerate,
   characterLimit,
+  onImagesPaste,
+  initialEditorContent,
+  className,
 }) => {
-  const { loading: aiGenerateLoading } = useAIThemeGeneration();
+  const { loading: aiGenerateLoading } = useAIThemeGenerationCore();
   const { toast } = useToast();
 
   const editor = useEditor({
@@ -80,7 +44,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
       Placeholder.configure({
         placeholder: "Describe your theme...",
         emptyEditorClass:
-          "cursor-text before:content-[attr(data-placeholder)] before:absolute before:top-2 before:left-3 before:text-mauve-11 before:opacity-50 before-pointer-events-none",
+          "cursor-text before:content-[attr(data-placeholder)] before:absolute before:inset-x-1 before:top-1 before:opacity-50 before-pointer-events-none",
       }),
       CharacterCount.configure({
         limit: characterLimit,
@@ -89,8 +53,10 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
     autofocus: !aiGenerateLoading,
     editorProps: {
       attributes: {
-        class:
-          "min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full rounded-md bg-background px-3 py-2 pb-6 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50 max-sm:text-[16px]!",
+        class: cn(
+          "min-w-0 min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background p-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
+          className
+        ),
       },
       handleKeyDown: (view, event) => {
         if (event.key === "Enter" && !event.shiftKey && !aiGenerateLoading) {
@@ -120,6 +86,18 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         const clipboardData = event.clipboardData;
         if (!clipboardData) return false;
 
+        // Check for image files
+        if (onImagesPaste) {
+          const files = Array.from(clipboardData.files);
+          const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+
+          if (imageFiles.length > 0) {
+            event.preventDefault();
+            onImagesPaste(imageFiles);
+            return true;
+          }
+        }
+
         const pastedText = clipboardData.getData("text/plain");
         const currentCharacterCount = editor?.storage.characterCount.characters() || 0;
         const totalCharacters = currentCharacterCount + pastedText.length;
@@ -137,10 +115,13 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         return false;
       },
     },
+    content: initialEditorContent || "",
+    onCreate: ({ editor }) => {
+      editor.commands.focus("end");
+    },
     onUpdate: ({ editor }) => {
       const jsonContent = editor.getJSON();
-      const promptData = convertJSONContentToPromptData(jsonContent);
-      onContentChange(promptData);
+      onContentChange(jsonContent);
     },
   });
 

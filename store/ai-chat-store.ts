@@ -1,7 +1,7 @@
 import { AssistantMessage, ChatMessage, UserMessage } from "@/types/ai";
-import { ThemeStyles } from "@/types/theme";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { idbStorage } from "./idb-storage";
 
 interface AIChatStore {
   messages: ChatMessage[];
@@ -45,6 +45,7 @@ export const useAIChatStore = create<AIChatStore>()(
           id: crypto.randomUUID(),
           content: message.content,
           themeStyles: message.themeStyles,
+          isError: message.isError,
           role: "assistant",
           timestamp: Date.now(),
         };
@@ -60,6 +61,7 @@ export const useAIChatStore = create<AIChatStore>()(
     }),
     {
       name: "ai-chat-storage",
+      storage: createJSONStorage(() => idbStorage),
     }
   )
 );
@@ -79,16 +81,4 @@ export const getAssistantMessages = (messages: ChatMessage[]) => {
 export const getLastUserMessage = (messages: ChatMessage[]) => {
   const userMessages = getUserMessages(messages);
   return userMessages[userMessages.length - 1];
-};
-
-export const getLastGeneratedThemeStyles = (messages: ChatMessage[]): ThemeStyles | null => {
-  const assistantMessages = getAssistantMessages(messages);
-  // recursively find the last theme styles message starting from the last message
-  for (let i = assistantMessages.length - 1; i >= 0; i--) {
-    const message = assistantMessages[i];
-    if (message.themeStyles) {
-      return message.themeStyles;
-    }
-  }
-  return null;
 };

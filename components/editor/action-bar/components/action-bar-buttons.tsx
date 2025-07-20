@@ -1,5 +1,6 @@
 import { Separator } from "@/components/ui/separator";
-import { useAIThemeGeneration } from "@/hooks/use-ai-theme-generation";
+import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
+import { useAIChatStore } from "@/store/ai-chat-store";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { CodeButton } from "./code-button";
@@ -11,7 +12,6 @@ import { SaveButton } from "./save-button";
 import { ShareButton } from "./share-button";
 import { ThemeToggle } from "./theme-toggle";
 import { UndoRedoButtons } from "./undo-redo-buttons";
-import { useAIChatStore } from "@/store/ai-chat-store";
 
 interface ActionBarButtonsProps {
   onImportClick: () => void;
@@ -29,7 +29,7 @@ export function ActionBarButtons({
   isSaving,
 }: ActionBarButtonsProps) {
   const { themeState, resetToCurrentPreset, hasUnsavedChanges } = useEditorStore();
-  const { loading: aiGenerationLoading } = useAIThemeGeneration();
+  const { loading: aiGenerationLoading } = useAIThemeGenerationCore();
   const { getPreset } = useThemePresetStore();
   const currentPreset = themeState?.preset ? getPreset(themeState?.preset) : undefined;
   const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";

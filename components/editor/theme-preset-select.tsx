@@ -1,17 +1,3 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  ChevronDown,
-  Heart,
-  Moon,
-  Search,
-  Settings,
-  Shuffle,
-  Sun,
-} from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
@@ -26,7 +12,20 @@ import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { ThemePreset } from "@/types/theme";
 import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronDown,
+  Heart,
+  Search,
+  Settings,
+  Shuffle,
+} from "lucide-react";
 import Link from "next/link";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ThemeToggle } from "../theme-toggle";
+import { TooltipWrapper } from "../tooltip-wrapper";
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
   withCycleThemes?: boolean;
@@ -76,35 +75,15 @@ const ThemeControls = () => {
     applyThemePreset(presetNames[random]);
   }, [presetNames, applyThemePreset]);
 
-  const { theme, toggleTheme } = useTheme();
-  const handleThemeToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { clientX: x, clientY: y } = event;
-    toggleTheme({ x, y });
-  };
-
   return (
     <div className="flex gap-1">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={handleThemeToggle}>
-            {theme === "light" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p className="text-xs">Toggle theme</p>
-        </TooltipContent>
-      </Tooltip>
+      <ThemeToggle variant="ghost" size="icon" className="size-6 p-1" />
 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={randomize}>
-            <Shuffle className="h-3.5 w-3.5" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p className="text-xs">Random theme</p>
-        </TooltipContent>
-      </Tooltip>
+      <TooltipWrapper label="Random theme" asChild>
+        <Button variant="ghost" size="sm" className="size-6 p-1" onClick={randomize}>
+          <Shuffle className="h-3.5 w-3.5" />
+        </Button>
+      </TooltipWrapper>
     </div>
   );
 };
@@ -235,21 +214,29 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
     const filteredList =
       search.trim() === ""
         ? presetNames
-        : Object.entries(presets)
-            .filter(([_, preset]) => preset.label?.toLowerCase().includes(search.toLowerCase()))
-            .map(([name]) => name);
+        : presetNames.filter((name) => {
+            if (name === "default") {
+              return "default".toLowerCase().includes(search.toLowerCase());
+            }
+            return presets[name]?.label?.toLowerCase().includes(search.toLowerCase());
+          });
 
     // Separate saved and default themes
     const savedThemesList = filteredList.filter((name) => name !== "default" && isSavedTheme(name));
     const defaultThemesList = filteredList.filter((name) => !savedThemesList.includes(name));
 
-    // Sort each list
-    const sortThemes = (list: string[]) =>
-      list.sort((a, b) => {
-        const labelA = presets[a]?.label || a;
-        const labelB = presets[b]?.label || b;
-        return labelA.localeCompare(labelB);
-      });
+    // Sort each list, with "default" at the top for default themes
+    const sortThemes = (list: string[]) => {
+      const defaultTheme = list.filter((name) => name === "default");
+      const otherThemes = list
+        .filter((name) => name !== "default")
+        .sort((a, b) => {
+          const labelA = presets[a]?.label || a;
+          const labelB = presets[b]?.label || b;
+          return labelA.localeCompare(labelB);
+        });
+      return [...defaultTheme, ...otherThemes];
+    };
 
     // Combine saved themes first, then default themes
     return [...sortThemes(savedThemesList), ...sortThemes(defaultThemesList)];
@@ -303,7 +290,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0" align="center">
-          <Command className="h-100 w-full rounded-lg border shadow-md">
+          <Command className="h-100 w-full">
             <div className="flex w-full items-center">
               <div className="flex w-full items-center border-b px-3 py-1">
                 <Search className="size-4 shrink-0 opacity-50" />
@@ -315,8 +302,8 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 />
               </div>
             </div>
-            <div className="flex items-center justify-between px-4 py-2">
-              <div className="text-muted-foreground text-xs">
+            <div className="flex items-center justify-between px-3 py-2">
+              <div className="text-muted-foreground text-sm">
                 {filteredPresets.length} theme
                 {filteredPresets.length !== 1 ? "s" : ""}
               </div>
@@ -333,14 +320,14 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                     heading={
                       <div className="flex w-full items-center justify-between">
                         <span>Saved Themes</span>
-                        <Link href="/dashboard">
+                        <Link href="/settings/themes">
                           <Button
                             variant="link"
                             size="sm"
-                            className="text-muted-foreground hover:text-foreground flex h-6 items-center gap-1.5 p-0 text-xs"
+                            className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 p-0 text-xs"
                           >
-                            <Settings />
                             <span>Manage</span>
+                            <Settings className="size-3.5!" />
                           </Button>
                         </Link>
                       </div>
@@ -381,14 +368,14 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
 
               {filteredSavedThemes.length === 0 && search.trim() === "" && (
                 <>
-                  <div className="text-muted-foreground flex items-center gap-1.5 px-2 pt-2 text-xs">
-                    <div className="flex items-center gap-1 rounded-md border px-2 py-1">
-                      <Heart className="size-3" />
+                  <div className="text-muted-foreground flex items-center gap-1.5 px-3 py-2 text-xs font-medium">
+                    <div className="bg-muted flex items-center gap-1 rounded-md border px-2 py-0.5">
+                      <Heart className="fill-muted-foreground size-3" />
                       <span>Save</span>
                     </div>
-                    <span>a theme to find it here.</span>
+                    <span className="text-muted-foreground">a theme to find it here.</span>
                   </div>
-                  <Separator className="my-2" />
+                  <Separator />
                 </>
               )}
 

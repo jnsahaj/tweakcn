@@ -12,7 +12,7 @@ export function AIAnnouncement() {
           Beta
         </span>
         <span className="text-muted-foreground group-hover:text-foreground text-sm font-medium transition-colors">
-          Try the new AI theme editor
+          Try the new AI Theme Editor
         </span>
 
         <ArrowRight className="text-muted-foreground group-hover:text-foreground size-4 -rotate-45 transition-all group-hover:rotate-0" />

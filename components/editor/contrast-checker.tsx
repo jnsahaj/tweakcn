@@ -191,7 +191,7 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" className="w-full justify-start px-2">
           <Contrast className="h-4 w-4" />
-          Contrast
+          <span className="text-sm">Contrast</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="flex max-h-[80vh] max-w-4xl flex-col gap-6 overflow-hidden rounded-lg border p-0 py-6 shadow-lg">

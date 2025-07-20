@@ -1,4 +1,5 @@
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
+import { GetProDialogWrapper } from "@/components/get-pro-dialog-wrapper";
 import { PostHogInit } from "@/components/posthog-init";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     siteName: "tweakcn",
     images: [
       {
-        url: "https://tweakcn.com/og-image.png",
+        url: "https://tweakcn.com/og-image.v050725.png",
         width: 1200,
         height: 630,
       },
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
     title: "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
     description:
       "Customize theme for shadcn/ui with tweakcn's interactive editor. Supports Tailwind CSS v4, Shadcn UI, and custom styles. Modify properties, preview changes, and get the code in real time.",
-    images: ["https://tweakcn.com/og-image.png"],
+    images: ["https://tweakcn.com/og-image.v050725.png"],
   },
   robots: "index, follow",
 };
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <ThemeProvider defaultTheme="light">
                 <TooltipProvider>
                   <AuthDialogWrapper />
+                  <GetProDialogWrapper />
                   <Toaster />
                   {children}
                 </TooltipProvider>
