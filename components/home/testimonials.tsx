@@ -1,51 +1,99 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { motion, useMotionValue, useReducedMotion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
-import man1 from '@/assets/man1.png';
-import man2 from '@/assets/man2.png';
-import girl1 from '@/assets/girl1.png';
-import girl2 from '@/assets/girl2.png';
-import girl3 from '@/assets/girl3.png';
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { motion, useMotionValue, useReducedMotion } from "motion/react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 // Testimonials Data
 const testimonials = [
   {
-    image: man1.src,
-    name: 'Sanwal Sulehri',
-    tag: 'sanwalakram12',
-    description: `Playing around with @tweakcn suddenly made me feel inspired to launch that side project.`,
+    image: "https://pbs.twimg.com/profile_images/1766632098461253634/2t4wT1TZ_400x400.png",
+    name: "YiMing",
+    tag: "yimingdothan",
+    description: `v0 + tweakcn + chatgpt for graphics
+
+generated a landing page in about 2~ hours
+
+crazy how easy this shit is now`,
+    href: "https://x.com/yimingdothan/status/1923833970799608086",
   },
   {
-    image: man2.src,
-    name: 'Darius Flynn',
-    tag: 'flynnn',
-    description: `Exploring @tweakcn's sleek UI. It's like a dark mode enthusiast's playground.`,
+    image: "https://pbs.twimg.com/profile_images/1783856060249595904/8TfcCN0r_400x400.jpg",
+    name: "Guillermo Rauch",
+    tag: "rauchg",
+    description: `If you're looking to learn:
+▪️ full stack Next.js
+▪️ how to build a focused product people love
+
+… look no further than tweakcn[0] by 
+@iamsahaj_xyz. It's an open-source @shadcn theme builder.
+`,
+    href: "https://x.com/rauchg/status/1938745259204493738",
   },
   {
-    image: girl1.src,
-    name: 'Olivia Blackwood',
-    tag: 'olivia1992',
-    description: `@tweakcn is slick. That globe graphic though.`,
+    image: "https://pbs.twimg.com/profile_images/1593304942210478080/TUYae5z7_400x400.jpg",
+    name: "shadcn",
+    tag: "shadcn",
+    description: `4/n - Finally, a custom theme from tweakcn by @iamsahaj_xyz`,
+    href: "https://x.com/shadcn/status/1909619407124676701",
   },
   {
-    image: girl2.src,
-    name: 'Esme Rothschild',
-    tag: 'EmeRothArt',
-    description: `Just made my first website with @tweakcn.`,
+    image: "https://pbs.twimg.com/profile_images/1849574174785732608/ltlLcyaT_400x400.jpg",
+    name: "Kevin Kern",
+    tag: "kregenrek",
+    description: `Tweakcn is really cool. Custom shadcn themes on the fly.`,
+    href: "https://x.com/kregenrek/status/1911892242568216618",
   },
   {
-    image: girl3.src,
-    name: 'Kai Nakamura',
-    tag: 'KaiNakWaves',
-    description: `@tweakcn is a game-changer for rapid prototyping.`,
+    image: "https://pbs.twimg.com/profile_images/1756766826736893952/6Gvg6jha_400x400.jpg",
+    name: "OrcDev",
+    tag: "theorcdev",
+    description: `Transform your Shadcn app with one click!
+
+@iamsahaj_xyz created a great concept with Tweakcn ⚔️`,
+    href: "https://x.com/theorcdev/status/1923396394452124081",
   },
   {
-    name: 'Suna Martinez',
-    tag: 'sunacode',
-    description: `@tweakcn is not messing around with its component library game.`,
+    image: "https://pbs.twimg.com/profile_images/1934209156816216064/NZns8Qth_400x400.jpg",
+    name: "Ciara Wearen",
+    tag: "nocheerleader",
+    description: `Create a Custom Theme: Your app instantly looks more intentional.
+
+Build a color palette, typography and layout preview with tweakcn dot com
+
+Grab  the CSS → drop into Bolt = cohesive design`,
+    href: "https://x.com/nocheerleader/status/1934648830315684275",
+  },
+  {
+    image: "https://pbs.twimg.com/profile_images/1937802227672109056/JHRKKC9G_400x400.jpg",
+    name: "Tanpreet Jolly 🌂",
+    tag: "JollyTanpreet",
+    description:
+      "I just tried tweakcn and seems like you nailed it. This is what I have been looking for, awesome job!",
+    href: "https://x.com/JollyTanpreet/status/1926923858721808484",
+  },
+  {
+    image: "https://pbs.twimg.com/profile_images/1677359164580929544/jngFF04Y_400x400.jpg",
+    name: "Code With Antonio",
+    tag: "YTCodeAntonio",
+    description: "there is an entire chapter dedicated to tweakcn!! such a cool project",
+    href: "https://x.com/YTCodeAntonio/status/1938314416497549430",
+  },
+  {
+    image: "https://pbs.twimg.com/profile_images/1942939901994893312/epjxuhCr_400x400.jpg",
+    name: "Emir",
+    tag: "emirthedev",
+    description: "Started using tweakcn for client projects too. This is a real game changer",
+    href: "https://x.com/emirthedev/status/1919418644183843211",
+  },
+  {
+    image: "https://pbs.twimg.com/profile_images/1903255064149442560/TYvinGL9_400x400.jpg",
+    name: "Matt Silverlock 🐀",
+    tag: "elithrar",
+    description: `used this shadcn theme editor to make it a little less plain: tweakcn.com`,
+    href: "https://x.com/elithrar/status/1905704716589510889",
   },
 ];
 
@@ -58,7 +106,7 @@ const MarqueeRow = ({
 }) => {
   const shouldReduceMotion = useReducedMotion();
   const x = useRef(useMotionValue(0));
-  const speed = shouldReduceMotion ? 0 : 50;
+  const speed = shouldReduceMotion ? 0 : 20;
   const containerRef = useRef<HTMLDivElement>(null);
   const animationFrame = useRef(0);
   const lastTime = useRef(performance.now());
@@ -67,8 +115,8 @@ const MarqueeRow = ({
   const [containerWidth, setContainerWidth] = useState(0);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && containerRef.current) {
-      const cardWidth = 300;
+    if (typeof window !== "undefined" && containerRef.current) {
+      const cardWidth = 400;
       const screenWidth = window.innerWidth;
       const cardsNeeded = Math.ceil(screenWidth / cardWidth) + 3;
       const loopCount = Math.ceil(cardsNeeded / items.length);
@@ -125,9 +173,9 @@ const MarqueeRow = ({
       className="relative w-full overflow-hidden py-2"
       style={{
         maskImage:
-          'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
+          "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
         WebkitMaskImage:
-          'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
+          "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
       }}
     >
       <motion.div
@@ -135,35 +183,37 @@ const MarqueeRow = ({
         style={{ x: x.current }}
         onMouseEnter={pause}
         onMouseLeave={resume}
-        className={`flex w-max gap-4 items-stretch ${reverse ? 'flex-row-reverse' : ''}`}
+        className={`flex w-max items-stretch gap-4 ${reverse ? "flex-row-reverse" : ""}`}
       >
         {repeatedItems.map((testimonial, i) => (
           <Card
             key={i}
-            className="sm:max-w-[400px] min-w-[260px] max-w-[330px] sm:min-w-[300px] w-full border border-border/40 bg-gradient-to-b from-card to-card/50 backdrop-blur transition-all hover:shadow-lg hover:border-primary/20 group"
+            className="border-border/40 from-card to-card/50 hover:border-primary/20 group max-h-[240px] w-full max-w-[420px] min-w-[260px] overflow-hidden border bg-gradient-to-b backdrop-blur transition-all hover:shadow-lg sm:max-w-[400px] sm:min-w-[300px]"
           >
-            <CardContent className="flex flex-col p-6 gap-4 h-full">
-              <div className="flex items-center gap-3">
-                {testimonial.image ? (
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="h-12 w-12 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="bg-primary text-primary-foreground flex h-12 w-12 items-center justify-center rounded-full text-lg font-semibold">
-                    {testimonial.name.charAt(0)}
+            <Link href={testimonial.href} className="h-full" target="_blank">
+              <CardContent className="flex h-full w-[300px] flex-col gap-4 p-4 md:w-[400px]">
+                <div className="flex items-center gap-3">
+                  {testimonial.image ? (
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      className="h-12 w-12 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="bg-primary text-primary-foreground flex h-12 w-12 items-center justify-center rounded-full text-lg font-semibold">
+                      {testimonial.name.charAt(0)}
+                    </div>
+                  )}
+                  <div>
+                    <h3 className="text-foreground text-xl font-semibold">{testimonial.name}</h3>
+                    <p className="text-muted-foreground text-sm">@{testimonial.tag}</p>
                   </div>
-                )}
-                <div>
-                  <h3 className="text-foreground text-xl font-semibold">
-                    {testimonial.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">@{testimonial.tag}</p>
                 </div>
-              </div>
-              <p className="text-foreground">{testimonial.description}</p>
-            </CardContent>
+                <p className="text-foreground line-clamp-4 overflow-hidden text-ellipsis whitespace-pre-wrap md:line-clamp-5">
+                  {testimonial.description}
+                </p>
+              </CardContent>
+            </Link>
           </Card>
         ))}
       </motion.div>
@@ -185,21 +235,24 @@ export function Testimonials() {
           transition={{ duration: 0.5 }}
           className="mb-12 flex flex-col items-center justify-center space-y-4 text-center"
         >
-          <Badge className="rounded-full px-4 py-1.5 text-sm font-medium shadow-sm" variant="secondary">
+          <Badge
+            className="rounded-full px-4 py-1.5 text-sm font-medium shadow-sm"
+            variant="secondary"
+          >
             <span className="text-primary mr-1">✦</span> Testimonials
           </Badge>
           <h2 className="from-foreground to-foreground/80 max-w-[600px] bg-gradient-to-r bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
-            Loved by designers and developers across the planet
+            Loved by developers worldwide
           </h2>
           <p className="text-muted-foreground max-w-[500px] md:text-lg">
-            Here&apos;s what people are saying about tweakcn
+            See what the community is saying about tweakcn
           </p>
         </motion.div>
 
         {/* 🚀 Two Marquee Rows */}
         <div className="flex flex-col gap-y-0">
-          <MarqueeRow items={testimonials} reverse={false} />
-          <MarqueeRow items={testimonials} reverse={true} />
+          <MarqueeRow items={testimonials.slice(0, 5)} reverse={false} />
+          <MarqueeRow items={testimonials.slice(5, 10)} reverse={true} />
         </div>
       </div>
     </section>

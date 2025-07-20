@@ -10,9 +10,6 @@ import { Hero } from "@/components/home/hero";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Roadmap } from "@/components/home/roadmap";
 import { Testimonials } from "@/components/home/testimonials";
-import { FAQ } from "@/components/home/faq";
-import { CTA } from "@/components/home/cta";
-import { Footer } from "@/components/footer";
 import { ThemePresetSelector } from "@/components/home/theme-preset-selector";
 import { useEffect, useState } from "react";
 
@@ -43,11 +40,11 @@ export default function Home() {
       <main className="w-full flex-1">
         <Hero />
         <ThemePresetSelector />
+        <Testimonials />
         <Features />
         <AIGenerationCTA />
         <HowItWorks />
         <Roadmap />
-        <Testimonials />
         <FAQ />
         <CTA />
       </main>

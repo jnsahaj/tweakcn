@@ -81,8 +81,7 @@ export function Features() {
             Powerful Customization Tools
           </h2>
           <p className="text-muted-foreground max-w-[800px] md:text-lg">
-            tweakcn provides all the tools you need to customize your shadcn/ui components and make
-            them unique.
+            All the tools you need to customize your shadcn/ui components and make them unique.
           </p>
         </motion.div>
 
