@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { setIframeForPostMessage } from "@/store/editor-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +15,15 @@ export default function CustomUrlPreview({ onUrlChange }: CustomUrlPreviewProps)
   const [url, setUrl] = useState("");
   const [submittedUrl, setSubmittedUrl] = useState("");
   const [_isLoading, setIsLoading] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    setIframeForPostMessage(iframeRef.current);
+
+    return () => {
+      setIframeForPostMessage(null);
+    };
+  }, [submittedUrl]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,9 +110,10 @@ export default function CustomUrlPreview({ onUrlChange }: CustomUrlPreviewProps)
           </div>
           <div className="flex-1 overflow-hidden">
             <iframe
+              ref={iframeRef}
               src={submittedUrl}
               width="100%"
-              height="100%"
+              height="800"
               className="border-0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

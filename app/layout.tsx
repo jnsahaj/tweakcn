@@ -72,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
         <meta name="darkreader-lock" />
+        <script src="/embed-script.js" async />
       </head>
       <body>
         <NuqsAdapter>

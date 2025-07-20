@@ -5,6 +5,12 @@ import { defaultThemeState } from "@/config/theme";
 import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
 import { isDeepEqual } from "@/lib/utils";
 
+let iframe: HTMLIFrameElement | null = null;
+
+export const setIframeForPostMessage = (el: HTMLIFrameElement | null) => {
+  iframe = el;
+};
+
 const MAX_HISTORY_COUNT = 30;
 const HISTORY_OVERRIDE_THRESHOLD_MS = 500; // 0.5 seconds
 
@@ -82,6 +88,16 @@ export const useEditorStore = create<EditorStore>()(
           history: currentHistory,
           future: currentFuture,
         });
+
+        if (iframe) {
+          iframe.contentWindow?.postMessage(
+            {
+              type: "theme-change",
+              themeState: newState,
+            },
+            "*"
+          );
+        }
       },
       applyThemePreset: (preset: string) => {
         const currentThemeState = get().themeState;
@@ -108,6 +124,16 @@ export const useEditorStore = create<EditorStore>()(
           history: updatedHistory,
           future: [],
         });
+
+        if (iframe) {
+          iframe.contentWindow?.postMessage(
+            {
+              type: "theme-change",
+              themeState: newThemeState,
+            },
+            "*"
+          );
+        }
       },
       saveThemeCheckpoint: () => {
         set({ themeCheckpoint: get().themeState });
@@ -133,6 +159,19 @@ export const useEditorStore = create<EditorStore>()(
             history: updatedHistory,
             future: [],
           });
+
+          if (iframe) {
+            iframe.contentWindow?.postMessage(
+              {
+                type: "theme-change",
+                themeState: {
+                  ...checkpoint,
+                  currentMode: get().themeState.currentMode,
+                },
+              },
+              "*"
+            );
+          }
         } else {
           console.warn("No theme checkpoint available to restore to.");
         }
@@ -167,6 +206,16 @@ export const useEditorStore = create<EditorStore>()(
           history: [],
           future: [],
         });
+
+        if (iframe) {
+          iframe.contentWindow?.postMessage(
+            {
+              type: "theme-change",
+              themeState: newThemeState,
+            },
+            "*"
+          );
+        }
       },
       undo: () => {
         const history = get().history;
@@ -192,6 +241,19 @@ export const useEditorStore = create<EditorStore>()(
           history: newHistory,
           future: newFuture,
         });
+
+        if (iframe) {
+          iframe.contentWindow?.postMessage(
+            {
+              type: "theme-change",
+              themeState: {
+                ...lastHistoryEntry.state,
+                currentMode: currentThemeState.currentMode,
+              },
+            },
+            "*"
+          );
+        }
       },
       redo: () => {
         const future = get().future;
@@ -220,6 +282,19 @@ export const useEditorStore = create<EditorStore>()(
           history: updatedHistory,
           future: newFuture,
         });
+
+        if (iframe) {
+          iframe.contentWindow?.postMessage(
+            {
+              type: "theme-change",
+              themeState: {
+                ...firstFutureEntry.state,
+                currentMode: currentThemeState.currentMode,
+              },
+            },
+            "*"
+          );
+        }
       },
       canUndo: () => get().history.length > 0,
       canRedo: () => get().future.length > 0,
