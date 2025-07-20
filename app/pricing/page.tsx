@@ -14,6 +14,7 @@ import { Calendar, Check, Circle, Mail } from "lucide-react";
 import Link from "next/link";
 import { CheckoutButton } from "./components/checkout-button";
 import { Metadata } from "next";
+import { Testimonials } from "@/components/home/testimonials";
 
 export const metadata: Metadata = {
   title: "Pricing — tweakcn",
@@ -153,6 +154,11 @@ export default function PricingPage() {
             </div>
           </Card>
         </section>
+
+        <div className="-mt-8">
+          <Testimonials />
+        </div>
+
         {/* FAQs Section */}
         <section className="mx-auto max-w-3xl space-y-8">
           <div className="space-y-2 text-center">
