@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion, useMotionValue, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -188,22 +189,22 @@ const MarqueeRow = ({
         {repeatedItems.map((testimonial, i) => (
           <Card
             key={i}
-            className="border-border/40 from-card to-card/50 hover:border-primary/20 group max-h-[240px] w-full max-w-[420px] min-w-[260px] overflow-hidden border bg-gradient-to-b backdrop-blur transition-all hover:shadow-lg sm:max-w-[400px] sm:min-w-[300px]"
+            className="border-border/40 from-card to-card/50 hover:border-primary/20 group focus-within:ring-primary max-h-[240px] w-full max-w-[420px] min-w-[260px] overflow-hidden border bg-gradient-to-b backdrop-blur transition-all focus-within:ring-2 focus-within:ring-offset-2 hover:shadow-lg sm:max-w-[400px] sm:min-w-[300px]"
           >
-            <Link href={testimonial.href} className="h-full" target="_blank">
+            <Link
+              href={testimonial.href}
+              className="focus:ring-primary h-full rounded-lg focus:ring-2 focus:ring-offset-2 focus:outline-none"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <CardContent className="flex h-full w-[300px] flex-col gap-4 p-4 md:w-[400px]">
                 <div className="flex items-center gap-3">
-                  {testimonial.image ? (
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="h-12 w-12 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="bg-primary text-primary-foreground flex h-12 w-12 items-center justify-center rounded-full text-lg font-semibold">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={testimonial.image} alt={testimonial.name} loading="lazy" />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
                       {testimonial.name.charAt(0)}
-                    </div>
-                  )}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <h3 className="text-foreground text-xl font-semibold">{testimonial.name}</h3>
                     <p className="text-muted-foreground text-sm">@{testimonial.tag}</p>
