@@ -25,6 +25,7 @@ import InspectorOverlay from "./inspector-overlay";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
+import CustomUrlPreview from "./custom-url-preview";
 
 const DemoCards = lazy(() => import("@/components/examples/cards"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
@@ -71,6 +72,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
           <HorizontalScrollArea className="mt-2 mb-1 flex w-full items-center justify-between px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
+              <TabsTriggerPill value="custom">Custom</TabsTriggerPill>
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
@@ -198,6 +200,12 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               <TabsContentPrimitive value="mail" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="min-w-[1300px]">
                   <DemoMail />
+                </ExamplesPreviewContainer>
+              </TabsContentPrimitive>
+
+              <TabsContentPrimitive value="custom" className="@container mt-0 h-full space-y-6">
+                <ExamplesPreviewContainer className="min-w-[1300px]">
+                  <CustomUrlPreview />
                 </ExamplesPreviewContainer>
               </TabsContentPrimitive>
 
