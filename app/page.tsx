@@ -9,6 +9,7 @@ import { Header } from "@/components/home/header";
 import { Hero } from "@/components/home/hero";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Roadmap } from "@/components/home/roadmap";
+import { ThemeHotKeyHandler } from "@/components/home/theme-hotkey-handler";
 import { ThemePresetSelector } from "@/components/home/theme-preset-selector";
 import { useEffect, useState } from "react";
 
@@ -18,7 +19,7 @@ export default function Home() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
+      if (window.scrollY > 10){
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -31,6 +32,7 @@ export default function Home() {
 
   return (
     <div className="bg-background text-foreground flex min-h-[100dvh] flex-col items-center justify-items-center">
+      <ThemeHotKeyHandler>
       <Header
         isScrolled={isScrolled}
         mobileMenuOpen={mobileMenuOpen}
@@ -47,6 +49,7 @@ export default function Home() {
         <CTA />
       </main>
       <Footer />
+      </ThemeHotKeyHandler>
     </div>
   );
 }
