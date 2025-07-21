@@ -125,10 +125,7 @@ export const defaultThemeState: ThemeEditorState = {
     light: defaultLightThemeStyles,
     dark: defaultDarkThemeStyles,
   },
-  currentMode:
-    typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light",
+  currentMode: "light", // Always deterministic for SSR
   hslAdjustments: {
     hueShift: 0,
     saturationScale: 1,

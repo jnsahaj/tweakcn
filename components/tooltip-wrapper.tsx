@@ -9,14 +9,16 @@ export function TooltipWrapper({
   command,
   className,
   children,
+  asChild = false,
   ...props
 }: ComponentProps<typeof TooltipTrigger> & {
   label: string;
   command?: React.ReactNode;
+  asChild?: boolean;
 }) {
   return (
     <Tooltip key={label}>
-      <TooltipTrigger className={cn(className)} {...props}>
+      <TooltipTrigger asChild={asChild} className={cn(className)} {...props}>
         {children}
       </TooltipTrigger>
 

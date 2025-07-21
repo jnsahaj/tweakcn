@@ -49,6 +49,17 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
     }
   }, [initialTheme, setThemeState]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prev = useEditorStore.getState().themeState;
+      setThemeState({
+        ...prev,
+        currentMode: prefersDark ? "dark" : "light",
+      });
+    }
+  }, [setThemeState]);
+
   if (initialTheme && !isThemeStyles(initialTheme.styles)) {
     return (
       <div className="text-destructive flex h-full items-center justify-center">

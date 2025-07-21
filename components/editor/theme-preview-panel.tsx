@@ -132,6 +132,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               <TooltipWrapper
                 label={isFullscreen ? "Exit full screen" : "Full screen"}
                 className="hidden md:inline-flex"
+                asChild
               >
                 <Button
                   variant="ghost"

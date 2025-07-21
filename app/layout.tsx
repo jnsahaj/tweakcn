@@ -10,6 +10,8 @@ import type { Metadata, Viewport } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import "./globals.css";
+import { cookies } from "next/headers";
+import { defaultDarkThemeStyles, defaultLightThemeStyles } from "@/config/theme";
 
 export const metadata: Metadata = {
   title: "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
@@ -49,9 +51,22 @@ export const viewport: Viewport = {
   initialScale: 1.0,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+function toCSSVarObject(obj: Record<string, string>) {
+  return Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => [k.startsWith("--") ? k : `--${k}`, v])
+  );
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const themeCookie = cookieStore.get("theme")?.value;
+  const isDark = themeCookie === "dark";
+  const themeStyles = isDark ? defaultDarkThemeStyles : defaultLightThemeStyles;
+
+  const cssVarStyles = toCSSVarObject(themeStyles);
+
   return (
-    <html lang="en">
+    <html lang="en" style={cssVarStyles} suppressHydrationWarning>
       <head>
         <ThemeScript />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

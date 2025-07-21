@@ -28,10 +28,10 @@ export function MoreOptions({ ...props }: MoreOptionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="text-foreground">
           <DropdownMenuItem onClick={() => setMcpDialogOpen(true)} asChild>
-            <Button variant="ghost" size="sm" className="w-full justify-start">
+            <span className="w-full justify-start flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-accent cursor-pointer">
               <McpIcon className="h-4 w-4" />
               <span className="text-sm">MCP</span>
-            </Button>
+            </span>
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
             <ContrastChecker currentStyles={themeState.styles[themeState.currentMode]} />
