@@ -51,12 +51,25 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const prev = useEditorStore.getState().themeState;
-      setThemeState({
-        ...prev,
-        currentMode: prefersDark ? "dark" : "light",
-      });
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+      const updateThemeMode = (e: MediaQueryListEvent | MediaQueryList) => {
+        const prev = useEditorStore.getState().themeState;
+        setThemeState({
+          ...prev,
+          currentMode: e.matches ? "dark" : "light",
+        });
+      };
+
+      // Set initial preference
+      updateThemeMode(mediaQuery);
+
+      // Listen for changes
+      mediaQuery.addEventListener("change", updateThemeMode);
+
+      return () => {
+        mediaQuery.removeEventListener("change", updateThemeMode);
+      };
     }
   }, [setThemeState]);
 
