@@ -153,7 +153,9 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               <TabsContent value="dashboard" className="@container m-0 size-full">
                 <ExamplesPreviewContainer className="size-full">
                   <ScrollArea className="size-full">
-                    <DemoDashboard />
+                    <div className="size-full min-w-[1300px]">
+                      <DemoDashboard />
+                    </div>
                     <ScrollBar orientation="horizontal" />
                   </ScrollArea>
                 </ExamplesPreviewContainer>
@@ -191,7 +193,10 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               <TabsContent value="mail" className="@container m-0 size-full">
                 <ExamplesPreviewContainer className="size-full">
                   <ScrollArea className="size-full">
-                    <DemoMail />
+                    <div className="size-full min-w-[1300px]">
+                      <DemoMail />
+                    </div>
+                    <ScrollBar orientation="horizontal" />
                   </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
