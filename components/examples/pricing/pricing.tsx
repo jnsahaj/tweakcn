@@ -73,17 +73,22 @@ const Pricing2 = ({
 }: Pricing2Props) => {
   const [isYearly, setIsYearly] = useState(false);
   return (
-    <section className="py-16">
+    <section className="@container py-16">
       <div className="container mx-auto">
-        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
-          <h2 className="text-foreground text-4xl font-bold text-pretty lg:text-6xl">{heading}</h2>
-          <p className="text-muted-foreground lg:text-xl">{description}</p>
-          <div className="text-foreground flex items-center gap-3 text-lg">
-            Monthly
-            <Switch checked={isYearly} onCheckedChange={() => setIsYearly(!isYearly)} />
-            Yearly
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-8 text-center">
+          <div className="flex size-full flex-col items-center gap-4">
+            <h2 className="text-foreground text-3xl leading-tight font-bold tracking-tight text-pretty @3xl:text-5xl">
+              {heading}
+            </h2>
+            <p className="text-muted-foreground @3xl:text-xl">{description}</p>
+            <div className="text-foreground flex items-center gap-3 text-lg">
+              Monthly
+              <Switch checked={isYearly} onCheckedChange={() => setIsYearly(!isYearly)} />
+              Yearly
+            </div>
           </div>
-          <div className="flex flex-col items-stretch gap-6 md:flex-row">
+
+          <div className="flex flex-col items-stretch gap-6 @3xl:flex-row">
             {plans.map((plan) => (
               <Card key={plan.id} className="flex w-80 flex-col justify-between text-left">
                 <CardHeader>

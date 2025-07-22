@@ -27,8 +27,6 @@ import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 
 const DemoCards = lazy(() => import("@/components/examples/cards"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
-const DemoTasks = lazy(() => import("@/components/examples/tasks"));
-const DemoMusic = lazy(() => import("@/components/examples/music"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
 const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
 const TypographyDemo = lazy(() => import("@/components/examples/typography/typography-demo"));
@@ -70,6 +68,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
           <HorizontalScrollArea className="mt-2 mb-1 flex w-full items-center justify-between px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
+
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
@@ -88,18 +87,6 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => handleTabChange("typography")}>
                     Typography
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleTabChange("tasks")}
-                    className="hidden md:flex"
-                  >
-                    Tasks
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleTabChange("music")}
-                    className="hidden md:flex"
-                  >
-                    Music
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -120,7 +107,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                   size="sm"
                   onClick={toggleInspector}
                   className={cn(
-                    "group h-8 w-8",
+                    "group size-8",
                     inspectorEnabled && "bg-accent text-accent-foreground w-auto"
                   )}
                 >
@@ -149,27 +136,32 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
             </div>
           </HorizontalScrollArea>
 
-          <ScrollArea
-            className="relative m-4 mt-1 flex flex-1 flex-col overflow-hidden rounded-lg border"
-            ref={rootRef}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-          >
-            <div className="flex h-full flex-1 flex-col">
-              <TabsContent value="cards" className="m-0 h-full">
-                <ExamplesPreviewContainer>
-                  <DemoCards />
+          <section className="relative size-full overflow-hidden p-4 pt-1">
+            <div
+              className="relative isolate size-full overflow-hidden rounded-lg border"
+              ref={rootRef}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+            >
+              <TabsContent value="cards" className="m-0 size-full">
+                <ExamplesPreviewContainer className="size-full">
+                  <ScrollArea className="size-full">
+                    <DemoCards />
+                  </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
 
-              <TabsContent value="dashboard" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer className="min-w-[1400px]">
-                  <DemoDashboard />
+              <TabsContent value="dashboard" className="@container m-0 size-full">
+                <ExamplesPreviewContainer className="size-full">
+                  <ScrollArea className="size-full">
+                    <DemoDashboard />
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
 
               <TabsContent value="pricing" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer>
+                <ExamplesPreviewContainer className="size-full">
                   <div className="absolute top-4 right-4 z-10">
                     <Link
                       href="https://shadcnblocks.com?utm_source=tweakcn&utm_medium=theme-editor-preview"
@@ -191,41 +183,37 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                       </Button>
                     </Link>
                   </div>
-                  <DemoPricing />
+                  <ScrollArea className="size-full">
+                    <DemoPricing />
+                  </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
 
-              <TabsContent value="mail" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer className="min-w-[1300px]">
-                  <DemoMail />
+              <TabsContent value="mail" className="@container m-0 size-full">
+                <ExamplesPreviewContainer className="size-full">
+                  <ScrollArea className="size-full">
+                    <DemoMail />
+                  </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
 
-              <TabsContent value="tasks" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer className="min-w-[1300px]">
-                  <DemoTasks />
+              <TabsContent value="typography" className="m-0 size-full">
+                <ExamplesPreviewContainer className="size-full">
+                  <ScrollArea className="size-full">
+                    <TypographyDemo />
+                  </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
 
-              <TabsContent value="music" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer className="min-w-[1300px]">
-                  <DemoMusic />
-                </ExamplesPreviewContainer>
+              <TabsContent value="colors" className="m-0 size-full">
+                <ScrollArea className="size-full">
+                  <div className="p-4">
+                    <ColorPreview styles={styles} currentMode={currentMode} />
+                  </div>
+                </ScrollArea>
               </TabsContent>
-
-              <TabsContent value="typography" className="space-y-6 p-4">
-                <ExamplesPreviewContainer>
-                  <TypographyDemo />
-                </ExamplesPreviewContainer>
-              </TabsContent>
-
-              <TabsContent value="colors" className="space-y-6 p-4">
-                <ColorPreview styles={styles} currentMode={currentMode} />
-              </TabsContent>
-
-              <ScrollBar orientation="horizontal" />
             </div>
-          </ScrollArea>
+          </section>
         </Tabs>
       </div>
 
