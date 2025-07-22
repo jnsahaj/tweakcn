@@ -1,8 +1,12 @@
 import { TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { TabsTriggerProps } from "@radix-ui/react-tabs";
+import * as React from "react";
 
-const TabsTriggerPill = ({ children, className, ...props }: TabsTriggerProps) => {
+const TabsTriggerPill = ({
+  children,
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof TabsTrigger>) => {
   return (
     <TabsTrigger
       className={cn(

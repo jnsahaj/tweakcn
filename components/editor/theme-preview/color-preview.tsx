@@ -26,7 +26,7 @@ function ColorPreviewItem({ label, color, name }: { label: string; color: string
       </div>
 
       <div className="hidden flex-col opacity-0 transition-opacity group-hover/color-preview:opacity-100 md:flex">
-        <TooltipWrapper label="Edit color">
+        <TooltipWrapper label="Edit color" asChild>
           <Button
             variant="ghost"
             size="icon"
