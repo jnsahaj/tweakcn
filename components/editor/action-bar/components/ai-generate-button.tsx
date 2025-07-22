@@ -14,7 +14,7 @@ export function AIGenerateButton({ onClick }: AIGenerateButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button asChild
+        <Button
           variant="ghost"
           size="sm"
           onClick={onClick}

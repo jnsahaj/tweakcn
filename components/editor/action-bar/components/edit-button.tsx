@@ -20,7 +20,7 @@ export function EditButton({ themeId, disabled, className, ...props }: EditButto
   return (
     <TooltipWrapper label="Edit theme" asChild>
       <Link href={href}>
-        <Button asChild
+        <Button
           variant="ghost"
           size="sm"
           className={cn(className)}
