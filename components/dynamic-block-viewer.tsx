@@ -1,32 +1,46 @@
+import Logo from "@/assets/logo.svg";
 import {
   BlockViewerDisplay,
   BlockViewerProvider,
   BlockViewerToolbar,
 } from "@/components/block-viewer";
+import { CopyButton } from "@/components/copy-button";
 import { LoadingLogo } from "@/components/editor/ai/loading-logo";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { IframeStatus, useIframeThemeInjector } from "@/hooks/use-iframe-theme-injector";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { applyThemeToElement } from "@/utils/apply-theme";
-import { ExternalLink, Globe, Loader, RefreshCw, Unlink } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  ExternalLink,
+  Globe,
+  GlobeLock,
+  Loader,
+  RefreshCw,
+  X,
+  XCircle,
+} from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 const DYNAMIC_IFRAME_ID = "dynamic-block-iframe";
+const SCRIPT_URL = "https://tweakcn.com/live-preview-embed-script.js";
 
 export function DynamicBlockViewer({
   className,
   name,
-  children,
-  allowThemeInjection = false,
+  useDirectInjection = false,
   ...props
 }: React.ComponentPropsWithoutRef<"div"> & {
   name: string;
   dynamic?: boolean;
-  allowThemeInjection?: boolean;
+  useDirectInjection?: boolean;
 }) {
   return (
-    <DynamicBlockViewerProvider allowThemeInjection={allowThemeInjection}>
+    <DynamicBlockViewerProvider useDirectInjection={useDirectInjection}>
       <div
         className={cn(
           "group/block-view-wrapper bg-background @container isolate flex size-full min-w-0 flex-col overflow-clip",
@@ -52,7 +66,9 @@ type DynamicBlockViewerContext = {
   setIsLoading: (loading: boolean) => void;
   error: string | null;
   setError: (error: string | null) => void;
-  allowThemeInjection: boolean;
+  useDirectInjection: boolean;
+  status: IframeStatus;
+  retryValidation: () => void;
 };
 
 const DynamicBlockViewerContext = React.createContext<DynamicBlockViewerContext | null>(null);
@@ -67,15 +83,19 @@ function useDynamicBlockViewer() {
 
 function DynamicBlockViewerProvider({
   children,
-  allowThemeInjection = false,
+  useDirectInjection = false,
 }: {
   children: React.ReactNode;
-  allowThemeInjection?: boolean;
+  useDirectInjection?: boolean;
 }) {
   const [inputUrl, setInputUrl] = useState("");
   const [currentUrl, setCurrentUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { status, retryValidation } = useIframeThemeInjector(
+    DYNAMIC_IFRAME_ID,
+    !useDirectInjection && !!currentUrl
+  );
 
   return (
     <BlockViewerProvider>
@@ -89,7 +109,9 @@ function DynamicBlockViewerProvider({
           setIsLoading,
           error,
           setError,
-          allowThemeInjection,
+          useDirectInjection: useDirectInjection,
+          status,
+          retryValidation,
         }}
       >
         {children}
@@ -107,7 +129,7 @@ function DynamicToolbarControls() {
     isLoading,
     setIsLoading,
     setError,
-    allowThemeInjection,
+    useDirectInjection,
   } = useDynamicBlockViewer();
 
   const loadUrl = () => {
@@ -151,7 +173,7 @@ function DynamicToolbarControls() {
         <Input
           type="url"
           placeholder={
-            allowThemeInjection
+            useDirectInjection
               ? "Enter same-origin URL for theme injection"
               : "Enter website URL (e.g., tweakcn.com)"
           }
@@ -202,10 +224,21 @@ function DynamicToolbarControls() {
 }
 
 function DynamicIframeContent() {
-  const { currentUrl, isLoading, setIsLoading, error, setError, allowThemeInjection } =
-    useDynamicBlockViewer();
+  const {
+    currentUrl,
+    isLoading,
+    setIsLoading,
+    error,
+    setError,
+    useDirectInjection,
+    status,
+    retryValidation,
+  } = useDynamicBlockViewer();
   const { themeState } = useEditorStore();
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isIframeLoaded, setIsIframeLoaded] = useState(false);
+
+  useIframeThemeInjector(DYNAMIC_IFRAME_ID, !useDirectInjection && isIframeLoaded);
 
   const clearLoadingTimeout = () => {
     if (loadingTimeoutRef.current) {
@@ -218,9 +251,10 @@ function DynamicIframeContent() {
     clearLoadingTimeout();
     setIsLoading(false);
     setError(null);
+    setIsIframeLoaded(true);
 
     // Inject theme if allowed and same-origin
-    if (allowThemeInjection && currentUrl) {
+    if (useDirectInjection && currentUrl) {
       try {
         const iframe = document.getElementById(DYNAMIC_IFRAME_ID) as HTMLIFrameElement;
         if (iframe && iframe.contentDocument) {
@@ -235,6 +269,12 @@ function DynamicIframeContent() {
       }
     }
   };
+
+  useEffect(() => {
+    if (currentUrl) {
+      setIsIframeLoaded(false);
+    }
+  }, [currentUrl]);
 
   // Set up timeout when loading starts
   useEffect(() => {
@@ -253,7 +293,7 @@ function DynamicIframeContent() {
 
   // Watch for theme changes and re-inject if possible
   useEffect(() => {
-    if (allowThemeInjection && currentUrl && !isLoading) {
+    if (useDirectInjection && currentUrl && !isLoading) {
       try {
         const iframe = document.getElementById(DYNAMIC_IFRAME_ID) as HTMLIFrameElement;
         if (iframe && iframe.contentDocument) {
@@ -266,7 +306,7 @@ function DynamicIframeContent() {
         console.error("Cannot inject theme into cross-origin iframe:", e);
       }
     }
-  }, [themeState, allowThemeInjection, currentUrl, isLoading]);
+  }, [themeState, useDirectInjection, currentUrl, isLoading]);
 
   const handleIframeError = () => {
     clearLoadingTimeout();
@@ -276,24 +316,43 @@ function DynamicIframeContent() {
     );
   };
 
+  const scriptTag = `<script src="${SCRIPT_URL}"></script>`;
+
   if (!currentUrl && !error) {
     return (
       <div className="relative size-full overflow-hidden p-4">
-        <div className="text-muted-foreground flex h-full flex-col items-center justify-center space-y-2">
-          <div className="bg-muted flex size-16 flex-col items-center justify-center space-y-2 rounded-full">
-            <Unlink className="size-6" />
+        <div className="text-muted-foreground mx-auto flex h-full max-w-lg flex-col items-center justify-center space-y-6">
+          <div className="flex items-center gap-1">
+            <div className="bg-muted outline-border/50 flex size-16 flex-col items-center justify-center space-y-2 rounded-full outline">
+              <GlobeLock className="text-foreground size-7" />
+            </div>
+            <X className="text-foreground size-6" />
+            <div className="bg-muted outline-border/50 flex size-16 flex-col items-center justify-center space-y-2 rounded-full outline">
+              <Logo className="text-foreground size-7" />
+            </div>
           </div>
-          <p className="text-sm text-pretty">
-            {allowThemeInjection
-              ? "Enter a same-origin URL to preview with theme injection"
-              : "Enter a URL above to preview a website"}
-          </p>
-          {allowThemeInjection && (
-            <p className="text-muted-foreground max-w-xs text-center text-xs">
-              Theme injection only works with same-origin content due to browser security
-              restrictions.
+
+          <div className="space-y-1 text-center">
+            <p className="text-foreground text-lg font-medium">Preview External Websites</p>
+            <p className="text-muted-foreground text-sm text-pretty">
+              Enter a URL to preview websites built with{" "}
+              <span className="font-medium">shadcn/ui</span> components. External sites using
+              shadcn/ui can integrate with tweakcn by including our script for live theme previews.
             </p>
-          )}
+          </div>
+
+          <Card className="w-full space-y-1 p-2">
+            <div className="flex w-full items-center justify-between gap-2">
+              <p className="text-muted-foreground text-xs">
+                <span className="font-medium">For external website integration:</span>
+              </p>
+
+              <CopyButton textToCopy={scriptTag} className="[&>svg]:size-3" />
+            </div>
+            <code className="text-foreground bg-muted block rounded-md border p-2 font-mono text-xs">
+              {scriptTag}
+            </code>
+          </Card>
         </div>
       </div>
     );
@@ -339,6 +398,63 @@ function DynamicIframeContent() {
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
         loading="lazy"
       />
+
+      {!isLoading && !!status && (
+        <div className="bg-background/60 outline-border/50 absolute bottom-2 left-2 z-10 rounded-md px-2 py-1 outline-2 backdrop-blur-lg">
+          <ConnectionStatus
+            status={status}
+            retryValidation={retryValidation}
+            isLoading={isLoading}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConnectionStatus({
+  status,
+  retryValidation,
+  isLoading,
+}: {
+  status: IframeStatus;
+  retryValidation: () => void;
+  isLoading: boolean;
+}) {
+  if (isLoading || status === "unknown") return null;
+
+  const ICONS: Record<IframeStatus, React.ReactNode> = {
+    checking: <Loader className="text-foreground size-4 animate-spin" />,
+    connected: <CheckCircle className="text-foreground size-4" />,
+    supported: <CheckCircle className="text-foreground size-4" />,
+    unsupported: <AlertCircle className="text-foreground size-4" />,
+    missing: <XCircle className="text-destructive size-4" />,
+    unknown: null,
+  };
+
+  const TEXTS: Record<IframeStatus, string> = {
+    checking: "Checking connection...",
+    connected: "Connected",
+    supported: "Live preview enabled",
+    unsupported: "Unsupported site",
+    missing: "Script not found",
+    unknown: "",
+  };
+
+  return (
+    <div className="flex h-8 items-center gap-2">
+      {ICONS[status]}
+      <span className="text-muted-foreground text-sm font-medium">{TEXTS[status]}</span>
+      {(status === "missing" || status === "unsupported") && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 px-2 py-1 text-xs"
+          onClick={retryValidation}
+        >
+          Retry
+        </Button>
+      )}
     </div>
   );
 }
