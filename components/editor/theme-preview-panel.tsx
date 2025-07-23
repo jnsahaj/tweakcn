@@ -1,6 +1,9 @@
 "use client";
 
 import ShadcnBlocksLogo from "@/assets/shadcnblocks.svg";
+import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,9 +20,6 @@ import { ThemeEditorPreviewProps } from "@/types/theme";
 import { Inspect, Maximize, Minimize, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { lazy, useState } from "react";
-import { HorizontalScrollArea } from "../horizontal-scroll-area";
-import { ThemeToggle } from "../theme-toggle";
-import { TooltipWrapper } from "../tooltip-wrapper";
 import InspectorOverlay from "./inspector-overlay";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
@@ -30,6 +30,7 @@ const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
 const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
 const TypographyDemo = lazy(() => import("@/components/examples/typography/typography-demo"));
+const CustomDemo = lazy(() => import("@/components/examples/custom"));
 
 const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
@@ -68,6 +69,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
           <HorizontalScrollArea className="mt-2 mb-1 flex w-full items-center justify-between px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
+              <TabsTriggerPill value="custom">Custom</TabsTriggerPill>
 
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
@@ -118,6 +120,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               <TooltipWrapper
                 label={isFullscreen ? "Exit full screen" : "Full screen"}
                 className="hidden md:inline-flex"
+                asChild
               >
                 <Button
                   variant="ghost"
@@ -147,6 +150,12 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
                   <ScrollArea className="size-full">
                     <DemoCards />
                   </ScrollArea>
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="custom" className="@container m-0 size-full">
+                <ExamplesPreviewContainer className="size-full">
+                  <CustomDemo />
                 </ExamplesPreviewContainer>
               </TabsContent>
 
