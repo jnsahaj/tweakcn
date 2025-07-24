@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from ".
 import { usePostHog } from "posthog-js/react";
 import { useEditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
-import { generateThemeCode } from "@/utils/theme-style-generator";
+import { generateThemeCode, generateTailwindConfigCode } from "@/utils/theme-style-generator";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { useDialogActions } from "@/hooks/use-dialog-actions";
 
@@ -38,6 +38,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   const getAvailableColorFormats = usePreferencesStore((state) => state.getAvailableColorFormats);
 
   const code = generateThemeCode(themeEditorState, colorFormat, tailwindVersion);
+  const configCode = generateTailwindConfigCode(themeEditorState, tailwindVersion);
 
   const getRegistryCommand = (preset: string) => {
     const url = isSavedPreset
@@ -198,6 +199,11 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             <TabsTrigger value="index.css" className="h-7 px-3 text-sm font-medium">
               index.css
             </TabsTrigger>
+            {tailwindVersion === "3" && (
+              <TabsTrigger value="tailwind.config.ts" className="h-7 px-3 text-sm font-medium">
+                tailwind.config.ts
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <div className="flex items-center gap-2">
@@ -231,6 +237,17 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             <ScrollBar />
           </ScrollArea>
         </TabsContent>
+
+        {tailwindVersion === "3" && (
+          <TabsContent value="tailwind.config.ts" className="overflow-hidden">
+            <ScrollArea className="relative h-full">
+              <pre className="h-full p-4 text-sm">
+                <code>{configCode}</code>
+              </pre>
+              <ScrollBar />
+            </ScrollArea>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
