@@ -5,29 +5,24 @@ import React, { use } from "react";
 
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
-import {
-  COMMON_STYLES,
-  DEFAULT_FONT_MONO,
-  DEFAULT_FONT_SANS,
-  DEFAULT_FONT_SERIF,
-  defaultThemeState,
-} from "@/config/theme";
+import { COMMON_STYLES, defaultThemeState } from "@/config/theme";
 import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useControlsTabFromUrl, type ControlTab } from "@/hooks/use-controls-tab-from-url";
 import { useEditorStore } from "@/store/editor-store";
+import { type FontInfo } from "@/types/fonts";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
-import { getAppliedThemeFont, monoFonts, sansSerifFonts, serifFonts } from "@/utils/theme-fonts";
+import { buildFontFamily } from "@/utils/fonts";
+import { getAppliedThemeFont } from "@/utils/theme-fonts";
 import { HorizontalScrollArea } from "../horizontal-scroll-area";
 import { ChatInterface } from "./ai/chat-interface";
 import ColorPicker from "./color-picker";
 import ControlSection from "./control-section";
+import { GoogleFontPicker } from "./google-font-picker";
 import HslAdjustmentControls from "./hsl-adjustment-controls";
 import ShadowControl from "./shadow-control";
 import { SliderWithInput } from "./slider-with-input";
 import ThemeEditActions from "./theme-edit-actions";
-import ThemeFontSelect from "./theme-font-select";
 import ThemePresetSelect from "./theme-preset-select";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 
@@ -362,43 +357,49 @@ const ThemeControlPanel = ({
                 </div>
               </div>
 
-              <ControlSection title="Font Family" expanded>
+              <ControlSection title="Font Family" expanded className="p-3">
                 <div className="mb-4">
                   <Label htmlFor="font-sans" className="mb-1.5 block text-xs">
                     Sans-Serif Font
                   </Label>
-                  <ThemeFontSelect
-                    fonts={{ ...sansSerifFonts, ...serifFonts, ...monoFonts }}
-                    defaultValue={DEFAULT_FONT_SANS}
-                    currentFont={getAppliedThemeFont(themeState, "font-sans")}
-                    onFontChange={(value) => updateStyle("font-sans", value)}
+                  <GoogleFontPicker
+                    value={getAppliedThemeFont(themeState, "font-sans") || undefined}
+                    category="sans-serif"
+                    placeholder="Choose a sans-serif font..."
+                    onSelect={(font: FontInfo) => {
+                      const fontFamily = buildFontFamily(font.family, font.category);
+                      updateStyle("font-sans", fontFamily);
+                    }}
                   />
                 </div>
-
-                <Separator className="my-4" />
 
                 <div className="mb-4">
                   <Label htmlFor="font-serif" className="mb-1.5 block text-xs">
                     Serif Font
                   </Label>
-                  <ThemeFontSelect
-                    fonts={{ ...serifFonts, ...sansSerifFonts, ...monoFonts }}
-                    defaultValue={DEFAULT_FONT_SERIF}
-                    currentFont={getAppliedThemeFont(themeState, "font-serif")}
-                    onFontChange={(value) => updateStyle("font-serif", value)}
+                  <GoogleFontPicker
+                    value={getAppliedThemeFont(themeState, "font-serif") || undefined}
+                    category="serif"
+                    placeholder="Choose a serif font..."
+                    onSelect={(font: FontInfo) => {
+                      const fontFamily = buildFontFamily(font.family, font.category);
+                      updateStyle("font-serif", fontFamily);
+                    }}
                   />
                 </div>
 
-                <Separator className="my-4" />
                 <div>
                   <Label htmlFor="font-mono" className="mb-1.5 block text-xs">
                     Monospace Font
                   </Label>
-                  <ThemeFontSelect
-                    fonts={{ ...monoFonts, ...sansSerifFonts, ...serifFonts }}
-                    defaultValue={DEFAULT_FONT_MONO}
-                    currentFont={getAppliedThemeFont(themeState, "font-mono")}
-                    onFontChange={(value) => updateStyle("font-mono", value)}
+                  <GoogleFontPicker
+                    value={getAppliedThemeFont(themeState, "font-mono") || undefined}
+                    category="monospace"
+                    placeholder="Choose a monospace font..."
+                    onSelect={(font: FontInfo) => {
+                      const fontFamily = buildFontFamily(font.family, font.category);
+                      updateStyle("font-mono", fontFamily);
+                    }}
                   />
                 </div>
               </ControlSection>
