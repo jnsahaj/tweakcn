@@ -1,3 +1,5 @@
+// THIS COMPONENT MIGHT BE REPLACED BY THE GOOGLE FONT PICKER
+
 import React, { useMemo } from "react";
 import {
   Select,
@@ -22,12 +24,12 @@ const ThemeFontSelect: React.FC<ThemeFontSelectProps> = ({
   onFontChange,
 }) => {
   const fontNames = useMemo(() => ["System", ...Object.keys(fonts)], [fonts]);
-  const value = currentFont ? fonts[currentFont] ?? defaultValue : defaultValue;
+  const value = currentFont ? (fonts[currentFont] ?? defaultValue) : defaultValue;
 
   return (
     <Select value={value || ""} onValueChange={onFontChange}>
-      <div className="flex gap-1 items-center w-full">
-        <SelectTrigger className="w-full bg-secondary text-secondary-foreground">
+      <div className="flex w-full items-center gap-1">
+        <SelectTrigger className="bg-secondary text-secondary-foreground w-full">
           <SelectValue placeholder="Select theme font" />
         </SelectTrigger>
       </div>

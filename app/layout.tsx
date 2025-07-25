@@ -1,4 +1,5 @@
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
+import { DynamicFontLoader } from "@/components/dynamic-font-loader";
 import { GetProDialogWrapper } from "@/components/get-pro-dialog-wrapper";
 import { PostHogInit } from "@/components/posthog-init";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <ThemeScript />
+        <DynamicFontLoader />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -65,6 +67,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           sizes="180x180"
         />
         <link rel="manifest" href="/site.webmanifest" />
+
+        {/* PRELOAD FONTS USED BY BUILT-IN THEMES */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
