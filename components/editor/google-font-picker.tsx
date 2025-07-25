@@ -19,6 +19,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import { FontCategory, useFontSearch } from "@/hooks/use-font-search";
+import { cn } from "@/lib/utils";
 import { FontInfo, GoogleFontCategory } from "@/types/fonts";
 import { buildFontFamily, getDefaultWeights, loadGoogleFont, waitForFont } from "@/utils/fonts";
 import { ChevronDown, Loader2 } from "lucide-react";
@@ -124,7 +125,11 @@ export function GoogleFontPicker({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" className={`w-full justify-between ${className}`}>
+        <Button
+          variant="outline"
+          role="combobox"
+          className={cn("bg-input/25 w-full justify-between", className)}
+        >
           <div className="flex items-center gap-2">
             {currentFont ? (
               <span className="inline-flex items-center gap-2">
@@ -135,8 +140,6 @@ export function GoogleFontPicker({
                 >
                   {currentFont.family}
                 </span>
-
-                <span className="text-muted-foreground text-xs">{currentFont.category}</span>
               </span>
             ) : (
               <span className="text-muted-foreground">{placeholder}</span>
@@ -161,7 +164,7 @@ export function GoogleFontPicker({
                 value={selectedCategory}
                 onValueChange={(value) => setSelectedCategory(value as FontCategory)}
               >
-                <SelectTrigger className="focus bg-background h-8 px-2 text-xs outline-none">
+                <SelectTrigger className="focus bg-input/25 h-8 px-2 text-xs outline-none">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -191,7 +194,7 @@ export function GoogleFontPicker({
                 {allFonts.map((font: FontInfo) => (
                   <CommandItem
                     key={font.family}
-                    className="group/command-item flex cursor-pointer flex-col items-start gap-1 p-2"
+                    className="flex cursor-pointer flex-col items-start gap-1 p-2"
                     onSelect={() => handleFontSelect(font)}
                     disabled={loadingFont === font.family}
                     onMouseEnter={() => {
@@ -206,15 +209,15 @@ export function GoogleFontPicker({
                           fontFamily: buildFontFamily(font.family, font.category),
                         }}
                       >
-                        <span className="text-base leading-tight font-medium">{font.family}</span>
+                        <span className="text-base leading-tight">{font.family}</span>
                         {loadingFont === font.family && <Loader2 className="size-3 animate-spin" />}
                       </span>
 
-                      <div className="text-muted-foreground group-hover/command-item:text-accent-foreground flex items-center gap-1">
-                        <span className="text-xs">{font.category}</span>
+                      <div className="flex items-center gap-1 text-xs font-normal opacity-70">
+                        <span>{font.category}</span>
 
                         {font.variable && (
-                          <span className="inline-flex items-center gap-1 text-xs">
+                          <span className="inline-flex items-center gap-1">
                             <span>•</span>
                             <span>Variable</span>
                           </span>
