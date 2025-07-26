@@ -18,16 +18,17 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
-import { FontCategory, useFontSearch } from "@/hooks/use-font-search";
+import { FilterFontCategory, useFontSearch } from "@/hooks/use-font-search";
 import { cn } from "@/lib/utils";
-import { FontInfo, GoogleFontCategory } from "@/types/fonts";
-import { buildFontFamily, getDefaultWeights, loadGoogleFont, waitForFont } from "@/utils/fonts";
+import { FontInfo } from "@/types/fonts";
+import { buildFontFamily, getDefaultWeights, waitForFont } from "@/utils/fonts";
+import { loadGoogleFont } from "@/utils/fonts/google-fonts";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface GoogleFontPickerProps {
   value?: string;
-  category?: GoogleFontCategory;
+  category?: FilterFontCategory;
   onSelect: (font: FontInfo) => void;
   placeholder?: string;
   className?: string;
@@ -42,7 +43,7 @@ export function GoogleFontPicker({
 }: GoogleFontPickerProps) {
   const [inputValue, setInputValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<FontCategory>(category || "all");
+  const [selectedCategory, setSelectedCategory] = useState<FilterFontCategory>(category || "all");
   const [loadingFont, setLoadingFont] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -64,24 +65,34 @@ export function GoogleFontPicker({
     return fontQuery.data.pages.flatMap((page) => page.fonts);
   }, [fontQuery.data]);
 
-  // Infinite scroll detection
-  useEffect(() => {
-    const scrollElement = scrollRef.current;
-    if (!scrollElement) return;
+  // Intersection Observer ref callback for infinite scroll
+  const loadMoreRefCallback = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) return;
 
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = scrollElement;
-      // Load more when scrolled to 80% of the way down
-      if (scrollTop + clientHeight >= scrollHeight * 0.8) {
-        if (fontQuery.hasNextPage && !fontQuery.isFetchingNextPage) {
-          fontQuery.fetchNextPage();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting && fontQuery.hasNextPage && !fontQuery.isFetchingNextPage) {
+            fontQuery.fetchNextPage();
+          }
+        },
+        {
+          root: scrollRef.current,
+          rootMargin: "100px",
+          threshold: 0,
         }
-      }
-    };
+      );
 
-    scrollElement.addEventListener("scroll", handleScroll);
-    return () => scrollElement.removeEventListener("scroll", handleScroll);
-  }, [fontQuery]);
+      observer.observe(node);
+      return () => observer.unobserve(node);
+    },
+    [fontQuery.hasNextPage, fontQuery.isFetchingNextPage, fontQuery.fetchNextPage]
+  );
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, [selectedCategory, searchQuery]);
 
   const handleFontSelect = useCallback(
     async (font: FontInfo) => {
@@ -116,11 +127,11 @@ export function GoogleFontPicker({
 
     return {
       family: extractedFontName,
-      category,
+      category: category || "sans-serif",
       variants: ["400"],
       variable: false,
     } as FontInfo;
-  }, [value, allFonts]);
+  }, [value, allFonts, category]);
 
   return (
     <Popover>
@@ -162,7 +173,7 @@ export function GoogleFontPicker({
             <div className="px-2 py-1">
               <Select
                 value={selectedCategory}
-                onValueChange={(value) => setSelectedCategory(value as FontCategory)}
+                onValueChange={(value) => setSelectedCategory(value as FilterFontCategory)}
               >
                 <SelectTrigger className="focus bg-input/25 h-8 px-2 text-xs outline-none">
                   <SelectValue />
@@ -226,6 +237,9 @@ export function GoogleFontPicker({
                     </div>
                   </CommandItem>
                 ))}
+
+                {/* Load more trigger element */}
+                {fontQuery.hasNextPage && <div ref={loadMoreRefCallback} className="h-2 w-full" />}
 
                 {/* Loading indicator for infinite scroll */}
                 {fontQuery.isFetchingNextPage && (

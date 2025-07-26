@@ -1,6 +1,22 @@
-import { PaginatedFontsResponse } from "@/types/fonts";
-import { fetchGoogleFonts } from "@/utils/fonts";
+import { FontInfo, PaginatedFontsResponse } from "@/types/fonts";
+import { FALLBACK_FONTS } from "@/utils/fonts";
+import { readFileSync } from "fs";
 import { NextRequest, NextResponse } from "next/server";
+import { join } from "path";
+
+function loadFontsFromFile(): FontInfo[] {
+  try {
+    const fontsPath = join(process.cwd(), "public", "assets", "google-fonts.json");
+    const fontsData = readFileSync(fontsPath, "utf-8");
+    const fonts: FontInfo[] = JSON.parse(fontsData);
+
+    console.log(`✅ Loaded ${fonts.length} fonts from static file`);
+    return fonts;
+  } catch (error) {
+    console.warn("⚠️ Could not load fonts from static file, using fallback fonts:", error);
+    return FALLBACK_FONTS;
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +26,7 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(Number(searchParams.get("limit")) || 50, 100);
     const offset = Number(searchParams.get("offset")) || 0;
 
-    const allFonts = await fetchGoogleFonts();
+    const allFonts = loadFontsFromFile();
 
     // Filter fonts based on search query and category
     let filteredFonts = allFonts;
@@ -23,10 +39,6 @@ export async function GET(request: NextRequest) {
       filteredFonts = filteredFonts.filter((font) => font.category === category);
     }
 
-    // Sort alphabetically by family name
-    filteredFonts.sort((a, b) => a.family.localeCompare(b.family));
-
-    // Apply pagination
     const paginatedFonts = filteredFonts.slice(offset, offset + limit);
 
     const response: PaginatedFontsResponse = {
