@@ -7,6 +7,8 @@
     "build": "npm run generate-theme-registry && next build --turbopack",
     "start": "next start",
     "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "generate-theme-registry": "tsx scripts/generate-theme-registry.ts && tsx scripts/generate-registry.ts",
     "prepare": "husky"
   },
