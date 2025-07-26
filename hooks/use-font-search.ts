@@ -1,11 +1,11 @@
-import { PaginatedFontsResponse, type GoogleFontCategory } from "@/types/fonts";
+import { PaginatedFontsResponse, type FontCategory } from "@/types/fonts";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-export type FontCategory = "all" | GoogleFontCategory;
+export type FilterFontCategory = "all" | FontCategory;
 
 interface UseFontSearchParams {
   query: string;
-  category?: FontCategory;
+  category?: FilterFontCategory;
   limit?: number;
 }
 

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "generate-theme-registry": "tsx scripts/generate-theme-registry.ts && tsx scripts/generate-registry.ts",
+    "fetch-google-fonts": "tsx scripts/fetch-google-fonts.ts",
     "prepare": "husky"
   },
   "dependencies": {

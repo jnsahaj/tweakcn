@@ -1,4 +1,4 @@
-export type GoogleFontCategory = "sans-serif" | "serif" | "display" | "handwriting" | "monospace";
+export type FontCategory = "sans-serif" | "serif" | "display" | "handwriting" | "monospace";
 
 // Google Fonts API response types
 export type GoogleFontAxis = {
@@ -14,7 +14,7 @@ export type GoogleFontFiles = {
 export type GoogleFont = {
   kind: "webfonts#webfont";
   family: string;
-  category: GoogleFontCategory;
+  category: FontCategory;
   variants: string[];
   subsets: string[];
   version: string;
@@ -32,7 +32,7 @@ export type GoogleFontsAPIResponse = {
 // App's font info type
 export type FontInfo = {
   family: string;
-  category: GoogleFontCategory;
+  category: FontCategory;
   variants: string[];
   variable: boolean;
 };
