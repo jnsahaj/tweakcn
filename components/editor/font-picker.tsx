@@ -23,10 +23,11 @@ import { cn } from "@/lib/utils";
 import { FontInfo } from "@/types/fonts";
 import { buildFontFamily, getDefaultWeights, waitForFont } from "@/utils/fonts";
 import { loadGoogleFont } from "@/utils/fonts/google-fonts";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { Check, ChevronDown, FunnelX, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { TooltipWrapper } from "../tooltip-wrapper";
 
-interface GoogleFontPickerProps {
+interface FontPickerProps {
   value?: string;
   category?: FilterFontCategory;
   onSelect: (font: FontInfo) => void;
@@ -34,19 +35,22 @@ interface GoogleFontPickerProps {
   className?: string;
 }
 
-export function GoogleFontPicker({
+export function FontPicker({
   value,
   category,
   onSelect,
   placeholder = "Search fonts...",
   className,
-}: GoogleFontPickerProps) {
+}: FontPickerProps) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<FilterFontCategory>(category || "all");
   const [loadingFont, setLoadingFont] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const selectedFontRef = useRef<HTMLDivElement>(null);
+  const hasScrolledToSelectedFont = useRef(false);
 
   const debouncedSetSearchQuery = useDebouncedCallback(setSearchQuery, 300);
 
@@ -60,6 +64,25 @@ export function GoogleFontPicker({
     limit: 15,
     enabled: open,
   });
+
+  useEffect(() => {
+    if (!open) return;
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, [selectedCategory, searchQuery, open]);
+
+  useEffect(() => {
+    if (open && fontQuery.data && !hasScrolledToSelectedFont.current) {
+      requestAnimationFrame(() => {
+        selectedFontRef.current?.scrollIntoView({
+          block: "center",
+          inline: "nearest",
+        });
+      });
+      hasScrolledToSelectedFont.current = true;
+    } else if (!open) {
+      hasScrolledToSelectedFont.current = false;
+    }
+  }, [open, fontQuery.data]);
 
   // Flatten all pages into a single array
   const allFonts = useMemo(() => {
@@ -92,10 +115,6 @@ export function GoogleFontPicker({
     [fontQuery.hasNextPage, fontQuery.isFetchingNextPage, fontQuery.fetchNextPage]
   );
 
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0 });
-  }, [selectedCategory, searchQuery]);
-
   const handleFontSelect = useCallback(
     async (font: FontInfo) => {
       setLoadingFont(font.family);
@@ -110,7 +129,6 @@ export function GoogleFontPicker({
 
       setLoadingFont(null);
       onSelect(font);
-      setInputValue("");
     },
     [onSelect]
   );
@@ -158,19 +176,34 @@ export function GoogleFontPicker({
               <span className="text-muted-foreground">{placeholder}</span>
             )}
           </div>
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronDown className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
 
       <PopoverContent className="w-[300px] p-0" align="start">
         <Command shouldFilter={false} className="h-96 w-full overflow-hidden">
           <div className="flex flex-col">
-            <CommandInput
-              className="h-10 w-full border-none p-0"
-              placeholder="Search Google fonts..."
-              value={inputValue}
-              onValueChange={setInputValue}
-            />
+            <div className="relative">
+              <CommandInput
+                className="h-10 w-full border-none p-0 pr-10"
+                placeholder="Search Google fonts..."
+                value={inputValue}
+                onValueChange={setInputValue}
+              />
+
+              {inputValue && (
+                <TooltipWrapper asChild label="Clear search">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setInputValue("")}
+                    className="absolute top-2 right-2 size-6"
+                  >
+                    <FunnelX className="size-4" />
+                  </Button>
+                </TooltipWrapper>
+              )}
+            </div>
 
             <div className="px-2 py-1">
               <Select
@@ -204,41 +237,48 @@ export function GoogleFontPicker({
               <CommandEmpty>No fonts found.</CommandEmpty>
             ) : (
               <CommandList className="scrollbar-thin size-full p-1" ref={scrollRef}>
-                {allFonts.map((font: FontInfo) => (
-                  <CommandItem
-                    key={font.family}
-                    className="flex cursor-pointer flex-col items-start gap-1 p-2"
-                    onSelect={() => handleFontSelect(font)}
-                    disabled={loadingFont === font.family}
-                    onMouseEnter={() => {
-                      // Preload font on hover
-                      loadGoogleFont(font.family, ["400"]);
-                    }}
-                  >
-                    <div className="flex w-full flex-col">
-                      <span
-                        className="flex items-center gap-2"
-                        style={{
-                          fontFamily: buildFontFamily(font.family, font.category),
-                        }}
-                      >
-                        <span className="text-base leading-tight">{font.family}</span>
-                        {loadingFont === font.family && <Loader2 className="size-3 animate-spin" />}
-                      </span>
+                {allFonts.map((font: FontInfo) => {
+                  const isSelected = font.family === value;
+                  const isLoading = loadingFont === font.family;
+                  const fontFamily = buildFontFamily(font.family, font.category);
 
-                      <div className="flex items-center gap-1 text-xs font-normal opacity-70">
-                        <span>{font.category}</span>
+                  const handlePreloadOnHover = () => {
+                    loadGoogleFont(font.family, ["400"]);
+                  };
 
-                        {font.variable && (
-                          <span className="inline-flex items-center gap-1">
-                            <span>•</span>
-                            <span>Variable</span>
-                          </span>
-                        )}
+                  return (
+                    <CommandItem
+                      key={font.family}
+                      className="flex cursor-pointer items-center justify-between gap-2 p-2"
+                      onSelect={() => handleFontSelect(font)}
+                      disabled={isLoading}
+                      onMouseEnter={handlePreloadOnHover}
+                      ref={isSelected ? selectedFontRef : null}
+                    >
+                      <div className="line-clamp-1 inline-flex w-full flex-1 flex-col justify-between">
+                        <span
+                          className="inline-flex items-center gap-2 truncate"
+                          style={{ fontFamily }}
+                        >
+                          {font.family}
+                          {isLoading && <Loader2 className="size-3 animate-spin" />}
+                        </span>
+
+                        <div className="flex items-center gap-1 text-xs font-normal opacity-70">
+                          <span>{font.category}</span>
+
+                          {font.variable && (
+                            <span className="inline-flex items-center gap-1">
+                              <span>•</span>
+                              <span>Variable</span>
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </CommandItem>
-                ))}
+                      {isSelected && <Check className="size-4 shrink-0 opacity-70" />}
+                    </CommandItem>
+                  );
+                })}
 
                 {/* Load more trigger element */}
                 {fontQuery.hasNextPage && <div ref={loadMoreRefCallback} className="h-2 w-full" />}
