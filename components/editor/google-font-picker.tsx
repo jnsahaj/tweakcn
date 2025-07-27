@@ -41,6 +41,7 @@ export function GoogleFontPicker({
   placeholder = "Search fonts...",
   className,
 }: GoogleFontPickerProps) {
+  const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<FilterFontCategory>(category || "all");
@@ -57,6 +58,7 @@ export function GoogleFontPicker({
     query: searchQuery,
     category: selectedCategory,
     limit: 15,
+    enabled: open,
   });
 
   // Flatten all pages into a single array
@@ -134,7 +136,7 @@ export function GoogleFontPicker({
   }, [value, allFonts, category]);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
