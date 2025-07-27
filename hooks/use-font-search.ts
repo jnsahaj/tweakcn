@@ -7,9 +7,15 @@ interface UseFontSearchParams {
   query: string;
   category?: FilterFontCategory;
   limit?: number;
+  enabled?: boolean;
 }
 
-export function useFontSearch({ query, category = "all", limit = 20 }: UseFontSearchParams) {
+export function useFontSearch({
+  query,
+  category = "all",
+  limit = 20,
+  enabled = true,
+}: UseFontSearchParams) {
   return useInfiniteQuery({
     queryKey: ["fonts", query, category],
     queryFn: async ({ pageParam }) => {
@@ -37,5 +43,6 @@ export function useFontSearch({ query, category = "all", limit = 20 }: UseFontSe
       return lastPage.hasMore ? lastPage.offset + lastPage.limit : undefined;
     },
     staleTime: 1000 * 60 * 60 * 24, // 1 day
+    enabled,
   });
 }
