@@ -18,7 +18,7 @@ import { HorizontalScrollArea } from "../horizontal-scroll-area";
 import { ChatInterface } from "./ai/chat-interface";
 import ColorPicker from "./color-picker";
 import ControlSection from "./control-section";
-import { GoogleFontPicker } from "./google-font-picker";
+import { FontPicker } from "./font-picker";
 import HslAdjustmentControls from "./hsl-adjustment-controls";
 import ShadowControl from "./shadow-control";
 import { SliderWithInput } from "./slider-with-input";
@@ -362,7 +362,7 @@ const ThemeControlPanel = ({
                   <Label htmlFor="font-sans" className="mb-1.5 block text-xs">
                     Sans-Serif Font
                   </Label>
-                  <GoogleFontPicker
+                  <FontPicker
                     value={getAppliedThemeFont(themeState, "font-sans") || undefined}
                     category="sans-serif"
                     placeholder="Choose a sans-serif font..."
@@ -377,7 +377,7 @@ const ThemeControlPanel = ({
                   <Label htmlFor="font-serif" className="mb-1.5 block text-xs">
                     Serif Font
                   </Label>
-                  <GoogleFontPicker
+                  <FontPicker
                     value={getAppliedThemeFont(themeState, "font-serif") || undefined}
                     category="serif"
                     placeholder="Choose a serif font..."
@@ -392,7 +392,7 @@ const ThemeControlPanel = ({
                   <Label htmlFor="font-mono" className="mb-1.5 block text-xs">
                     Monospace Font
                   </Label>
-                  <GoogleFontPicker
+                  <FontPicker
                     value={getAppliedThemeFont(themeState, "font-mono") || undefined}
                     category="monospace"
                     placeholder="Choose a monospace font..."
