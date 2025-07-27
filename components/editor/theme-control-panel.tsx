@@ -3,6 +3,17 @@
 import { AlertCircle, Sparkle } from "lucide-react";
 import React, { use } from "react";
 
+import { ChatInterface } from "@/components/editor/ai/chat-interface";
+import ColorPicker from "@/components/editor/color-picker";
+import ControlSection from "@/components/editor/control-section";
+import { FontPicker } from "@/components/editor/font-picker";
+import HslAdjustmentControls from "@/components/editor/hsl-adjustment-controls";
+import ShadowControl from "@/components/editor/shadow-control";
+import { SliderWithInput } from "@/components/editor/slider-with-input";
+import ThemeEditActions from "@/components/editor/theme-edit-actions";
+import ThemePresetSelect from "@/components/editor/theme-preset-select";
+import TabsTriggerPill from "@/components/editor/theme-preview/tabs-trigger-pill";
+import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
@@ -14,17 +25,6 @@ import { type FontInfo } from "@/types/fonts";
 import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
 import { buildFontFamily } from "@/utils/fonts";
 import { getAppliedThemeFont } from "@/utils/theme-fonts";
-import { HorizontalScrollArea } from "../horizontal-scroll-area";
-import { ChatInterface } from "./ai/chat-interface";
-import ColorPicker from "./color-picker";
-import ControlSection from "./control-section";
-import { FontPicker } from "./font-picker";
-import HslAdjustmentControls from "./hsl-adjustment-controls";
-import ShadowControl from "./shadow-control";
-import { SliderWithInput } from "./slider-with-input";
-import ThemeEditActions from "./theme-edit-actions";
-import ThemePresetSelect from "./theme-preset-select";
-import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 
 const ThemeControlPanel = ({
   styles,
