@@ -1,4 +1,5 @@
-import { ThemeEditorState } from "../types/editor";
+import { ThemeEditorState } from "@/types/editor";
+import { SYSTEM_FONTS } from "@/utils/fonts";
 
 const sansSerifFontNames = [
   "Inter",
@@ -80,8 +81,17 @@ export const getAppliedThemeFont = (
   state: ThemeEditorState,
   fontKey: "font-sans" | "font-serif" | "font-mono"
 ): string | null => {
-  const fontSans = state.styles.light[fontKey];
-  // find key of font in fonts object based on value
-  const key = Object.keys(fonts).find((key) => fonts[key].includes(fontSans));
-  return key ? key : null;
+  const currentStyles = state.styles[state.currentMode];
+  const fontValue = currentStyles[fontKey];
+
+  // Extract the font family name from the font value
+  if (!fontValue) return null;
+
+  // Handle both old format ("Outfit, sans-serif") and new format ("Outfit", ui-sans-serif, ...)
+  const firstFont = fontValue.split(",")[0].trim();
+  const cleanFont = firstFont.replace(/['"]/g, "");
+
+  // Skip system fonts
+  if (SYSTEM_FONTS.includes(cleanFont.toLowerCase())) return null;
+  return cleanFont;
 };

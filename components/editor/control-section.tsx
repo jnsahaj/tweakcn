@@ -15,7 +15,7 @@ const ControlSection = ({ title, children, expanded = false, className }: Contro
         toggleExpanded: () => setIsExpanded((prev) => !prev),
       }}
     >
-      <div className={cn("mb-4 overflow-hidden rounded-lg border", className)}>
+      <div className={cn("mb-4 overflow-hidden rounded-lg border")}>
         <div
           className="bg-background hover:bg-muted flex cursor-pointer items-center justify-between p-3"
           onClick={() => setIsExpanded(!isExpanded)}
@@ -36,7 +36,7 @@ const ControlSection = ({ title, children, expanded = false, className }: Contro
             isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
           )}
         >
-          <div className="bg-background border-t p-3">{children}</div>
+          <div className={cn("bg-background border-t p-3", className)}>{children}</div>
         </div>
       </div>
     </SectionContext.Provider>
