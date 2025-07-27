@@ -2,7 +2,7 @@ import { FontInfo, GoogleFont, GoogleFontsAPIResponse } from "@/types/fonts";
 
 export const GOOGLE_FONTS_API_URL = "https://www.googleapis.com/webfonts/v1/webfonts";
 
-export async function fetchGoogleFonts(googleFontsApiKey: string): Promise<FontInfo[]> {
+export async function fetchGoogleFonts(googleFontsApiKey: string | undefined): Promise<FontInfo[]> {
   try {
     if (!googleFontsApiKey) throw new Error("Google Fonts API key is required");
 

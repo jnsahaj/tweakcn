@@ -1,22 +1,12 @@
-import { FontInfo, PaginatedFontsResponse } from "@/types/fonts";
+import { PaginatedFontsResponse } from "@/types/fonts";
 import { FALLBACK_FONTS } from "@/utils/fonts";
-import { readFileSync } from "fs";
+import { fetchGoogleFonts } from "@/utils/fonts/google-fonts";
+import { unstable_cache } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
-import { join } from "path";
 
-function loadFontsFromFile(): FontInfo[] {
-  try {
-    const fontsPath = join(process.cwd(), "public", "assets", "google-fonts.json");
-    const fontsData = readFileSync(fontsPath, "utf-8");
-    const fonts: FontInfo[] = JSON.parse(fontsData);
-
-    console.log(`✅ Loaded ${fonts.length} fonts from static file`);
-    return fonts;
-  } catch (error) {
-    console.warn("⚠️ Could not load fonts from static file, using fallback fonts:", error);
-    return FALLBACK_FONTS;
-  }
-}
+const cachedFetchGoogleFonts = unstable_cache(fetchGoogleFonts, ["google-fonts-catalogue"], {
+  tags: ["google-fonts-catalogue"],
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,10 +16,17 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(Number(searchParams.get("limit")) || 50, 100);
     const offset = Number(searchParams.get("offset")) || 0;
 
-    const allFonts = loadFontsFromFile();
+    let googleFonts = FALLBACK_FONTS;
+
+    try {
+      googleFonts = await cachedFetchGoogleFonts(process.env.GOOGLE_FONTS_API_KEY);
+    } catch (error) {
+      console.error("Error fetching Google Fonts:", error);
+      console.log("Using fallback fonts");
+    }
 
     // Filter fonts based on search query and category
-    let filteredFonts = allFonts;
+    let filteredFonts = googleFonts;
 
     if (query) {
       filteredFonts = filteredFonts.filter((font) => font.family.toLowerCase().includes(query));
