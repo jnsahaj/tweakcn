@@ -57,8 +57,11 @@ export function ThemeCard({ theme, className }: ThemeCardProps) {
   };
 
   const handleConfirmDelete = () => {
-    deleteThemeMutation.mutate(theme.id);
-    setShowDeleteDialog(false);
+    deleteThemeMutation.mutate(theme.id, {
+      onSuccess: () => {
+        setShowDeleteDialog(false);
+      },
+    });
   };
 
   const handleQuickApply = () => {
