@@ -10,8 +10,18 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { MoreVertical, Trash2, Edit, Loader2, Zap, ExternalLink, Copy } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useEditorStore } from "@/store/editor-store";
 import { useDeleteTheme } from "@/hooks/themes";
 import Link from "next/link";
@@ -39,10 +49,16 @@ const swatchDefinitions: SwatchDefinition[] = [
 export function ThemeCard({ theme, className }: ThemeCardProps) {
   const { themeState, setThemeState } = useEditorStore();
   const deleteThemeMutation = useDeleteTheme();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const mode = themeState.currentMode;
 
   const handleDelete = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
     deleteThemeMutation.mutate(theme.id);
+    setShowDeleteDialog(false);
   };
 
   const handleQuickApply = () => {
@@ -157,6 +173,34 @@ export function ThemeCard({ theme, className }: ThemeCardProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete your {theme.name} theme?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your theme.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteThemeMutation.isPending}
+            >
+              {deleteThemeMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
