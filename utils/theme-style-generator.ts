@@ -1,9 +1,9 @@
-import { ThemeEditorState } from "@/types/editor";
-import { colorFormatter } from "./color-converter";
-import { ColorFormat } from "../types";
-import { getShadowMap } from "./shadows";
 import { defaultLightThemeStyles } from "@/config/theme";
+import { ColorFormat } from "@/types";
+import { ThemeEditorState } from "@/types/editor";
 import { ThemeStyles } from "@/types/theme";
+import { colorFormatter } from "@/utils/color-converter";
+import { getShadowMap } from "@/utils/shadows";
 
 type ThemeMode = "light" | "dark";
 
@@ -68,29 +68,21 @@ const generateShadowVariables = (shadowMap: Record<string, string>): string => {
   --shadow-2xl: ${shadowMap["shadow-2xl"]};`;
 };
 
-const generateTrackingVariables = (themeStyles: ThemeStyles): string => {
-  const styles = themeStyles["light"];
-  if (styles["letter-spacing"] === "0em") {
-    return "";
-  }
-  return `
-
-  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
-  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
-  --tracking-normal: var(--tracking-normal);
-  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
-  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
-  --tracking-widest: calc(var(--tracking-normal) + 0.1em);`;
+export type GenerateVarsPreferences = {
+  includeFontVariables?: boolean;
 };
 
 const generateThemeVariables = (
   themeStyles: ThemeStyles,
   mode: ThemeMode,
-  formatColor: (color: string) => string
-): string => {
+  formatColor: (color: string) => string,
+  preferences: GenerateVarsPreferences
+) => {
+  const { includeFontVariables = true } = preferences;
+
   const selector = mode === "dark" ? ".dark" : ":root";
   const colorVars = generateColorVariables(themeStyles, mode, formatColor);
-  const fontVars = generateFontVariables(themeStyles, mode);
+  const fontVars = includeFontVariables ? generateFontVariables(themeStyles, mode) : "";
   const radiusVar = `\n  --radius: ${themeStyles[mode].radius};`;
   const shadowVars = generateShadowVariables(
     getShadowMap({ styles: themeStyles, currentMode: mode })
@@ -105,22 +97,50 @@ const generateThemeVariables = (
       ? `\n  --tracking-normal: ${themeStyles["light"]["letter-spacing"] ?? defaultLightThemeStyles["letter-spacing"]};`
       : "";
 
-  return (
-    selector +
-    " {" +
-    colorVars +
-    fontVars +
-    radiusVar +
-    shadowVars +
-    trackingVars +
-    spacingVar +
-    "\n}"
-  );
+  if (mode === "light") {
+    return (
+      selector +
+      " {" +
+      fontVars +
+      radiusVar +
+      colorVars +
+      shadowVars +
+      trackingVars +
+      spacingVar +
+      "\n}"
+    );
+  }
+
+  if (mode === "dark") {
+    return selector + " {" + colorVars + shadowVars + "\n}";
+  }
 };
 
-const generateTailwindV4ThemeInline = (themeStyles: ThemeStyles): string => {
-  return `@theme inline {
-  --color-background: var(--background);
+const generateInlineTrackingVariables = (themeStyles: ThemeStyles): string => {
+  const styles = themeStyles["light"];
+  if (styles["letter-spacing"] === "0em") return "";
+
+  return `\n  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+  --tracking-normal: var(--tracking-normal);
+  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+  --tracking-widest: calc(var(--tracking-normal) + 0.1em);\n`;
+};
+
+const generateTailwindV4ThemeInline = (
+  themeStyles: ThemeStyles,
+  preferences: GenerateVarsPreferences
+): string => {
+  const { includeFontVariables = true } = preferences;
+
+  const fontVarsInline = includeFontVariables
+    ? `\n  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-serif: var(--font-serif);\n`
+    : "";
+
+  const colorVarsInline = `\n  --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -151,34 +171,56 @@ const generateTailwindV4ThemeInline = (themeStyles: ThemeStyles): string => {
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-ring: var(--sidebar-ring);\n`;
 
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-serif: var(--font-serif);
-
-  --radius-sm: calc(var(--radius) - 4px);
+  const radiusVarsInline = `\n  --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 4px);\n`;
 
-  --shadow-2xs: var(--shadow-2xs);
+  const shadowVarsInline = `\n  --shadow-2xs: var(--shadow-2xs);
   --shadow-xs: var(--shadow-xs);
   --shadow-sm: var(--shadow-sm);
   --shadow: var(--shadow);
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);${generateTrackingVariables(themeStyles)}
-}`;
+  --shadow-2xl: var(--shadow-2xl);\n`;
+
+  const trackingVarsInline = generateInlineTrackingVariables(themeStyles);
+
+  return (
+    "@theme inline {" +
+    fontVarsInline +
+    colorVarsInline +
+    radiusVarsInline +
+    shadowVarsInline +
+    trackingVarsInline +
+    "}"
+  );
 };
 
-const generateTailwindV3Config = (_themeStyles: ThemeStyles): string => {
-  return `/** @type {import('tailwindcss').Config} */
+const generateTailwindV3ConfigFile = (
+  _themeStyles: ThemeStyles,
+  preferences: GenerateVarsPreferences
+): string => {
+  const { includeFontVariables = true } = preferences;
+
+  const fontFamilyBlock = includeFontVariables
+    ? `fontFamily: {
+        sans: "var(--font-sans)",
+        serif: "var(--font-serif)",
+        mono: "var(--font-mono)",
+      },`
+    : "";
+
+  const code = `
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
   theme: {
     extend: {
+      ${fontFamilyBlock}
       colors: {
         border: "var(--border)",
         input: "var(--input)",
@@ -236,20 +278,22 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      fontFamily: {
-        sans: ["var(--font-sans)"],
-        serif: ["var(--font-serif)"],
-        mono: ["var(--font-mono)"],
-      },
     },
   },
 }`;
+
+  return code
+    .trim()
+    .split("\n")
+    .filter((line) => line.trim() !== "")
+    .join("\n");
 };
 
 export const generateThemeCode = (
   themeEditorState: ThemeEditorState,
   colorFormat: ColorFormat = "hsl",
-  tailwindVersion: "3" | "4" = "3"
+  tailwindVersion: "3" | "4" = "3",
+  preferences: GenerateVarsPreferences = {}
 ): string => {
   if (
     !themeEditorState ||
@@ -259,13 +303,13 @@ export const generateThemeCode = (
     throw new Error("Invalid theme styles: missing light or dark mode");
   }
 
-  const themeStyles = themeEditorState.styles as ThemeStyles;
+  const themeStyles = themeEditorState.styles;
   const formatColor = (color: string) => colorFormatter(color, colorFormat, tailwindVersion);
 
-  const lightTheme = generateThemeVariables(themeStyles, "light", formatColor);
-  const darkTheme = generateThemeVariables(themeStyles, "dark", formatColor);
+  const lightTheme = generateThemeVariables(themeStyles, "light", formatColor, preferences);
+  const darkTheme = generateThemeVariables(themeStyles, "dark", formatColor, preferences);
   const tailwindV4Theme =
-    tailwindVersion === "4" ? `\n\n${generateTailwindV4ThemeInline(themeStyles)}` : "";
+    tailwindVersion === "4" ? `\n\n${generateTailwindV4ThemeInline(themeStyles, preferences)}` : "";
 
   const bodyLetterSpacing =
     themeStyles["light"]["letter-spacing"] !== "0em"
@@ -275,9 +319,9 @@ export const generateThemeCode = (
   return `${lightTheme}\n\n${darkTheme}${tailwindV4Theme}${bodyLetterSpacing}`;
 };
 
-export const generateTailwindConfigCode = (
+export const generateTailwindConfigFileCode = (
   themeEditorState: ThemeEditorState,
-  _tailwindVersion: "3" | "4" = "3"
+  preferences: GenerateVarsPreferences = {}
 ): string => {
   if (
     !themeEditorState ||
@@ -287,6 +331,6 @@ export const generateTailwindConfigCode = (
     throw new Error("Invalid theme styles: missing light or dark mode");
   }
 
-  const themeStyles = themeEditorState.styles as ThemeStyles;
-  return generateTailwindV3Config(themeStyles);
+  const themeStyles = themeEditorState.styles;
+  return generateTailwindV3ConfigFile(themeStyles, preferences);
 };

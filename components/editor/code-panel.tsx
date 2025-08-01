@@ -1,24 +1,42 @@
-import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Heart } from "lucide-react";
-import { ThemeEditorState } from "@/types/editor";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import { ColorFormat } from "../../types";
-import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "../ui/select";
-import { usePostHog } from "posthog-js/react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDialogActions } from "@/hooks/use-dialog-actions";
 import { useEditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
-import { generateThemeCode, generateTailwindConfigCode } from "@/utils/theme-style-generator";
 import { useThemePresetStore } from "@/store/theme-preset-store";
-import { useDialogActions } from "@/hooks/use-dialog-actions";
+import { ColorFormat } from "@/types";
+import { ThemeEditorState } from "@/types/editor";
+import {
+  generateTailwindConfigFileCode,
+  generateThemeCode,
+  GenerateVarsPreferences,
+} from "@/utils/theme-style-generator";
+import { Check, Copy, Heart, Settings } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
+import { useEffect, useMemo, useState } from "react";
 
 interface CodePanelProps {
   themeEditorState: ThemeEditorState;
 }
 
+const EXPORT_CODE_TABS = {
+  CSS_CODE: "css-code",
+  TAILWIND_CONFIG_CODE: "tailwind-config-code",
+};
+
 const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   const [registryCopied, setRegistryCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState(EXPORT_CODE_TABS.CSS_CODE);
   const [copied, setCopied] = useState(false);
   const posthog = usePostHog();
   const { handleSaveClick } = useDialogActions();
@@ -26,9 +44,11 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   const preset = useEditorStore((state) => state.themeState.preset);
   const colorFormat = usePreferencesStore((state) => state.colorFormat);
   const tailwindVersion = usePreferencesStore((state) => state.tailwindVersion);
+  const includeFontVariables = usePreferencesStore((state) => state.includeFontVariables);
   const packageManager = usePreferencesStore((state) => state.packageManager);
   const setColorFormat = usePreferencesStore((state) => state.setColorFormat);
   const setTailwindVersion = usePreferencesStore((state) => state.setTailwindVersion);
+  const setIncludeFontVariables = usePreferencesStore((state) => state.setIncludeFontVariables);
   const setPackageManager = usePreferencesStore((state) => state.setPackageManager);
   const hasUnsavedChanges = useEditorStore((state) => state.hasUnsavedChanges);
 
@@ -37,8 +57,12 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   );
   const getAvailableColorFormats = usePreferencesStore((state) => state.getAvailableColorFormats);
 
-  const code = generateThemeCode(themeEditorState, colorFormat, tailwindVersion);
-  const configCode = generateTailwindConfigCode(themeEditorState, tailwindVersion);
+  const preferences: GenerateVarsPreferences = {
+    includeFontVariables,
+  };
+
+  const code = generateThemeCode(themeEditorState, colorFormat, tailwindVersion, preferences);
+  const configCode = generateTailwindConfigFileCode(themeEditorState, preferences);
 
   const getRegistryCommand = (preset: string) => {
     const url = isSavedPreset
@@ -91,6 +115,13 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
     return preset && preset !== "default" && !hasUnsavedChanges();
   }, [preset, hasUnsavedChanges]);
 
+  // Auto-switch to CSS file when switching from v3 to v4
+  useEffect(() => {
+    if (tailwindVersion === "4" && activeTab === EXPORT_CODE_TABS.TAILWIND_CONFIG_CODE) {
+      setActiveTab(EXPORT_CODE_TABS.CSS_CODE);
+    }
+  }, [tailwindVersion, activeTab]);
+
   const PackageManagerHeader = ({ actionButton }: { actionButton: React.ReactNode }) => (
     <div className="flex border-b">
       {(["pnpm", "npm", "yarn", "bun"] as const).map((pm) => (
@@ -124,7 +155,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
                   variant="ghost"
                   size="sm"
                   onClick={copyRegistryCommand}
-                  className="ml-auto h-8"
+                  className="ml-auto size-8"
                   aria-label={registryCopied ? "Copied to clipboard" : "Copy to clipboard"}
                 >
                   {registryCopied ? <Check className="size-4" /> : <Copy className="size-4" />}
@@ -159,48 +190,80 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           </div>
         </div>
       </div>
-      <div className="mb-4 flex items-center gap-2">
-        <Select
-          value={tailwindVersion}
-          onValueChange={(value: "3" | "4") => {
-            setTailwindVersion(value);
-            if (value === "4" && colorFormat === "hsl") {
-              setColorFormat("oklch");
-            }
-          }}
-        >
-          <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
-            <SelectValue className="focus:ring-transparent" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="3">Tailwind v3</SelectItem>
-            <SelectItem value="4">Tailwind v4</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={colorFormat} onValueChange={(value: ColorFormat) => setColorFormat(value)}>
-          <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
-            <SelectValue className="focus:ring-transparent" />
-          </SelectTrigger>
-          <SelectContent>
-            {getAvailableColorFormats().map((colorFormat) => (
-              <SelectItem key={colorFormat} value={colorFormat}>
-                {colorFormat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Select
+            value={tailwindVersion}
+            onValueChange={(value: "3" | "4") => {
+              setTailwindVersion(value);
+              if (value === "4" && colorFormat === "hsl") {
+                setColorFormat("oklch");
+              }
+            }}
+          >
+            <SelectTrigger className="bg-muted/50 h-8 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
+              <SelectValue className="focus:ring-transparent" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="3">Tailwind v3</SelectItem>
+              <SelectItem value="4">Tailwind v4</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={colorFormat} onValueChange={(value: ColorFormat) => setColorFormat(value)}>
+            <SelectTrigger className="bg-muted/50 h-8 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
+              <SelectValue className="focus:ring-transparent" />
+            </SelectTrigger>
+            <SelectContent>
+              {getAvailableColorFormats().map((colorFormat) => (
+                <SelectItem key={colorFormat} value={colorFormat}>
+                  {colorFormat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1.5 shadow-sm max-md:w-8">
+              <Settings />
+              <span className="sr-only md:not-sr-only">Preferences</span>
+            </Button>
+          </PopoverTrigger>
+
+          <PopoverContent align="end" className="w-[300px] space-y-2">
+            <div className="flex justify-between gap-4 rounded-lg">
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium">Include font variables</span>
+                <span className="text-muted-foreground text-xs text-pretty">
+                  If you handle fonts separately, turn this OFF.
+                </span>
+              </div>
+              <Switch
+                className="ml-auto shrink-0"
+                checked={includeFontVariables}
+                onCheckedChange={(checked) => setIncludeFontVariables(checked)}
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
       <Tabs
-        defaultValue="index.css"
+        value={activeTab}
+        onValueChange={setActiveTab}
         className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border"
       >
         <div className="bg-muted/50 flex flex-none items-center justify-between border-b px-4 py-2">
           <TabsList className="h-8 bg-transparent p-0">
-            <TabsTrigger value="index.css" className="h-7 px-3 text-sm font-medium">
+            <TabsTrigger value={EXPORT_CODE_TABS.CSS_CODE} className="h-8 px-2 text-sm font-medium">
               index.css
             </TabsTrigger>
             {tailwindVersion === "3" && (
-              <TabsTrigger value="tailwind.config.ts" className="h-7 px-3 text-sm font-medium">
+              <TabsTrigger
+                value={EXPORT_CODE_TABS.TAILWIND_CONFIG_CODE}
+                className="h-8 px-2 text-sm font-medium"
+              >
                 tailwind.config.ts
               </TabsTrigger>
             )}
@@ -211,7 +274,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
               variant="outline"
               size="sm"
               onClick={() => copyToClipboard(code)}
-              className="h-8"
+              className="h-8 max-md:w-8"
               aria-label={copied ? "Copied to clipboard" : "Copy to clipboard"}
             >
               {copied ? (
@@ -229,7 +292,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           </div>
         </div>
 
-        <TabsContent value="index.css" className="overflow-hidden">
+        <TabsContent value={EXPORT_CODE_TABS.CSS_CODE} className="overflow-hidden">
           <ScrollArea className="relative h-full">
             <pre className="h-full p-4 text-sm">
               <code>{code}</code>
@@ -239,7 +302,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
         </TabsContent>
 
         {tailwindVersion === "3" && (
-          <TabsContent value="tailwind.config.ts" className="overflow-hidden">
+          <TabsContent value={EXPORT_CODE_TABS.TAILWIND_CONFIG_CODE} className="overflow-hidden">
             <ScrollArea className="relative h-full">
               <pre className="h-full p-4 text-sm">
                 <code>{configCode}</code>
