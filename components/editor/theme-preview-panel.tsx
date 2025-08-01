@@ -153,7 +153,7 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
               <TabsContent value="dashboard" className="@container m-0 size-full">
                 <ExamplesPreviewContainer className="size-full">
                   <ScrollArea className="size-full">
-                    <div className="size-full min-w-[1400px]">
+                    <div className="size-full">
                       <DemoDashboard />
                     </div>
                     <ScrollBar orientation="horizontal" />
