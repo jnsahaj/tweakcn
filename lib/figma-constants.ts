@@ -2,7 +2,6 @@ export const FIGMA_CONSTANTS = {
   shadcraftUrl: "https://shadcraft.com?aff=6NjlYZ",
   previewUrl:
     "https://www.figma.com/design/J1e0cfCkDffMx6I0D0g5Nd/PREVIEW-%E2%80%A2-Shadcraft-%E2%80%A2-Beta-0.1.0?node-id=7050-2702&p=f&m=dev",
-  purchaseUrl: "https://shadcraft.lemonsqueezy.com/buy/ce9ced1d-3119-413d-82b8-a4baef6aab36",
   designers: [
     { name: "Designer 1", avatar: "/figma-onboarding/avatar-1.png", fallback: "D1" },
     { name: "Designer 2", avatar: "/figma-onboarding/avatar-2.png", fallback: "D2" },
@@ -36,6 +35,6 @@ export const FIGMA_CONSTANTS = {
   ],
 };
 
-export const createPurchaseUrl = (successRedirectUrl: string = "/") => {
-  return `${FIGMA_CONSTANTS.purchaseUrl}?embed=1&aff=6NjlYZ&redirect_url=${encodeURIComponent(successRedirectUrl)}`;
+export const redirectToShadcraft = () => {
+  window.open(FIGMA_CONSTANTS.shadcraftUrl, "_blank");
 };

@@ -11,7 +11,6 @@ import type { Metadata, Viewport } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import "./globals.css";
-import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator",
@@ -57,20 +56,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <ThemeScript />
         <DynamicFontLoader />
-        <Script
-          id="shadcraft"
-          dangerouslySetInnerHTML={{
-            __html: `
-window.lemonSqueezyAffiliateConfig = {
-  store: 'mystore', // Replace with your store's subdomain
-  trackOnLoad: false,
-  onReady: function(e) {
-    e.Track('6NjlYZ');
-  }
-}`,
-          }}
-        />
-        <Script id="affiliate" src="https://lmsqueezy.com/affiliate.js" defer />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

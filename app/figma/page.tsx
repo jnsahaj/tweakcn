@@ -11,7 +11,7 @@ import Shadcraft from "@/assets/shadcraft.svg";
 import FigmaIcon from "@/assets/figma.svg";
 import { Check, X, ArrowUpRight, Figma, Cable, Paintbrush } from "lucide-react";
 import Link from "next/link";
-import { FIGMA_CONSTANTS, createPurchaseUrl } from "@/lib/figma-constants";
+import { FIGMA_CONSTANTS, redirectToShadcraft } from "@/lib/figma-constants";
 
 export default function FigmaPage() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,9 +29,8 @@ export default function FigmaPage() {
       ),
   }));
 
-  const handlePurchase = () => {
-    const url = createPurchaseUrl("/");
-    window.open(url, "_blank");
+  const handleGetStarted = () => {
+    redirectToShadcraft();
   };
 
   useEffect(() => {
@@ -143,7 +142,7 @@ export default function FigmaPage() {
               </h1>
 
               <div className="flex justify-center gap-3.5">
-                <Button size="lg" className="h-10 px-8" onClick={handlePurchase}>
+                <Button size="lg" className="h-10 px-8" onClick={handleGetStarted}>
                   Get started
                 </Button>
                 <Link href={FIGMA_CONSTANTS.previewUrl} target="_blank" rel="noopener noreferrer">
@@ -253,7 +252,7 @@ export default function FigmaPage() {
                       <div className="text-muted-foreground text-sm line-through">$119</div>
                     </div>
                     <div className="flex gap-3">
-                      <Button className="flex-1" onClick={handlePurchase}>
+                      <Button className="flex-1" onClick={handleGetStarted}>
                         Get started
                       </Button>
                       <Link
