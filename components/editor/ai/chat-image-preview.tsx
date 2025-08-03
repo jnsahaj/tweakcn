@@ -1,10 +1,10 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/ui/revola";
 import { cn } from "@/lib/utils";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
@@ -16,8 +16,8 @@ interface ChatImagePreviewProps extends ComponentProps<typeof Image> {
 
 export function ChatImagePreview({ name, src, className, alt, ...props }: ChatImagePreviewProps) {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <ResponsiveDialog onlyDialog>
+      <ResponsiveDialogTrigger asChild>
         <div className="group/preview relative isolate size-full cursor-pointer overflow-hidden rounded-lg border">
           <Image
             width={250}
@@ -36,20 +36,20 @@ export function ChatImagePreview({ name, src, className, alt, ...props }: ChatIm
             <ImageIcon className="size-3.5" />
           </div>
         </div>
-      </DialogTrigger>
+      </ResponsiveDialogTrigger>
 
-      <DialogContent className="size-fit max-h-[80vh] max-w-[80vw] overflow-hidden rounded-lg p-0">
-        <DialogHeader className="sr-only">
-          <DialogTitle className="sr-only">Image Preview</DialogTitle>
-        </DialogHeader>
+      <ResponsiveDialogContent className="size-fit max-h-[80dvh] overflow-hidden sm:max-w-[80vw]">
+        <ResponsiveDialogHeader className="sr-only">
+          <ResponsiveDialogTitle className="sr-only">Image Preview</ResponsiveDialogTitle>
+        </ResponsiveDialogHeader>
         <Image
+          src={src}
           width={500}
           height={500}
-          src={src}
           alt="Full image preview"
-          className="h-auto max-h-[80vh] w-auto max-w-[80vw] object-contain"
+          className="size-auto max-h-[80vh] max-w-[80vw] object-contain"
         />
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }
