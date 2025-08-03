@@ -1,15 +1,16 @@
 import * as React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { Check, Copy } from "lucide-react";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@/components/ui/revola";
 
 interface ShareDialogProps {
   open: boolean;
@@ -27,35 +28,29 @@ export function ShareDialog({ open, onOpenChange, url }: ShareDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] p-0 py-6 overflow-hidden rounded-lg border shadow-lg gap-6">
-        <DialogHeader className="px-6">
-          <DialogTitle>Share Theme</DialogTitle>
-          <DialogDescription>
-            Anyone with this URL will be able to view this theme.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex items-center space-x-2 px-6">
-          <Input
-            readOnly
-            value={url}
-            className="flex-1"
-            onClick={(e) => e.currentTarget.select()}
-          />
-          <Button
-            size="icon"
-            disabled={isCopying}
-            onClick={handleCopy}
-            variant="outline"
-          >
-            {hasCopied ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-          </Button>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange} onlyDialog>
+      <ResponsiveDialogContent className="overflow-hidden p-6 shadow-lg sm:max-w-100">
+        <div className="space-y-6">
+          <ResponsiveDialogHeader className="p-0">
+            <ResponsiveDialogTitle>Share Theme</ResponsiveDialogTitle>
+            <ResponsiveDialogDescription>
+              Anyone with this URL will be able to view this theme.
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+
+          <div className="flex items-center space-x-2">
+            <Input
+              readOnly
+              value={url}
+              onClick={(e) => e.currentTarget.select()}
+              className="selection:bg-primary selection:text-primary-foreground flex-1"
+            />
+            <Button size="icon" disabled={isCopying} onClick={handleCopy} variant="outline">
+              {hasCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }
