@@ -99,7 +99,7 @@ export function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
             <div className="bg-primary/15 absolute right-0 bottom-0 -z-10 size-70 translate-x-1/2 translate-y-1/2 rounded-full blur-3xl" />
             {/* ----Background effects---- */}
 
-            <div className="absolute top-6 left-6 z-10 flex items-center justify-center overflow-hidden rounded-lg border lg:inset-6">
+            <div className="absolute inset-4 top-4 z-10 flex items-center justify-center overflow-hidden rounded-lg border lg:inset-6">
               <AIChatDemo />
             </div>
           </section>
