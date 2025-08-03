@@ -3,15 +3,28 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check, Heart } from "lucide-react";
 import { ThemeEditorState } from "@/types/editor";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import { ColorFormat } from "../../types";
-import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "../ui/select";
+// import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  TabsIndicator,
+} from "@/components/ui/base-ui-tabs";
+import {
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+  SelectItem,
+} from "@/components/ui/select";
 import { usePostHog } from "posthog-js/react";
 import { useEditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import { generateThemeCode, generateTailwindConfigCode } from "@/utils/theme-style-generator";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { useDialogActions } from "@/hooks/use-dialog-actions";
+import { ColorFormat } from "@/types";
 
 interface CodePanelProps {
   themeEditorState: ThemeEditorState;
@@ -172,7 +185,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
             <SelectValue className="focus:ring-transparent" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-99999">
             <SelectItem value="3">Tailwind v3</SelectItem>
             <SelectItem value="4">Tailwind v4</SelectItem>
           </SelectContent>
@@ -181,7 +194,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
           <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
             <SelectValue className="focus:ring-transparent" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-99999">
             {getAvailableColorFormats().map((colorFormat) => (
               <SelectItem key={colorFormat} value={colorFormat}>
                 {colorFormat}
@@ -204,6 +217,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
                 tailwind.config.ts
               </TabsTrigger>
             )}
+            <TabsIndicator className="bg-background rounded-sm" />
           </TabsList>
 
           <div className="flex items-center gap-2">
