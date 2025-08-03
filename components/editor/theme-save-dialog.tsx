@@ -1,14 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
@@ -23,6 +15,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "../ui/revola";
 
 const formSchema = z.object({
   themeName: z.string().min(1, "Theme name cannot be empty."),
@@ -71,64 +71,53 @@ export function ThemeSaveDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[550px] p-0 pt-6 overflow-hidden rounded-lg border shadow-lg gap-6">
-        <DialogHeader className="px-6">
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 px-6"
+    <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
+      <ResponsiveDialogContent className="overflow-hidden shadow-lg sm:max-w-100">
+        <div className="space-y-6 p-6 pt-0 sm:pt-6 sm:pb-2">
+          <ResponsiveDialogHeader className="p-0">
+            <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
+            <ResponsiveDialogDescription>{description}</ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="themeName"
+                render={({ field }) => (
+                  <FormItem className="grid">
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="My Awesome Theme" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </div>
+        <ResponsiveDialogFooter className="bg-muted/30 gap-2 border-t sm:px-6 sm:py-4">
+          <Button size="sm" disabled={isSaving} variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            type="submit"
+            disabled={isSaving || !form.formState.isValid || form.formState.isSubmitting}
+            onClick={form.handleSubmit(onSubmit)}
           >
-            <FormField
-              control={form.control}
-              name="themeName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="My Awesome Theme" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
-        <DialogFooter className="bg-muted/30 px-6 py-4 border-t">
-          <div className="flex items-center justify-end w-full gap-2">
-            <Button
-              onClick={() => onOpenChange(false)}
-              variant="ghost"
-              disabled={isSaving}
-              size="sm"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={
-                isSaving ||
-                !form.formState.isValid ||
-                form.formState.isSubmitting
-              }
-              size="sm"
-              onClick={form.handleSubmit(onSubmit)}
-            >
-              {isSaving || form.formState.isSubmitting ? (
-                <>
-                  <Loader2 className="mr-1 size-4 animate-spin" />
-                  Saving
-                </>
-              ) : (
-                ctaLabel
-              )}
-            </Button>
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            {isSaving || form.formState.isSubmitting ? (
+              <>
+                <Loader2 className="mr-1 size-4 animate-spin" />
+                Saving
+              </>
+            ) : (
+              ctaLabel
+            )}
+          </Button>
+        </ResponsiveDialogFooter>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }
