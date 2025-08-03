@@ -34,15 +34,6 @@ const TabsIndicator = React.forwardRef<
 ));
 TabsIndicator.displayName = TabsPrimitive.Indicator.displayName;
 
-//  "ring-offset-background focus-visible:ring-ring data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground hover:text-muted-foreground/70 inline-flex items-center justify-center rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
-
-{
-  /* <Tabs.Tab
-          className="flex h-8 items-center justify-center border-0 px-2 text-sm font-medium break-keep whitespace-nowrap text-gray-600 outline-none select-none before:inset-x-0 before:inset-y-1 before:rounded-sm before:-outline-offset-1 before:outline-blue-800 hover:text-gray-900 focus-visible:relative focus-visible:before:absolute focus-visible:before:outline focus-visible:before:outline-2 data-[selected]:text-gray-900"
-          value="overview"
-        ></Tabs.Tab> */
-}
-
 const TabsTrigger = React.forwardRef<
   React.ComponentRef<typeof TabsPrimitive.Tab>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Tab>
