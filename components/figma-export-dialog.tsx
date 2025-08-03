@@ -68,13 +68,12 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
             </div>
           </div>
 
-          <div className="space-y-16 px-8 pb-32">
+          <div className="mt-4 space-y-16 px-8 pb-32">
             {/* Hero Section */}
             <div className="space-y-6 text-center">
               <h1 className="text-5xl leading-12 font-semibold tracking-tight">
                 Apply your theme to the ultimate Figma UI kit
               </h1>
-
               <div className="flex justify-center gap-3.5">
                 <Button size="lg" className="h-10 px-8" onClick={handleGetStarted}>
                   Get started
@@ -86,7 +85,6 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
                   </Button>
                 </Link>
               </div>
-
               <div className="space-y-1.5 pt-1">
                 <p className="text-muted-foreground text-sm">Trusted by top designers</p>
                 <div className="flex justify-center -space-x-3">
@@ -99,7 +97,6 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
                 </div>
               </div>
             </div>
-
             {/* How it works */}
             <div className="space-y-4">
               <h2 className="text-center text-2xl font-semibold">How it works</h2>
@@ -118,7 +115,6 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
                 </div>
               </div>
             </div>
-
             {/* Feature Description */}
             <div className="space-y-6 text-center">
               <div className="mx-auto max-w-sm space-y-1.5">
@@ -129,7 +125,6 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
                   Shadcraft is packed with top quality components, true to the shadcn/ui ethos.
                 </p>
               </div>
-
               {/* Demo UI Preview */}
               <div className="border-border relative overflow-hidden rounded-2xl border">
                 <img
@@ -138,7 +133,6 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
                   className="h-auto w-full"
                 />
               </div>
-
               <Link href={FIGMA_CONSTANTS.shadcraftUrl} target="_blank">
                 <Button variant="link" className="gap-1 text-sm">
                   More on Shadcraft
@@ -146,11 +140,9 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
                 </Button>
               </Link>
             </div>
-
             {/* Pricing */}
             <div className="space-y-6">
               <h2 className="text-center text-2xl font-semibold">Pricing</h2>
-
               <Card className="p-6">
                 <div className="grid gap-7 md:grid-cols-2">
                   <div className="space-y-4">
@@ -164,7 +156,6 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
                       ))}
                     </div>
                   </div>
-
                   <div className="space-y-4">
                     <Badge variant="secondary" className="w-fit">
                       Introductory offer
