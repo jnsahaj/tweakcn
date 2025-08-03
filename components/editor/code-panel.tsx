@@ -248,7 +248,8 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             <pre className="h-full p-4 text-sm">
               <code>{code}</code>
             </pre>
-            <ScrollBar />
+            <ScrollBar orientation="horizontal" />
+            <ScrollBar orientation="vertical" />
           </ScrollArea>
         </TabsContent>
 
@@ -258,7 +259,8 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
               <pre className="h-full p-4 text-sm">
                 <code>{configCode}</code>
               </pre>
-              <ScrollBar />
+              <ScrollBar orientation="horizontal" />
+              <ScrollBar orientation="vertical" />
             </ScrollArea>
           </TabsContent>
         )}
