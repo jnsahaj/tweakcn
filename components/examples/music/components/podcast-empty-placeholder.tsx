@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/ui/revola";
 
 export function PodcastEmptyPlaceholder() {
   return (
@@ -22,7 +22,7 @@ export function PodcastEmptyPlaceholder() {
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
-          className="h-10 w-10 text-muted-foreground"
+          className="text-muted-foreground h-10 w-10"
           viewBox="0 0 24 24"
         >
           <circle cx="12" cy="11" r="1" />
@@ -31,33 +31,37 @@ export function PodcastEmptyPlaceholder() {
         </svg>
 
         <h3 className="mt-4 text-lg font-semibold">No episodes added</h3>
-        <p className="mb-4 mt-2 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-2 mb-4 text-sm">
           You have not added any podcasts. Add one below.
         </p>
-        <Dialog>
-          <DialogTrigger asChild>
+        <ResponsiveDialog>
+          <ResponsiveDialogTrigger asChild>
             <Button size="sm" className="relative">
               Add Podcast
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Podcast</DialogTitle>
-              <DialogDescription>
-                Copy and paste the podcast feed URL to import.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="url">Podcast URL</Label>
-                <Input id="url" placeholder="https://example.com/feed.xml" />
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent>
+            <div className="space-y-4 p-6 py-0 sm:pt-6">
+              <ResponsiveDialogHeader className="p-0">
+                <ResponsiveDialogTitle>Add Podcast</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription>
+                  Copy and paste the podcast feed URL to import.
+                </ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
+
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="url">Podcast URL</Label>
+                  <Input id="url" placeholder="https://example.com/feed.xml" />
+                </div>
               </div>
             </div>
-            <DialogFooter>
+
+            <ResponsiveDialogFooter className="sm:p-6 sm:pt-0">
               <Button>Import Podcast</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </ResponsiveDialogFooter>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
       </div>
     </div>
   );
