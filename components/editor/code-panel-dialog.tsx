@@ -17,7 +17,7 @@ interface CodePanelDialogProps {
 export function CodePanelDialog({ open, onOpenChange, themeEditorState }: CodePanelDialogProps) {
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="h-[90dvh] max-h-[90dvh] overflow-hidden shadow-lg sm:h-[80dvh] sm:w-[calc(100%-2rem)] sm:max-w-4xl sm:py-6">
+      <ResponsiveDialogContent className="h-[90dvh] max-h-[90dvh] overflow-hidden shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl sm:py-6">
         <div className="h-full space-y-6 overflow-auto px-6">
           <ResponsiveDialogHeader className="sr-only">
             <ResponsiveDialogTitle>Theme Code</ResponsiveDialogTitle>
