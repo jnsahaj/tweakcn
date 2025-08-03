@@ -13,18 +13,18 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { ArrowUpIcon, CheckIcon, PlusIcon } from "lucide-react";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@/components/ui/revola";
 
 const users = [
   {
@@ -165,14 +165,15 @@ export function CardsChat() {
           </form>
         </CardFooter>
       </Card>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="gap-0 p-0 outline-none">
-          <DialogHeader className="px-4 pt-5 pb-4">
-            <DialogTitle>New message</DialogTitle>
-            <DialogDescription>
+      <ResponsiveDialog open={open} onOpenChange={setOpen}>
+        <ResponsiveDialogContent className="flex max-h-[85%] flex-col gap-0">
+          <ResponsiveDialogHeader className="pt-0 sm:p-4 sm:pt-5">
+            <ResponsiveDialogTitle>New message</ResponsiveDialogTitle>
+            <ResponsiveDialogDescription>
               Invite a user to this thread. This will create a new group message.
-            </DialogDescription>
-          </DialogHeader>
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+
           <Command className="overflow-hidden rounded-t-none border-t bg-transparent">
             <CommandInput placeholder="Search user..." />
             <CommandList>
@@ -182,20 +183,19 @@ export function CardsChat() {
                   <CommandItem
                     key={user.email}
                     data-active={selectedUsers.includes(user)}
-                    className="data-[active=true]:opacity-50"
+                    className="gap-2 data-[active=true]:opacity-50"
                     onSelect={() => {
                       if (selectedUsers.includes(user)) {
                         return setSelectedUsers(
                           selectedUsers.filter((selectedUser) => selectedUser !== user)
                         );
                       }
-
                       return setSelectedUsers(
                         [...users].filter((u) => [...selectedUsers, user].includes(u))
                       );
                     }}
                   >
-                    <Avatar className="border">
+                    <Avatar className="size-7.5 border">
                       <AvatarImage src={user.avatar} alt="Image" />
                       <AvatarFallback>{user.name[0]}</AvatarFallback>
                     </Avatar>
@@ -211,11 +211,12 @@ export function CardsChat() {
               </CommandGroup>
             </CommandList>
           </Command>
-          <DialogFooter className="flex items-center border-t p-4 @2xl:justify-between">
+
+          <ResponsiveDialogFooter className="items-center gap-2 border-t sm:justify-between sm:p-4">
             {selectedUsers.length > 0 ? (
               <div className="flex -space-x-2 overflow-hidden">
                 {selectedUsers.map((user) => (
-                  <Avatar key={user.email} className="inline-block border">
+                  <Avatar key={user.email} className="inline-block size-7.5 border">
                     <AvatarImage src={user.avatar} />
                     <AvatarFallback>{user.name[0]}</AvatarFallback>
                   </Avatar>
@@ -225,17 +226,16 @@ export function CardsChat() {
               <p className="text-muted-foreground text-sm">Select users to add to this thread.</p>
             )}
             <Button
-              disabled={selectedUsers.length < 2}
-              size="sm"
               onClick={() => {
                 setOpen(false);
               }}
+              disabled={selectedUsers.length < 2}
             >
               Continue
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
     </>
   );
 }
