@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import { useContrastChecker } from "../../hooks/use-contrast-checker";
 import { ThemeStyleProps } from "@/types/theme";
 import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "../ui/dialog";
 import { Contrast, Check, AlertTriangle, Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
-import { ScrollArea } from "../ui/scroll-area";
-import { Separator } from "../ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useTheme } from "@/components/theme-provider";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/ui/revola";
 
 type ContrastCheckerProps = {
   currentStyles: ThemeStyleProps;
@@ -187,18 +187,18 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
     .filter((group) => group.pairs.length > 0);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <ResponsiveDialog>
+      <ResponsiveDialogTrigger asChild>
         <Button variant="ghost" size="sm" className="w-full justify-start px-2">
           <Contrast className="h-4 w-4" />
           <span className="text-sm">Contrast</span>
         </Button>
-      </DialogTrigger>
-      <DialogContent className="flex max-h-[80vh] max-w-4xl flex-col gap-6 overflow-hidden rounded-lg border p-0 py-6 shadow-lg">
+      </ResponsiveDialogTrigger>
+      <ResponsiveDialogContent className="flex max-h-[95dvh] flex-col space-y-6 overflow-hidden shadow-lg sm:max-h-[min(700px,85dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl sm:pt-6">
         <div className="flex flex-col items-end justify-between gap-4 px-6 sm:flex-row">
-          <DialogHeader>
-            <DialogTitle>Contrast Checker</DialogTitle>
-            <DialogDescription>
+          <ResponsiveDialogHeader className="p-0 text-left">
+            <ResponsiveDialogTitle>Contrast Checker</ResponsiveDialogTitle>
+            <ResponsiveDialogDescription>
               WCAG 2.0 AA requires a contrast ratio of at least {MIN_CONTRAST_RATIO}:1{" • "}
               <a
                 href="https://www.w3.org/TR/WCAG21/"
@@ -208,8 +208,8 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
               >
                 Learn more
               </a>
-            </DialogDescription>
-          </DialogHeader>
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
 
           <div className="hidden items-center gap-2 md:flex">
             <Tooltip>
@@ -238,8 +238,9 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
               All
             </Button>
             <Button
-              variant={filter === "issues" ? "default" : "outline"}
               size="sm"
+              disabled={totalIssues === 0}
+              variant={filter === "issues" ? "default" : "outline"}
               onClick={() => setFilter("issues")}
             >
               <AlertTriangle className={cn("mr-1 h-3 w-3")} />
@@ -251,11 +252,12 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
         <ScrollArea className="relative flex flex-1 flex-col">
           <div className="space-y-6 px-6">
             {groupedPairs.map((group) => (
-              <div key={group.category} className="space-y-4">
-                <div className="flex items-center gap-2">
+              <div key={group.category} className="">
+                <div className="bg-background sticky -top-px z-10 flex items-center gap-2 pb-4 sm:rounded-b-xl">
                   <h2 className="text-md font-semibold">{group.label}</h2>
                   <Separator className="flex-1" />
                 </div>
+
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {group.pairs.map((pair) => {
                     const result = getContrastResult(pair.id);
@@ -263,7 +265,6 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
                       result?.contrastRatio !== undefined &&
                       result?.contrastRatio >= MIN_CONTRAST_RATIO;
                     const contrastRatio = result?.contrastRatio?.toFixed(2) ?? "N/A";
-
                     return (
                       <Card
                         key={pair.id}
@@ -302,7 +303,6 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
                               )}
                             </Badge>
                           </div>
-
                           <div className="flex items-center gap-2">
                             <div className="flex flex-1 flex-col items-center gap-3">
                               <div className="flex w-full items-center gap-3">
@@ -319,7 +319,6 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
                                   </span>
                                 </div>
                               </div>
-
                               <div className="flex w-full items-center gap-3">
                                 <div
                                   style={{
@@ -335,7 +334,6 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
                                 </div>
                               </div>
                             </div>
-
                             <div
                               style={{
                                 backgroundColor: pair.background ?? "transparent",
@@ -371,8 +369,8 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
             ))}
           </div>
         </ScrollArea>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 };
 
