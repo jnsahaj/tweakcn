@@ -1,5 +1,4 @@
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
-import { DynamicFontLoader } from "@/components/dynamic-font-loader";
 import { GetProDialogWrapper } from "@/components/get-pro-dialog-wrapper";
 import { PostHogInit } from "@/components/posthog-init";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,6 +9,8 @@ import { QueryProvider } from "@/lib/query-client";
 import type { Metadata, Viewport } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
+import { ThemeHotKeyHandler } from "@/components/home/theme-hotkey-handler";
+import KeyboardShortcutsOverlay  from "@/components/keyboard-shortcut-overlay";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -55,7 +56,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <ThemeScript />
-        <DynamicFontLoader />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -67,8 +67,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           sizes="180x180"
         />
         <link rel="manifest" href="/site.webmanifest" />
-
-        {/* PRELOAD FONTS USED BY BUILT-IN THEMES */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -78,6 +76,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="darkreader-lock" />
       </head>
       <body>
+        <ThemeHotKeyHandler>
+          <KeyboardShortcutsOverlay>
         <NuqsAdapter>
           <Suspense>
             <QueryProvider>
@@ -93,6 +93,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
         </NuqsAdapter>
         <PostHogInit />
+        </KeyboardShortcutsOverlay>
+        </ThemeHotKeyHandler>
       </body>
     </html>
   );
