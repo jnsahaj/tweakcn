@@ -1,19 +1,24 @@
 "use client";
 
 import DiscordIcon from "@/assets/discord.svg";
+import FigmaIcon from "@/assets/figma.svg";
 import GitHubIcon from "@/assets/github.svg";
 import Logo from "@/assets/logo.svg";
 import TwitterIcon from "@/assets/twitter.svg";
+import { FigmaExportDialog } from "@/components/figma-export-dialog";
 import { SocialLink } from "@/components/social-link";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { useGithubStars } from "@/hooks/use-github-stars";
 import { formatCompactNumber } from "@/utils/format";
 import Link from "next/link";
+import { useState } from "react";
 import { GetProCTA } from "./get-pro-cta";
 
 export function Header() {
   const { stargazersCount } = useGithubStars("jnsahaj", "tweakcn");
+  const [figmaDialogOpen, setFigmaDialogOpen] = useState(false);
 
   return (
     <header className="border-b">
@@ -46,9 +51,19 @@ export function Header() {
             </SocialLink>
           </div>
           <Separator orientation="vertical" className="h-8" />
+          <Button
+            onClick={() => setFigmaDialogOpen(true)}
+            variant="outline"
+            className="flex h-8 items-center gap-2"
+          >
+            <FigmaIcon className="size-4" />
+            Export to Figma
+          </Button>
           <UserProfileDropdown />
         </div>
       </div>
+
+      <FigmaExportDialog open={figmaDialogOpen} onOpenChange={setFigmaDialogOpen} />
     </header>
   );
 }
