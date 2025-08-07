@@ -3,9 +3,9 @@
 import * as React from "react";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { Drawer as DrawerPrimitive, Content as VaulDrawerContent } from "vaul";
-import { X } from "lucide-react";
 import { cva } from "class-variance-authority";
+import { X } from "lucide-react";
+import { Drawer as DrawerPrimitive, Content as VaulDrawerContent } from "vaul";
 
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ type ResponsiveDialogProviderProps = {
   children: React.ReactNode;
 } & ResponsiveDialogContextProps;
 
-const ResponsiveDialogContext = React.createContext<ResponsiveDialogContextProps>({});
+const ResponsiveDialogContext = React.createContext<ResponsiveDialogContextProps | null>(null);
 const MOBILE_BREAKPOINT = "(min-width: 640px)";
 
 const ResponsiveDialogProvider = ({
@@ -171,6 +171,8 @@ const ResponsiveDialogClose = ({
   return (
     <ResponsiveDialogClose
       aria-label="Close"
+      {...(shouldPreventClose && { disabled: true })}
+      {...(shouldPreventClose && { "aria-disabled": true })}
       {...(shouldPreventClose && { onClick: (e) => e.preventDefault() })}
       {...props}
     />
@@ -201,7 +203,7 @@ const ResponsiveDialogContentVariants = cva("fixed z-[9999] bg-background", {
       device: "mobile",
       direction: "bottom",
       className:
-        "inset-x-0 bottom-0 mt-24 h-fit max-h-[75%] flex-col rounded-t-lg border border-b-0 !border-primary/10 pt-4",
+        "inset-x-0 bottom-0 mt-24 h-fit max-h-[75%] flex-col rounded-t-lg border border-b-0 !border-primary/10",
     },
     {
       device: "mobile",
@@ -226,65 +228,90 @@ const ResponsiveDialogContentVariants = cva("fixed z-[9999] bg-background", {
 
 const ResponsiveDialogContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & { showCloseButton?: boolean }
->(({ className, children, showCloseButton = true, ...props }, ref) => {
-  const { direction, modal, dismissible, alert, onlyDrawer, onlyDialog } = useResponsiveDialog();
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+    showCloseButton?: boolean;
+    /** Styles for the built in close button */
+    closeButtonClassName?: string;
+    /** Styles for the drag handle */
+    dragHandleClassName?: string;
+  }
+>(
+  (
+    {
+      className,
+      children,
+      closeButtonClassName,
+      dragHandleClassName,
+      showCloseButton = true,
+      ...props
+    },
+    ref
+  ) => {
+    const { direction, modal, dismissible, alert, onlyDrawer, onlyDialog } = useResponsiveDialog();
 
-  const isDesktop = useMediaQuery(MOBILE_BREAKPOINT);
-  const shouldUseDialog = onlyDialog || (!onlyDrawer && isDesktop);
-  const ResponsiveDialogContent = shouldUseDialog ? DialogPrimitive.Content : VaulDrawerContent;
+    const isDesktop = useMediaQuery(MOBILE_BREAKPOINT);
+    const shouldUseDialog = onlyDialog || (!onlyDrawer && isDesktop);
+    const ResponsiveDialogContent = shouldUseDialog ? DialogPrimitive.Content : VaulDrawerContent;
 
-  const shouldShowCloseButton = !alert && showCloseButton;
-  const shouldPreventEscape = !dismissible && !alert;
-  const shouldPreventOutsideInteraction = !modal || (!dismissible && !alert) || alert;
+    const shouldShowCloseButton = !alert && showCloseButton;
+    const shouldPreventEscape = !dismissible && !alert;
+    const shouldPreventOutsideInteraction = !modal || (!dismissible && !alert) || alert;
 
-  return (
-    <ResponsiveDialogPortal>
-      <ResponsiveDialogOverlay />
-      <ResponsiveDialogContent
-        ref={ref}
-        {...props}
-        {...(shouldPreventEscape &&
-          shouldUseDialog && { onEscapeKeyDown: (e) => e.preventDefault() })}
-        {...(shouldPreventOutsideInteraction &&
-          shouldUseDialog && {
-            onInteractOutside: (e) => e.preventDefault(),
-          })}
-        {...(!shouldUseDialog &&
-          shouldPreventOutsideInteraction && {
-            onPointerDownOutside: (e) => e.preventDefault(),
-            onInteractOutside: (e) => e.preventDefault(),
-          })}
-        className={cn(
-          ResponsiveDialogContentVariants({
-            device: shouldUseDialog ? "desktop" : "mobile",
-            direction,
-          }),
-          className
-        )}
-      >
-        {!shouldUseDialog && direction === "bottom" && (
-          <div className="bg-muted-foreground/25 dark:bg-muted mx-auto mb-4 h-1.5 w-14 rounded-full pb-1.5 data-[vaul-handle]:h-1.5 data-[vaul-handle]:w-14 data-[vaul-handle]:pb-1.5" />
-        )}
-        {children}
-        {shouldShowCloseButton && (
-          <ResponsiveDialogClose className="ring-offset-background focus-visible:ring-ring data-[state=open]:bg-accent absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-offset-2 focus:outline-none focus-visible:ring-2 disabled:pointer-events-none data-[state=open]:text-white">
-            <X className="size-4" />
-            <span className="sr-only">close</span>
-          </ResponsiveDialogClose>
-        )}
-      </ResponsiveDialogContent>
-    </ResponsiveDialogPortal>
-  );
-});
+    return (
+      <ResponsiveDialogPortal>
+        <ResponsiveDialogOverlay />
+        <ResponsiveDialogContent
+          ref={ref}
+          {...props}
+          {...(shouldPreventEscape &&
+            shouldUseDialog && { onEscapeKeyDown: (e) => e.preventDefault() })}
+          {...(shouldPreventOutsideInteraction &&
+            shouldUseDialog && {
+              onInteractOutside: (e) => e.preventDefault(),
+            })}
+          {...(!shouldUseDialog &&
+            shouldPreventOutsideInteraction && {
+              onPointerDownOutside: (e) => e.preventDefault(),
+              onInteractOutside: (e) => e.preventDefault(),
+            })}
+          className={cn(
+            ResponsiveDialogContentVariants({
+              device: shouldUseDialog ? "desktop" : "mobile",
+              direction,
+            }),
+            className
+          )}
+        >
+          {!shouldUseDialog && direction === "bottom" && (
+            <div
+              className={cn(
+                "bg-muted-foreground/25 dark:bg-muted mx-auto my-4 h-1.5 w-14 rounded-full pb-1.5 data-[vaul-handle]:h-1.5 data-[vaul-handle]:w-14 data-[vaul-handle]:pb-1.5",
+                dragHandleClassName
+              )}
+            />
+          )}
+          {children}
+          {shouldShowCloseButton && (
+            <ResponsiveDialogClose
+              className={cn(
+                "ring-offset-background focus-visible:ring-ring data-[state=open]:bg-accent absolute top-4 right-4 rounded-sm opacity-70 backdrop-blur-sm transition-opacity hover:opacity-100 focus:ring-offset-2 focus:outline-none focus-visible:ring-2 disabled:pointer-events-none data-[state=open]:text-white",
+                closeButtonClassName
+              )}
+            >
+              <X className="size-4" />
+              <span className="sr-only">close</span>
+            </ResponsiveDialogClose>
+          )}
+        </ResponsiveDialogContent>
+      </ResponsiveDialogPortal>
+    );
+  }
+);
 ResponsiveDialogContent.displayName = "ResponsiveDialogContent";
 
 const ResponsiveDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div
-      className={cn("flex flex-col gap-1.5 p-4 text-center sm:p-0 sm:text-left", className)}
-      {...props}
-    />
+    <div className={cn("flex flex-col gap-1.5 text-center sm:text-left", className)} {...props} />
   );
 };
 ResponsiveDialogHeader.displayName = "ResponsiveDialogHeader";
@@ -292,10 +319,7 @@ ResponsiveDialogHeader.displayName = "ResponsiveDialogHeader";
 const ResponsiveDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <footer
-      className={cn(
-        "flex flex-col-reverse gap-4 p-4 max-sm:mt-auto sm:flex-row sm:justify-end sm:gap-2 sm:p-0",
-        className
-      )}
+      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
       {...props}
     />
   );
