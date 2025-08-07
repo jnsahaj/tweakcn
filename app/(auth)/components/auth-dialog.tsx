@@ -1,12 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
-import Google from "@/assets/google.svg";
 import Github from "@/assets/github.svg";
+import Google from "@/assets/google.svg";
+import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -14,6 +10,10 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/ui/revola";
+import { authClient } from "@/lib/auth-client";
+import { Loader2 } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface AuthDialogProps {
   open: boolean;
@@ -79,9 +79,9 @@ export function AuthDialog({
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       {trigger && <ResponsiveDialogTrigger asChild>{trigger}</ResponsiveDialogTrigger>}
-      <ResponsiveDialogContent className="overflow-hidden sm:max-w-100 sm:p-0">
+      <ResponsiveDialogContent className="overflow-hidden sm:max-w-100">
         <div className="space-y-4">
-          <ResponsiveDialogHeader className="py-0 sm:pt-8">
+          <ResponsiveDialogHeader className="sm:pt-8">
             <ResponsiveDialogTitle className="text-center text-2xl font-bold">
               {isSignIn ? "Welcome back" : "Create account"}
             </ResponsiveDialogTitle>
