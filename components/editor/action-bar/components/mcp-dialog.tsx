@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Tabs,
   TabsContent,
@@ -6,9 +5,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/base-ui-tabs";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { Check, Copy } from "lucide-react";
-import { usePostHog } from "posthog-js/react";
+import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -16,6 +13,9 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@/components/ui/revola";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { Check, Copy } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
 
 interface MCPDialogProps {
   open: boolean;
@@ -47,7 +47,7 @@ export function MCPDialog({ open, onOpenChange }: MCPDialogProps) {
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent className="flex max-h-[90dvh] flex-col overflow-hidden shadow-lg sm:w-[calc(100%-2rem)] sm:max-w-2xl">
         <div className="space-y-6 p-6 pt-0 sm:p-6">
-          <ResponsiveDialogHeader className="p-0 text-left sm:p-0">
+          <ResponsiveDialogHeader className="text-left">
             <ResponsiveDialogTitle>Setup MCP</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>
               Use the code below to configure the registry in your IDE.
