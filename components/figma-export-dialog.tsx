@@ -1,15 +1,12 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import FigmaIcon from "@/assets/figma.svg";
 import Logo from "@/assets/logo.svg";
 import Shadcraft from "@/assets/shadcraft.svg";
-import FigmaIcon from "@/assets/figma.svg";
-import { Check, X, ArrowUpRight, Figma, Cable, Paintbrush } from "lucide-react";
-import Link from "next/link";
-import { FIGMA_CONSTANTS, redirectToShadcraft } from "@/lib/figma-constants";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -18,6 +15,9 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/revola";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { FIGMA_CONSTANTS, redirectToShadcraft } from "@/lib/figma-constants";
+import { ArrowUpRight, Cable, Check, Figma, Paintbrush, X } from "lucide-react";
+import Link from "next/link";
 interface FigmaExportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,7 +42,7 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="flex max-h-[90%] flex-col overflow-hidden sm:max-h-[min(700px,90dvh)] sm:max-w-150 sm:p-0">
+      <ResponsiveDialogContent className="flex max-h-[90%] flex-col overflow-hidden sm:max-h-[min(700px,90dvh)] sm:max-w-150">
         {/* Header */}
         <ScrollArea className="flex h-full flex-col gap-4 overflow-hidden">
           <ResponsiveDialogHeader className="sr-only">
@@ -52,7 +52,7 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
             </ResponsiveDialogDescription>
           </ResponsiveDialogHeader>
 
-          <div className="p-8 pb-5">
+          <div className="p-8 py-5 sm:pt-8">
             <div className="flex items-center justify-center gap-2">
               <div className="flex items-center gap-2">
                 <Logo className="h-6 w-6" />

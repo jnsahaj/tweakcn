@@ -42,7 +42,7 @@ export function PodcastEmptyPlaceholder() {
           </ResponsiveDialogTrigger>
           <ResponsiveDialogContent>
             <div className="space-y-4 p-6 py-0 sm:pt-6">
-              <ResponsiveDialogHeader className="p-0">
+              <ResponsiveDialogHeader>
                 <ResponsiveDialogTitle>Add Podcast</ResponsiveDialogTitle>
                 <ResponsiveDialogDescription>
                   Copy and paste the podcast feed URL to import.
@@ -57,7 +57,7 @@ export function PodcastEmptyPlaceholder() {
               </div>
             </div>
 
-            <ResponsiveDialogFooter className="sm:p-6 sm:pt-0">
+            <ResponsiveDialogFooter className="p-6 pt-2 pb-4 sm:pt-0 sm:pb-6">
               <Button>Import Podcast</Button>
             </ResponsiveDialogFooter>
           </ResponsiveDialogContent>

@@ -1,12 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -15,6 +9,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -74,7 +74,7 @@ export function ThemeSaveDialog({
     <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
       <ResponsiveDialogContent className="overflow-hidden shadow-lg sm:max-w-100">
         <div className="space-y-6 p-6 pt-0 sm:pt-6 sm:pb-2">
-          <ResponsiveDialogHeader className="p-0">
+          <ResponsiveDialogHeader>
             <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>{description}</ResponsiveDialogDescription>
           </ResponsiveDialogHeader>
@@ -97,7 +97,7 @@ export function ThemeSaveDialog({
             </form>
           </Form>
         </div>
-        <ResponsiveDialogFooter className="bg-muted/30 gap-2 border-t sm:px-6 sm:py-4">
+        <ResponsiveDialogFooter className="bg-muted/30 border-t px-6 py-4">
           <Button size="sm" disabled={isSaving} variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>

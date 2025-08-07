@@ -1,9 +1,5 @@
-import * as React from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { Check, Copy } from "lucide-react";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -11,6 +7,8 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@/components/ui/revola";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { Check, Copy } from "lucide-react";
 
 interface ShareDialogProps {
   open: boolean;
@@ -29,9 +27,9 @@ export function ShareDialog({ open, onOpenChange, url }: ShareDialogProps) {
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange} onlyDialog>
-      <ResponsiveDialogContent className="overflow-hidden p-6 shadow-lg sm:max-w-100">
-        <div className="space-y-6">
-          <ResponsiveDialogHeader className="p-0">
+      <ResponsiveDialogContent className="overflow-hidden shadow-lg sm:max-w-100">
+        <div className="space-y-6 p-6">
+          <ResponsiveDialogHeader>
             <ResponsiveDialogTitle>Share Theme</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>
               Anyone with this URL will be able to view this theme.

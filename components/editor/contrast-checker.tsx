@@ -1,15 +1,6 @@
-import React, { useState } from "react";
-import { useContrastChecker } from "../../hooks/use-contrast-checker";
-import { ThemeStyleProps } from "@/types/theme";
-import { Button } from "../ui/button";
-import { Contrast, Check, AlertTriangle, Moon, Sun } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useTheme } from "@/components/theme-provider";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -18,6 +9,15 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/ui/revola";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { ThemeStyleProps } from "@/types/theme";
+import { AlertTriangle, Check, Contrast, Moon, Sun } from "lucide-react";
+import { useState } from "react";
+import { useContrastChecker } from "../../hooks/use-contrast-checker";
+import { Button } from "../ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type ContrastCheckerProps = {
   currentStyles: ThemeStyleProps;
@@ -194,9 +194,9 @@ const ContrastChecker = ({ currentStyles }: ContrastCheckerProps) => {
           <span className="text-sm">Contrast</span>
         </Button>
       </ResponsiveDialogTrigger>
-      <ResponsiveDialogContent className="flex max-h-[95dvh] flex-col space-y-6 overflow-hidden shadow-lg sm:max-h-[min(700px,85dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl sm:pt-6">
+      <ResponsiveDialogContent className="flex max-h-[95dvh] flex-col gap-0 space-y-6 overflow-hidden shadow-lg sm:max-h-[min(700px,85dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl sm:pt-6">
         <div className="flex flex-col items-end justify-between gap-4 px-6 sm:flex-row">
-          <ResponsiveDialogHeader className="p-0 text-left">
+          <ResponsiveDialogHeader className="text-left">
             <ResponsiveDialogTitle>Contrast Checker</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>
               WCAG 2.0 AA requires a contrast ratio of at least {MIN_CONTRAST_RATIO}:1{" • "}

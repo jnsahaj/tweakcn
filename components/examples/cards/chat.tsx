@@ -14,9 +14,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { ArrowUpIcon, CheckIcon, PlusIcon } from "lucide-react";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -25,6 +22,9 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@/components/ui/revola";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { ArrowUpIcon, CheckIcon, PlusIcon } from "lucide-react";
 
 const users = [
   {
@@ -167,7 +167,7 @@ export function CardsChat() {
       </Card>
       <ResponsiveDialog open={open} onOpenChange={setOpen}>
         <ResponsiveDialogContent className="flex max-h-[85%] flex-col gap-0">
-          <ResponsiveDialogHeader className="pt-0 sm:p-4 sm:pt-5">
+          <ResponsiveDialogHeader className="p-4 pt-0 sm:pt-5">
             <ResponsiveDialogTitle>New message</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>
               Invite a user to this thread. This will create a new group message.
@@ -212,7 +212,7 @@ export function CardsChat() {
             </CommandList>
           </Command>
 
-          <ResponsiveDialogFooter className="items-center gap-2 border-t sm:justify-between sm:p-4">
+          <ResponsiveDialogFooter className="items-center border-t p-4 sm:justify-between">
             {selectedUsers.length > 0 ? (
               <div className="flex -space-x-2 overflow-hidden">
                 {selectedUsers.map((user) => (

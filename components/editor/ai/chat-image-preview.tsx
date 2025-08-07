@@ -38,9 +38,12 @@ export function ChatImagePreview({ name, src, className, alt, ...props }: ChatIm
         </div>
       </ResponsiveDialogTrigger>
 
-      <ResponsiveDialogContent className="size-fit max-h-[80dvh] overflow-hidden sm:max-w-[80vw]">
+      <ResponsiveDialogContent
+        closeButtonClassName="bg-white/10 backdrop-blur-md"
+        className="size-fit max-h-[80dvh] overflow-hidden sm:max-w-[80vw]"
+      >
         <ResponsiveDialogHeader className="sr-only">
-          <ResponsiveDialogTitle className="sr-only">Image Preview</ResponsiveDialogTitle>
+          <ResponsiveDialogTitle>Image Preview</ResponsiveDialogTitle>
         </ResponsiveDialogHeader>
         <Image
           src={src}

@@ -31,11 +31,14 @@ interface GetProDialogProps {
 export function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
   return (
     <ResponsiveDialog open={isOpen} onOpenChange={onClose}>
-      <ResponsiveDialogContent className="gap-0 overflow-hidden sm:max-w-lg md:w-[calc(100vw-2rem)] md:max-w-4xl">
+      <ResponsiveDialogContent
+        closeButtonClassName="backdrop-blur-md bg-muted/15"
+        className="gap-0 overflow-hidden sm:max-w-lg md:w-[calc(100vw-2rem)] md:max-w-4xl"
+      >
         <div className="flex flex-col md:flex-row">
           {/* Left section: content */}
           <section className="w-full space-y-8 border-r md:w-1/2">
-            <ResponsiveDialogHeader className="p-0 sm:p-6 sm:pb-0">
+            <ResponsiveDialogHeader className="sm:p-6 sm:pb-0">
               <ResponsiveDialogTitle>Get Pro</ResponsiveDialogTitle>
               <ResponsiveDialogDescription>{`Unlock all of tweakcn's features`}</ResponsiveDialogDescription>
             </ResponsiveDialogHeader>
@@ -67,7 +70,7 @@ export function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
   to the next level, cancel anytime.`}</p>
             </div>
 
-            <ResponsiveDialogFooter className="bg-muted/30 relative flex-col gap-2 border-t px-6 sm:p-6">
+            <ResponsiveDialogFooter className="bg-muted/30 relative flex-col border-t p-6">
               <Button asChild className="grow">
                 <Link href="/pricing" onNavigate={onClose}>
                   Upgrade to Pro
