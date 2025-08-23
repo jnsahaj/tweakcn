@@ -1,36 +1,34 @@
 "use client";
 
 import { suggestion } from "@/components/editor/mention-suggestion";
-import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import CharacterCount from "@tiptap/extension-character-count";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 interface CustomTextareaProps {
   onContentChange: (jsonContent: JSONContent) => void;
-  onGenerate?: () => void;
+  onSubmit: () => void;
+  disabled?: boolean;
   characterLimit?: number;
   onImagesPaste?: (files: File[]) => void;
   initialEditorContent?: JSONContent | null;
   className?: string;
 }
 
-const CustomTextarea: React.FC<CustomTextareaProps> = ({
+export default function CustomTextarea({
   onContentChange,
-  onGenerate,
+  onSubmit,
+  disabled = false,
   characterLimit,
   onImagesPaste,
   initialEditorContent,
   className,
-}) => {
-  const { loading: aiGenerateLoading } = useAIThemeGenerationCore();
-  const { toast } = useToast();
-
+}: CustomTextareaProps) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -50,17 +48,16 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         limit: characterLimit,
       }),
     ],
-    autofocus: !aiGenerateLoading,
+    autofocus: !disabled,
     editorProps: {
       attributes: {
         class: cn(
-          "min-w-0 min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background p-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
+          "min-w-0 min-h-[50px] max-h-[120px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background p-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
           className
         ),
       },
       handleKeyDown: (view, event) => {
-        if (event.key === "Enter" && !event.shiftKey && !aiGenerateLoading) {
-          const { state } = view;
+        if (event.key === "Enter" && !event.shiftKey && !disabled) {
           const mentionPluginKey = Mention.options.suggestion.pluginKey;
 
           if (!mentionPluginKey) {
@@ -68,13 +65,14 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
             return false;
           }
 
+          const { state } = view;
           const mentionState = mentionPluginKey.getState(state);
 
           if (mentionState?.active) {
             return false;
           } else {
             event.preventDefault();
-            onGenerate?.();
+            onSubmit();
             return true;
           }
         }
@@ -126,10 +124,8 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   });
 
   useEffect(() => {
-    if (editor) {
-      editor.commands.blur();
-    }
-  }, [aiGenerateLoading, editor]);
+    if (editor) editor.commands.blur();
+  }, [disabled, editor]);
 
   if (!editor) {
     return null;
@@ -156,6 +152,4 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
       )}
     </div>
   );
-};
-
-export default CustomTextarea;
+}

@@ -1,8 +1,19 @@
-import { ValidationError, SubscriptionRequiredError, UnauthorizedError } from "@/types/errors";
+import {
+  MyErrorResponseType,
+  SubscriptionRequiredError,
+  UnauthorizedError,
+  ValidationError,
+} from "@/types/errors";
 import { logError } from "./shared";
 
-function jsonError(code: string, message: string, data: unknown, status: number) {
-  return new Response(JSON.stringify({ code, message, data }), {
+function jsonError(
+  code: MyErrorResponseType["code"],
+  message: MyErrorResponseType["message"],
+  data: MyErrorResponseType["data"],
+  status: MyErrorResponseType["status"]
+): Response {
+  const response: MyErrorResponseType = { code, message, data, status };
+  return new Response(JSON.stringify(response), {
     status,
     headers: { "Content-Type": "application/json" },
   });

@@ -8,12 +8,13 @@ export const getTextContent = (promptData: AIPromptData | null) => {
   return promptData.content;
 };
 
-export const buildPromptForAPI = (promptData: AIPromptData) => {
-  const mentionReferences = promptData.mentions.map(
-    (mention) => `@${mention.label} = 
-  ${JSON.stringify(mention.themeData)}`
-  );
+export const buildMentionStringForAPI = (mention: MentionReference) => {
+  return `@${mention.label} = 
+  ${JSON.stringify(mention.themeData)}`;
+};
 
+export const buildPromptForAPI = (promptData: AIPromptData) => {
+  const mentionReferences = promptData.mentions.map((mention) => buildMentionStringForAPI(mention));
   return `${promptData.content}\n\n${mentionReferences.join("\n")}`;
 };
 

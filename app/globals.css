@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./loaders.css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -60,6 +63,15 @@
   --tracking-wide: calc(var(--letter-spacing) + 0.025em);
   --tracking-wider: calc(var(--letter-spacing) + 0.05em);
   --tracking-widest: calc(var(--letter-spacing) + 0.1em);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 * {

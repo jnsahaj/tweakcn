@@ -1,3 +1,5 @@
+import { THEME_GENERATION_TOOLS } from "@/app/api/generate-theme/tools";
+import { InferUITools, UIMessage } from "ai";
 import { type ThemeStyleProps, type ThemeStyles } from "./theme";
 
 export type MentionReference = {
@@ -19,22 +21,18 @@ export type AIPromptData = {
   images?: PromptImage[];
 };
 
-export type ChatMessage = {
-  id: string;
-  role: "user" | "assistant";
-  timestamp: number;
+export type MyMetadata = {
   promptData?: AIPromptData;
-  content?: string;
   themeStyles?: ThemeStyles;
-  isError?: boolean;
 };
 
-export type UserMessage = {
-  promptData: AIPromptData;
+export type MyUIDataParts = {
+  "generated-theme-styles": {
+    themeStyles: ThemeStyles;
+  };
 };
 
-export type AssistantMessage = {
-  content: string;
-  themeStyles?: ThemeStyles;
-  isError?: boolean;
-};
+type ThemeGenerationUITools = InferUITools<typeof THEME_GENERATION_TOOLS>;
+export type MyUITools = ThemeGenerationUITools;
+
+export type ChatMessage = UIMessage<MyMetadata, MyUIDataParts, MyUITools>;

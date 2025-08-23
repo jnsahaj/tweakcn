@@ -7,7 +7,7 @@ import { MAX_IMAGE_FILES, MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
 import { useDocumentDragAndDropIntent } from "@/hooks/use-document-drag-and-drop-intent";
 import { convertJSONContentToPromptData } from "@/utils/ai/ai-prompt";
 import { JSONContent } from "@tiptap/react";
-import { useReducer, useEffect, useRef } from "react";
+import { useReducer, useEffect, useRef, useTransition } from "react";
 
 export function useAIChatForm() {
   const {
@@ -18,6 +18,7 @@ export function useAIChatForm() {
     setImagesDraft,
   } = useAILocalDraftStore();
 
+  const [isInitializing, startTransition] = useTransition();
   const hasInitialized = useRef(false);
 
   const [uploadedImages, dispatch] = useReducer(
@@ -29,9 +30,12 @@ export function useAIChatForm() {
   useEffect(() => {
     if (!hasInitialized.current && imagesDraft.length > 0) {
       hasInitialized.current = true;
-      dispatch({
-        type: "INITIALIZE",
-        payload: imagesDraft.map(({ url }) => ({ url })),
+
+      startTransition(() => {
+        dispatch({
+          type: "INITIALIZE",
+          payload: imagesDraft.map(({ url }) => ({ url })),
+        });
       });
     }
   }, [imagesDraft]);
@@ -76,5 +80,6 @@ export function useAIChatForm() {
     clearUploadedImages,
     isSomeImageUploading,
     isUserDragging,
+    isInitializing,
   };
 }

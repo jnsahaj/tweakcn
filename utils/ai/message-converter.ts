@@ -1,16 +1,22 @@
 import { ChatMessage } from "@/types/ai";
-import { buildPromptForAPI } from "@/utils/ai/ai-prompt";
-import { CoreMessage, TextPart, UserContent } from "ai";
+import { buildMentionStringForAPI } from "@/utils/ai/ai-prompt";
+import { AssistantContent, ModelMessage, TextPart, UserContent } from "ai";
 
-export async function convertChatMessagesToCoreMessages(
+export async function convertMessagesToModelMessages(
   messages: ChatMessage[]
-): Promise<CoreMessage[]> {
-  const coreMessages: CoreMessage[] = [];
+): Promise<ModelMessage[]> {
+  const modelMessages: ModelMessage[] = [];
 
   for (const message of messages) {
-    if (message.role === "user" && message.promptData) {
-      const content: UserContent = [];
-      const { promptData } = message;
+    const promptData = message.metadata?.promptData;
+    const themeStyles = message.metadata?.themeStyles;
+
+    const msgTextContent = message.parts
+      .map((part) => (part.type === "text" ? part.text : ""))
+      .join("");
+
+    if (message.role === "user" && promptData) {
+      const userContentParts: UserContent = [];
 
       if (promptData.images && promptData.images.length > 0) {
         promptData.images.forEach((image) => {
@@ -25,18 +31,18 @@ export async function convertChatMessagesToCoreMessages(
                 svgMarkup = decodeURIComponent(dataUrlPart);
               }
 
-              content.push({
+              userContentParts.push({
                 type: "text",
                 text: `Here is an SVG image for analysis:\n\`\`\`svg\n${svgMarkup}\n\`\`\``,
               });
-            } catch (error) {
-              content.push({
+            } catch {
+              userContentParts.push({
                 type: "image",
                 image: image.url,
               });
             }
           } else {
-            content.push({
+            userContentParts.push({
               type: "image",
               image: image.url,
             });
@@ -44,32 +50,52 @@ export async function convertChatMessagesToCoreMessages(
         });
       }
 
-      // Add text part
-      const textContent = buildPromptForAPI(promptData);
+      // Add the prompt text content as a text part
+      const textContent = promptData.content;
       if (textContent.trim().length > 0) {
         const textPart: TextPart = {
           type: "text",
           text: textContent,
         };
-        content.push(textPart);
+        userContentParts.push(textPart);
       }
 
-      coreMessages.push({
-        role: "user",
-        content,
+      // Add each mention as a text part
+      promptData.mentions.forEach((mention) => {
+        userContentParts.push({
+          type: "text",
+          text: buildMentionStringForAPI(mention),
+        });
       });
-    } else if (message.role === "assistant" && message.content) {
-      let content = message.content;
-      if (message.themeStyles) {
-        content = `${content}\n\n${JSON.stringify(message.themeStyles)}`;
+
+      modelMessages.push({
+        role: "user",
+        content: userContentParts,
+      });
+    }
+
+    if (message.role === "assistant") {
+      const assistantContentParts: AssistantContent = [];
+      assistantContentParts.push({
+        type: "text",
+        text: msgTextContent,
+      });
+
+      // If the assistant message has themeStyles attached to the metadata,
+      // we need to add it to the assistant content to provide more context for the next generations
+      if (themeStyles) {
+        assistantContentParts.push({
+          type: "text",
+          text: JSON.stringify(themeStyles),
+        });
       }
 
-      coreMessages.push({
+      modelMessages.push({
         role: "assistant",
-        content,
+        content: assistantContentParts,
       });
     }
   }
 
-  return coreMessages;
+  return modelMessages;
 }
