@@ -1,6 +1,6 @@
+import { ColorFormat } from "@/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ColorFormat } from "@/types";
 
 type PackageManager = "pnpm" | "npm" | "yarn" | "bun";
 export type ColorSelectorTab = "list" | "palette";
@@ -13,11 +13,13 @@ const colorFormatsByVersion = {
 interface PreferencesStore {
   tailwindVersion: "3" | "4";
   colorFormat: ColorFormat;
+  includeFontVariables: boolean;
   packageManager: PackageManager;
   colorSelectorTab: ColorSelectorTab;
   chatSuggestionsOpen: boolean;
   setTailwindVersion: (version: "3" | "4") => void;
   setColorFormat: (format: ColorFormat) => void;
+  setIncludeFontVariables: (includeFontVars: boolean) => void;
   setPackageManager: (pm: PackageManager) => void;
   setColorSelectorTab: (tab: ColorSelectorTab) => void;
   setChatSuggestionsOpen: (open: boolean) => void;
@@ -29,6 +31,7 @@ export const usePreferencesStore = create<PreferencesStore>()(
     (set, get) => ({
       tailwindVersion: "4",
       colorFormat: "oklch",
+      includeFontVariables: true,
       packageManager: "pnpm",
       colorSelectorTab: "list",
       chatSuggestionsOpen: true,
@@ -45,6 +48,9 @@ export const usePreferencesStore = create<PreferencesStore>()(
         if (availableFormats.includes(format)) {
           set({ colorFormat: format });
         }
+      },
+      setIncludeFontVariables: (includeFontVars: boolean) => {
+        set({ includeFontVariables: includeFontVars });
       },
       setPackageManager: (pm: PackageManager) => {
         set({ packageManager: pm });
