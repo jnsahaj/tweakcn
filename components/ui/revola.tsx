@@ -85,6 +85,7 @@ const ResponsiveDialog = ({
   const effectiveModal = alert ? true : modal;
   const effectiveDismissible = alert ? true : dismissible;
 
+ const isIOS = typeof window !== "undefined" && /iPad|iPhone|iPod/.test(navigator.userAgent)
   return (
     <ResponsiveDialogProvider
       modal={effectiveModal}
@@ -101,6 +102,7 @@ const ResponsiveDialog = ({
         shouldScaleBackground={shouldScaleBackground}
         open={open}
         onOpenChange={onOpenChange}
+        repositionInputs={!isIOS}
         {...props}
       />
     </ResponsiveDialogProvider>
