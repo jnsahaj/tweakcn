@@ -1,14 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { PRO_SUB_FEATURES } from "@/utils/subscription";
@@ -16,6 +8,14 @@ import { Calendar, Check } from "lucide-react";
 import Link from "next/link";
 import { NoiseEffect } from "./effects/noise-effect";
 import { AIChatDemo } from "./examples/ai-chat-demo";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "./ui/revola";
 
 export function GetProDialogWrapper() {
   const { isOpen, closeGetProDialog } = useGetProDialogStore();
@@ -28,17 +28,20 @@ interface GetProDialogProps {
   onClose: () => void;
 }
 
-function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
+export function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="gap-0 overflow-hidden rounded-lg border p-0 md:max-w-2xl lg:max-w-4xl">
+    <ResponsiveDialog open={isOpen} onOpenChange={onClose}>
+      <ResponsiveDialogContent
+        closeButtonClassName="backdrop-blur-md bg-muted/15"
+        className="gap-0 overflow-hidden sm:max-w-lg md:w-[calc(100vw-2rem)] md:max-w-4xl"
+      >
         <div className="flex flex-col md:flex-row">
           {/* Left section: content */}
-          <section className="w-full space-y-8 border-r md:w-2/3 lg:w-1/2">
-            <DialogHeader className="px-6 pt-6">
-              <DialogTitle>Get Pro</DialogTitle>
-              <DialogDescription>{`Unlock all of tweakcn's features`}</DialogDescription>
-            </DialogHeader>
+          <section className="w-full space-y-8 border-r md:w-1/2">
+            <ResponsiveDialogHeader className="sm:p-6 sm:pb-0">
+              <ResponsiveDialogTitle>Get Pro</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>{`Unlock all of tweakcn's features`}</ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
 
             <div className="space-y-6 px-6">
               <ul className="space-y-3">
@@ -67,22 +70,20 @@ function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
   to the next level, cancel anytime.`}</p>
             </div>
 
-            <DialogFooter className="bg-muted/30 relative border-t p-6">
-              <div className="flex w-full items-center justify-end gap-2">
-                <Button asChild className="grow">
-                  <Link href="/pricing" onNavigate={onClose}>
-                    Upgrade to Pro
-                  </Link>
-                </Button>
-                <Button variant="ghost" onClick={onClose}>
-                  Maybe Later
-                </Button>
-              </div>
-            </DialogFooter>
+            <ResponsiveDialogFooter className="bg-muted/30 relative flex-col border-t p-6">
+              <Button asChild className="grow">
+                <Link href="/pricing" onNavigate={onClose}>
+                  Upgrade to Pro
+                </Link>
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
+                Maybe Later
+              </Button>
+            </ResponsiveDialogFooter>
           </section>
 
           {/* Right section: chat preview, only visible md+ */}
-          <section className="bg-muted/30 relative isolate hidden shrink-0 items-center justify-center overflow-hidden md:block md:w-1/3 lg:w-1/2">
+          <section className="bg-muted/30 relative isolate hidden shrink-0 items-center justify-center overflow-hidden md:block md:w-1/2">
             {/* ----Background effects---- */}
             <div
               className={cn(
@@ -101,12 +102,12 @@ function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
             <div className="bg-primary/15 absolute right-0 bottom-0 -z-10 size-70 translate-x-1/2 translate-y-1/2 rounded-full blur-3xl" />
             {/* ----Background effects---- */}
 
-            <div className="absolute top-6 left-6 z-10 flex items-center justify-center overflow-hidden rounded-lg border lg:inset-6">
+            <div className="absolute inset-4 top-4 z-10 flex items-center justify-center overflow-hidden rounded-lg border lg:inset-6">
               <AIChatDemo />
             </div>
           </section>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

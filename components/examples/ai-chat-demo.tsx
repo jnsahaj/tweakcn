@@ -35,7 +35,7 @@ export function AIChatDemo({
   return (
     <div
       className={cn(
-        "bg-background/50 flex h-full w-full min-w-[350px] origin-top-left flex-col overflow-hidden backdrop-blur-lg max-lg:scale-80"
+        "bg-background/50 flex h-full w-full min-w-[350px] origin-top-left flex-col overflow-hidden backdrop-blur-lg"
       )}
       aria-hidden="true"
       tabIndex={-1}
