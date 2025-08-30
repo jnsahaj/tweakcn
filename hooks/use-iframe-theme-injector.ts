@@ -3,7 +3,7 @@ import { EmbedMessage, IframeStatus, MESSAGE } from "@/types/live-preview-embed"
 import { applyThemeToElement } from "@/utils/apply-theme";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const THEME_UPDATE_DEBOUNCE_MS = 150; // Throttle theme updates to ~6-7 fps
+const THEME_UPDATE_DEBOUNCE_MS = 50;
 
 export interface UseIframeThemeInjectorProps {
   allowCrossOrigin?: boolean; // default false - must explicitly opt-in for external sites
@@ -24,6 +24,7 @@ export const useIframeThemeInjector = ({
 
   const { themeState } = useEditorStore();
   const [status, setStatus] = useState<IframeStatus>("unknown");
+  const [themeInjectionError, setThemeInjectionError] = useState<string | null>(null);
   const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const themeUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -31,9 +32,9 @@ export const useIframeThemeInjector = ({
     if (allowCrossOrigin) return; // Only for same-origin mode
 
     const iframe = ref.current;
-    if (!iframe?.contentDocument?.documentElement) return;
+    const iframeRoot = iframe?.contentDocument?.documentElement;
+    if (!iframeRoot) return;
 
-    const iframeRoot = iframe.contentDocument.documentElement;
     applyThemeToElement(themeState, iframeRoot);
   }, [allowCrossOrigin, ref, themeState]);
 
@@ -45,6 +46,7 @@ export const useIframeThemeInjector = ({
           iframe.contentWindow.postMessage(msg, "*");
         } catch (error) {
           console.warn("Failed to send message to iframe:", error);
+          setThemeInjectionError("Failed to establish the connection.");
         }
       }
     },
@@ -58,7 +60,10 @@ export const useIframeThemeInjector = ({
     clearTimeout(validationTimeoutRef.current!);
     validationTimeoutRef.current = setTimeout(() => {
       setStatus("missing");
-    }, 2000);
+      setThemeInjectionError(
+        "The tweakcn's live theme preview script could not be found. Please make sure the script is included in the website's source code and try again."
+      );
+    }, 3000);
   }, [postMessage]);
 
   // Listen for iframe load
@@ -77,6 +82,7 @@ export const useIframeThemeInjector = ({
         // Same-origin: just apply theme directly
         applySameOriginTheme();
         setStatus("supported"); // Always supported for same-origin
+        setThemeInjectionError(null);
       }
     };
 
@@ -100,13 +106,34 @@ export const useIframeThemeInjector = ({
 
       switch (message.type) {
         case MESSAGE.EMBED_LOADED:
+          console.log("Tweakcn Embed: Embed loaded");
+          setThemeInjectionError(null);
+          break;
+
         case MESSAGE.PONG:
           setStatus("connected");
+          setThemeInjectionError(null);
           postMessage({ type: MESSAGE.CHECK_SHADCN });
           break;
 
         case MESSAGE.SHADCN_STATUS:
-          setStatus(message.payload.supported ? "supported" : "unsupported");
+          const { supported } = message.payload;
+          if (supported) {
+            setStatus("supported");
+            setThemeInjectionError(null);
+          } else {
+            setStatus("unsupported");
+            setThemeInjectionError(
+              "Live theme preview requires shadcn/ui setup. Please make sure that the basic shadcn/ui variables are configured correctly."
+            );
+          }
+          break;
+
+        case MESSAGE.EMBED_ERROR:
+          const { error } = message.payload;
+          console.error("Tweakcn Embed: Error from iframe:", error);
+          setStatus("error");
+          setThemeInjectionError(error);
           break;
       }
     };
@@ -143,5 +170,6 @@ export const useIframeThemeInjector = ({
     ref,
     status: allowCrossOrigin ? status : "supported", // Same-origin is always "supported"
     retryValidation: allowCrossOrigin ? startCrossOriginValidation : applySameOriginTheme,
+    themeInjectionError,
   };
 };

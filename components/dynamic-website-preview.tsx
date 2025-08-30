@@ -8,8 +8,11 @@ import {
 } from "@/components/block-viewer";
 import { CopyButton } from "@/components/copy-button";
 import { LoadingLogo } from "@/components/editor/ai/loading-logo";
+import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
+import { SocialLink } from "@/components/social-link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import { useIframeThemeInjector } from "@/hooks/use-iframe-theme-injector";
 import { useWebsitePreview } from "@/hooks/use-website-preview";
@@ -21,6 +24,7 @@ import {
   ExternalLink,
   Globe,
   GlobeLock,
+  Info,
   Loader,
   RefreshCw,
   X,
@@ -101,7 +105,7 @@ function DynamicWebsitePreviewProvider({
 }) {
   const websitePreviewState = useWebsitePreview({ allowCrossOrigin });
 
-  const { status, retryValidation } = useIframeThemeInjector({
+  const { status, retryValidation, themeInjectionError } = useIframeThemeInjector({
     allowCrossOrigin: allowCrossOrigin && !!websitePreviewState.currentUrl,
     iframeRef: websitePreviewState.iframeRef,
   });
@@ -110,6 +114,7 @@ function DynamicWebsitePreviewProvider({
     ...websitePreviewState,
     status,
     retryValidation,
+    themeInjectionError,
   };
 
   return (
@@ -124,7 +129,7 @@ function DynamicToolbarControls() {
     inputUrl,
     setInputUrl,
     currentUrl,
-    isLoading,
+    isLoading: previewIsLoading,
     loadUrl,
     refreshIframe,
     openInNewTab,
@@ -157,18 +162,18 @@ function DynamicToolbarControls() {
 
       <Button
         onClick={loadUrl}
-        disabled={isLoading || !inputUrl}
+        disabled={previewIsLoading || !inputUrl}
         size="sm"
         className="h-8 w-16 shadow-none"
       >
-        {isLoading ? <Loader className="size-3 animate-spin" /> : "Load"}
+        {previewIsLoading ? <Loader className="size-3 animate-spin" /> : "Load"}
       </Button>
 
       <Button
         variant="outline"
         size="icon"
         onClick={refreshIframe}
-        disabled={isLoading || !currentUrl}
+        disabled={previewIsLoading || !currentUrl}
         className="size-8 shadow-none"
       >
         <RefreshCw className={cn("size-3")} />
@@ -194,17 +199,18 @@ function DynamicToolbarControls() {
 function DynamicIframeContent() {
   const {
     currentUrl,
-    isLoading,
-    error,
+    isLoading: previewIsLoading,
+    error: previewError,
     status,
     retryValidation,
     allowCrossOrigin,
     iframeRef,
     handleIframeLoad,
     handleIframeError,
+    themeInjectionError,
   } = useDynamicWebsitePreview();
 
-  if (!currentUrl && !error) {
+  if (!currentUrl && !previewError) {
     return (
       <div className="relative size-full overflow-hidden p-4">
         <div className="text-muted-foreground mx-auto flex h-full max-w-lg flex-col items-center justify-center space-y-6">
@@ -222,10 +228,15 @@ function DynamicIframeContent() {
             <p className="text-foreground text-lg font-medium">Preview External Websites</p>
             <p className="text-muted-foreground text-sm text-pretty">
               Enter a URL to preview websites built with{" "}
-              <span className="font-medium">shadcn/ui</span> components.
-              {allowCrossOrigin
-                ? "External sites can integrate with tweakcn by including our script for live theme previews."
-                : "Same-origin websites support direct theme injection without requiring external scripts."}
+              <span className="font-medium">shadcn/ui</span> components.{" "}
+              {allowCrossOrigin ? (
+                <span>
+                  External sites can integrate with tweakcn by including our script for{" "}
+                  <span className="font-medium">live theme previews</span>.
+                </span>
+              ) : (
+                "Same-origin websites support direct theme injection without requiring external scripts."
+              )}
             </p>
           </div>
 
@@ -246,12 +257,12 @@ function DynamicIframeContent() {
     );
   }
 
-  if (error) {
+  if (previewError) {
     return (
       <div className="relative size-full overflow-hidden p-4">
         <div className="flex h-full flex-col items-center justify-center space-y-2 p-4 text-center">
           <p className="text-destructive text-sm font-medium">Error Loading Website</p>
-          <span className="text-muted-foreground max-w-md text-xs">{error}</span>
+          <span className="text-muted-foreground max-w-md text-xs">{previewError}</span>
         </div>
       </div>
     );
@@ -259,7 +270,7 @@ function DynamicIframeContent() {
 
   return (
     <div className="relative size-full overflow-hidden">
-      {isLoading && (
+      {previewIsLoading && (
         <div className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm">
           <div className="flex items-center space-x-2">
             <div className="relative size-6">
@@ -285,18 +296,19 @@ function DynamicIframeContent() {
         onError={handleIframeError}
         sandbox={
           allowCrossOrigin
-            ? "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+            ? "allow-scripts allow-same-origin allow-forms allow-popups"
             : "allow-scripts allow-same-origin"
         }
         loading="lazy"
       />
 
-      {!isLoading && !!status && allowCrossOrigin && (
-        <div className="bg-background/60 outline-border/50 absolute bottom-2 left-2 z-10 rounded-md px-2 py-1 outline-2 backdrop-blur-lg">
+      {!previewIsLoading && !!status && allowCrossOrigin && (
+        <div className="absolute bottom-2 left-2 z-10">
           <ConnectionStatus
             status={status}
             retryValidation={retryValidation}
-            isLoading={isLoading}
+            isLoading={previewIsLoading}
+            errorMsg={themeInjectionError}
           />
         </div>
       )}
@@ -308,45 +320,119 @@ function ConnectionStatus({
   status,
   retryValidation,
   isLoading,
+  errorMsg,
 }: {
   status: IframeStatus;
   retryValidation: () => void;
   isLoading: boolean;
+  errorMsg?: string | null;
 }) {
   if (isLoading || status === "unknown") return null;
 
   return (
-    <div className="flex h-8 items-center gap-2">
-      {ICONS[status]}
-      <span className="text-muted-foreground text-sm font-medium">{TEXTS[status]}</span>
-      {(status === "missing" || status === "unsupported") && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 px-2 py-1 text-xs"
-          onClick={retryValidation}
-        >
-          Retry
-        </Button>
+    <div className="bg-popover/90 outline-border/50 flex h-8 items-center gap-2 rounded-lg px-2 shadow-sm outline backdrop-blur-lg">
+      <div className="flex items-center gap-1">
+        <span className="text-foreground/90">
+          {errorMsg ? (
+            <HoverCard>
+              <HoverCardTrigger>{ICONS[status]}</HoverCardTrigger>
+              <HoverCardContent
+                align="start"
+                side="top"
+                className="size-fit max-w-[280px] min-w-[140px] p-2"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1">
+                    <Info className="size-3" />
+                    <p className="text-xs font-medium">Error details:</p>
+                  </div>
+
+                  <p className="text-muted-foreground text-xs text-pretty">{errorMsg}</p>
+
+                  {status === "missing" && (
+                    <code className="text-foreground bg-muted group/script relative isolate block overflow-hidden rounded-md border">
+                      <HorizontalScrollArea className="relative isolate">
+                        <span className="p-2 font-mono text-xs text-nowrap">
+                          {TWEAKCN_EMBED_SCRIPT_TAG}
+                        </span>
+                      </HorizontalScrollArea>
+
+                      <CopyButton
+                        variant="default"
+                        size="icon"
+                        textToCopy={TWEAKCN_EMBED_SCRIPT_TAG}
+                        className="absolute top-1 right-1 z-10 hidden group-hover/script:inline-flex [&>svg]:size-3"
+                      />
+                    </code>
+                  )}
+
+                  {status === "unsupported" && (
+                    <div className="space-y-1">
+                      <p className="border-primary! border-l-2 pl-2 text-xs font-medium text-pretty">
+                        Consult the shadcn/ui docs for more information:
+                      </p>
+                      <div className="flex flex-col gap-0.5">
+                        <SocialLink
+                          showIcon
+                          href="https://ui.shadcn.com/docs/installation"
+                          className="text-primary text-xs"
+                        >
+                          Installation docs
+                        </SocialLink>
+                        <SocialLink
+                          showIcon
+                          href="https://ui.shadcn.com/docs/theming"
+                          className="text-primary text-xs"
+                        >
+                          Theming docs
+                        </SocialLink>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          ) : (
+            ICONS[status]
+          )}
+        </span>
+        <span className="text-foreground/90 flex items-center gap-1 text-sm font-medium">
+          {TEXTS[status]}
+        </span>
+      </div>
+
+      {(status === "missing" || status === "unsupported" || status === "error") && (
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-6 px-2 text-xs shadow-none"
+            onClick={retryValidation}
+          >
+            Retry
+          </Button>
+        </div>
       )}
     </div>
   );
 }
 
 const ICONS: Record<IframeStatus, React.ReactNode> = {
-  checking: <Loader className="text-foreground size-4 animate-spin" />,
-  connected: <CheckCircle className="text-foreground size-4" />,
-  supported: <CheckCircle className="text-foreground size-4" />,
-  unsupported: <AlertCircle className="text-foreground size-4" />,
-  missing: <XCircle className="text-destructive size-4" />,
   unknown: null,
+  checking: <Loader className="size-4 animate-spin" />,
+  connected: <CheckCircle className="size-4" />,
+  supported: <CheckCircle className="size-4" />,
+  unsupported: <AlertCircle className="size-4" />,
+  missing: <XCircle className="text-destructive size-4" />,
+  error: <XCircle className="text-destructive size-4" />,
 };
 
 const TEXTS: Record<IframeStatus, string> = {
-  checking: "Checking connection...",
+  unknown: "",
+  checking: "Checking connection",
   connected: "Connected",
   supported: "Live preview enabled",
   unsupported: "Unsupported site",
   missing: "Script not found",
-  unknown: "",
+  error: "An error occurred",
 };

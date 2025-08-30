@@ -9,6 +9,7 @@ export const MESSAGE = {
   THEME_UPDATE: "TWEAKCN_THEME_UPDATE",
   THEME_APPLIED: "TWEAKCN_THEME_APPLIED",
   EMBED_LOADED: "TWEAKCN_EMBED_LOADED",
+  EMBED_ERROR: "TWEAKCN_EMBED_ERROR",
 } as const;
 
 export type MessageType = (typeof MESSAGE)[keyof typeof MESSAGE];
@@ -28,7 +29,8 @@ export type EmbedMessage =
   | { type: typeof MESSAGE.SHADCN_STATUS; payload: ShadcnStatusPayload }
   | { type: typeof MESSAGE.THEME_UPDATE; payload: ThemeUpdatePayload }
   | { type: typeof MESSAGE.THEME_APPLIED }
-  | { type: typeof MESSAGE.EMBED_LOADED };
+  | { type: typeof MESSAGE.EMBED_LOADED }
+  | { type: typeof MESSAGE.EMBED_ERROR; payload: { error: string } };
 
 export type IframeStatus =
   | "unknown"
@@ -36,4 +38,5 @@ export type IframeStatus =
   | "connected"
   | "supported"
   | "unsupported"
-  | "missing";
+  | "missing"
+  | "error";
