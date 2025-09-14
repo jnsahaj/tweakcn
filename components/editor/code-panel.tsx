@@ -180,6 +180,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             setTailwindVersion(value);
             if (value === "4" && colorFormat === "hsl") {
               setColorFormat("oklch");
+              setActiveTab("index.css");
             }
           }}
         >
