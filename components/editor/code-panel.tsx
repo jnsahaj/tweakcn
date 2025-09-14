@@ -33,6 +33,7 @@ interface CodePanelProps {
 const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   const [registryCopied, setRegistryCopied] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("index.css");
   const posthog = usePostHog();
   const { handleSaveClick } = useDialogActions();
 
@@ -204,6 +205,8 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
         </Select>
       </div>
       <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
         defaultValue="index.css"
         className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border"
       >
@@ -224,7 +227,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => copyToClipboard(code)}
+              onClick={() => copyToClipboard(activeTab === "index.css" ? code : configCode)}
               className="h-8"
               aria-label={copied ? "Copied to clipboard" : "Copy to clipboard"}
             >
