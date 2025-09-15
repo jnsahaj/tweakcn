@@ -438,7 +438,7 @@ const ThemeControlPanel = ({
 
               <ControlSection title="Spacing">
                 <SliderWithInput
-                  value={parseFloat(currentStyles.spacing?.replace("rem", ""))}
+                  value={parseFloat(currentStyles?.spacing?.replace("rem", "") || "0")}
                   onChange={(value) => updateStyle("spacing", `${value}rem`)}
                   min={0.15}
                   max={0.35}
