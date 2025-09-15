@@ -103,7 +103,7 @@ const HslAdjustmentControls = () => {
           return {
             ...acc,
             [key]: adjustColorByHsl(
-              lightStyles[colorKey],
+              lightStyles[colorKey] || "",
               adjustments.hueShift,
               adjustments.saturationScale,
               adjustments.lightnessScale
@@ -118,7 +118,7 @@ const HslAdjustmentControls = () => {
           return {
             ...acc,
             [key]: adjustColorByHsl(
-              darkStyles[colorKey],
+              darkStyles[colorKey] || "",
               adjustments.hueShift,
               adjustments.saturationScale,
               adjustments.lightnessScale
