@@ -34,7 +34,7 @@ const ThemeControlPanel = ({
 }: ThemeEditorControlsProps) => {
   const { themeState } = useEditorStore();
   const { tab, handleSetTab } = useControlsTabFromUrl();
-  const { loading: aiGenerationLoading } = useAIThemeGenerationCore();
+  const { isGeneratingTheme } = useAIThemeGenerationCore();
 
   const currentStyles = React.useMemo(
     () => ({
@@ -80,9 +80,9 @@ const ThemeControlPanel = ({
     <>
       <div className="border-b">
         {!theme ? (
-          <ThemePresetSelect className="h-14 rounded-none" disabled={aiGenerationLoading} />
+          <ThemePresetSelect className="h-14 rounded-none" disabled={isGeneratingTheme} />
         ) : (
-          <ThemeEditActions theme={theme} disabled={aiGenerationLoading} />
+          <ThemeEditActions theme={theme} disabled={isGeneratingTheme} />
         )}
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">

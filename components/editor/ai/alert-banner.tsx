@@ -61,43 +61,51 @@ export function AlertBanner() {
   if (isPro || isPending) return null;
 
   return (
-    <div className="@container/alert-banner relative">
-      {showBanner && <div className="bg-muted absolute inset-0 translate-y-full" />}
+    <BannerWrapper show={showBanner}>
+      <div className="flex size-full items-center justify-between gap-2">
+        <p className={cn("line-clamp-1 text-pretty @2xl/alert-banner:text-sm")}>
+          {getBannerContent()}
+        </p>
+        <div className="ml-auto flex items-center gap-1">
+          <Link href="/pricing">
+            <Button variant="link" size="sm" className="h-fit @2xl/alert-banner:text-sm">
+              Upgrade
+            </Button>
+          </Link>
 
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-4 [&>svg]:size-3"
+            onClick={() => setShowBanner(false)}
+          >
+            <X />
+          </Button>
+        </div>
+      </div>
+    </BannerWrapper>
+  );
+}
+
+export function BannerWrapper({ children, show }: { children: React.ReactNode; show: boolean }) {
+  return (
+    <div className={cn("@container/alert-banner")}>
       <div
         className={cn(
-          "relative grid content-end transition-all duration-300 ease-in-out",
-          showBanner ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          "relative w-full origin-bottom transition-all duration-300 ease-in-out",
+          show
+            ? "pointer-events-auto max-h-6 @2xl/alert-banner:max-h-7.5"
+            : "pointer-events-none max-h-0 translate-y-full"
         )}
+        style={{
+          willChange: "transform, max-height",
+        }}
       >
-        <div className="overflow-hidden">
-          <div className="bg-muted text-muted-foreground flex items-center justify-between gap-2 rounded-t-lg px-3 py-1.5 text-xs">
-            <p
-              className={cn(
-                "text-pretty @2xl/alert-banner:text-sm",
-                showBanner ? "opacity-100" : "opacity-0"
-              )}
-            >
-              {getBannerContent()}
-            </p>
-            <div className="ml-auto flex items-center gap-1">
-              <Link href="/pricing">
-                <Button variant="link" size="sm" className="h-fit @2xl/alert-banner:text-sm">
-                  Upgrade
-                </Button>
-              </Link>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-4 [&>svg]:size-3"
-                onClick={() => setShowBanner(false)}
-              >
-                <X />
-              </Button>
-            </div>
-          </div>
+        <div className="bg-muted text-muted-foreground flex h-6 items-center rounded-t-lg px-3 text-xs @2xl/alert-banner:h-7.5">
+          {children}
         </div>
+
+        <div className="bg-muted h-4 w-full"></div>
       </div>
     </div>
   );

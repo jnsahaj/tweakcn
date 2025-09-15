@@ -2,11 +2,12 @@
 
 import { AIChatFormBody } from "@/components/editor/ai/ai-chat-form-body";
 import { AlertBanner } from "@/components/editor/ai/alert-banner";
+import { EnhancePromptButton } from "@/components/editor/ai/enhance-prompt-button";
 import { ImageUploader } from "@/components/editor/ai/image-uploader";
 import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import { Button } from "@/components/ui/button";
 import { useAIChatForm } from "@/hooks/use-ai-chat-form";
-import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
+import { useAIEnhancePrompt } from "@/hooks/use-ai-enhance-prompt";
 import { useGuards } from "@/hooks/use-guards";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -14,11 +15,14 @@ import { AIPromptData } from "@/types/ai";
 import { ArrowUp, Loader, StopCircle } from "lucide-react";
 
 export function AIChatForm({
-  handleThemeGeneration,
+  onThemeGeneration,
+  isGeneratingTheme,
+  onCancelThemeGeneration,
 }: {
-  handleThemeGeneration: (promptData: AIPromptData | null) => void;
+  onThemeGeneration: (promptData: AIPromptData) => void;
+  isGeneratingTheme: boolean;
+  onCancelThemeGeneration: () => void;
 }) {
-  const { loading: aiGenerateLoading, cancelThemeGeneration } = useAIThemeGenerationCore();
   const {
     editorContentDraft,
     handleContentChange,
@@ -31,9 +35,22 @@ export function AIChatForm({
     handleImageRemove,
     isSomeImageUploading,
     isUserDragging,
+    isInitializing,
   } = useAIChatForm();
 
   const { checkValidSession, checkValidSubscription } = useGuards();
+
+  const { startEnhance, stopEnhance, enhancedPromptAsJsonContent, isEnhancingPrompt } =
+    useAIEnhancePrompt();
+
+  const handleEnhancePrompt = () => {
+    // TODO: Add subscription check, this should be a Pro only feature
+    if (!checkValidSession() || !checkValidSubscription()) return; // Act as an early return;
+
+    // Only send images that are not loading, and strip loading property
+    const images = uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url }));
+    startEnhance({ ...promptData, images });
+  };
 
   const handleGenerate = async () => {
     if (!checkValidSession() || !checkValidSubscription()) return; // Act as an early return
@@ -44,7 +61,7 @@ export function AIChatForm({
     // Proceed only if there is text, or at least one image
     if (isEmptyPrompt && images.length === 0) return;
 
-    handleThemeGeneration({
+    onThemeGeneration({
       ...promptData,
       content: promptData?.content ?? "",
       mentions: promptData?.mentions ?? [],
@@ -61,7 +78,14 @@ export function AIChatForm({
       <div className="bg-background relative z-10 flex size-full min-h-[100px] flex-1 flex-col gap-2 overflow-hidden rounded-lg border p-2 shadow-xs">
         <AIChatFormBody
           isUserDragging={isUserDragging}
-          aiGenerateLoading={aiGenerateLoading}
+          disabled={isEnhancingPrompt}
+          canSubmit={
+            !isGeneratingTheme &&
+            !isEnhancingPrompt &&
+            !isEmptyPrompt &&
+            !isSomeImageUploading &&
+            !isInitializing
+          }
           uploadedImages={uploadedImages}
           handleImagesUpload={handleImagesUpload}
           handleImageRemove={handleImageRemove}
@@ -69,12 +93,13 @@ export function AIChatForm({
           handleGenerate={handleGenerate}
           initialEditorContent={editorContentDraft ?? undefined}
           textareaKey={editorContentDraft ? "with-draft" : "no-draft"}
+          externalEditorContent={isEnhancingPrompt ? enhancedPromptAsJsonContent : undefined}
         />
 
         <div className="flex items-center justify-between gap-2">
           <div className="flex w-full max-w-64 items-center gap-2 overflow-hidden">
             <ThemePresetSelect
-              disabled={aiGenerateLoading}
+              disabled={isGeneratingTheme || isEnhancingPrompt || isInitializing}
               withCycleThemes={false}
               variant="outline"
               size="sm"
@@ -83,22 +108,34 @@ export function AIChatForm({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* TODO: This should be a Pro only feature */}
+            {promptData?.content ? (
+              <EnhancePromptButton
+                isEnhancing={isEnhancingPrompt}
+                onStart={handleEnhancePrompt}
+                onStop={stopEnhance}
+                disabled={isGeneratingTheme || isInitializing}
+              />
+            ) : null}
+
             <ImageUploader
               fileInputRef={fileInputRef}
               onImagesUpload={handleImagesUpload}
               onClick={() => fileInputRef.current?.click()}
               disabled={
-                aiGenerateLoading ||
+                isGeneratingTheme ||
+                isEnhancingPrompt ||
+                isInitializing ||
                 uploadedImages.some((img) => img.loading) ||
                 uploadedImages.length >= MAX_IMAGE_FILES
               }
             />
 
-            {aiGenerateLoading ? (
+            {isGeneratingTheme ? (
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={cancelThemeGeneration}
+                onClick={onCancelThemeGeneration}
                 className={cn("flex items-center gap-1", "@max-[350px]/form:w-8")}
               >
                 <StopCircle />
@@ -107,11 +144,17 @@ export function AIChatForm({
             ) : (
               <Button
                 size="icon"
-                className="size-8"
+                className="size-8 shadow-none"
                 onClick={handleGenerate}
-                disabled={isEmptyPrompt || isSomeImageUploading || aiGenerateLoading}
+                disabled={
+                  isEmptyPrompt ||
+                  isSomeImageUploading ||
+                  isGeneratingTheme ||
+                  isEnhancingPrompt ||
+                  isInitializing
+                }
               >
-                {aiGenerateLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
+                {isGeneratingTheme ? <Loader className="animate-spin" /> : <ArrowUp />}
               </Button>
             )}
           </div>

@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ChatProvider } from "@/hooks/use-chat-context";
 import { QueryProvider } from "@/lib/query-client";
 import type { Metadata, Viewport } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -86,7 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <AuthDialogWrapper />
                   <GetProDialogWrapper />
                   <Toaster />
-                  {children}
+                  <ChatProvider>{children}</ChatProvider>
                 </TooltipProvider>
               </ThemeProvider>
             </QueryProvider>

@@ -1,38 +1,41 @@
 "use client";
 
 import { suggestion } from "@/components/editor/mention-suggestion";
-import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import CharacterCount from "@tiptap/extension-character-count";
 import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 interface CustomTextareaProps {
-  onContentChange: (jsonContent: JSONContent) => void;
-  onGenerate?: () => void;
-  characterLimit?: number;
-  onImagesPaste?: (files: File[]) => void;
-  initialEditorContent?: JSONContent | null;
   className?: string;
+  disabled?: boolean;
+  canSubmit?: boolean;
+  onContentChange: (jsonContent: JSONContent) => void;
+  onSubmit: () => void;
+  onImagesPaste?: (files: File[]) => void;
+  characterLimit?: number;
+  initialEditorContent?: JSONContent | null;
+  externalEditorContent?: JSONContent | null;
 }
 
-const CustomTextarea: React.FC<CustomTextareaProps> = ({
-  onContentChange,
-  onGenerate,
-  characterLimit,
-  onImagesPaste,
-  initialEditorContent,
+export default function CustomTextarea({
   className,
-}) => {
-  const { loading: aiGenerateLoading } = useAIThemeGenerationCore();
-  const { toast } = useToast();
-
+  disabled = false,
+  canSubmit = false,
+  onContentChange,
+  onSubmit,
+  onImagesPaste,
+  characterLimit,
+  initialEditorContent,
+  externalEditorContent,
+}: CustomTextareaProps) {
   const editor = useEditor({
     immediatelyRender: false,
+    editable: !disabled,
     extensions: [
       StarterKit,
       Mention.configure({
@@ -50,17 +53,22 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
         limit: characterLimit,
       }),
     ],
-    autofocus: !aiGenerateLoading,
+    autofocus: !disabled,
     editorProps: {
       attributes: {
         class: cn(
-          "min-w-0 min-h-[60px] max-h-[150px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background p-1 text-sm focus-visible:outline-none disabled:opacity-50 max-sm:text-[16px]!",
+          "min-w-0 min-h-[50px] max-h-[120px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background p-1 text-sm focus-visible:outline-none max-sm:text-[16px]! transition-all",
+          disabled && "opacity-75 pointer-events-none",
           className
         ),
       },
       handleKeyDown: (view, event) => {
-        if (event.key === "Enter" && !event.shiftKey && !aiGenerateLoading) {
-          const { state } = view;
+        if (disabled) {
+          event.preventDefault();
+          return true;
+        }
+
+        if (event.key === "Enter" && !event.shiftKey && !disabled && canSubmit) {
           const mentionPluginKey = Mention.options.suggestion.pluginKey;
 
           if (!mentionPluginKey) {
@@ -68,19 +76,25 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
             return false;
           }
 
+          const { state } = view;
           const mentionState = mentionPluginKey.getState(state);
 
           if (mentionState?.active) {
             return false;
           } else {
             event.preventDefault();
-            onGenerate?.();
+            onSubmit();
             return true;
           }
         }
         return false;
       },
       handlePaste: (_view, event) => {
+        if (disabled) {
+          event.preventDefault();
+          return true;
+        }
+
         if (!characterLimit) return false;
 
         const clipboardData = event.clipboardData;
@@ -117,6 +131,7 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
     },
     content: initialEditorContent || "",
     onCreate: ({ editor }) => {
+      if (disabled) return;
       editor.commands.focus("end");
     },
     onUpdate: ({ editor }) => {
@@ -126,10 +141,29 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
   });
 
   useEffect(() => {
-    if (editor) {
-      editor.commands.blur();
+    if (!editor) return;
+    editor.setEditable(!disabled);
+    if (disabled) editor.commands.blur();
+    else editor.commands.focus("end");
+  }, [disabled, editor]);
+
+  // Stream external content into the editor
+  useEffect(() => {
+    if (!editor) return;
+    if (!externalEditorContent) return;
+
+    try {
+      const current = editor.getJSON();
+      const next = externalEditorContent;
+      const hasChanged = JSON.stringify(current) !== JSON.stringify(next);
+      if (!hasChanged) return;
+
+      // Emit update so listeners propagate changes
+      editor.commands.setContent(next, true);
+    } catch (_e) {
+      // If setContent fails for any reason, silently ignore; user can keep typing
     }
-  }, [aiGenerateLoading, editor]);
+  }, [externalEditorContent, editor]);
 
   if (!editor) {
     return null;
@@ -141,12 +175,12 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
 
   return (
     <div className="relative isolate">
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} aria-disabled={disabled} />
       {shouldShowCount && (
-        <div className="pointer-events-none absolute right-3 bottom-2 z-10 flex text-xs">
+        <div className="absolute right-3 bottom-2 z-10 flex text-xs hover:opacity-0">
           <span
             className={cn(
-              "bg-background/10 rounded-full px-0.5 backdrop-blur-xs",
+              "bg-background/10 pointer-events-none rounded-full px-0.5 backdrop-blur-xs",
               isLimitExceeded ? "text-destructive" : "text-muted-foreground"
             )}
           >
@@ -156,6 +190,4 @@ const CustomTextarea: React.FC<CustomTextareaProps> = ({
       )}
     </div>
   );
-};
-
-export default CustomTextarea;
+}

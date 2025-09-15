@@ -2,20 +2,23 @@ import { recordAIUsage } from "@/actions/ai-usage";
 import { handleError } from "@/lib/error-response";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
+import { ChatMessage } from "@/types/ai";
 import { SubscriptionRequiredError } from "@/types/errors";
-import { requestSchema, responseSchema, SYSTEM_PROMPT } from "@/utils/ai/generate-theme";
-import { createGoogleGenerativeAI, GoogleGenerativeAIProviderOptions } from "@ai-sdk/google";
+import { SYSTEM_PROMPT } from "@/utils/ai/generate-theme";
+import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
+import { MODELS, baseProviderOptions } from "@/utils/ai/providers";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
-import { generateText, Output } from "ai";
+import {
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+  stepCountIs,
+  streamText,
+  UIMessageStreamWriter,
+} from "ai";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
-
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_API_KEY,
-});
-
-const model = google("gemini-2.5-pro");
+import { THEME_GENERATION_TOOLS } from "./tools";
 
 const ratelimit = new Ratelimit({
   redis: kv,
@@ -51,39 +54,52 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { messages } = requestSchema.parse(await req.json());
+    const { messages }: { messages: ChatMessage[] } = await req.json();
+    const modelMessages = await convertMessagesToModelMessages(messages);
 
-    const { experimental_output: result, usage } = await generateText({
-      model,
-      experimental_output: Output.object({
-        schema: responseSchema,
-      }),
-      system: SYSTEM_PROMPT,
-      messages,
-      abortSignal: req.signal,
-      providerOptions: {
-        google: {
-          thinkingConfig: {
-            thinkingBudget: 128,
+    const stream = createUIMessageStream<ChatMessage>({
+      execute: ({ writer }) => {
+        const context: Context = { writer };
+
+        const result = streamText({
+          abortSignal: req.signal,
+          model: MODELS.themeGeneration,
+          providerOptions: baseProviderOptions,
+          system: SYSTEM_PROMPT,
+          messages: modelMessages,
+          tools: THEME_GENERATION_TOOLS,
+          stopWhen: stepCountIs(5),
+          onError: (error) => {
+            if (error instanceof Error) console.error(error);
           },
-        } satisfies GoogleGenerativeAIProviderOptions,
+          onFinish: async (result) => {
+            const { totalUsage } = result;
+            try {
+              await recordAIUsage({
+                promptTokens: totalUsage.inputTokens,
+                completionTokens: totalUsage.outputTokens,
+              });
+            } catch (error) {
+              logError(error as Error, { action: "recordAIUsage", totalUsage });
+            }
+          },
+          experimental_context: context,
+        });
+
+        writer.merge(
+          result.toUIMessageStream({
+            messageMetadata: ({ part }) => {
+              // `toolName` is not typed for some reason, must be kept in sync with the actual tool names
+              if (part.type === "tool-result" && part.toolName === "generateTheme") {
+                return { themeStyles: part.output };
+              }
+            },
+          })
+        );
       },
     });
 
-    if (usage) {
-      try {
-        await recordAIUsage({
-          promptTokens: usage.promptTokens,
-          completionTokens: usage.completionTokens,
-        });
-      } catch (error) {
-        logError(error as Error, { action: "recordAIUsage", usage });
-      }
-    }
-
-    return new Response(JSON.stringify(result), {
-      headers: { "Content-Type": "application/json" },
-    });
+    return createUIMessageStreamResponse({ stream });
   } catch (error) {
     if (
       error instanceof Error &&
@@ -95,3 +111,5 @@ export async function POST(req: NextRequest) {
     return handleError(error, { route: "/api/generate-theme" });
   }
 }
+
+export type Context = { writer: UIMessageStreamWriter<ChatMessage> };

@@ -23,7 +23,7 @@ interface DialogActionsContextType {
   shareUrl: string;
   dialogKey: number;
   isCreatingTheme: boolean;
-  aiGenerateLoading: boolean;
+  isGeneratingTheme: boolean;
 
   // Dialog actions
   setCssImportOpen: (open: boolean) => void;
@@ -45,7 +45,7 @@ function useDialogActionsStore(): DialogActionsContextType {
   const [shareAfterSave, setShareAfterSave] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
-  const [dialogKey, setDialogKey] = useState(0);
+  const [dialogKey, _setDialogKey] = useState(0);
 
   const { themeState, setThemeState, applyThemePreset, hasThemeChangedFromCheckpoint } =
     useEditorStore();
@@ -53,7 +53,7 @@ function useDialogActionsStore(): DialogActionsContextType {
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const createThemeMutation = useCreateTheme();
-  const { loading: aiGenerateLoading } = useAIThemeGenerationCore();
+  const { isGeneratingTheme } = useAIThemeGenerationCore();
   const posthog = usePostHog();
 
   usePostLoginAction("SAVE_THEME", () => {
@@ -162,7 +162,7 @@ function useDialogActionsStore(): DialogActionsContextType {
     shareUrl,
     dialogKey,
     isCreatingTheme: createThemeMutation.isPending,
-    aiGenerateLoading,
+    isGeneratingTheme,
 
     // Dialog actions
     setCssImportOpen,

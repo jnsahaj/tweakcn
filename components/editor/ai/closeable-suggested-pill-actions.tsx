@@ -2,7 +2,6 @@
 
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Button } from "@/components/ui/button";
-import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { usePreferencesStore } from "@/store/preferences-store";
 import { AIPromptData } from "@/types/ai";
 import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
@@ -12,10 +11,11 @@ import { PillActionButton } from "./pill-action-button";
 
 export function ClosableSuggestedPillActions({
   onGenerateTheme,
+  isGeneratingTheme,
 }: {
-  onGenerateTheme: (promptData: AIPromptData | null) => Promise<void>;
+  onGenerateTheme: (promptData: AIPromptData) => void;
+  isGeneratingTheme: boolean;
 }) {
-  const { loading: aiIsGenerating } = useAIThemeGenerationCore();
   const { chatSuggestionsOpen, setChatSuggestionsOpen } = usePreferencesStore();
 
   const handleSetPrompt = async (prompt: string) => {
@@ -27,9 +27,6 @@ export function ClosableSuggestedPillActions({
 
   return (
     <div className="relative flex flex-col items-center justify-center">
-      {/* Fade out effect when scrolling */}
-      <div className="via-background/50 from-background pointer-events-none absolute -top-6 right-0 left-0 z-20 h-6 bg-gradient-to-t to-transparent opacity-100 transition-opacity ease-out" />
-
       <div className="text-muted-foreground flex w-full items-center justify-between gap-4">
         <h3 className="text-xs">Suggestions</h3>
         <Button
@@ -47,7 +44,7 @@ export function ClosableSuggestedPillActions({
           <PillActionButton
             key={key}
             onClick={() => handleSetPrompt(prompt)}
-            disabled={aiIsGenerating}
+            disabled={isGeneratingTheme}
           >
             <Sparkles /> {label}
           </PillActionButton>

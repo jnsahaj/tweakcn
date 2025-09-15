@@ -1,6 +1,5 @@
 import { Separator } from "@/components/ui/separator";
 import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
-import { useAIChatStore } from "@/store/ai-chat-store";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { CodeButton } from "./code-button";
@@ -29,36 +28,34 @@ export function ActionBarButtons({
   isSaving,
 }: ActionBarButtonsProps) {
   const { themeState, resetToCurrentPreset, hasUnsavedChanges } = useEditorStore();
-  const { loading: aiGenerationLoading } = useAIThemeGenerationCore();
+  const { isGeneratingTheme } = useAIThemeGenerationCore();
   const { getPreset } = useThemePresetStore();
   const currentPreset = themeState?.preset ? getPreset(themeState?.preset) : undefined;
   const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";
-  const { clearMessages } = useAIChatStore();
 
   const handleReset = () => {
     resetToCurrentPreset();
-    clearMessages();
   };
 
   return (
     <div className="flex items-center gap-1">
-      <MoreOptions disabled={aiGenerationLoading} />
+      <MoreOptions disabled={isGeneratingTheme} />
       <Separator orientation="vertical" className="mx-1 h-8" />
       <ThemeToggle />
       <Separator orientation="vertical" className="mx-1 h-8" />
-      <UndoRedoButtons disabled={aiGenerationLoading} />
+      <UndoRedoButtons disabled={isGeneratingTheme} />
       <Separator orientation="vertical" className="mx-1 h-8" />
-      <ResetButton onClick={handleReset} disabled={!hasUnsavedChanges() || aiGenerationLoading} />
+      <ResetButton onClick={handleReset} disabled={!hasUnsavedChanges() || isGeneratingTheme} />
       <div className="hidden items-center gap-1 md:flex">
-        <ImportButton onClick={onImportClick} disabled={aiGenerationLoading} />
+        <ImportButton onClick={onImportClick} disabled={isGeneratingTheme} />
       </div>
       <Separator orientation="vertical" className="mx-1 h-8" />
       {isSavedPreset && (
-        <EditButton themeId={themeState.preset as string} disabled={aiGenerationLoading} />
+        <EditButton themeId={themeState.preset as string} disabled={isGeneratingTheme} />
       )}
-      <ShareButton onClick={() => onShareClick(themeState.preset)} disabled={aiGenerationLoading} />
-      <SaveButton onClick={onSaveClick} isSaving={isSaving} disabled={aiGenerationLoading} />
-      <CodeButton onClick={onCodeClick} disabled={aiGenerationLoading} />
+      <ShareButton onClick={() => onShareClick(themeState.preset)} disabled={isGeneratingTheme} />
+      <SaveButton onClick={onSaveClick} isSaving={isSaving} disabled={isGeneratingTheme} />
+      <CodeButton onClick={onCodeClick} disabled={isGeneratingTheme} />
     </div>
   );
 }

@@ -1,86 +1,167 @@
+import { Loader } from "@/components/loader";
 import { useTheme } from "@/components/theme-provider";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { useFeedbackText } from "@/hooks/use-feedback-text";
 import { cn } from "@/lib/utils";
 import { ThemeStyles } from "@/types/theme";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { applyGeneratedTheme } from "@/utils/ai/apply-theme";
+import { AlertCircle, CheckCheck, ChevronsUpDown, Loader2, Zap } from "lucide-react";
 import { ComponentProps, useState } from "react";
 
-interface ChatThemePreviewProps extends ComponentProps<"div"> {
-  themeStyles: ThemeStyles;
-}
+type ChatThemePreviewProps = ComponentProps<"div"> & ChatThemePreviewPropsBase;
+
+type ChatThemePreviewPropsBase =
+  | {
+      status: "loading";
+      expanded?: boolean;
+      themeStyles?: Partial<ThemeStyles>;
+    }
+  | {
+      status: "error";
+      expanded?: boolean;
+      errorText?: string;
+      themeStyles?: Partial<ThemeStyles>;
+    }
+  | {
+      status: "complete";
+      expanded?: boolean;
+      themeStyles: ThemeStyles;
+    };
 
 export function ChatThemePreview({
+  status,
+  expanded = false,
   themeStyles,
   className,
   children,
   ...props
 }: ChatThemePreviewProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(expanded);
   const { theme: mode } = useTheme();
+  const loading = status === "loading";
 
-  return (
-    <div className={cn("border-border/75! max-w-[550px] overflow-hidden rounded-lg border")}>
-      <div
-        className={cn(
-          "group/control bg-background hover:bg-muted/40 flex h-10 w-full shrink-0 cursor-pointer items-center justify-between gap-4 p-2.5 transition-colors duration-300 ease-in-out",
-          isExpanded ? "bg-muted/40" : "border-transparent"
-        )}
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <h3
-          className={cn(
-            "group-hover/control:text-foreground text-foreground/75 text-sm font-medium",
-            isExpanded && "text-foreground"
-          )}
-        >
-          Preview
-        </h3>
-        <div className="flex gap-0.5">
-          <div
-            className="border-muted bg-primary h-3 w-3 rounded-sm border"
-            style={{ backgroundColor: themeStyles[mode].primary }}
-          />
-          <div
-            className="border-muted bg-secondary h-3 w-3 rounded-sm border"
-            style={{ backgroundColor: themeStyles[mode].secondary }}
-          />
-          <div
-            className="border-muted bg-background h-3 w-3 rounded-sm border"
-            style={{ backgroundColor: themeStyles[mode].background }}
-          />
-          <div
-            className="border-muted bg-muted h-3 w-3 rounded-sm border"
-            style={{ backgroundColor: themeStyles[mode].muted }}
-          />
-          <div
-            className="border-muted bg-accent h-3 w-3 rounded-sm border"
-            style={{ backgroundColor: themeStyles[mode].accent }}
-          />
-          <div
-            className="border-muted bg-border h-3 w-3 rounded-sm border"
-            style={{ backgroundColor: themeStyles[mode].border }}
-          />
+  const feedbackText = useFeedbackText({
+    showFeedbackText: loading,
+    feedbackMessages: FEEDBACK_MESSAGES,
+    rotationIntervalInSeconds: 8,
+  });
+
+  if (loading) {
+    return (
+      <Card className={cn("w-full max-w-[550px] overflow-hidden rounded-lg shadow-none")}>
+        <div className="flex size-full h-10 items-center gap-2 p-1.5">
+          <div className="bg-muted flex size-7 items-center justify-center rounded-sm">
+            <Loader2 className="text-muted-foreground size-4 animate-spin" />
+          </div>
+
+          <Loader variant="text-shimmer" text={feedbackText} size="md" />
         </div>
-        <button
-          type="button"
-          className="text-foreground/75 group-hover/control:text-foreground ml-auto transition-colors"
-          aria-label={isExpanded ? "Collapse section" : "Expand section"}
-        >
-          {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
-      </div>
+      </Card>
+    );
+  }
 
-      <div
-        className={cn(
-          "grid transition-all duration-300 ease-in-out",
-          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-        )}
-      >
-        <div className="bg-background overflow-hidden">
-          <div className={cn("space-y-2 p-2.5", className)} {...props}>
-            {children}
+  if (status === "error")
+    return (
+      <Card className={cn("max-w-[550px] overflow-hidden rounded-lg shadow-none")}>
+        <div className="flex size-full h-10 items-center gap-2 p-1.5">
+          <div className="bg-destructive flex size-7 items-center justify-center rounded-sm">
+            <AlertCircle className="text-destructive-foreground size-4" />
+          </div>
+          <span className="text-foreground/90 text-sm">Generation cancelled or failed.</span>
+        </div>
+      </Card>
+    );
+
+  const handleApplyTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (status === "complete") applyGeneratedTheme(themeStyles);
+  };
+
+  if (status === "complete")
+    return (
+      <Card className={cn("max-w-[550px] overflow-hidden rounded-lg shadow-none")}>
+        <div
+          className={cn(
+            "group/control hover:bg-background/50 flex h-10 w-full shrink-0 cursor-pointer items-center gap-2 p-1.5 pr-2 transition-colors duration-300 ease-in-out",
+            isExpanded ? "border-b" : "border-transparent"
+          )}
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="bg-primary/15 flex size-7 items-center justify-center rounded-sm">
+            <CheckCheck className="text-primary size-4" />
+          </div>
+
+          <div className="flex gap-1">
+            <div
+              className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
+              style={{ backgroundColor: themeStyles[mode].primary }}
+            />
+            <div
+              className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
+              style={{ backgroundColor: themeStyles[mode].secondary }}
+            />
+            <div
+              className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
+              style={{ backgroundColor: themeStyles[mode].background }}
+            />
+            <div
+              className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
+              style={{ backgroundColor: themeStyles[mode].muted }}
+            />
+            <div
+              className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
+              style={{ backgroundColor: themeStyles[mode].accent }}
+            />
+            <div
+              className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
+              style={{ backgroundColor: themeStyles[mode].border }}
+            />
+          </div>
+
+          <div className="ml-auto flex items-center gap-1">
+            <Button
+              variant="ghost"
+              className="h-7 gap-1.5 px-2 shadow-none"
+              onClick={handleApplyTheme}
+            >
+              <Zap className="size-3.5!" />
+              Apply
+            </Button>
+
+            <button
+              type="button"
+              className="text-foreground/75 group-hover/control:text-foreground ml-auto transition-colors"
+              aria-label={isExpanded ? "Collapse section" : "Expand section"}
+            >
+              <ChevronsUpDown className="size-4" />
+            </button>
           </div>
         </div>
-      </div>
-    </div>
-  );
+
+        <div
+          className={cn(
+            "grid transition-all duration-300 ease-in-out",
+            isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          )}
+        >
+          <div className="overflow-hidden">
+            <div className={cn("space-y-2 p-2.5", className)} {...props}>
+              {children}
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+
+  return null;
 }
+
+const FEEDBACK_MESSAGES = [
+  "Generating your theme...",
+  "Tweaking color tokens...",
+  "Making a good theme takes time...",
+  "Still working on your theme...",
+  "Almost there...",
+];
