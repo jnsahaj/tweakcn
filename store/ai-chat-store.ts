@@ -25,8 +25,20 @@ export const useAIChatStore = create<AIChatStore>()(
       },
     }),
     {
-      name: "ai-chat-storage-v2",
+      version: 2,
+      name: "ai-chat-storage",
       storage: createJSONStorage(() => idbStorage),
+      partialize: (state) => ({ messages: state.messages }),
+      migrate: (persistedState, fromVersion) => {
+        if (!persistedState || typeof persistedState !== "object") {
+          return { messages: [] };
+        }
+
+        if (fromVersion === 2) {
+          const current = persistedState as AIChatStore;
+          return { messages: Array.isArray(current.messages) ? current.messages : [] };
+        }
+      },
       onRehydrateStorage: () => (state) => {
         state?._setHasHydrated?.();
       },
