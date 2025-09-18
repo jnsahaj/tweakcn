@@ -1,7 +1,7 @@
 import { recordAIUsage } from "@/actions/ai-usage";
 import { THEME_GENERATION_TOOLS } from "@/lib/ai/generate-theme/tools";
 import { GENERATE_THEME_SYSTEM } from "@/lib/ai/prompts";
-import { baseProviderOptions, MODELS } from "@/lib/ai/providers";
+import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
 import { handleError } from "@/lib/error-response";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
@@ -54,10 +54,11 @@ export async function POST(req: NextRequest) {
     const stream = createUIMessageStream<ChatMessage>({
       execute: ({ writer }) => {
         const context: AdditionalAIContext = { writer };
+        const model = myProvider.languageModel("theme-generation");
 
         const result = streamText({
           abortSignal: req.signal,
-          model: MODELS.themeGeneration,
+          model: model,
           providerOptions: baseProviderOptions,
           system: GENERATE_THEME_SYSTEM,
           messages: modelMessages,
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
             const { totalUsage } = result;
             try {
               await recordAIUsage({
-                modelId: MODELS.themeGeneration.modelId,
+                modelId: model.modelId,
                 promptTokens: totalUsage.inputTokens,
                 completionTokens: totalUsage.outputTokens,
               });

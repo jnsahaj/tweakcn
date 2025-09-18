@@ -1,5 +1,5 @@
 import { ENHANCE_PROMPT_SYSTEM } from "@/lib/ai/prompts";
-import { baseProviderOptions, MODELS } from "@/lib/ai/providers";
+import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
 import { AIPromptData } from "@/types/ai";
 import { buildUserContentPartsFromPromptData } from "@/utils/ai/message-converter";
 import { smoothStream, streamText } from "ai";
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         content: userContentParts,
       },
     ],
-    model: MODELS.promptEnhancement,
+    model: myProvider.languageModel("prompt-enhancement"),
     providerOptions: baseProviderOptions,
     experimental_transform: smoothStream({
       delayInMs: 10,
