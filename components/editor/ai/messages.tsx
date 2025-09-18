@@ -16,7 +16,7 @@ import {
   getLastAssistantMessage,
   getUserMessages,
 } from "@/utils/ai/messages";
-import { parseAiSdkTransportError } from "@/utils/ai/parse-ai-sdk-transport-error";
+import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { X } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { LoadingLogo } from "./loading-logo";

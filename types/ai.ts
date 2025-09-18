@@ -1,5 +1,5 @@
-import { THEME_GENERATION_TOOLS } from "@/app/api/generate-theme/tools";
-import { DeepPartial, InferUITools, UIMessage } from "ai";
+import { THEME_GENERATION_TOOLS } from "@/lib/ai/generate-theme/tools";
+import { DeepPartial, InferUITools, UIMessage, UIMessageStreamWriter } from "ai";
 import { ThemeStylesWithoutSpacing, type ThemeStyleProps, type ThemeStyles } from "./theme";
 
 export type MentionReference = {
@@ -42,3 +42,5 @@ type ThemeGenerationUITools = InferUITools<typeof THEME_GENERATION_TOOLS>;
 export type MyUITools = ThemeGenerationUITools;
 
 export type ChatMessage = UIMessage<MyMetadata, MyUIDataParts, MyUITools>;
+
+export type AdditionalAIContext = { writer: UIMessageStreamWriter<ChatMessage> };

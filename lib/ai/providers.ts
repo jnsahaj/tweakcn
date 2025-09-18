@@ -7,7 +7,7 @@ const google = createGoogleGenerativeAI({
 });
 
 export const MODELS = {
-  basic: google("gemini-2.5-flash"),
+  base: google("gemini-2.5-flash"),
   themeGeneration: google("gemini-2.5-pro"),
   promptEnhancement: google("gemini-2.5-flash"),
 };

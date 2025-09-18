@@ -6,7 +6,7 @@ import { useAIChatStore } from "@/store/ai-chat-store";
 import { ChatMessage } from "@/types/ai";
 import { applyGeneratedTheme } from "@/utils/ai/apply-theme";
 
-import { parseAiSdkTransportError } from "@/utils/ai/parse-ai-sdk-transport-error";
+import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { DefaultChatTransport } from "ai";
