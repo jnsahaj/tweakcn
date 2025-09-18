@@ -1,12 +1,12 @@
 "use server";
 
-import { z } from "zod";
 import { db } from "@/db";
 import { aiUsage } from "@/db/schema";
-import { eq, and, gte, count } from "drizzle-orm";
-import cuid from "cuid";
-import { ValidationError } from "@/types/errors";
 import { getCurrentUserId } from "@/lib/shared";
+import { ValidationError } from "@/types/errors";
+import cuid from "cuid";
+import { and, count, eq, gte } from "drizzle-orm";
+import { z } from "zod";
 
 const getDaysSinceEpoch = (daysAgo: number = 0) =>
   Math.floor(Date.now() / (24 * 60 * 60 * 1000)) - daysAgo;
@@ -15,6 +15,7 @@ const getDaysSinceEpoch = (daysAgo: number = 0) =>
 const recordUsageSchema = z.object({
   promptTokens: z.number().min(0).default(0),
   completionTokens: z.number().min(0).default(0),
+  modelId: z.string(),
 });
 
 // Schema for timeframe validation
@@ -36,13 +37,11 @@ interface ChartDataPoint {
   totalRequests: number;
 }
 
-// Constants
-const MODEL_CONFIG = {
-  id: "gemini-2.5-pro",
-  name: "Gemini 2.5 Pro",
-};
-
-export async function recordAIUsage(input: { promptTokens?: number; completionTokens?: number }) {
+export async function recordAIUsage(input: {
+  modelId: string;
+  promptTokens?: number;
+  completionTokens?: number;
+}) {
   try {
     const userId = await getCurrentUserId();
 
@@ -51,22 +50,19 @@ export async function recordAIUsage(input: { promptTokens?: number; completionTo
       throw new ValidationError("Invalid usage data", validation.error.format());
     }
 
-    const { promptTokens, completionTokens } = validation.data;
-    const now = new Date();
+    const { promptTokens, completionTokens, modelId } = validation.data;
     const daysSinceEpoch = getDaysSinceEpoch(0);
-
-    const usageId = cuid();
 
     const [insertedUsage] = await db
       .insert(aiUsage)
       .values({
-        id: usageId,
+        id: cuid(),
         userId,
-        modelId: MODEL_CONFIG.id,
+        modelId,
         promptTokens: promptTokens.toString(),
         completionTokens: completionTokens.toString(),
         daysSinceEpoch: daysSinceEpoch.toString(),
-        createdAt: now,
+        createdAt: new Date(),
       })
       .returning();
 
@@ -193,7 +189,10 @@ export async function getMyUsageChartData(timeframe: Timeframe): Promise<ChartDa
 }
 
 // Internal function for detailed usage (including tokens) - not exposed to users
-export async function getDetailedUsageStats(timeframe: Timeframe): Promise<{
+export async function getDetailedUsageStats(
+  timeframe: Timeframe,
+  modelId: string
+): Promise<{
   requests: number;
   promptTokens: number;
   completionTokens: number;
@@ -218,7 +217,7 @@ export async function getDetailedUsageStats(timeframe: Timeframe): Promise<{
       .where(
         and(
           eq(aiUsage.userId, userId),
-          eq(aiUsage.modelId, MODEL_CONFIG.id),
+          eq(aiUsage.modelId, modelId),
           gte(aiUsage.daysSinceEpoch, startDay.toString())
         )
       );

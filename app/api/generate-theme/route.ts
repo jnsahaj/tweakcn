@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
             const { totalUsage } = result;
             try {
               await recordAIUsage({
+                modelId: MODELS.themeGeneration.modelId,
                 promptTokens: totalUsage.inputTokens,
                 completionTokens: totalUsage.outputTokens,
               });
