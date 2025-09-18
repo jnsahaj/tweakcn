@@ -1,24 +1,18 @@
 import { recordAIUsage } from "@/actions/ai-usage";
+import { THEME_GENERATION_TOOLS } from "@/lib/ai/generate-theme/tools";
+import { GENERATE_THEME_SYSTEM } from "@/lib/ai/prompts";
+import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
 import { handleError } from "@/lib/error-response";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
-import { ChatMessage } from "@/types/ai";
+import { AdditionalAIContext, ChatMessage } from "@/types/ai";
 import { SubscriptionRequiredError } from "@/types/errors";
-import { SYSTEM_PROMPT } from "@/utils/ai/generate-theme";
 import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
-import { MODELS, baseProviderOptions } from "@/utils/ai/providers";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
-import {
-  createUIMessageStream,
-  createUIMessageStreamResponse,
-  stepCountIs,
-  streamText,
-  UIMessageStreamWriter,
-} from "ai";
+import { createUIMessageStream, createUIMessageStreamResponse, stepCountIs, streamText } from "ai";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
-import { THEME_GENERATION_TOOLS } from "./tools";
 
 const ratelimit = new Ratelimit({
   redis: kv,
@@ -59,13 +53,14 @@ export async function POST(req: NextRequest) {
 
     const stream = createUIMessageStream<ChatMessage>({
       execute: ({ writer }) => {
-        const context: Context = { writer };
+        const context: AdditionalAIContext = { writer };
+        const model = myProvider.languageModel("theme-generation");
 
         const result = streamText({
           abortSignal: req.signal,
-          model: MODELS.themeGeneration,
+          model: model,
           providerOptions: baseProviderOptions,
-          system: SYSTEM_PROMPT,
+          system: GENERATE_THEME_SYSTEM,
           messages: modelMessages,
           tools: THEME_GENERATION_TOOLS,
           stopWhen: stepCountIs(5),
@@ -76,6 +71,7 @@ export async function POST(req: NextRequest) {
             const { totalUsage } = result;
             try {
               await recordAIUsage({
+                modelId: model.modelId,
                 promptTokens: totalUsage.inputTokens,
                 completionTokens: totalUsage.outputTokens,
               });
@@ -111,5 +107,3 @@ export async function POST(req: NextRequest) {
     return handleError(error, { route: "/api/generate-theme" });
   }
 }
-
-export type Context = { writer: UIMessageStreamWriter<ChatMessage> };

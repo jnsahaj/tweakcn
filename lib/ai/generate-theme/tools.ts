@@ -1,8 +1,8 @@
-import { themeStylesOutputSchema } from "@/utils/ai/generate-theme";
-import { MODELS, baseProviderOptions } from "@/utils/ai/providers";
+import { themeStylesOutputSchema } from "@/lib/ai/generate-theme";
+import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
+import { AdditionalAIContext } from "@/types/ai";
 import { streamObject, tool } from "ai";
 import z from "zod";
-import { Context } from "./route";
 
 export const THEME_GENERATION_TOOLS = {
   generateTheme: tool({
@@ -15,11 +15,11 @@ export const THEME_GENERATION_TOOLS = {
     inputSchema: z.object({}),
     outputSchema: themeStylesOutputSchema,
     execute: async (_input, { messages, abortSignal, toolCallId, experimental_context }) => {
-      const { writer } = experimental_context as Context;
+      const { writer } = experimental_context as AdditionalAIContext;
 
       const { partialObjectStream, object } = streamObject({
         abortSignal,
-        model: MODELS.themeGeneration,
+        model: myProvider.languageModel("theme-generation"),
         providerOptions: baseProviderOptions,
         schema: themeStylesOutputSchema,
         messages,

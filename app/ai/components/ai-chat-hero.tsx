@@ -28,8 +28,8 @@ export function AIChatHero() {
     startNewChat();
     setChatSuggestionsOpen(true);
 
-    router.push("/editor/theme?tab=ai");
     generateThemeCore(promptData);
+    router.push("/editor/theme?tab=ai");
   };
 
   usePostLoginAction("AI_GENERATE_FROM_PAGE", ({ promptData }) => {
