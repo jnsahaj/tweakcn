@@ -6,12 +6,7 @@ import z from "zod";
 
 export const THEME_GENERATION_TOOLS = {
   generateTheme: tool({
-    description: `Generate a complete shadcn/ui theme (light and dark) from the conversation context. Use this tool as soon as you've gathered sufficient input (prompt, images/SVG, or an @base theme reference). The input is the current conversation context.
-    
-    # Rules
-    - Some tokens come with a -foreground counterpart, ensure adequate contrast for each base/foreground pair.
-    - Colors must be HEX only (#RRGGBB). Do not output rgba().
-    - Do not output CSS variables for fonts; use the font family string.`,
+    description: `Generates a complete shadcn/ui theme (light and dark) based on the current conversation context. Use this tool once you have a clear understanding of the user's request, which may include a text prompt, images, an SVG, or a base theme reference (@[theme_name]).`,
     inputSchema: z.object({}),
     outputSchema: themeStylesOutputSchema,
     execute: async (_input, { messages, abortSignal, toolCallId, experimental_context }) => {
