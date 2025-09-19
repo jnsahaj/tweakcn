@@ -30,6 +30,7 @@ interface AIChatFormBodyProps {
   initialEditorContent: JSONContent | undefined;
   externalEditorContent?: JSONContent;
   textareaKey?: string | number;
+  isStreamingContent?: boolean;
 }
 
 export function AIChatFormBody({
@@ -44,6 +45,7 @@ export function AIChatFormBody({
   initialEditorContent,
   externalEditorContent,
   textareaKey,
+  isStreamingContent = false,
 }: AIChatFormBodyProps) {
   return (
     <>
@@ -87,6 +89,7 @@ export function AIChatFormBody({
             onImagesPaste={handleImagesUpload}
             initialEditorContent={initialEditorContent}
             externalEditorContent={externalEditorContent}
+            isStreamingContent={isStreamingContent}
           />
         </div>
       </div>

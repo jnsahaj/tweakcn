@@ -93,7 +93,8 @@ export function AIChatForm({
           handleGenerate={handleGenerate}
           initialEditorContent={editorContentDraft ?? undefined}
           textareaKey={editorContentDraft ? "with-draft" : "no-draft"}
-          externalEditorContent={isEnhancingPrompt ? enhancedPromptAsJsonContent : undefined}
+          externalEditorContent={enhancedPromptAsJsonContent}
+          isStreamingContent={isEnhancingPrompt}
         />
 
         <div className="flex items-center justify-between gap-2">

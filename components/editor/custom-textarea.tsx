@@ -20,6 +20,7 @@ interface CustomTextareaProps {
   characterLimit?: number;
   initialEditorContent?: JSONContent | null;
   externalEditorContent?: JSONContent | null;
+  isStreamingContent?: boolean;
 }
 
 export default function CustomTextarea({
@@ -32,6 +33,7 @@ export default function CustomTextarea({
   characterLimit,
   initialEditorContent,
   externalEditorContent,
+  isStreamingContent = false,
 }: CustomTextareaProps) {
   const editor = useEditor({
     immediatelyRender: false,
@@ -149,21 +151,20 @@ export default function CustomTextarea({
 
   // Stream external content into the editor
   useEffect(() => {
-    if (!editor) return;
-    if (!externalEditorContent) return;
+    if (!editor || !externalEditorContent || !isStreamingContent) return;
 
     try {
-      const current = editor.getJSON();
-      const next = externalEditorContent;
-      const hasChanged = JSON.stringify(current) !== JSON.stringify(next);
-      if (!hasChanged) return;
+      const currentContent = JSON.stringify(editor.getJSON());
+      const nextContent = JSON.stringify(externalEditorContent);
+      if (currentContent === nextContent) return;
 
-      // Emit update so listeners propagate changes
-      editor.commands.setContent(next, true);
+      // Preserve cursor position at the end
+      editor.commands.setContent(externalEditorContent, false);
+      editor.commands.focus("end");
     } catch (_e) {
       // If setContent fails for any reason, silently ignore; user can keep typing
     }
-  }, [externalEditorContent, editor]);
+  }, [externalEditorContent, editor, isStreamingContent]);
 
   if (!editor) {
     return null;
