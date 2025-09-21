@@ -5,7 +5,6 @@ import { FigmaHeader } from "@/components/figma-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Logo from "@/assets/logo.svg";
 import Shadcraft from "@/assets/shadcraft.svg";
 import FigmaIcon from "@/assets/figma.svg";
@@ -228,9 +227,9 @@ export default function FigmaPage() {
               <h2 className="text-center text-2xl font-semibold">Pricing</h2>
 
               <Card className="p-6">
+                <h3 className="mb-4 font-semibold">What you get with Shadcraft</h3>
                 <div className="grid gap-7 md:grid-cols-2">
                   <div className="space-y-4">
-                    <h3 className="font-semibold">What you get with Shadcraft</h3>
                     <ul className="space-y-2" role="list">
                       {FIGMA_CONSTANTS.features.map((feature, index) => (
                         <li key={index} className="flex items-center gap-1.5">
@@ -241,17 +240,13 @@ export default function FigmaPage() {
                     </ul>
                   </div>
 
-                  <div className="space-y-4">
-                    <Badge variant="secondary" className="w-fit">
-                      Introductory offer
-                    </Badge>
+                  <div className="mt-auto space-y-4">
                     <div className="space-y-1.5">
                       <div className="flex items-end gap-1">
-                        <span className="text-5xl font-semibold">$89</span>
+                        <span className="text-5xl font-semibold">$119</span>
                       </div>
-                      <div className="text-muted-foreground text-sm line-through">$119</div>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex gap-2">
                       <Button className="flex-1" onClick={handleGetStarted}>
                         Get started
                       </Button>

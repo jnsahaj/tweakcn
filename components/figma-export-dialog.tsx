@@ -4,7 +4,6 @@ import FigmaIcon from "@/assets/figma.svg";
 import Logo from "@/assets/logo.svg";
 import Shadcraft from "@/assets/shadcraft.svg";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -157,14 +156,10 @@ export function FigmaExportDialog({ open, onOpenChange }: FigmaExportDialogProps
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <Badge variant="secondary" className="w-fit">
-                      Introductory offer
-                    </Badge>
-                    <div className="space-y-1.5">
+                    <div className="mt-6 space-y-1.5">
                       <div className="flex items-end gap-1">
-                        <span className="text-5xl font-semibold">$89</span>
+                        <span className="text-5xl font-semibold">$119</span>
                       </div>
-                      <div className="text-muted-foreground text-sm line-through">$119</div>
                     </div>
                     <div className="flex gap-3">
                       <Button className="flex-1" onClick={handleGetStarted}>
