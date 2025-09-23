@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { type Metadata } from "next";
 import { AIAnnouncement } from "./components/ai-announcement";
 import { AIChatHero } from "./components/ai-chat-hero";
 

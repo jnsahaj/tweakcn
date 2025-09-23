@@ -1,7 +1,6 @@
 "use client";
 
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
-import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useImageUpload } from "@/hooks/use-image-upload";
 import { imageUploadReducer } from "@/hooks/use-image-upload-reducer";
 import { MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
@@ -12,12 +11,12 @@ import { ImageIcon, Sparkles } from "lucide-react";
 import { useEffect, useReducer } from "react";
 
 export function SuggestedPillActions({
-  handleThemeGeneration,
+  onThemeGeneration,
+  isGeneratingTheme,
 }: {
-  handleThemeGeneration: (promptData: AIPromptData | null) => void;
+  onThemeGeneration: (promptData: AIPromptData) => void;
+  isGeneratingTheme: boolean;
 }) {
-  const { loading: aiIsGenerating } = useAIThemeGenerationCore();
-
   const [uploadedImages, dispatch] = useReducer(imageUploadReducer, []);
 
   const { fileInputRef, handleImagesUpload, canUploadMore, isSomeImageUploading } = useImageUpload({
@@ -30,7 +29,7 @@ export function SuggestedPillActions({
   // Automatically send prompt when an image is selected and loaded
   useEffect(() => {
     if (uploadedImages.length > 0 && !isSomeImageUploading) {
-      handleThemeGeneration({
+      onThemeGeneration({
         content: "", // No text prompt
         mentions: [], // No mentions
         images: [uploadedImages[0]],
@@ -42,7 +41,7 @@ export function SuggestedPillActions({
 
   const handleSetPrompt = async (prompt: string) => {
     const promptData = createCurrentThemePrompt({ prompt });
-    handleThemeGeneration(promptData);
+    onThemeGeneration(promptData);
   };
 
   const handleImageButtonClick = () => {
@@ -61,14 +60,14 @@ export function SuggestedPillActions({
 
   return (
     <>
-      <PillActionButton onClick={handleImageButtonClick} disabled={aiIsGenerating}>
+      <PillActionButton onClick={handleImageButtonClick} disabled={isGeneratingTheme}>
         <input
           type="file"
           accept="image/*"
           multiple={false}
           ref={fileInputRef}
           onChange={handleImageUpload}
-          disabled={aiIsGenerating}
+          disabled={isGeneratingTheme}
           style={{ display: "none" }}
         />
         <ImageIcon /> From an Image
@@ -78,7 +77,7 @@ export function SuggestedPillActions({
         <PillActionButton
           key={key}
           onClick={() => handleSetPrompt(prompt)}
-          disabled={aiIsGenerating}
+          disabled={isGeneratingTheme}
         >
           <Sparkles /> {label}
         </PillActionButton>

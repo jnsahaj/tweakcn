@@ -1,3 +1,5 @@
+import z from "zod";
+
 export class UnauthorizedError extends Error {
   constructor(message = "Unauthorized") {
     super(message);
@@ -56,3 +58,12 @@ export class ApiError extends Error {
     this.name = "ApiError";
   }
 }
+
+export const MyErrorResponseSchema = z.object({
+  code: z.string().optional(),
+  message: z.string().optional(),
+  data: z.unknown().optional(),
+  status: z.number().optional(),
+});
+
+export type MyErrorResponseType = z.infer<typeof MyErrorResponseSchema>;

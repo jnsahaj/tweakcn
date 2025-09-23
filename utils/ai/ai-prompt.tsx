@@ -8,12 +8,13 @@ export const getTextContent = (promptData: AIPromptData | null) => {
   return promptData.content;
 };
 
-export const buildPromptForAPI = (promptData: AIPromptData) => {
-  const mentionReferences = promptData.mentions.map(
-    (mention) => `@${mention.label} = 
-  ${JSON.stringify(mention.themeData)}`
-  );
+export const buildMentionStringForAPI = (mention: MentionReference) => {
+  return `@${mention.label} = 
+  ${JSON.stringify(mention.themeData)}`;
+};
 
+export const buildPromptForAPI = (promptData: AIPromptData) => {
+  const mentionReferences = promptData.mentions.map((mention) => buildMentionStringForAPI(mention));
   return `${promptData.content}\n\n${mentionReferences.join("\n")}`;
 };
 
@@ -209,7 +210,7 @@ export function convertPromptDataToJSONContent(promptData: AIPromptData): JSONCo
   // If no mentions, just return the content as text
   if (!mentions || mentions.length === 0) {
     const lines = content.split(/\n/);
-    const nodes: any[] = [];
+    const nodes: JSONContent[] = [];
 
     lines.forEach((line, lineIdx) => {
       if (line) {
@@ -237,22 +238,22 @@ export function convertPromptDataToJSONContent(promptData: AIPromptData): JSONCo
 
   // Process content with mentions using direct string search
   const lines = content.split(/\n/);
-  const nodes: any[] = [];
+  const nodes: JSONContent[] = [];
+
+  // Dedupe mention to avoid scanning the same label multiple times
+  const uniqueMentions = dedupeMentionReferences(mentions);
 
   lines.forEach((line, lineIdx) => {
-    let remainingLine = line;
-    let processedLength = 0;
-
     // Find all mention positions in the line
     const mentionPositions: Array<{ index: number; mention: MentionReference; length: number }> =
       [];
 
-    mentions.forEach((mention) => {
+    uniqueMentions.forEach((mention) => {
       const mentionText = `@${mention.label}`;
       let searchIndex = 0;
 
       while (true) {
-        const foundIndex = remainingLine.indexOf(mentionText, searchIndex);
+        const foundIndex = line.indexOf(mentionText, searchIndex);
         if (foundIndex === -1) break;
 
         mentionPositions.push({
@@ -265,13 +266,17 @@ export function convertPromptDataToJSONContent(promptData: AIPromptData): JSONCo
       }
     });
 
-    // Sort mention positions by index
-    mentionPositions.sort((a, b) => a.index - b.index);
+    // Sort by index asc; for same start index prefer the longest match
+    mentionPositions.sort((a, b) =>
+      a.index === b.index ? b.length - a.length : a.index - b.index
+    );
 
     // Process the line with mentions
     let currentIndex = 0;
 
     mentionPositions.forEach(({ index, mention, length }) => {
+      // Skip if this mention would overlap with a previously emitted one
+      if (index < currentIndex) return;
       // Add text before mention
       if (index > currentIndex) {
         const textBefore = line.slice(currentIndex, index);
@@ -292,17 +297,17 @@ export function convertPromptDataToJSONContent(promptData: AIPromptData): JSONCo
       currentIndex = index + length;
     });
 
-    // Add any remaining text after the last mention
-    if (currentIndex < line.length) {
+    // If no mentions are present in this line, push the entire line once.
+    // Otherwise, only push the text that comes after the last mention.
+    if (mentionPositions.length === 0) {
+      if (line) {
+        nodes.push({ type: "text", text: line });
+      }
+    } else if (currentIndex < line.length) {
       const textAfter = line.slice(currentIndex);
       if (textAfter) {
         nodes.push({ type: "text", text: textAfter });
       }
-    }
-
-    // If no mentions found in this line, add the entire line as text
-    if (mentionPositions.length === 0 && line) {
-      nodes.push({ type: "text", text: line });
     }
 
     // Add hardBreak if not the last line
@@ -335,4 +340,14 @@ export function isEmptyPromptData(
   const isEmptyPromptDataImages = !!uploadedImages && uploadedImages.length === 0;
 
   return isEmptyPromptDataImages && isEmptyPromptDataContent;
+}
+
+export function dedupeMentionReferences(mentions: MentionReference[]): MentionReference[] {
+  const uniqueMentions = new Map<string, MentionReference>();
+  for (const m of mentions) {
+    if (!uniqueMentions.has(m.id)) {
+      uniqueMentions.set(m.id, m);
+    }
+  }
+  return Array.from(uniqueMentions.values());
 }

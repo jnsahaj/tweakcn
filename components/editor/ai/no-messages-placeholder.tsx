@@ -2,7 +2,6 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
-import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { AIPromptData } from "@/types/ai";
@@ -14,12 +13,12 @@ import TabsTriggerPill from "../theme-preview/tabs-trigger-pill";
 
 export function NoMessagesPlaceholder({
   onGenerateTheme,
+  isGeneratingTheme,
 }: {
-  onGenerateTheme: (promptData: AIPromptData | null) => void;
+  onGenerateTheme: (promptData: AIPromptData) => void;
+  isGeneratingTheme: boolean;
 }) {
   const { data: session } = authClient.useSession();
-  const { loading: isGenerating } = useAIThemeGenerationCore();
-
   const userName = session?.user.name?.split(" ")[0];
   const heading = `What can I help you theme${userName ? `, ${userName}` : ""}?`;
 
@@ -51,7 +50,7 @@ export function NoMessagesPlaceholder({
           {CREATE_PROMPTS.map((prompt, index) => (
             <Fragment key={`create-${index}`}>
               <PromptButton
-                disabled={isGenerating}
+                disabled={isGeneratingTheme}
                 onClick={() =>
                   onGenerateTheme({
                     content: prompt.prompt,
@@ -70,7 +69,7 @@ export function NoMessagesPlaceholder({
           {REMIX_PROMPTS.map((prompt, index) => (
             <Fragment key={`variant-${index}`}>
               <PromptButton
-                disabled={isGenerating}
+                disabled={isGeneratingTheme}
                 onClick={() =>
                   onGenerateTheme(createPromptDataFromPreset(prompt.prompt, prompt.basePreset))
                 }
@@ -86,7 +85,7 @@ export function NoMessagesPlaceholder({
           {VARIANT_PROMPTS.map((prompt, index) => (
             <Fragment key={`variant-${index}`}>
               <PromptButton
-                disabled={isGenerating}
+                disabled={isGeneratingTheme}
                 onClick={() => onGenerateTheme(createCurrentThemePrompt({ prompt: prompt.prompt }))}
               >
                 {prompt.displayContent}

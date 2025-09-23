@@ -1,7 +1,6 @@
 import { CopyButton } from "@/components/copy-button";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { FocusColorId, useColorControlFocus } from "@/store/color-control-focus-store";
 import { ThemeEditorPreviewProps } from "@/types/theme";
 import { SquarePen } from "lucide-react";
@@ -72,8 +71,6 @@ const ColorPreview = ({ styles, currentMode }: ColorPreviewProps) => {
         </div>
       </div>
 
-      <Separator />
-
       {/* Secondary & Accent Colors */}
       <div className="space-y-4 @max-3xl:space-y-2">
         <h3 className="text-muted-foreground text-sm font-semibold">Secondary & Accent Colors</h3>
@@ -96,8 +93,6 @@ const ColorPreview = ({ styles, currentMode }: ColorPreviewProps) => {
           />
         </div>
       </div>
-
-      <Separator />
 
       {/* UI Component Colors */}
       <div className="space-y-4 @max-3xl:space-y-2">
@@ -124,8 +119,6 @@ const ColorPreview = ({ styles, currentMode }: ColorPreviewProps) => {
         </div>
       </div>
 
-      <Separator />
-
       {/* Utility & Form Colors */}
       <div className="space-y-4 @max-3xl:space-y-2">
         <h3 className="text-muted-foreground text-sm font-semibold">Utility & Form Colors</h3>
@@ -135,8 +128,6 @@ const ColorPreview = ({ styles, currentMode }: ColorPreviewProps) => {
           <ColorPreviewItem label="Ring" color={styles[currentMode].ring} name="ring" />
         </div>
       </div>
-
-      <Separator />
 
       {/* Status & Feedback Colors */}
       <div className="space-y-4 @max-3xl:space-y-2">
@@ -155,8 +146,6 @@ const ColorPreview = ({ styles, currentMode }: ColorPreviewProps) => {
         </div>
       </div>
 
-      <Separator />
-
       {/* Chart & Data Visualization Colors */}
       <div className="space-y-4 @max-3xl:space-y-2">
         <h3 className="text-muted-foreground text-sm font-semibold">
@@ -170,8 +159,6 @@ const ColorPreview = ({ styles, currentMode }: ColorPreviewProps) => {
           <ColorPreviewItem label="Chart 5" color={styles[currentMode]["chart-5"]} name="chart-5" />
         </div>
       </div>
-
-      <Separator />
 
       {/* Sidebar Colors */}
       <div className="space-y-4 @max-3xl:space-y-2">
