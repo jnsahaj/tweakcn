@@ -64,7 +64,7 @@ const parseColorVariables = (
         return;
       }
 
-      const colorValue = processColorValue(trimmedValue);
+      const colorValue = processColorValue(valueWithoutImportant);
       const formattedValue = colorFormatter(colorValue, "hex");
       target[cleanName as keyof ThemeStyleProps] = formattedValue;
     }
