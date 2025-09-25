@@ -52,6 +52,12 @@ const parseColorVariables = (
         return;
       }
 
+      // Skip CSS variable references (var(...)) as they can't be processed as colors
+      if (value.trim().startsWith("var(") && value.trim().endsWith(")")) {
+        console.warn(`Skipping CSS variable reference: ${cleanName}: ${value}`);
+        return;
+      }
+
       const colorValue = processColorValue(value);
       const formattedValue = colorFormatter(colorValue, "hex");
       target[cleanName as keyof ThemeStyleProps] = formattedValue;
