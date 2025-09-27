@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useAIChatForm } from "@/hooks/use-ai-chat-form";
 import { useAIEnhancePrompt } from "@/hooks/use-ai-enhance-prompt";
 import { useGuards } from "@/hooks/use-guards";
+import { useSubscription } from "@/hooks/use-subscription";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { AIPromptData } from "@/types/ai";
@@ -39,13 +40,15 @@ export function AIChatForm({
   } = useAIChatForm();
 
   const { checkValidSession, checkValidSubscription } = useGuards();
+  const { subscriptionStatus } = useSubscription();
+  const isPro = subscriptionStatus?.isSubscribed ?? false;
+  const hasFreeRequestsLeft = (subscriptionStatus?.requestsRemaining ?? 0) > 0;
 
   const { startEnhance, stopEnhance, enhancedPromptAsJsonContent, isEnhancingPrompt } =
     useAIEnhancePrompt();
 
   const handleEnhancePrompt = () => {
-    // TODO: Add subscription check, this should be a Pro only feature
-    if (!checkValidSession() || !checkValidSubscription()) return; // Act as an early return;
+    if (!checkValidSession() || !checkValidSubscription()) return;
 
     // Only send images that are not loading, and strip loading property
     const images = uploadedImages.filter((img) => !img.loading).map(({ url }) => ({ url }));
@@ -109,8 +112,7 @@ export function AIChatForm({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* TODO: This should be a Pro only feature */}
-            {promptData?.content ? (
+            {(isPro || hasFreeRequestsLeft) && promptData?.content ? (
               <EnhancePromptButton
                 isEnhancing={isEnhancingPrompt}
                 onStart={handleEnhancePrompt}

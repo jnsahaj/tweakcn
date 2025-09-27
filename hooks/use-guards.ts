@@ -6,11 +6,12 @@ import { useSubscription } from "./use-subscription";
 
 export function useGuards() {
   const { checkValidSession } = useSessionGuard();
-  const { checkValidSubscription } = useSubscriptionGuard();
+  const { checkValidSubscription, checkValidProSubscription } = useSubscriptionGuard();
 
   return {
     checkValidSession,
     checkValidSubscription,
+    checkValidProSubscription,
   };
 }
 
@@ -57,7 +58,22 @@ export function useSubscriptionGuard() {
     return true; // Allow if not subscribed but still has requests left
   };
 
+  // Use this guard for features that are Pro only, not including free pro usage
+  const checkValidProSubscription = () => {
+    if (isPending) return false;
+
+    if (!subscriptionStatus) return false;
+
+    const { isSubscribed } = subscriptionStatus;
+
+    if (isSubscribed) return true;
+
+    openGetProDialog();
+    return false;
+  };
+
   return {
     checkValidSubscription,
+    checkValidProSubscription,
   };
 }
