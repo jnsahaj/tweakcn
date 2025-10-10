@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { API_AUTH_PREFIX, DEFAULT_LOGIN_REDIRECT } from "./routes";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
