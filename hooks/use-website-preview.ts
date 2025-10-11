@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useWebsitePreviewStore } from "@/store/website-preview-store";
 
 const LOADING_TIMEOUT_MS = 5000;
 
 interface WebsitePreviewState {
-  inputUrl: string;
-  currentUrl: string;
   isLoading: boolean;
   error: string | null;
 }
 
 type Action =
-  | { type: "SET_INPUT_URL"; payload: string }
-  | { type: "LOAD_URL_START"; payload: { url: string } }
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_LOAD_SUCCESS" }
   | { type: "SET_LOAD_ERROR"; payload: string }
@@ -19,18 +16,12 @@ type Action =
   | { type: "RESET" };
 
 const initialState: WebsitePreviewState = {
-  inputUrl: "",
-  currentUrl: "",
   isLoading: false,
   error: null,
 };
 
 function reducer(state: WebsitePreviewState, action: Action): WebsitePreviewState {
   switch (action.type) {
-    case "SET_INPUT_URL":
-      return { ...state, inputUrl: action.payload, error: null };
-    case "LOAD_URL_START":
-      return { ...state, isLoading: true, error: null, currentUrl: action.payload.url };
     case "SET_LOADING":
       return { ...state, isLoading: action.payload };
     case "SET_LOAD_SUCCESS":
@@ -55,6 +46,12 @@ export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePrevie
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const inputUrl = useWebsitePreviewStore((state) => state.inputUrl);
+  const currentUrl = useWebsitePreviewStore((state) => state.currentUrl);
+  const setInputUrlStore = useWebsitePreviewStore((state) => state.setInputUrl);
+  const setCurrentUrlStore = useWebsitePreviewStore((state) => state.setCurrentUrl);
+  const resetStore = useWebsitePreviewStore((state) => state.reset);
+
   const clearLoadingTimeout = () => {
     if (loadingTimeoutRef.current) {
       clearTimeout(loadingTimeoutRef.current);
@@ -77,7 +74,7 @@ export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePrevie
   }, []);
 
   useEffect(() => {
-    if (state.isLoading && state.currentUrl) {
+    if (state.isLoading && currentUrl) {
       clearLoadingTimeout();
       loadingTimeoutRef.current = setTimeout(() => {
         dispatch({
@@ -88,24 +85,30 @@ export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePrevie
       }, LOADING_TIMEOUT_MS);
       return clearLoadingTimeout;
     }
-  }, [state.isLoading, state.currentUrl]);
+  }, [state.isLoading, currentUrl]);
 
-  const setInputUrl = useCallback((url: string) => {
-    dispatch({ type: "SET_INPUT_URL", payload: url });
-  }, []);
+  const setInputUrl = useCallback(
+    (url: string) => {
+      setInputUrlStore(url);
+      dispatch({ type: "CLEAR_ERROR" });
+    },
+    [setInputUrlStore]
+  );
 
   const loadUrl = useCallback(() => {
-    if (!state.inputUrl.trim()) {
+    if (!inputUrl.trim()) {
       dispatch({ type: "SET_LOAD_ERROR", payload: "Please enter a valid URL" });
       return;
     }
 
-    let formattedUrl = state.inputUrl.trim();
+    let formattedUrl = inputUrl.trim();
     if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
       formattedUrl = "https://" + formattedUrl;
     }
 
-    dispatch({ type: "LOAD_URL_START", payload: { url: formattedUrl } });
+    setCurrentUrlStore(formattedUrl);
+    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: "CLEAR_ERROR" });
 
     if (iframeRef.current) {
       try {
@@ -116,32 +119,36 @@ export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePrevie
         iframeRef.current.src = formattedUrl + "?_t=" + Date.now();
       }
     }
-  }, [state.inputUrl]);
+  }, [inputUrl, setCurrentUrlStore]);
 
   const refreshIframe = useCallback(() => {
-    if (!state.currentUrl || !iframeRef.current) return;
+    if (!currentUrl || !iframeRef.current) return;
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const url = new URL(state.currentUrl);
+      const url = new URL(currentUrl);
       url.searchParams.set("_refresh", Date.now().toString());
       iframeRef.current.src = url.toString();
     } catch {
-      iframeRef.current.src = state.currentUrl + "?_refresh=" + Date.now();
+      iframeRef.current.src = currentUrl + "?_refresh=" + Date.now();
     }
-  }, [state.currentUrl]);
+  }, [currentUrl]);
 
   const openInNewTab = useCallback(() => {
-    if (!state.currentUrl) return;
-    window.open(state.currentUrl, "_blank", "noopener,noreferrer");
-  }, [state.currentUrl]);
+    if (!currentUrl) return;
+    window.open(currentUrl, "_blank", "noopener,noreferrer");
+  }, [currentUrl]);
 
   const reset = useCallback(() => {
     clearLoadingTimeout();
+    resetStore();
     dispatch({ type: "RESET" });
-  }, []);
+  }, [resetStore]);
 
   return {
-    ...state,
+    inputUrl,
+    currentUrl,
+    isLoading: state.isLoading,
+    error: state.error,
     iframeRef,
     setInputUrl,
     loadUrl,
