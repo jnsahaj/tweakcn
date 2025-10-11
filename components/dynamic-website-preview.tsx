@@ -12,6 +12,8 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { SocialLink } from "@/components/social-link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CodeBlock, CodeBlockCopyButton } from "@/components/ai-elements/code-block";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import { useIframeThemeInjector } from "@/hooks/use-iframe-theme-injector";
@@ -23,7 +25,6 @@ import {
   CheckCircle,
   ExternalLink,
   Globe,
-  GlobeLock,
   Info,
   Loader,
   RefreshCw,
@@ -49,6 +50,85 @@ import React from "react";
 
 const SCRIPT_URL = "https://tweakcn.com/live-preview-embed-script.js";
 const TWEAKCN_EMBED_SCRIPT_TAG = `<script src="${SCRIPT_URL}"/>`;
+
+// Code snippets for quick installation across common setups
+const HTML_SNIPPET = `<!-- Add inside <head> -->\n<script src="${SCRIPT_URL}"></script>`;
+
+const NEXT_APP_SNIPPET = `// app/layout.tsx\nexport default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <head>
+        <script
+          crossOrigin="anonymous"
+          src="${SCRIPT_URL}"
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  )
+}`;
+
+const NEXT_PAGES_SNIPPET = `// pages/_document.tsx\n
+import { Html, Head, Main, NextScript } from 'next/document';
+
+export default function Document() {
+  return (
+    <Html lang="en">
+      <Head>
+        <script
+          crossOrigin="anonymous"
+          src="${SCRIPT_URL}"
+        />
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
+}`;
+
+const VITE_SNIPPET = `<!-- index.html -->\n<!doctype html>
+<html lang="en">
+  <head>
+    <script
+      crossOrigin="anonymous"
+      src="${SCRIPT_URL}"
+    />
+  </head>
+  <body>
+    <!-- ... -->
+  </body>
+</html>`;
+
+const REMIX_SNIPPET = `// app/root.tsx\nimport { Links, Meta, Outlet, Scripts } from "@remix-run/react";
+
+export default function App() {
+  return (
+    <html>
+      <head>
+        <link
+          rel="icon"
+          href="data:image/x-icon;base64,AA"
+        />
+        <Meta />
+        <script
+          crossOrigin="anonymous"
+          src="${SCRIPT_URL}"
+        />
+        <Links />
+      </head>
+      <body>
+        <Outlet />
+        <Scripts />
+      </body>
+    </html>
+  );
+}`;
 
 export function DynamicWebsitePreview({
   className,
@@ -145,7 +225,7 @@ function DynamicToolbarControls() {
           placeholder={
             !allowCrossOrigin
               ? "Enter same-origin URL for direct theme injection"
-              : "Enter website URL (e.g., tweakcn.com)"
+              : "Enter website URL (e.g., http://localhost:3000/login)"
           }
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
@@ -232,10 +312,10 @@ function DynamicIframeContent() {
   if (!currentUrl && !previewError) {
     return (
       <div className="relative size-full overflow-hidden p-4">
-        <div className="text-muted-foreground mx-auto flex h-full max-w-lg flex-col items-center justify-center space-y-6">
+        <div className="text-muted-foreground mx-auto flex h-full max-w-2xl flex-col items-center justify-center space-y-6">
           <div className="flex items-center gap-1">
             <div className="bg-muted outline-border/50 flex size-16 flex-col items-center justify-center space-y-2 rounded-full outline">
-              <GlobeLock className="text-foreground size-7" />
+              <Globe className="text-foreground size-7" />
             </div>
             <X className="text-foreground size-6" />
             <div className="bg-muted outline-border/50 flex size-16 flex-col items-center justify-center space-y-2 rounded-full outline">
@@ -243,34 +323,77 @@ function DynamicIframeContent() {
             </div>
           </div>
 
-          <div className="space-y-1 text-center">
-            <p className="text-foreground text-lg font-medium">Preview External Websites</p>
-            <p className="text-muted-foreground text-sm text-pretty">
-              Enter a URL to preview websites built with{" "}
-              <span className="font-medium">shadcn/ui</span> components.{" "}
-              {allowCrossOrigin ? (
+          <div className="space-y-3 text-center">
+            <p className="text-foreground text-lg font-medium">Preview your website in tweakcn</p>
+            <div className="text-muted-foreground space-y-2 text-left text-sm">
+              <div className="flex gap-2">
+                <span className="text-foreground font-semibold">1.</span>
+                <span>Add the script below to your website based on your framework</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-foreground font-semibold">2.</span>
                 <span>
-                  External sites can integrate with tweakcn by including our script for{" "}
-                  <span className="font-medium">live theme previews</span>.
+                  Paste your website's URL (eg:{" "}
+                  <span className="font-mono font-medium">http://localhost:3000</span>) above to
+                  preview it with the theme applied in real-time
                 </span>
-              ) : (
-                "Same-origin websites support direct theme injection without requiring external scripts."
-              )}
-            </p>
+              </div>
+            </div>
           </div>
 
-          <Card className="w-full space-y-1 p-2">
-            <div className="flex w-full items-center justify-between gap-2">
-              <p className="text-muted-foreground text-xs">
-                <span className="font-medium">For external website integration:</span>
-              </p>
+          {allowCrossOrigin && (
+            <Card className="w-full p-2">
+              <Tabs defaultValue="script" className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                <div className="bg-muted/50 flex items-center justify-between rounded-md border px-2 py-1">
+                  <TabsList className="h-8 bg-transparent p-0">
+                    <TabsTrigger value="script" className="h-7 px-3 text-xs font-medium">
+                      Script Tag
+                    </TabsTrigger>
+                    <TabsTrigger value="next-app" className="h-7 px-3 text-xs font-medium">
+                      Next.js (App)
+                    </TabsTrigger>
+                    <TabsTrigger value="next-pages" className="h-7 px-3 text-xs font-medium">
+                      Next.js (Pages)
+                    </TabsTrigger>
+                    <TabsTrigger value="vite" className="h-7 px-3 text-xs font-medium">
+                      Vite
+                    </TabsTrigger>
+                    <TabsTrigger value="remix" className="h-7 px-3 text-xs font-medium">
+                      Remix
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
 
-              <CopyButton textToCopy={TWEAKCN_EMBED_SCRIPT_TAG} className="[&>svg]:size-3" />
-            </div>
-            <code className="text-foreground bg-muted block rounded-md border p-2 font-mono text-xs">
-              {TWEAKCN_EMBED_SCRIPT_TAG}
-            </code>
-          </Card>
+                <div className="max-h-76 overflow-y-auto">
+                  <TabsContent value="script">
+                    <CodeBlock code={HTML_SNIPPET} language="html">
+                      <CodeBlockCopyButton aria-label="Copy HTML snippet" />
+                    </CodeBlock>
+                  </TabsContent>
+                  <TabsContent value="next-app">
+                    <CodeBlock code={NEXT_APP_SNIPPET} language="tsx">
+                      <CodeBlockCopyButton aria-label="Copy Next.js App snippet" />
+                    </CodeBlock>
+                  </TabsContent>
+                  <TabsContent value="next-pages">
+                    <CodeBlock code={NEXT_PAGES_SNIPPET} language="tsx">
+                      <CodeBlockCopyButton aria-label="Copy Next.js Pages snippet" />
+                    </CodeBlock>
+                  </TabsContent>
+                  <TabsContent value="vite">
+                    <CodeBlock code={VITE_SNIPPET} language="html">
+                      <CodeBlockCopyButton aria-label="Copy Vite snippet" />
+                    </CodeBlock>
+                  </TabsContent>
+                  <TabsContent value="remix">
+                    <CodeBlock code={REMIX_SNIPPET} language="tsx">
+                      <CodeBlockCopyButton aria-label="Copy Remix snippet" />
+                    </CodeBlock>
+                  </TabsContent>
+                </div>
+              </Tabs>
+            </Card>
+          )}
         </div>
       </div>
     );
