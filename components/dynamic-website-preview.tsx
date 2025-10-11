@@ -6,10 +6,7 @@ import {
   BlockViewerProvider,
   BlockViewerToolbar,
 } from "@/components/block-viewer";
-import { CopyButton } from "@/components/copy-button";
 import { LoadingLogo } from "@/components/editor/ai/loading-logo";
-import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
-import { SocialLink } from "@/components/social-link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -49,7 +46,6 @@ import React from "react";
  */
 
 const SCRIPT_URL = "https://tweakcn.com/live-preview.js";
-const TWEAKCN_EMBED_SCRIPT_TAG = `<script src="${SCRIPT_URL}"/>`;
 
 // Code snippets for quick installation across common setups
 const HTML_SNIPPET = `<!-- Add inside <head> -->\n<script src="${SCRIPT_URL}"></script>`;
@@ -333,7 +329,7 @@ function DynamicIframeContent() {
               <div className="flex gap-2">
                 <span className="text-foreground font-semibold">2.</span>
                 <span>
-                  Paste your website's URL (eg:{" "}
+                  Paste your website&apos;s URL (eg:{" "}
                   <span className="font-mono font-medium">http://localhost:3000</span>) above to
                   preview it with the theme applied in real-time
                 </span>
