@@ -63,7 +63,34 @@ function loadGoogleFont(family, weights) {
   document.head.appendChild(link);
 }
 
-function loadThemeFonts(themeStyles) {
+function overrideFontClasses(root, fonts) {
+  const doc = root.ownerDocument || document;
+  const styleId = "tweakcn-font-overrides";
+  let styleElement = doc.getElementById(styleId);
+  
+  // Create style element if it doesn't exist
+  if (!styleElement) {
+    styleElement = doc.createElement("style");
+    styleElement.id = styleId;
+    doc.head.appendChild(styleElement);
+  }
+
+  // Build CSS rules for font class overrides
+  const cssRules = [];
+  if (fonts.sans) {
+    cssRules.push(`.font-sans { font-family: ${fonts.sans} !important; }`);
+  }
+  if (fonts.serif) {
+    cssRules.push(`.font-serif { font-family: ${fonts.serif} !important; }`);
+  }
+  if (fonts.mono) {
+    cssRules.push(`.font-mono { font-family: ${fonts.mono} !important; }`);
+  }
+
+  styleElement.textContent = cssRules.join("\n");
+}
+
+function loadThemeFonts(root, themeStyles) {
   try {
     const currentFonts = {
       sans: themeStyles["font-sans"],
@@ -77,6 +104,9 @@ function loadThemeFonts(themeStyles) {
         loadGoogleFont(fontFamily, DEFAULT_FONT_WEIGHTS);
       }
     });    
+
+    // Override font classes with theme fonts
+    overrideFontClasses(root, currentFonts);
   } catch (error) {
     console.warn("Tweakcn Embed: Failed to load fonts:", error);
   }
@@ -95,7 +125,6 @@ function updateThemeModeClass(root, mode) {
 
 function applyThemeStyles(root, themeStyles, mode) {
   updateThemeModeClass(root, mode);
-
   // Apply light theme styles first (base styles)
   const lightStyles = themeStyles.light || {};
   for (const [key, value] of Object.entries(lightStyles)) {
@@ -110,7 +139,7 @@ function applyThemeStyles(root, themeStyles, mode) {
     }
   }
 
-  loadThemeFonts(lightStyles);  
+  loadThemeFonts(root, lightStyles);  
 };
 
 function applyTheme(themeState) {
