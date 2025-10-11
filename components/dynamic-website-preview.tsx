@@ -48,7 +48,7 @@ import React from "react";
  * external website theming via the embed script.
  */
 
-const SCRIPT_URL = "https://tweakcn.com/live-preview-embed-script.js";
+const SCRIPT_URL = "https://tweakcn.com/live-preview.js";
 const TWEAKCN_EMBED_SCRIPT_TAG = `<script src="${SCRIPT_URL}"/>`;
 
 // Code snippets for quick installation across common setups
