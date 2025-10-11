@@ -24,6 +24,7 @@ import InspectorOverlay from "./inspector-overlay";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
+import { useQueryState } from "nuqs";
 
 const DemoCards = lazy(() => import("@/components/examples/cards"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
@@ -34,7 +35,9 @@ const CustomDemo = lazy(() => import("@/components/examples/custom"));
 
 const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
-  const [activeTab, setActiveTab] = useState("cards");
+  const [activeTab, setActiveTab] = useQueryState("p", {
+    defaultValue: "cards",
+  });
 
   const {
     rootRef,
