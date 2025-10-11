@@ -52,7 +52,19 @@ const parseColorVariables = (
         return;
       }
 
-      const colorValue = processColorValue(value);
+      const trimmedValue = value.trim();
+      const valueWithoutImportant = trimmedValue.replace(/\s*!important$/i, "");
+
+      // Skip CSS variable references (var(...)) as they can't be processed as colors
+      if (
+        valueWithoutImportant.toLowerCase().startsWith("var(") &&
+        valueWithoutImportant.endsWith(")")
+      ) {
+        console.warn(`Skipping CSS variable reference: ${cleanName}: ${trimmedValue}`);
+        return;
+      }
+
+      const colorValue = processColorValue(valueWithoutImportant);
       const formattedValue = colorFormatter(colorValue, "hex");
       target[cleanName as keyof ThemeStyleProps] = formattedValue;
     }
