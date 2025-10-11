@@ -458,106 +458,123 @@ function DynamicIframeContent() {
   );
 }
 
-function ConnectionStatus({
-  status,
-  retryValidation,
-  isLoading,
-  errorMsg,
-}: {
-  status: IframeStatus;
-  retryValidation: () => void;
-  isLoading: boolean;
-  errorMsg?: string | null;
-}) {
-  if (isLoading || status === "unknown") return null;
+const ConnectionStatus = React.memo(
+  ({
+    status,
+    retryValidation,
+    isLoading,
+    errorMsg,
+  }: {
+    status: IframeStatus;
+    retryValidation: () => void;
+    isLoading: boolean;
+    errorMsg?: string | null;
+  }) => {
+    const [isVisible, setIsVisible] = React.useState(false);
+    const [displayedStatus, setDisplayedStatus] = React.useState<IframeStatus>(status);
+    const showTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+    const hideTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+    const hasShownSupportedRef = React.useRef(false);
 
-  return (
-    <div className="bg-popover/90 outline-border/50 flex h-8 items-center gap-2 rounded-lg px-2 shadow-sm outline backdrop-blur-lg">
-      <div className="flex items-center gap-1">
-        <span className="text-foreground/90">
-          {errorMsg ? (
-            <HoverCard>
-              <HoverCardTrigger>{ICONS[status]}</HoverCardTrigger>
-              <HoverCardContent
-                align="start"
-                side="top"
-                className="size-fit max-w-[280px] min-w-[140px] p-2"
-              >
-                <div className="space-y-2">
-                  <div className="flex items-center gap-1">
-                    <Info className="size-3" />
-                    <p className="text-xs font-medium">Error details:</p>
-                  </div>
+    React.useEffect(() => {
+      // Clear any existing timeouts
+      if (showTimeoutRef.current) {
+        clearTimeout(showTimeoutRef.current);
+        showTimeoutRef.current = null;
+      }
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = null;
+      }
 
-                  <p className="text-muted-foreground text-xs text-pretty">{errorMsg}</p>
+      // If we've already shown "supported" and hidden it, don't show it again
+      // unless there was an error state in between
+      if (status === "supported" && hasShownSupportedRef.current) {
+        return;
+      }
 
-                  {status === "missing" && (
-                    <code className="text-foreground bg-muted group/script relative isolate block overflow-hidden rounded-md border">
-                      <HorizontalScrollArea className="relative isolate">
-                        <span className="p-2 font-mono text-xs text-nowrap">
-                          {TWEAKCN_EMBED_SCRIPT_TAG}
-                        </span>
-                      </HorizontalScrollArea>
+      // Reset the flag if we hit an error state
+      if (status === "missing" || status === "unsupported" || status === "error") {
+        hasShownSupportedRef.current = false;
+      }
 
-                      <CopyButton
-                        variant="default"
-                        size="icon"
-                        textToCopy={TWEAKCN_EMBED_SCRIPT_TAG}
-                        className="absolute top-1 right-1 z-10 hidden group-hover/script:inline-flex [&>svg]:size-3"
-                      />
-                    </code>
-                  )}
+      // Debounce: Wait 1s before showing the status to avoid flashing
+      showTimeoutRef.current = setTimeout(() => {
+        setDisplayedStatus(status);
+        setIsVisible(true);
 
-                  {status === "unsupported" && (
-                    <div className="space-y-1">
-                      <p className="border-primary! border-l-2 pl-2 text-xs font-medium text-pretty">
-                        Consult the shadcn/ui docs for more information:
-                      </p>
-                      <div className="flex flex-col gap-0.5">
-                        <SocialLink
-                          showIcon
-                          href="https://ui.shadcn.com/docs/installation"
-                          className="text-primary text-xs"
-                        >
-                          Installation docs
-                        </SocialLink>
-                        <SocialLink
-                          showIcon
-                          href="https://ui.shadcn.com/docs/theming"
-                          className="text-primary text-xs"
-                        >
-                          Theming docs
-                        </SocialLink>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-          ) : (
-            ICONS[status]
-          )}
-        </span>
-        <span className="text-foreground/90 flex items-center gap-1 text-sm font-medium">
-          {TEXTS[status]}
-        </span>
-      </div>
+        // Auto-hide after delay only for "supported" status
+        if (status === "supported") {
+          hasShownSupportedRef.current = true;
+          hideTimeoutRef.current = setTimeout(() => {
+            setIsVisible(false);
+          }, 2000);
+        }
+      }, 500);
 
-      {(status === "missing" || status === "unsupported" || status === "error") && (
+      return () => {
+        if (showTimeoutRef.current) {
+          clearTimeout(showTimeoutRef.current);
+        }
+        if (hideTimeoutRef.current) {
+          clearTimeout(hideTimeoutRef.current);
+        }
+      };
+    }, [status]);
+
+    if (isLoading || status === "unknown" || !isVisible) return null;
+
+    return (
+      <div className="bg-popover/90 outline-border/50 animate-in fade-in slide-in-from-bottom-2 flex h-8 items-center gap-2 rounded-lg px-2 shadow-sm outline backdrop-blur-lg duration-200">
         <div className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 px-2 text-xs shadow-none"
-            onClick={retryValidation}
-          >
-            Retry
-          </Button>
+          <span className="text-foreground/90">
+            {errorMsg ? (
+              <HoverCard>
+                <HoverCardTrigger>{ICONS[displayedStatus]}</HoverCardTrigger>
+                <HoverCardContent
+                  align="start"
+                  side="top"
+                  className="size-fit max-w-[280px] min-w-[140px] p-2"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1">
+                      <Info className="size-3" />
+                      <p className="text-xs font-medium">Error details:</p>
+                    </div>
+
+                    <p className="text-muted-foreground text-xs text-pretty">{errorMsg}</p>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            ) : (
+              ICONS[displayedStatus]
+            )}
+          </span>
+          <span className="text-foreground/90 flex items-center gap-1 text-sm font-medium">
+            {TEXTS[displayedStatus]}
+          </span>
         </div>
-      )}
-    </div>
-  );
-}
+
+        {(displayedStatus === "missing" ||
+          displayedStatus === "unsupported" ||
+          displayedStatus === "error") && (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-6 px-2 text-xs shadow-none"
+              onClick={retryValidation}
+            >
+              Retry
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+);
+
+ConnectionStatus.displayName = "ConnectionStatus";
 
 const ICONS: Record<IframeStatus, React.ReactNode> = {
   unknown: null,
