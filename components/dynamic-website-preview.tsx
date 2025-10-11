@@ -17,6 +17,7 @@ import { useIframeThemeInjector } from "@/hooks/use-iframe-theme-injector";
 import { useWebsitePreview } from "@/hooks/use-website-preview";
 import { cn } from "@/lib/utils";
 import { IframeStatus } from "@/types/live-preview-embed";
+import { usePostHog } from "posthog-js/react";
 import {
   AlertCircle,
   CheckCircle,
@@ -28,7 +29,7 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 /**
  * Dynamic Website Preview - Load and theme external websites
@@ -180,11 +181,28 @@ function DynamicWebsitePreviewProvider({
   allowCrossOrigin?: boolean;
 }) {
   const websitePreviewState = useWebsitePreview({ allowCrossOrigin });
+  const posthog = usePostHog();
 
   const { status, retryValidation, themeInjectionError } = useIframeThemeInjector({
     allowCrossOrigin: allowCrossOrigin && !!websitePreviewState.currentUrl,
     iframeRef: websitePreviewState.iframeRef,
   });
+
+  const statusRef = useRef<IframeStatus>(status);
+  // eslint-disable-next-line
+  statusRef.current = status;
+
+  useEffect(() => {
+    if (websitePreviewState.currentUrl) {
+      setTimeout(() => {
+        // capturing after 1s delay so status is finalized
+        posthog.capture("DYNAMIC_PREVIEW_LOADED", {
+          url: websitePreviewState.currentUrl,
+          status: statusRef.current,
+        });
+      }, 1000);
+    }
+  }, [websitePreviewState.currentUrl, posthog]);
 
   const contextValue = {
     ...websitePreviewState,
