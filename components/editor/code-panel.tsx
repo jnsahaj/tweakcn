@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check, Heart } from "lucide-react";
 import { ThemeEditorState } from "@/types/editor";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { CodeBlock, CodeBlockCopyButton } from "@/components/ai-elements/code-block";
-// import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { CodeBlock } from "@/components/ai-elements/code-block";
 import {
   Tabs,
   TabsList,
