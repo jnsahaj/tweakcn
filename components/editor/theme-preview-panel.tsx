@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { ThemeEditorPreviewProps } from "@/types/theme";
 import { Inspect, Maximize, Minimize, MoreVertical } from "lucide-react";
 import Link from "next/link";
-import { lazy, useState } from "react";
+import { lazy } from "react";
 import InspectorOverlay from "./inspector-overlay";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
