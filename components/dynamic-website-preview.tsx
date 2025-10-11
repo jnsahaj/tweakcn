@@ -133,11 +133,12 @@ function DynamicToolbarControls() {
     loadUrl,
     refreshIframe,
     openInNewTab,
+    reset,
     allowCrossOrigin,
   } = useDynamicWebsitePreview();
 
   return (
-    <div className="flex size-full items-center gap-1">
+    <div className="flex size-full items-center gap-1.5">
       <div className="relative max-w-xl flex-1">
         <Input
           type="url"
@@ -148,35 +149,53 @@ function DynamicToolbarControls() {
           }
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
+          onBlur={(e) => {
+            if (e.target.value !== currentUrl) {
+              loadUrl();
+            }
+          }}
           onKeyDown={(e) => {
             if (!inputUrl) return;
             if (e.key === "Enter") {
               loadUrl();
             }
           }}
-          className="peer bg-input h-8 pl-8 text-sm shadow-none"
+          className={cn(
+            "peer bg-background text-foreground h-8 pl-8 text-sm shadow-none transition-all duration-200",
+            "focus:bg-input/50 hover:bg-input/20",
+            currentUrl && "pr-8"
+          )}
         />
 
-        <Globe className="text-muted-foreground absolute top-0 left-2 size-4 translate-y-1/2" />
-      </div>
+        <Globe
+          className={cn(
+            "text-muted-foreground absolute top-0 left-2 size-4 translate-y-1/2 transition-colors",
+            "peer-focus:text-foreground/70"
+          )}
+        />
 
-      <Button
-        onClick={loadUrl}
-        disabled={previewIsLoading || !inputUrl}
-        size="sm"
-        className="h-8 w-16 shadow-none"
-      >
-        {previewIsLoading ? <Loader className="size-3 animate-spin" /> : "Load"}
-      </Button>
+        {currentUrl && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={reset}
+            className="absolute top-0 right-0 size-8 translate-y-0 hover:bg-transparent"
+          >
+            <X className="text-muted-foreground hover:text-foreground size-3.5 transition-colors" />
+          </Button>
+        )}
+      </div>
 
       <Button
         variant="outline"
         size="icon"
         onClick={refreshIframe}
         disabled={previewIsLoading || !currentUrl}
-        className="size-8 shadow-none"
+        className="size-8 shadow-none transition-all hover:scale-105"
       >
-        <RefreshCw className={cn("size-3")} />
+        <RefreshCw
+          className={cn("size-3.5 transition-transform", previewIsLoading && "animate-spin")}
+        />
       </Button>
 
       <Button
@@ -184,9 +203,9 @@ function DynamicToolbarControls() {
         size="icon"
         onClick={openInNewTab}
         disabled={!currentUrl}
-        className="size-8 px-2 shadow-none"
+        className="size-8 px-2 shadow-none transition-all hover:scale-105"
       >
-        <ExternalLink className="size-3" />
+        <ExternalLink className="size-3.5" />
       </Button>
     </div>
   );

@@ -15,7 +15,8 @@ type Action =
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_LOAD_SUCCESS" }
   | { type: "SET_LOAD_ERROR"; payload: string }
-  | { type: "CLEAR_ERROR" };
+  | { type: "CLEAR_ERROR" }
+  | { type: "RESET" };
 
 const initialState: WebsitePreviewState = {
   inputUrl: "",
@@ -38,6 +39,8 @@ function reducer(state: WebsitePreviewState, action: Action): WebsitePreviewStat
       return { ...state, isLoading: false, error: action.payload };
     case "CLEAR_ERROR":
       return { ...state, error: null };
+    case "RESET":
+      return initialState;
     default:
       return state;
   }
@@ -132,6 +135,11 @@ export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePrevie
     window.open(state.currentUrl, "_blank", "noopener,noreferrer");
   }, [state.currentUrl]);
 
+  const reset = useCallback(() => {
+    clearLoadingTimeout();
+    dispatch({ type: "RESET" });
+  }, []);
+
   return {
     ...state,
     iframeRef,
@@ -139,6 +147,7 @@ export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePrevie
     loadUrl,
     refreshIframe,
     openInNewTab,
+    reset,
     handleIframeLoad,
     handleIframeError,
     allowCrossOrigin,
