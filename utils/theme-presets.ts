@@ -655,7 +655,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
       },
       dark: {
         background: "#2b2b2b",
-        foreground: "#dcdcdc",
+        foreground: "#bebebe",
         card: "#333333",
         "card-foreground": "#dcdcdc",
         popover: "#333333",
