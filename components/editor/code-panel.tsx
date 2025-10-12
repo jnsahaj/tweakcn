@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check, Heart } from "lucide-react";
 import { ThemeEditorState } from "@/types/editor";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-// import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { CodeBlock } from "@/components/ai-elements/code-block";
 import {
   Tabs,
   TabsList,
@@ -52,7 +52,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   const getAvailableColorFormats = usePreferencesStore((state) => state.getAvailableColorFormats);
 
   const code = generateThemeCode(themeEditorState, colorFormat, tailwindVersion);
-  const configCode = generateTailwindConfigCode(themeEditorState, tailwindVersion);
+  const configCode = generateTailwindConfigCode(themeEditorState, colorFormat, tailwindVersion);
 
   const getRegistryCommand = (preset: string) => {
     const url = isSavedPreset
@@ -249,9 +249,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
 
         <TabsContent value="index.css" className="overflow-hidden">
           <ScrollArea className="relative h-full">
-            <pre className="h-full p-4 text-sm">
-              <code>{code}</code>
-            </pre>
+            <CodeBlock code={code} language="css" className="h-full rounded-none border-0" />
             <ScrollBar orientation="horizontal" />
             <ScrollBar orientation="vertical" />
           </ScrollArea>
@@ -260,9 +258,11 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
         {tailwindVersion === "3" && (
           <TabsContent value="tailwind.config.ts" className="overflow-hidden">
             <ScrollArea className="relative h-full">
-              <pre className="h-full p-4 text-sm">
-                <code>{configCode}</code>
-              </pre>
+              <CodeBlock
+                code={configCode}
+                language="typescript"
+                className="h-full rounded-none border-0"
+              />
               <ScrollBar orientation="horizontal" />
               <ScrollBar orientation="vertical" />
             </ScrollArea>

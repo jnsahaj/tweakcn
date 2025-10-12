@@ -306,6 +306,39 @@ const TWEAKCN_MESSAGE = {
 
   window.addEventListener("message", handleMessage);
 
+  // ----- NAVIGATION TRACKING -----
+  const emitNavigationUpdate = () => {
+    try {
+      sendMessageToParent({ type: TWEAKCN_MESSAGE.NAVIGATION_UPDATE, payload: { url: window.location.href } });
+    } catch (e) {
+      // noop
+    }
+  };
+
+  const patchHistory = () => {
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function () {
+      const ret = originalPushState.apply(this, arguments);
+      emitNavigationUpdate();
+      return ret;
+    };
+
+    history.replaceState = function () {
+      const ret = originalReplaceState.apply(this, arguments);
+      emitNavigationUpdate();
+      return ret;
+    };
+  };
+
+  // Initial and subsequent navigation events
+  try {
+    patchHistory();
+  } catch (e) {}
+  window.addEventListener("popstate", emitNavigationUpdate);
+  window.addEventListener("hashchange", emitNavigationUpdate);
+
   window.tweakcnEmbed = {
     initialized: true,
     version: "1.0.0",
@@ -315,6 +348,7 @@ const TWEAKCN_MESSAGE = {
     },
   };
 
-  // Announce that the embed script is ready
+  // Announce that the embed script is ready and send initial URL
   sendMessageToParent({ type: TWEAKCN_MESSAGE.EMBED_LOADED });
+  emitNavigationUpdate();
 })(); 

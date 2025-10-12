@@ -186,65 +186,73 @@ const generateTailwindV4ThemeInline = (themeStyles: ThemeStyles): string => {
 }`;
 };
 
-const generateTailwindV3Config = (_themeStyles: ThemeStyles): string => {
+const generateTailwindV3Config = (
+  _themeStyles: ThemeStyles,
+  colorFormat: ColorFormat = "hsl"
+): string => {
+  const colorToken = (key: string) => {
+    return colorFormat === "hsl" ? `"hsl(var(--${key}))"` : `"var(--${key})"`;
+  };
+
   return `/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
   theme: {
     extend: {
       colors: {
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        border: ${colorToken("border")},
+        input: ${colorToken("input")},
+        ring: ${colorToken("ring")},
+        background: ${colorToken("background")},
+        foreground: ${colorToken("foreground")},
         primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
+          DEFAULT: ${colorToken("primary")},
+          foreground: ${colorToken("primary-foreground")},
         },
         secondary: {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
+          DEFAULT: ${colorToken("secondary")},
+          foreground: ${colorToken("secondary-foreground")},
         },
         destructive: {
-          DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive-foreground)",
+          DEFAULT: ${colorToken("destructive")},
+          foreground: ${colorToken("destructive-foreground")},
         },
         muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
+            DEFAULT: ${colorToken("muted")},
+          foreground: ${colorToken("muted-foreground")},
         },
         accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
+          DEFAULT: ${colorToken("accent")},
+          foreground: ${colorToken("accent-foreground")},
         },
         popover: {
-          DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
+          DEFAULT: ${colorToken("popover")},
+          foreground: ${colorToken("popover-foreground")},
         },
         card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
+          DEFAULT: ${colorToken("card")},
+          foreground: ${colorToken("card-foreground")},
         },
         sidebar: {
-          DEFAULT: "var(--sidebar)",
-          foreground: "var(--sidebar-foreground)",
-          primary: "var(--sidebar-primary)",
-          "primary-foreground": "var(--sidebar-primary-foreground)",
-          accent: "var(--sidebar-accent)",
-          "accent-foreground": "var(--sidebar-accent-foreground)",
-          border: "var(--sidebar-border)",
-          ring: "var(--sidebar-ring)",
+          DEFAULT: ${colorToken("sidebar")},
+          foreground: ${colorToken("sidebar-foreground")},
+          primary: ${colorToken("sidebar-primary")},
+          "primary-foreground": ${colorToken("sidebar-primary-foreground")},
+          accent: ${colorToken("sidebar-accent")},
+          "accent-foreground": ${colorToken("sidebar-accent-foreground")},
+          border: ${colorToken("sidebar-border")},
+          ring: ${colorToken("sidebar-ring")},
         },
         chart: {
-          1: "var(--chart-1)",
-          2: "var(--chart-2)",
-          3: "var(--chart-3)",
-          4: "var(--chart-4)",
-          5: "var(--chart-5)",
+          1: ${colorToken("chart-1")},
+          2: ${colorToken("chart-2")},
+          3: ${colorToken("chart-3")},
+          4: ${colorToken("chart-4")},
+          5: ${colorToken("chart-5")},
         },
       },
       borderRadius: {
+        xl: "calc(var(--radius) + 4px)",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -290,6 +298,7 @@ export const generateThemeCode = (
 
 export const generateTailwindConfigCode = (
   themeEditorState: ThemeEditorState,
+  colorFormat: ColorFormat = "hsl",
   _tailwindVersion: "3" | "4" = "3"
 ): string => {
   if (
@@ -301,5 +310,5 @@ export const generateTailwindConfigCode = (
   }
 
   const themeStyles = themeEditorState.styles as ThemeStyles;
-  return generateTailwindV3Config(themeStyles);
+  return generateTailwindV3Config(themeStyles, colorFormat);
 };

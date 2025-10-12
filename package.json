@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npm run generate-theme-registry && next build --turbopack",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
     "generate-theme-registry": "tsx scripts/generate-theme-registry.ts && tsx scripts/generate-registry.ts",
+    "minify-live-preview": "pnpm dlx terser public/live-preview.js -o public/live-preview.min.js -c -m",
+    "prebuild": "pnpm generate-theme-registry",
+    "postbuild": "pnpm minify-live-preview",
     "prepare": "husky"
   },
   "dependencies": {
