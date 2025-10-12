@@ -58,6 +58,7 @@ const NEXT_APP_SNIPPET = `// app/layout.tsx\nexport default function RootLayout(
     <html lang="en">
       <head>
         <script
+          async
           crossOrigin="anonymous"
           src="${SCRIPT_URL}"
         />
@@ -75,6 +76,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <script
+          async
           crossOrigin="anonymous"
           src="${SCRIPT_URL}"
         />
