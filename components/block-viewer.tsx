@@ -1,13 +1,12 @@
 "use client";
-
-import { ComponentErrorBoundary } from "@/components/error-boundary";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn } from "@/lib/utils";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import React from "react";
 import { ImperativePanelHandle } from "react-resizable-panels";
+
+import { ComponentErrorBoundary } from "@/components/error-boundary";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
 
 type BlockViewerContext = {
   resizablePanelRef: React.RefObject<ImperativePanelHandle | null>;
@@ -25,7 +24,7 @@ function useBlockViewer() {
   return context;
 }
 
-export function BlockViewerProvider({ children }: { children: React.ReactNode }) {
+function BlockViewerProvider({ children }: { children: React.ReactNode }) {
   const resizablePanelRef = React.useRef<ImperativePanelHandle>(null);
   const [toggleValue, setToggleValue] = React.useState("100");
 
@@ -47,20 +46,20 @@ export function BlockViewer({
   name,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"div"> & {
+}: React.ComponentProps<"div"> & {
   name: string;
 }) {
   return (
     <BlockViewerProvider>
       <div
+        data-slot="block-viewer"
         className={cn(
-          "group/block-view-wrapper bg-background @container isolate flex size-full min-w-0 flex-col overflow-clip",
+          "group/block-viewer bg-background @container isolate flex size-full min-w-0 flex-col overflow-clip",
           className
         )}
         {...props}
       >
-        <BlockViewerToolbar name={name} />
-        <BlockViewerDisplay name={name}>{children}</BlockViewerDisplay>
+        {children}
       </div>
     </BlockViewerProvider>
   );
@@ -68,15 +67,17 @@ export function BlockViewer({
 
 export function BlockViewerToolbar({
   name,
+  className,
   toolbarControls,
-}: {
+}: React.ComponentProps<"div"> & {
   name: string;
+  className?: string;
   toolbarControls?: React.ReactNode;
 }) {
   const { resizablePanelRef, toggleValue, setToggleValue } = useBlockViewer();
 
   return (
-    <div className="h-12 w-full border-b p-2">
+    <div data-slot="block-viewer-toolbar" className={cn("h-12 w-full border-b p-2", className)}>
       <div className="flex size-full items-center justify-between gap-4">
         <div className="flex-1">
           {!!toolbarControls ? (
@@ -86,9 +87,9 @@ export function BlockViewerToolbar({
           )}
         </div>
 
-        <div className="flex items-center justify-between max-lg:hidden">
+        <div className="hidden items-center justify-between lg:group-has-data-[slot=block-viewer-display]/block-viewer:flex">
           <ToggleGroup
-            className="flex gap-0.5 rounded-md border p-0.5"
+            className="bg-background flex gap-0.5 rounded-lg border p-0.5"
             type="single"
             value={toggleValue}
             onValueChange={(value) => {
@@ -98,22 +99,16 @@ export function BlockViewerToolbar({
               }
             }}
           >
-            <ToggleGroupItem value="100" className="size-6 p-1" asChild>
-              <TooltipWrapper label="Desktop view">
-                <Monitor className="size-3.5" />
-              </TooltipWrapper>
+            <ToggleGroupItem value="100" className="flex size-7 items-center justify-center p-1">
+              <Monitor className="size-4" />
             </ToggleGroupItem>
 
-            <ToggleGroupItem value="60" className="size-6 p-1" asChild>
-              <TooltipWrapper label="Tablet view">
-                <Tablet className="size-3.5" />
-              </TooltipWrapper>
+            <ToggleGroupItem value="60" className="flex size-7 items-center justify-center p-1">
+              <Tablet className="size-4" />
             </ToggleGroupItem>
 
-            <ToggleGroupItem value="30" className="size-6 p-1" asChild>
-              <TooltipWrapper label="Mobile view">
-                <Smartphone className="size-3.5" />
-              </TooltipWrapper>
+            <ToggleGroupItem value="30" className="flex size-7 items-center justify-center p-1">
+              <Smartphone className="size-4" />
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
@@ -127,7 +122,7 @@ export function BlockViewerDisplay({
   className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"div"> & {
+}: React.ComponentProps<"div"> & {
   name: string;
 }) {
   const { resizablePanelRef, setToggleValue } = useBlockViewer();
@@ -151,16 +146,17 @@ export function BlockViewerDisplay({
     <ComponentErrorBoundary name={name}>
       <div
         id={name}
+        data-slot="block-viewer-display"
         data-name={name.toLowerCase()}
-        className={cn("grid w-full grow gap-4 overflow-clip", className)}
+        className={cn("size-full min-h-0 gap-4 overflow-hidden", className)}
         {...props}
       >
-        <ResizablePanelGroup direction="horizontal" className="relative isolate z-10">
+        <ResizablePanelGroup direction="horizontal" className="relative isolate z-10 size-full">
           <div className="bg-muted absolute inset-0 right-3 [background-image:radial-gradient(var(--muted-foreground),transparent_1px)] [background-size:1rem_1rem] opacity-60 dark:opacity-35" />
 
           <ResizablePanel
             ref={resizablePanelRef}
-            className="bg-background relative lg:aspect-auto lg:min-w-[350px]"
+            className="bg-background relative min-w-[350px] lg:aspect-auto"
             defaultSize={100}
             minSize={30}
           >

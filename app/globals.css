@@ -133,6 +133,10 @@ body {
   @apply bg-primary/10 rounded-md px-1 font-mono text-sm font-semibold;
 }
 
+.code-inline {
+  @apply bg-muted text-muted-foreground px-1.5 py-0.5 font-mono text-xs font-medium;
+}
+
 @keyframes text {
   from {
     background-position: 0% center;

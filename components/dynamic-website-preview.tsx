@@ -1,26 +1,23 @@
 "use client";
 
 import Logo from "@/assets/logo.svg";
-import {
-  BlockViewerDisplay,
-  BlockViewerProvider,
-  BlockViewerToolbar,
-} from "@/components/block-viewer";
+import { CodeBlock, CodeBlockCopyButton } from "@/components/ai-elements/code-block";
+import { BlockViewer, BlockViewerDisplay, BlockViewerToolbar } from "@/components/block-viewer";
 import { LoadingLogo } from "@/components/editor/ai/loading-logo";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CodeBlock, CodeBlockCopyButton } from "@/components/ai-elements/code-block";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIframeThemeInjector } from "@/hooks/use-iframe-theme-injector";
 import { useWebsitePreview } from "@/hooks/use-website-preview";
 import { cn } from "@/lib/utils";
 import { IframeStatus } from "@/types/live-preview-embed";
-import { usePostHog } from "posthog-js/react";
 import {
   AlertCircle,
   CheckCircle,
+  CloudAlert,
   ExternalLink,
   Globe,
   Info,
@@ -29,6 +26,7 @@ import {
   X,
   XCircle,
 } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
 import React, { useEffect, useRef } from "react";
 
 /**
@@ -127,35 +125,6 @@ export default function App() {
   );
 }`;
 
-export function DynamicWebsitePreview({
-  className,
-  name,
-  allowCrossOrigin = false,
-  ...props
-}: React.ComponentPropsWithoutRef<"div"> & {
-  name: string;
-  allowCrossOrigin?: boolean;
-}) {
-  return (
-    <DynamicWebsitePreviewProvider allowCrossOrigin={allowCrossOrigin}>
-      <BlockViewerProvider>
-        <div
-          className={cn(
-            "group/block-view-wrapper bg-background @container isolate flex size-full min-w-0 flex-col overflow-clip",
-            className
-          )}
-          {...props}
-        >
-          <BlockViewerToolbar name={name} toolbarControls={<DynamicToolbarControls />} />
-          <BlockViewerDisplay name={name}>
-            <DynamicIframeContent />
-          </BlockViewerDisplay>
-        </div>
-      </BlockViewerProvider>
-    </DynamicWebsitePreviewProvider>
-  );
-}
-
 type DynamicWebsitePreviewContextType = ReturnType<typeof useWebsitePreview> &
   Omit<ReturnType<typeof useIframeThemeInjector>, "ref">;
 
@@ -218,7 +187,47 @@ function DynamicWebsitePreviewProvider({
   );
 }
 
-function DynamicToolbarControls() {
+export function DynamicWebsitePreview({
+  className,
+  name,
+  allowCrossOrigin = false,
+  ...props
+}: React.ComponentPropsWithoutRef<"div"> & {
+  name: string;
+  allowCrossOrigin?: boolean;
+}) {
+  return (
+    <DynamicWebsitePreviewProvider allowCrossOrigin={allowCrossOrigin}>
+      <BlockViewer
+        name={name}
+        className={cn(
+          "group/block-view-wrapper bg-background @container isolate flex size-full min-w-0 flex-col overflow-clip",
+          className
+        )}
+        {...props}
+      >
+        <BlockViewerToolbar name={name} toolbarControls={<Controls />} className="bg-muted h-fit" />
+        <DynamicWebsitePreviewContent name={name} />
+      </BlockViewer>
+    </DynamicWebsitePreviewProvider>
+  );
+}
+
+function DynamicWebsitePreviewContent({ name }: { name: string }) {
+  const { currentUrl, error: previewError } = useDynamicWebsitePreview();
+
+  if (!currentUrl && !previewError) {
+    return <NoWebsitePreviewLoaded />;
+  }
+
+  if (previewError) {
+    return <WebsitePreviewError error={previewError} />;
+  }
+
+  return <WebsitePreview name={name} />;
+}
+
+function Controls() {
   const {
     inputUrl,
     setInputUrl,
@@ -230,6 +239,15 @@ function DynamicToolbarControls() {
     reset,
     allowCrossOrigin,
   } = useDynamicWebsitePreview();
+
+  const handleReset = () => {
+    if (currentUrl) {
+      reset();
+      setInputUrl("");
+    } else {
+      setInputUrl("");
+    }
+  };
 
   return (
     <div className="flex size-full items-center gap-1.5">
@@ -243,13 +261,8 @@ function DynamicToolbarControls() {
           }
           value={inputUrl}
           onChange={(e) => setInputUrl(e.target.value)}
-          onBlur={(e) => {
-            if (e.target.value !== currentUrl) {
-              loadUrl();
-            }
-          }}
           onKeyDown={(e) => {
-            if (!inputUrl) return;
+            if (!inputUrl.trim()) return;
             if (e.key === "Enter") {
               loadUrl();
             }
@@ -268,39 +281,194 @@ function DynamicToolbarControls() {
           )}
         />
 
-        {currentUrl && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={reset}
-            className="absolute top-0 right-0 size-8 translate-y-0 hover:bg-transparent"
-          >
-            <X className="text-muted-foreground hover:text-foreground size-3.5 transition-colors" />
-          </Button>
+        {(currentUrl || inputUrl) && (
+          <TooltipWrapper asChild label="Reset">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleReset}
+              className="absolute top-0 right-0 size-8 translate-y-0 hover:bg-transparent"
+            >
+              <X className="text-muted-foreground hover:text-foreground size-3.5 transition-colors" />
+            </Button>
+          </TooltipWrapper>
         )}
       </div>
 
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={refreshIframe}
-        disabled={previewIsLoading || !currentUrl}
-        className="size-8 shadow-none transition-all hover:scale-105"
-      >
-        <RefreshCw
-          className={cn("size-3.5 transition-transform", previewIsLoading && "animate-spin")}
-        />
-      </Button>
+      <TooltipWrapper asChild label="Refresh website">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={refreshIframe}
+          disabled={previewIsLoading || !currentUrl}
+          className="size-8 shadow-none transition-all hover:scale-105"
+        >
+          <RefreshCw
+            className={cn("size-3.5 transition-transform", previewIsLoading && "animate-spin")}
+          />
+        </Button>
+      </TooltipWrapper>
 
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={openInNewTab}
-        disabled={!currentUrl}
-        className="size-8 px-2 shadow-none transition-all hover:scale-105"
-      >
-        <ExternalLink className="size-3.5" />
-      </Button>
+      <TooltipWrapper asChild label="Open in new tab">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={openInNewTab}
+          disabled={!currentUrl || previewIsLoading}
+          className="size-8 px-2 shadow-none transition-all hover:scale-105"
+        >
+          <ExternalLink className="size-3.5" />
+        </Button>
+      </TooltipWrapper>
+    </div>
+  );
+}
+
+function NoWebsitePreviewLoaded() {
+  return (
+    <div className="scrollbar-thin scrollbar-gutter-both relative flex size-full flex-col overflow-y-auto p-4 py-8">
+      <div className="text-muted-foreground mx-auto my-auto flex w-full max-w-xl min-w-0 flex-col items-center justify-center space-y-6">
+        <div className="flex items-center gap-1">
+          <div className="bg-muted outline-border/50 flex size-16 flex-col items-center justify-center rounded-full outline">
+            <Globe className="text-foreground size-7" />
+          </div>
+          <X className="text-muted-foreground size-6" />
+          <div className="bg-muted outline-border/50 flex size-16 flex-col items-center justify-center rounded-full outline">
+            <Logo className="text-foreground size-7" />
+          </div>
+        </div>
+
+        <h3 className="text-foreground text-center text-lg font-medium md:text-2xl">
+          Preview your Website in tweakcn
+        </h3>
+
+        <div className="text-muted-foreground space-y-2 text-left text-sm">
+          <div className="flex gap-2">
+            <span className="text-foreground font-semibold">1.</span>
+            <span>Add the script below to your website based on your framework</span>
+          </div>
+          <div className="flex gap-2">
+            <span className="text-foreground font-semibold">2.</span>
+            <span>
+              Paste your website&apos;s URL (e.g.,{" "}
+              <code className="code-inline">http://localhost:3000</code>) above to preview it with
+              the theme applied in real-time
+            </span>
+          </div>
+        </div>
+
+        <Card className="w-full p-2">
+          <Tabs
+            defaultValue="script"
+            className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden"
+          >
+            <div className="scrollbar-thin flex items-center justify-between overflow-x-auto rounded-lg border p-1">
+              <TabsList className="m-0 h-fit bg-transparent p-0">
+                <TabsTrigger value="script" className="h-7 px-3 text-xs font-medium">
+                  Script Tag
+                </TabsTrigger>
+                <TabsTrigger value="next-app" className="h-7 px-3 text-xs font-medium">
+                  Next.js (App)
+                </TabsTrigger>
+                <TabsTrigger value="next-pages" className="h-7 px-3 text-xs font-medium">
+                  Next.js (Pages)
+                </TabsTrigger>
+                <TabsTrigger value="vite" className="h-7 px-3 text-xs font-medium">
+                  Vite
+                </TabsTrigger>
+                <TabsTrigger value="remix" className="h-7 px-3 text-xs font-medium">
+                  Remix
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <div className="bg-background scrollbar-thin max-h-76 overflow-y-auto rounded-lg border">
+              <TabsContent value="script" className="m-0">
+                <CodeBlock
+                  code={HTML_SNIPPET}
+                  language="html"
+                  className="rounded-none border-none bg-transparent"
+                >
+                  <CodeBlockCopyButton aria-label="Copy HTML snippet" />
+                </CodeBlock>
+              </TabsContent>
+
+              <TabsContent value="next-app" className="m-0">
+                <CodeBlock
+                  code={NEXT_APP_SNIPPET}
+                  language="tsx"
+                  className="rounded-none border-none bg-transparent"
+                >
+                  <CodeBlockCopyButton aria-label="Copy Next.js App snippet" />
+                </CodeBlock>
+              </TabsContent>
+
+              <TabsContent value="next-pages" className="m-0">
+                <CodeBlock
+                  code={NEXT_PAGES_SNIPPET}
+                  language="tsx"
+                  className="rounded-none border-none bg-transparent"
+                >
+                  <CodeBlockCopyButton aria-label="Copy Next.js Pages snippet" />
+                </CodeBlock>
+              </TabsContent>
+
+              <TabsContent value="vite" className="m-0">
+                <CodeBlock
+                  code={VITE_SNIPPET}
+                  language="html"
+                  className="rounded-none border-none bg-transparent"
+                >
+                  <CodeBlockCopyButton aria-label="Copy Vite snippet" />
+                </CodeBlock>
+              </TabsContent>
+
+              <TabsContent value="remix" className="m-0">
+                <CodeBlock
+                  code={REMIX_SNIPPET}
+                  language="tsx"
+                  className="rounded-none border-none bg-transparent"
+                >
+                  <CodeBlockCopyButton aria-label="Copy Remix snippet" />
+                </CodeBlock>
+              </TabsContent>
+            </div>
+          </Tabs>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function WebsitePreviewLoading() {
+  return (
+    <div className="bg-muted flex size-full items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative isolate size-10">
+          <LoadingLogo />
+        </div>
+
+        <span className="text-muted-foreground animate-pulse text-sm">Loading website</span>
+      </div>
+    </div>
+  );
+}
+
+function WebsitePreviewError({ error }: { error: string }) {
+  return (
+    <div className="bg-muted relative size-full overflow-hidden p-4">
+      <div className="flex h-full flex-col items-center justify-center space-y-6 p-4 text-center">
+        <div className="bg-destructive/80 outline-border/50 flex size-16 flex-col items-center justify-center rounded-full outline">
+          <CloudAlert className="text-destructive-foreground size-7" />
+        </div>
+
+        <div className="space-y-2">
+          <h3 className="text-foreground text-center text-lg font-medium md:text-2xl">
+            Error Loading Website Preview
+          </h3>
+          <span className="text-muted-foreground max-w-md text-sm text-balance">{error}</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -309,11 +477,10 @@ function DynamicToolbarControls() {
  * Content component that manages the iframe and its loading states
  * Theme injection is now handled entirely by the useIframeThemeInjector hook
  */
-function DynamicIframeContent() {
+function WebsitePreview({ name }: { name: string }) {
   const {
     currentUrl,
     isLoading: previewIsLoading,
-    error: previewError,
     status,
     retryValidation,
     allowCrossOrigin,
@@ -323,123 +490,11 @@ function DynamicIframeContent() {
     themeInjectionError,
   } = useDynamicWebsitePreview();
 
-  if (!currentUrl && !previewError) {
-    return (
-      <div className="relative size-full overflow-hidden p-4">
-        <div className="text-muted-foreground mx-auto flex h-full max-w-2xl flex-col items-center justify-center space-y-6">
-          <div className="flex items-center gap-1">
-            <div className="bg-muted outline-border/50 flex size-16 flex-col items-center justify-center space-y-2 rounded-full outline">
-              <Globe className="text-foreground size-7" />
-            </div>
-            <X className="text-foreground size-6" />
-            <div className="bg-muted outline-border/50 flex size-16 flex-col items-center justify-center space-y-2 rounded-full outline">
-              <Logo className="text-foreground size-7" />
-            </div>
-          </div>
-
-          <div className="space-y-3 text-center">
-            <p className="text-foreground text-lg font-medium">Preview your website in tweakcn</p>
-            <div className="text-muted-foreground space-y-2 text-left text-sm">
-              <div className="flex gap-2">
-                <span className="text-foreground font-semibold">1.</span>
-                <span>Add the script below to your website based on your framework</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="text-foreground font-semibold">2.</span>
-                <span>
-                  Paste your website&apos;s URL (eg:{" "}
-                  <span className="font-mono font-medium">http://localhost:3000</span>) above to
-                  preview it with the theme applied in real-time
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {allowCrossOrigin && (
-            <Card className="w-full p-2">
-              <Tabs defaultValue="script" className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                <div className="bg-muted/50 flex items-center justify-between rounded-md border px-2 py-1">
-                  <TabsList className="h-8 bg-transparent p-0">
-                    <TabsTrigger value="script" className="h-7 px-3 text-xs font-medium">
-                      Script Tag
-                    </TabsTrigger>
-                    <TabsTrigger value="next-app" className="h-7 px-3 text-xs font-medium">
-                      Next.js (App)
-                    </TabsTrigger>
-                    <TabsTrigger value="next-pages" className="h-7 px-3 text-xs font-medium">
-                      Next.js (Pages)
-                    </TabsTrigger>
-                    <TabsTrigger value="vite" className="h-7 px-3 text-xs font-medium">
-                      Vite
-                    </TabsTrigger>
-                    <TabsTrigger value="remix" className="h-7 px-3 text-xs font-medium">
-                      Remix
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-
-                <div className="max-h-76 overflow-y-auto">
-                  <TabsContent value="script">
-                    <CodeBlock code={HTML_SNIPPET} language="html">
-                      <CodeBlockCopyButton aria-label="Copy HTML snippet" />
-                    </CodeBlock>
-                  </TabsContent>
-                  <TabsContent value="next-app">
-                    <CodeBlock code={NEXT_APP_SNIPPET} language="tsx">
-                      <CodeBlockCopyButton aria-label="Copy Next.js App snippet" />
-                    </CodeBlock>
-                  </TabsContent>
-                  <TabsContent value="next-pages">
-                    <CodeBlock code={NEXT_PAGES_SNIPPET} language="tsx">
-                      <CodeBlockCopyButton aria-label="Copy Next.js Pages snippet" />
-                    </CodeBlock>
-                  </TabsContent>
-                  <TabsContent value="vite">
-                    <CodeBlock code={VITE_SNIPPET} language="html">
-                      <CodeBlockCopyButton aria-label="Copy Vite snippet" />
-                    </CodeBlock>
-                  </TabsContent>
-                  <TabsContent value="remix">
-                    <CodeBlock code={REMIX_SNIPPET} language="tsx">
-                      <CodeBlockCopyButton aria-label="Copy Remix snippet" />
-                    </CodeBlock>
-                  </TabsContent>
-                </div>
-              </Tabs>
-            </Card>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (previewError) {
-    return (
-      <div className="relative size-full overflow-hidden p-4">
-        <div className="flex h-full flex-col items-center justify-center space-y-2 p-4 text-center">
-          <p className="text-destructive text-sm font-medium">Error Loading Website</p>
-          <span className="text-muted-foreground max-w-md text-xs">{previewError}</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="relative size-full overflow-hidden">
+    <BlockViewerDisplay name={name} className="relative">
       {previewIsLoading && (
-        <div className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm">
-          <div className="flex items-center space-x-2">
-            <div className="relative size-6">
-              <LoadingLogo />
-            </div>
-
-            <p className="inline-flex animate-pulse gap-0.25">
-              <span className="text-sm">Loading website</span>
-              <span className="animate-bounce delay-100">.</span>
-              <span className="animate-bounce delay-200">.</span>
-              <span className="animate-bounce delay-300">.</span>
-            </p>
-          </div>
+        <div className="absolute inset-0">
+          <WebsitePreviewLoading />
         </div>
       )}
 
@@ -468,7 +523,7 @@ function DynamicIframeContent() {
           />
         </div>
       )}
-    </div>
+    </BlockViewerDisplay>
   );
 }
 
