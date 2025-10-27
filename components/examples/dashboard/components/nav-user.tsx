@@ -94,7 +94,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive">
+            <DropdownMenuItem className="text-destructive hover:text-destructive focus:text-destructive">
               <LogOutIcon />
               Log out
             </DropdownMenuItem>

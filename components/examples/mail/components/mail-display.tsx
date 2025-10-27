@@ -50,7 +50,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
             size="icon" 
             disabled={!mail} 
             title="Move to trash"
-            className="text-destructive hover:text-destructive"
+            className="text-destructive hover:text-destructive focus-visible:text-destructive"
           >
             <Trash2 className="h-4 w-4" />
             <span className="sr-only">Move to trash</span>
