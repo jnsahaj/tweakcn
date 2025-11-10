@@ -3,6 +3,8 @@
 import { ActionBarButtons } from "@/components/editor/action-bar/components/action-bar-buttons";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { DialogActionsProvider, useDialogActions } from "@/hooks/use-dialog-actions";
+import { useActionsStore } from "@/store/action-store";
+import { useEffect} from "react";
 
 export function ActionBar() {
   return (
@@ -15,6 +17,19 @@ export function ActionBar() {
 function ActionBarContent() {
   const { isCreatingTheme, handleSaveClick, handleShareClick, setCssImportOpen, setCodePanelOpen } =
     useDialogActions();
+
+    const setHandleSaveClick = useActionsStore((store) => store.setHandleSaveClick)
+    const setSetCodePanelOpen = useActionsStore((store) => store.setSetCodePanelOpen)
+
+    useEffect(()=> {
+      setHandleSaveClick(handleSaveClick)
+      return () => setHandleSaveClick(() => {})
+    },[setHandleSaveClick , handleSaveClick])
+
+    useEffect(() => {
+      setSetCodePanelOpen(setCodePanelOpen)
+      return () => setSetCodePanelOpen(() => {})
+    },[setCodePanelOpen, setSetCodePanelOpen])
 
   return (
     <div className="border-b">
