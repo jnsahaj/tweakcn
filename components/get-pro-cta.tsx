@@ -28,7 +28,7 @@ export function GetProCTA({ className, ...props }: GetProCTAProps) {
     >
       <Link href="/pricing">
         <Gem />
-        Get Pro
+        <span className="hidden lg:block">Get Pro</span>
       </Link>
     </Button>
   );

@@ -10,8 +10,14 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
-import { ThemePreset } from "@/types/theme";
-import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
+import Link from "next/link";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ThemeToggle } from "../theme-toggle";
+import { TooltipWrapper } from "../tooltip-wrapper";
+import { ThemeColors } from "../search/theme-colors";
+import { filterPresets } from "@/lib/search/filter-presets";
+import { sortThemes } from "@/lib/search/sort-themes";
+import { isThemeNew } from "@/lib/search/is-theme-new";
 import {
   ArrowLeft,
   ArrowRight,
@@ -22,47 +28,10 @@ import {
   Settings,
   Shuffle,
 } from "lucide-react";
-import Link from "next/link";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ThemeToggle } from "../theme-toggle";
-import { TooltipWrapper } from "../tooltip-wrapper";
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
   withCycleThemes?: boolean;
 }
-
-interface ColorBoxProps {
-  color: string;
-}
-
-const ColorBox: React.FC<ColorBoxProps> = ({ color }) => (
-  <div className="border-muted h-3 w-3 rounded-sm border" style={{ backgroundColor: color }} />
-);
-
-interface ThemeColorsProps {
-  presetName: string;
-  mode: "light" | "dark";
-}
-
-const ThemeColors: React.FC<ThemeColorsProps> = ({ presetName, mode }) => {
-  const styles = getPresetThemeStyles(presetName)[mode];
-  return (
-    <div className="flex gap-0.5">
-      <ColorBox color={styles.primary} />
-      <ColorBox color={styles.accent} />
-      <ColorBox color={styles.secondary} />
-      <ColorBox color={styles.border} />
-    </div>
-  );
-};
-
-const isThemeNew = (preset: ThemePreset) => {
-  if (!preset.createdAt) return false;
-  const createdAt = new Date(preset.createdAt);
-  const timePeriod = new Date();
-  timePeriod.setDate(timePeriod.getDate() - 5);
-  return createdAt > timePeriod;
-};
 
 const ThemeControls = () => {
   const applyThemePreset = useEditorStore((store) => store.applyThemePreset);
@@ -211,35 +180,13 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   const currentPresetName = presetNames?.find((name) => name === currentPreset);
 
   const filteredPresets = useMemo(() => {
-    const filteredList =
-      search.trim() === ""
-        ? presetNames
-        : presetNames.filter((name) => {
-            if (name === "default") {
-              return "default".toLowerCase().includes(search.toLowerCase());
-            }
-            return presets[name]?.label?.toLowerCase().includes(search.toLowerCase());
-          });
+    const filteredList = filterPresets(presetNames, presets, search);
 
     // Separate saved and default themes
     const savedThemesList = filteredList.filter((name) => name !== "default" && isSavedTheme(name));
     const defaultThemesList = filteredList.filter((name) => !savedThemesList.includes(name));
 
-    // Sort each list, with "default" at the top for default themes
-    const sortThemes = (list: string[]) => {
-      const defaultTheme = list.filter((name) => name === "default");
-      const otherThemes = list
-        .filter((name) => name !== "default")
-        .sort((a, b) => {
-          const labelA = presets[a]?.label || a;
-          const labelB = presets[b]?.label || b;
-          return labelA.localeCompare(labelB);
-        });
-      return [...defaultTheme, ...otherThemes];
-    };
-
-    // Combine saved themes first, then default themes
-    return [...sortThemes(savedThemesList), ...sortThemes(defaultThemesList)];
+    return [...sortThemes(savedThemesList, presets), ...sortThemes(defaultThemesList, presets)];
   }, [presetNames, search, presets, isSavedTheme]);
 
   const filteredSavedThemes = useMemo(() => {
@@ -260,12 +207,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
             {...props}
           >
             <div className="flex w-full items-center gap-3 overflow-hidden">
-              <div className="flex gap-0.5">
-                <ColorBox color={themeState.styles[mode].primary} />
-                <ColorBox color={themeState.styles[mode].accent} />
-                <ColorBox color={themeState.styles[mode].secondary} />
-                <ColorBox color={themeState.styles[mode].border} />
-              </div>
+              <ThemeColors presetName={currentPresetName || "default"} mode={mode} />
               {currentPresetName !== "default" &&
                 currentPresetName &&
                 isSavedTheme(currentPresetName) &&
