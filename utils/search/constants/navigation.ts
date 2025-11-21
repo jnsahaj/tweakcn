@@ -1,10 +1,11 @@
+import type { LucideIcon } from "lucide-react";
 import { CreditCard, Sparkles, Palette, Figma, Settings, ChartNoAxesCombined } from "lucide-react";
 
 interface NavigationItem {
     id: string;
     label: string;
     href: string;
-    icon: React.ComponentType<{ className?: string }>;
+    icon: LucideIcon;
     keywords?: string[];
 }
 

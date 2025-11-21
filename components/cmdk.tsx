@@ -11,11 +11,11 @@ import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { authClient } from "@/lib/auth-client";
 import { Badge } from "./ui/badge";
-import { isThemeNew } from "@/lib/search/is-theme-new";
+import { isThemeNew } from "@/utils/search/is-theme-new";
 import { ThemeColors } from "./search/theme-colors";
-import { NAVIGATION_ITEMS } from "@/lib/search/constants/navigation";
-import { filterPresets } from "@/lib/search/filter-presets";
-import { sortThemes } from "@/lib/search/sort-themes";
+import { NAVIGATION_ITEMS } from "@/utils/search/constants/navigation";
+import { filterPresets } from "@/utils/search/filter-presets";
+import { sortThemes } from "@/utils/search/sort-themes";
 import {
   CommandDialog,
   CommandEmpty,
@@ -120,10 +120,12 @@ export function CmdK() {
         variant={"outline"}
         className="flex h-8 items-center justify-between gap-6"
         onClick={() => setOpen(true)}
+        aria-label="Open search"
       >
-        <span className="text-muted-foreground flex items-center gap-2 text-sm">
-          <Search className="size-4" />
+        <span className="flex items-center gap-2 text-sm">
+          <Search className="size-4" aria-hidden="true" />
           <p className="hidden sm:block">Search...</p>
+          <span className="sr-only">Search</span>
         </span>
         <KbdGroup className="hidden md:flex">
           <Kbd>⌘</Kbd>
@@ -243,7 +245,7 @@ export function CmdK() {
 const CommandFooter = () => {
   return (
     <div className="text-muted-foreground flex items-center gap-2 px-6 py-2 text-xs">
-      <Kbd className="bg-background rounded-[4px] px-1">
+      <Kbd className="rounded-[4px] px-1">
         <CornerDownLeft />
       </Kbd>
       <p className="font-medium">Go to page</p>
