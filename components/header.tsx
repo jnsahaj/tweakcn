@@ -59,8 +59,9 @@ export function Header() {
             variant="outline"
             className="flex h-8 items-center gap-2"
           >
-            <FigmaIcon className="size-4" />
+            <FigmaIcon className="size-4" aria-hidden="true" />
             <span className="hidden lg:block">Export to Figma</span>
+            <span className="sr-only">Export to Figma</span>
           </Button>
           <UserProfileDropdown />
         </div>

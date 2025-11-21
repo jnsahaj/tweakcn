@@ -21,7 +21,6 @@ export function getPresetThemeStyles(name: string): ThemeStyles {
     },
     dark: {
       ...defaultTheme.dark,
-      ...(preset.styles.light || {}),
       ...(preset.styles.dark || {}),
     },
   };

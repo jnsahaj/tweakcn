@@ -15,9 +15,9 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
 import { ThemeColors } from "../search/theme-colors";
-import { filterPresets } from "@/lib/search/filter-presets";
-import { sortThemes } from "@/lib/search/sort-themes";
-import { isThemeNew } from "@/lib/search/is-theme-new";
+import { filterPresets } from "@/utils/search/filter-presets";
+import { sortThemes } from "@/utils/search/sort-themes";
+import { isThemeNew } from "@/utils/search/is-theme-new";
 import {
   ArrowLeft,
   ArrowRight,
