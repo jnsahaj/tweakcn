@@ -56,7 +56,7 @@ export function CmdK() {
     [presets]
   );
 
-  const presetNames = useMemo(() => ["default", ...Object.keys(presets)], [presets]);
+  const presetNames = useMemo(() => Array.from(new Set(["default", ...Object.keys(presets)])), [presets]);
 
   const filteredPresets = useMemo(() => {
     const filteredList = filterPresets(presetNames, presets, search);
