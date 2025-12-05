@@ -120,7 +120,10 @@ export function UserProfileDropdown() {
                   Privacy Policy
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogOut}>
+              <DropdownMenuItem 
+                onClick={handleLogOut}
+                className="text-destructive focus:text-destructive"
+              >
                 <LogOut /> Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
