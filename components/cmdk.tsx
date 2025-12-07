@@ -5,7 +5,7 @@ import { Check, CornerDownLeft, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Kbd, KbdGroup } from "./ui/kbd";
+import { Kbd } from "./ui/kbd";
 import { Button } from "./ui/button";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -24,6 +24,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export function CmdK() {
   const [open, setOpen] = useState(false);
@@ -116,22 +117,21 @@ export function CmdK() {
 
   return (
     <>
-      <Button
-        variant={"outline"}
-        className="flex h-8 items-center justify-between gap-6"
-        onClick={() => setOpen(true)}
-        aria-label="Open search"
-      >
-        <span className="flex items-center gap-2 text-sm">
-          <Search className="size-4" aria-hidden="true" />
-          <p className="hidden sm:block">Search...</p>
-          <span className="sr-only">Search</span>
-        </span>
-        <KbdGroup className="hidden md:flex">
-          <Kbd>⌘</Kbd>
-          <Kbd>K</Kbd>
-        </KbdGroup>
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant={"outline"}
+            className="flex h-8 items-center justify-between gap-6"
+            onClick={() => setOpen(true)}
+            aria-label="Open search"
+          >
+            <Search className="size-4" aria-hidden="true" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Search (⌘K)</p>
+        </TooltipContent>
+      </Tooltip>
       <CommandDialog open={open} onOpenChange={setOpen} title="Search">
         <div className="bg-card m-1 rounded-md">
           <div className="mb-2 flex items-center border-b px-3">
