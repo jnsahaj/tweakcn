@@ -251,7 +251,12 @@ export default function RootLayout({
 }
 
 export function generateV0PageTsx(themeName: string): string {
-  return `function ColorSwatch({ name, bgClass }: { name: string; bgClass: string }) {
+  return `/**
+ * This is a demo page to showcase the theme's color palette.
+ * Feel free to replace this with your actual app's logic.
+ */
+
+function ColorSwatch({ name, bgClass }: { name: string; bgClass: string }) {
   return (
     <div className="group relative">
       <div
