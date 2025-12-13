@@ -32,5 +32,12 @@ export function AuthDialogWrapper() {
     }
   }, [session, isOpen, closeAuthDialog, postLoginAction, clearPostLoginAction, posthog]);
 
-  return <AuthDialog open={isOpen} onOpenChange={closeAuthDialog} initialMode={mode} />;
+  return (
+    <AuthDialog
+      open={isOpen}
+      onOpenChange={closeAuthDialog}
+      initialMode={mode}
+      postLoginActionType={postLoginAction?.type}
+    />
+  );
 }
