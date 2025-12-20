@@ -10,6 +10,7 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/ui/revola";
+import { PostLoginActionType } from "@/hooks/use-post-login-action";
 import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -20,6 +21,44 @@ interface AuthDialogProps {
   onOpenChange: (open: boolean) => void;
   initialMode?: "signin" | "signup";
   trigger?: React.ReactNode; // Optional trigger element
+  postLoginActionType?: PostLoginActionType | null;
+}
+
+// Get contextual copy based on the post-login action
+function getContextualCopy(actionType?: PostLoginActionType | null) {
+  switch (actionType) {
+    case "SAVE_THEME":
+      return {
+        title: "Sign in to Save",
+        description: "Sign in to save your theme and access it from anywhere",
+      };
+    case "SAVE_THEME_FOR_SHARE":
+      return {
+        title: "Sign in to Share",
+        description: "Sign in to save and share your theme with others",
+      };
+    case "SAVE_THEME_FOR_V0":
+      return {
+        title: "Sign in to open in v0",
+        description: "Sign in to save your theme and open it in v0",
+      };
+    case "AI_GENERATE_FROM_PAGE":
+    case "AI_GENERATE_FROM_CHAT":
+    case "AI_GENERATE_FROM_CHAT_SUGGESTION":
+    case "AI_GENERATE_EDIT":
+    case "AI_GENERATE_RETRY":
+      return {
+        title: "Sign in for AI",
+        description: "Sign in to use AI-powered theme generation",
+      };
+    case "CHECKOUT":
+      return {
+        title: "Sign in to continue",
+        description: "Sign in to complete your purchase",
+      };
+    default:
+      return null;
+  }
 }
 
 export function AuthDialog({
@@ -27,12 +66,15 @@ export function AuthDialog({
   onOpenChange,
   initialMode = "signin",
   trigger,
+  postLoginActionType,
 }: AuthDialogProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isSignIn, setIsSignIn] = useState(initialMode === "signin");
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
+
+  const contextualCopy = getContextualCopy(postLoginActionType);
 
   const getCallbackUrl = () => {
     const baseUrl = pathname || "/editor/theme";
@@ -83,12 +125,13 @@ export function AuthDialog({
         <div className="space-y-4">
           <ResponsiveDialogHeader className="sm:pt-8">
             <ResponsiveDialogTitle className="text-center text-2xl font-bold">
-              {isSignIn ? "Welcome back" : "Create account"}
+              {contextualCopy?.title ?? (isSignIn ? "Welcome back" : "Create account")}
             </ResponsiveDialogTitle>
             <p className="text-muted-foreground text-center">
-              {isSignIn
-                ? "Sign in to your account to continue"
-                : "Sign up to get started with tweakcn"}
+              {contextualCopy?.description ??
+                (isSignIn
+                  ? "Sign in to your account to continue"
+                  : "Sign up to get started with tweakcn")}
             </p>
           </ResponsiveDialogHeader>
 

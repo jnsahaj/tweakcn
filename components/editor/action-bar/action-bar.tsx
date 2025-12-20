@@ -2,17 +2,9 @@
 
 import { ActionBarButtons } from "@/components/editor/action-bar/components/action-bar-buttons";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
-import { DialogActionsProvider, useDialogActions } from "@/hooks/use-dialog-actions";
+import { useDialogActions } from "@/hooks/use-dialog-actions";
 
 export function ActionBar() {
-  return (
-    <DialogActionsProvider>
-      <ActionBarContent />
-    </DialogActionsProvider>
-  );
-}
-
-function ActionBarContent() {
   const { isCreatingTheme, handleSaveClick, handleShareClick, setCssImportOpen, setCodePanelOpen } =
     useDialogActions();
 
