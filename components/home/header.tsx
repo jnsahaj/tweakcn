@@ -7,7 +7,7 @@ import { useGithubStars } from "@/hooks/use-github-stars";
 import { cn } from "@/lib/utils";
 import { formatCompactNumber } from "@/utils/format";
 import { ChevronRight, Menu, X } from "lucide-react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { ThemeToggle } from "../theme-toggle";
 
@@ -137,47 +137,49 @@ export function Header({ isScrolled, mobileMenuOpen, setMobileMenuOpen }: Header
         </div>
       </div>
       {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="bg-background/95 absolute inset-x-0 top-16 border-b backdrop-blur-lg md:hidden"
-        >
-          <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
-            {navbarItems.map((item, i) => (
-              <motion.a
-                key={item.label}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.2, delay: i * 0.05 }}
-                href={item.href}
-                onClick={(e) => {
-                  handleScrollToSection(e);
-                  setMobileMenuOpen(false);
-                }}
-                className="group relative overflow-hidden py-2 text-sm font-medium"
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-background/95 absolute inset-x-0 top-16 border-b backdrop-blur-lg md:hidden"
+          >
+            <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
+              {navbarItems.map((item, i) => (
+                <motion.a
+                  key={item.label}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2, delay: i * 0.05 }}
+                  href={item.href}
+                  onClick={(e) => {
+                    handleScrollToSection(e);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="group relative overflow-hidden py-2 text-sm font-medium"
+                >
+                  <span className="relative z-10">{item.href}</span>
+                  <span className="bg-primary absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-300 group-hover:w-full"></span>
+                </motion.a>
+              ))}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+                className="border-border/30 mt-2 border-t pt-2"
               >
-                <span className="relative z-10">{item.href}</span>
-                <span className="bg-primary absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-300 group-hover:w-full"></span>
-              </motion.a>
-            ))}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
-              className="border-border/30 mt-2 border-t pt-2"
-            >
-              <Link href="/editor/theme" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full rounded-full">
-                  Try It Now
-                  <ChevronRight className="ml-2 size-4" />
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
-        </motion.div>
-      )}
+                <Link href="/editor/theme" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full rounded-full">
+                    Try It Now
+                    <ChevronRight className="ml-2 size-4" />
+                  </Button>
+                </Link>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
