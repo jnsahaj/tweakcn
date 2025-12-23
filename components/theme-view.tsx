@@ -93,11 +93,11 @@ export default function ThemeView({ theme }: { theme: Theme }) {
         </div>
       </div>
 
-      <div className="-m-4 mt-6 flex h-[min(80svh,900px)] flex-col">
-        <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
-      </div>
-
       <DialogActionsProvider>
+        <div className="-m-4 mt-6 flex h-[min(80svh,900px)] flex-col">
+          <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
+        </div>
+
         <CodePanelDialog
           open={codePanelOpen}
           onOpenChange={setCodePanelOpen}
