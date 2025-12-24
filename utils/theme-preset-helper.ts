@@ -33,8 +33,7 @@ function mergePresetWithDefaults(presetStyles: {
     },
     dark: {
       ...defaultTheme.dark,
-      ...(presetStyles.light || {}),
-      ...(presetStyles.dark || {}),
+      ...(preset.styles.dark || {}),
     },
   };
 }
