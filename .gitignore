@@ -47,3 +47,4 @@ next-env.d.ts
 
 # build artifacts
 public/r/themes
+scripts/agent/.venv/
