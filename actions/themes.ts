@@ -13,7 +13,10 @@ import {
   UnauthorizedError,
   ValidationError,
   ThemeNotFoundError,
-  ThemeLimitError,
+  ErrorCode,
+  actionError,
+  actionSuccess,
+  type ActionResult,
 } from "@/types/errors";
 import { MAX_FREE_THEMES } from "@/lib/constants";
 import { getMyActiveSubscription } from "@/lib/subscription";
@@ -107,7 +110,10 @@ export async function createTheme(formData: { name: string; styles: ThemeStyles 
         activeSubscription?.productId === process.env.NEXT_PUBLIC_TWEAKCN_PRO_PRODUCT_ID;
 
       if (!isSubscribed) {
-        throw new ThemeLimitError(`You cannot have more than ${MAX_FREE_THEMES} themes.`);
+        return actionError(
+          ErrorCode.THEME_LIMIT_REACHED,
+          `You have reached the limit of ${MAX_FREE_THEMES} themes.`
+        );
       }
     }
 
@@ -127,7 +133,7 @@ export async function createTheme(formData: { name: string; styles: ThemeStyles 
       })
       .returning();
 
-    return insertedTheme;
+    return actionSuccess(insertedTheme);
   } catch (error) {
     logError(error as Error, { action: "createTheme", formData: { name: formData.name } });
     throw error;

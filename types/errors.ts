@@ -1,5 +1,31 @@
 import z from "zod";
 
+// Error codes for server actions - these survive serialization
+export const ErrorCode = {
+  UNAUTHORIZED: "UNAUTHORIZED",
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  THEME_NOT_FOUND: "THEME_NOT_FOUND",
+  THEME_LIMIT_REACHED: "THEME_LIMIT_REACHED",
+  UNKNOWN_ERROR: "UNKNOWN_ERROR",
+} as const;
+
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
+
+// Typed result for server actions
+export type ActionResult<T> =
+  | { success: true; data: T }
+  | { success: false; error: { code: ErrorCode; message: string } };
+
+// Helper to create error results
+export function actionError(code: ErrorCode, message: string): ActionResult<never> {
+  return { success: false, error: { code, message } };
+}
+
+// Helper to create success results
+export function actionSuccess<T>(data: T): ActionResult<T> {
+  return { success: true, data };
+}
+
 export class UnauthorizedError extends Error {
   constructor(message = "Unauthorized") {
     super(message);
@@ -31,13 +57,6 @@ export class ThemeNotFoundError extends Error {
   constructor(message = "Theme not found") {
     super(message);
     this.name = "ThemeNotFoundError";
-  }
-}
-
-export class ThemeLimitError extends Error {
-  constructor(message = "Theme limit reached") {
-    super(message);
-    this.name = "ThemeLimitError";
   }
 }
 
