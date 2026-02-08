@@ -83,7 +83,7 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
   return (
     <Link href={`/themes/${theme.themeId}`}>
       <Card className="group overflow-hidden border shadow-sm transition-all duration-200 hover:shadow-md hover:border-foreground/20">
-        <div className="relative flex h-36">
+        <div className="relative flex h-36 overflow-hidden">
           {colorSwatches.map((swatch) => (
             <div
               key={swatch.name + swatch.bg}
@@ -108,15 +108,15 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
           ))}
         </div>
 
-        <div className="bg-background p-3">
+        <div className="bg-card p-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="text-foreground truncate text-sm font-semibold">
+              <h3 className="text-card-foreground truncate text-sm font-semibold">
                 {theme.name}
               </h3>
               <div className="mt-1.5 flex items-center gap-3">
                 <div className="flex items-center gap-1.5">
-                  <Avatar className="h-4 w-4">
+                  <Avatar className="size-4">
                     {theme.author.image && (
                       <AvatarImage
                         src={theme.author.image}
@@ -131,7 +131,7 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
                     {theme.author.name}
                   </span>
                 </div>
-                <span className="text-muted-foreground/60 text-xs">
+                <span className="text-muted-foreground/50 text-[11px]">
                   {publishedDate}
                 </span>
               </div>
@@ -139,7 +139,7 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
             <button
               onClick={handleLike}
               className={cn(
-                "flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
+                "flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors",
                 theme.isLikedByMe
                   ? "bg-red-500/10 text-red-500"
                   : "text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -147,7 +147,7 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
             >
               <Heart
                 className={cn(
-                  "h-3.5 w-3.5",
+                  "size-3.5 transition-transform",
                   theme.isLikedByMe && "fill-current"
                 )}
               />
