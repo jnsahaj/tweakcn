@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { Flame, Clock, Loader2, Info } from "lucide-react";
+import { Flame, Loader2, Info } from "lucide-react";
 import { CommunityThemeCard } from "./community-theme-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
@@ -19,19 +19,10 @@ import Link from "next/link";
 const sortOptions: {
   value: CommunitySortOption;
   label: string;
-  icon: React.ReactNode;
 }[] = [
-  { value: "popular", label: "Popular", icon: <Flame className="size-3.5" /> },
-  {
-    value: "newest",
-    label: "Newest",
-    icon: <Clock className="size-3.5" />,
-  },
-  {
-    value: "oldest",
-    label: "Oldest",
-    icon: <Clock className="size-3.5" />,
-  },
+  { value: "popular", label: "Popular" },
+  { value: "newest", label: "Newest" },
+  { value: "oldest", label: "Oldest" },
 ];
 
 export function CommunityThemesContent() {
@@ -44,21 +35,24 @@ export function CommunityThemesContent() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-1">
-          {sortOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setSort(option.value)}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                sort === option.value
-                  ? "bg-foreground/10 text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+        <div className="flex items-center">
+          {sortOptions.map((option, i) => (
+            <div key={option.value} className="flex items-center">
+              {i > 0 && (
+                <Separator orientation="vertical" className="mx-1 h-4" />
               )}
-            >
-              {option.icon}
-              {option.label}
-            </button>
+              <button
+                onClick={() => setSort(option.value)}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  sort === option.value
+                    ? "bg-foreground/10 text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+                )}
+              >
+                {option.label}
+              </button>
+            </div>
           ))}
         </div>
 
