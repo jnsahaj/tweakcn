@@ -5,6 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
 import { useMemo } from "react";
+import { useTheme } from "@/components/theme-provider";
 import { useToggleLike } from "@/hooks/themes";
 import { useSessionGuard } from "@/hooks/use-guards";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
@@ -31,6 +32,7 @@ const swatchDefinitions: SwatchDefinition[] = [
 ];
 
 export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
+  const { theme: currentTheme } = useTheme();
   const toggleLike = useToggleLike();
   const { checkValidSession } = useSessionGuard();
 
@@ -56,16 +58,15 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
   };
 
   const colorSwatches = useMemo(() => {
-    const mode = "light";
     return swatchDefinitions.map((def) => ({
       name: def.name,
-      bg: theme.styles[mode][def.bgKey] || "#ffffff",
+      bg: theme.styles[currentTheme][def.bgKey] || "#ffffff",
       fg:
-        theme.styles[mode][def.fgKey] ||
-        theme.styles[mode].foreground ||
+        theme.styles[currentTheme][def.fgKey] ||
+        theme.styles[currentTheme].foreground ||
         "#000000",
     }));
-  }, [theme.styles]);
+  }, [theme.styles, currentTheme]);
 
   const authorInitials = theme.author.name
     ?.split(" ")

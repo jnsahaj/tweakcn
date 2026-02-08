@@ -10,10 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTheme } from "@/components/theme-provider";
 import { useSubscription } from "@/hooks/use-subscription";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
-import { BookLock, Gem, Loader2, LogOut, Settings } from "lucide-react";
+import * as SwitchPrimitives from "@radix-ui/react-switch";
+import { BookLock, Gem, Loader2, LogOut, Moon, Settings, Sun } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,6 +25,7 @@ import { usePostHog } from "posthog-js/react";
 export function UserProfileDropdown() {
   const { data: session, isPending } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
+  const { theme, toggleTheme } = useTheme();
   const posthog = usePostHog();
   const router = useRouter();
 
@@ -112,6 +116,34 @@ export function UserProfileDropdown() {
                 <Link href="/settings">
                   <Settings /> Settings
                 </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={(e) => e.preventDefault()}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  {theme === "dark" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+                  <span>Theme</span>
+                </div>
+                <SwitchPrimitives.Root
+                  checked={theme === "dark"}
+                  onClick={(e) => {
+                    const { clientX: x, clientY: y } = e;
+                    toggleTheme({ x, y });
+                  }}
+                  className={cn(
+                    "inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors",
+                    theme === "dark" ? "bg-primary" : "bg-input"
+                  )}
+                >
+                  <SwitchPrimitives.Thumb
+                    className={cn(
+                      "bg-background pointer-events-none flex size-4 items-center justify-center rounded-full shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+                    )}
+                  >
+                    {theme === "dark" ? <Moon className="size-2.5" /> : <Sun className="size-2.5" />}
+                  </SwitchPrimitives.Thumb>
+                </SwitchPrimitives.Root>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
