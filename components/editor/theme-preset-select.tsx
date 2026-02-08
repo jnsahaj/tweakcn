@@ -215,11 +215,11 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
       search.trim() === ""
         ? presetNames
         : presetNames.filter((name) => {
-            if (name === "default") {
-              return "default".toLowerCase().includes(search.toLowerCase());
-            }
-            return presets[name]?.label?.toLowerCase().includes(search.toLowerCase());
-          });
+          if (name === "default") {
+            return "default".toLowerCase().includes(search.toLowerCase());
+          }
+          return presets[name]?.label?.toLowerCase().includes(search.toLowerCase());
+        });
 
     // Separate saved and default themes
     const savedThemesList = filteredList.filter((name) => name !== "default" && isSavedTheme(name));
@@ -409,6 +409,18 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                   ))}
                 </CommandGroup>
               )}
+              <Separator className="my-1" />
+              <div className="px-3 py-2">
+                <Link href="/community">
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground w-full justify-center text-xs"
+                  >
+                    Discover more themes →
+                  </Button>
+                </Link>
+              </div>
             </ScrollArea>
           </Command>
         </PopoverContent>
