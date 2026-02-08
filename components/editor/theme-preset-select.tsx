@@ -279,11 +279,10 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                   </div>
                 )}
               <span className="truncate text-left font-medium capitalize">
-                {hasUnsavedChanges() ? (
-                  <>Custom (Unsaved)</>
-                ) : (
-                  presets[currentPresetName || "default"]?.label || "default"
-                )}
+                {presets[currentPresetName || "default"]?.label ||
+                  currentPresetName ||
+                  "default"}
+                {hasUnsavedChanges() && "*"}
               </span>
             </div>
             <ChevronDown className="size-4 shrink-0" />

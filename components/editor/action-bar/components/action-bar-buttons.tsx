@@ -4,7 +4,6 @@ import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { useThemesData } from "@/hooks/themes";
 import { CodeButton } from "./code-button";
-import { EditButton } from "./edit-button";
 import { ImportButton } from "./import-button";
 import { MoreOptions } from "./more-options";
 import { PublishButton } from "./publish-button";
@@ -60,9 +59,6 @@ export function ActionBarButtons({
         <ImportButton onClick={onImportClick} disabled={isGeneratingTheme} />
       </div>
       <Separator orientation="vertical" className="mx-1 h-8" />
-      {isSavedPreset && (
-        <EditButton themeId={themeState.preset as string} disabled={isGeneratingTheme} />
-      )}
       <ShareButton onClick={() => onShareClick(themeState.preset)} disabled={isGeneratingTheme} />
       {isSavedPreset && !hasUnsavedChanges() ? (
         <PublishButton

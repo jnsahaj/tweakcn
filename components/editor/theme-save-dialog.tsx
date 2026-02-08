@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
@@ -37,6 +38,9 @@ interface ThemeSaveDialogProps {
   ctaLabel?: string;
   title?: string;
   description?: string;
+  existingThemeName?: string;
+  onUpdateExisting?: () => Promise<void>;
+  isUpdating?: boolean;
 }
 
 export function ThemeSaveDialog({
@@ -48,6 +52,9 @@ export function ThemeSaveDialog({
   ctaLabel = "Save Theme",
   title = "Save Theme",
   description = "Enter a name for your theme so you can find it later.",
+  existingThemeName,
+  onUpdateExisting,
+  isUpdating = false,
 }: ThemeSaveDialogProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,6 +77,8 @@ export function ThemeSaveDialog({
     onOpenChange(newOpen);
   };
 
+  const hasUpdateOption = !!existingThemeName && !!onUpdateExisting;
+
   return (
     <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
       <ResponsiveDialogContent className="overflow-hidden shadow-lg sm:max-w-100">
@@ -78,6 +87,31 @@ export function ThemeSaveDialog({
             <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>{description}</ResponsiveDialogDescription>
           </ResponsiveDialogHeader>
+
+          {hasUpdateOption && (
+            <>
+              <Button
+                className="w-full"
+                disabled={isUpdating || isSaving}
+                onClick={onUpdateExisting}
+              >
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="mr-1 size-4 animate-spin" />
+                    Updating
+                  </>
+                ) : (
+                  <>Update &ldquo;{existingThemeName}&rdquo;</>
+                )}
+              </Button>
+
+              <div className="flex items-center gap-3">
+                <Separator className="flex-1" />
+                <span className="text-muted-foreground text-xs">or save as a new theme</span>
+                <Separator className="flex-1" />
+              </div>
+            </>
+          )}
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -98,13 +132,20 @@ export function ThemeSaveDialog({
           </Form>
         </div>
         <ResponsiveDialogFooter className="bg-muted/30 border-t px-6 py-4">
-          <Button size="sm" disabled={isSaving} variant="ghost" onClick={() => onOpenChange(false)}>
+          <Button
+            size="sm"
+            disabled={isSaving || isUpdating}
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+          >
             Cancel
           </Button>
           <Button
             size="sm"
             type="submit"
-            disabled={isSaving || !form.formState.isValid || form.formState.isSubmitting}
+            disabled={
+              isSaving || isUpdating || !form.formState.isValid || form.formState.isSubmitting
+            }
             onClick={form.handleSubmit(onSubmit)}
           >
             {isSaving || form.formState.isSubmitting ? (
@@ -112,6 +153,8 @@ export function ThemeSaveDialog({
                 <Loader2 className="mr-1 size-4 animate-spin" />
                 Saving
               </>
+            ) : hasUpdateOption ? (
+              "Save as New"
             ) : (
               ctaLabel
             )}

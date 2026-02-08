@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertCircle, Sparkle } from "lucide-react";
-import React, { use } from "react";
+import React from "react";
 
 import { ChatInterface } from "@/components/editor/ai/chat-interface";
 import ColorPicker from "@/components/editor/color-picker";
@@ -10,7 +10,6 @@ import { FontPicker } from "@/components/editor/font-picker";
 import HslAdjustmentControls from "@/components/editor/hsl-adjustment-controls";
 import ShadowControl from "@/components/editor/shadow-control";
 import { SliderWithInput } from "@/components/editor/slider-with-input";
-import ThemeEditActions from "@/components/editor/theme-edit-actions";
 import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import TabsTriggerPill from "@/components/editor/theme-preview/tabs-trigger-pill";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
@@ -22,16 +21,17 @@ import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useControlsTabFromUrl, type ControlTab } from "@/hooks/use-controls-tab-from-url";
 import { useEditorStore } from "@/store/editor-store";
 import { type FontInfo } from "@/types/fonts";
-import { ThemeEditorControlsProps, ThemeStyleProps } from "@/types/theme";
+import { ThemeStyles, ThemeStyleProps } from "@/types/theme";
 import { buildFontFamily } from "@/utils/fonts";
 import { getAppliedThemeFont } from "@/utils/theme-fonts";
 
-const ThemeControlPanel = ({
-  styles,
-  currentMode,
-  onChange,
-  themePromise,
-}: ThemeEditorControlsProps) => {
+interface ThemeControlPanelProps {
+  styles: ThemeStyles;
+  currentMode: "light" | "dark";
+  onChange: (styles: ThemeStyles) => void;
+}
+
+const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelProps) => {
   const { themeState } = useEditorStore();
   const { tab, handleSetTab } = useControlsTabFromUrl();
   const { isGeneratingTheme } = useAIThemeGenerationCore();
@@ -74,16 +74,10 @@ const ThemeControlPanel = ({
 
   const radius = parseFloat(currentStyles.radius.replace("rem", ""));
 
-  const theme = use(themePromise);
-
   return (
     <>
       <div className="border-b">
-        {!theme ? (
-          <ThemePresetSelect className="h-14 rounded-none" disabled={isGeneratingTheme} />
-        ) : (
-          <ThemeEditActions theme={theme} disabled={isGeneratingTheme} />
-        )}
+        <ThemePresetSelect className="h-14 rounded-none" disabled={isGeneratingTheme} />
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
         <Tabs

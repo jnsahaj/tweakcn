@@ -3,7 +3,7 @@ import CssImportDialog from "@/components/editor/css-import-dialog";
 import { ShareDialog } from "@/components/editor/share-dialog";
 import { ThemeSaveDialog } from "@/components/editor/theme-save-dialog";
 import { toast } from "@/components/ui/use-toast";
-import { useCreateTheme } from "@/hooks/themes";
+import { useCreateTheme, useUpdateTheme } from "@/hooks/themes";
 import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import { authClient } from "@/lib/auth-client";
@@ -45,8 +45,10 @@ interface DialogActionsContextType {
   shareUrl: string;
   dialogKey: number;
   isCreatingTheme: boolean;
+  isUpdatingTheme: boolean;
   isGeneratingTheme: boolean;
   pendingAction: PendingAction;
+  existingThemeName: string | undefined;
 
   // Dialog actions
   setCssImportOpen: (open: boolean) => void;
@@ -60,6 +62,7 @@ interface DialogActionsContextType {
   handleShareClick: (id?: string) => Promise<void>;
   handleOpenInV0: (id?: string) => void;
   saveTheme: (themeName: string) => Promise<void>;
+  handleUpdateExisting: () => Promise<void>;
 }
 
 function useDialogActionsStore(): DialogActionsContextType {
@@ -71,14 +74,19 @@ function useDialogActionsStore(): DialogActionsContextType {
   const [shareUrl, setShareUrl] = useState("");
   const [dialogKey, _setDialogKey] = useState(0);
 
-  const { themeState, setThemeState, applyThemePreset, hasThemeChangedFromCheckpoint } =
+  const { themeState, setThemeState, applyThemePreset, hasThemeChangedFromCheckpoint, hasUnsavedChanges } =
     useEditorStore();
   const { getPreset } = useThemePresetStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const createThemeMutation = useCreateTheme();
+  const updateThemeMutation = useUpdateTheme();
   const { isGeneratingTheme } = useAIThemeGenerationCore();
   const posthog = usePostHog();
+
+  const currentPreset = themeState?.preset ? getPreset(themeState.preset) : undefined;
+  const isOnSavedPreset = !!currentPreset && currentPreset.source === "SAVED" && hasUnsavedChanges();
+  const existingThemeName = isOnSavedPreset ? currentPreset.label : undefined;
 
   usePostLoginAction("SAVE_THEME", () => {
     setSaveDialogOpen(true);
@@ -223,6 +231,22 @@ function useDialogActionsStore(): DialogActionsContextType {
     openInV0(id);
   };
 
+  const handleUpdateExisting = async () => {
+    if (!themeState.preset) return;
+    try {
+      const result = await updateThemeMutation.mutateAsync({
+        id: themeState.preset,
+        styles: themeState.styles,
+      });
+      if (result) {
+        applyThemePreset(result.id || themeState.preset);
+        setSaveDialogOpen(false);
+      }
+    } catch (error) {
+      console.error("Failed to update theme:", error);
+    }
+  };
+
   const value = {
     // Dialog states
     cssImportOpen,
@@ -232,8 +256,10 @@ function useDialogActionsStore(): DialogActionsContextType {
     shareUrl,
     dialogKey,
     isCreatingTheme: createThemeMutation.isPending,
+    isUpdatingTheme: updateThemeMutation.isPending,
     isGeneratingTheme,
     pendingAction,
+    existingThemeName,
 
     // Dialog actions
     setCssImportOpen,
@@ -247,6 +273,7 @@ function useDialogActionsStore(): DialogActionsContextType {
     handleShareClick,
     handleOpenInV0,
     saveTheme,
+    handleUpdateExisting,
   };
 
   return value;
@@ -278,6 +305,9 @@ export function DialogActionsProvider({ children }: { children: ReactNode }) {
         onOpenChange={store.setSaveDialogOpen}
         onSave={store.saveTheme}
         isSaving={store.isCreatingTheme}
+        existingThemeName={store.existingThemeName}
+        onUpdateExisting={store.handleUpdateExisting}
+        isUpdating={store.isUpdatingTheme}
         {...getSaveDialogCopy(store.pendingAction)}
       />
       <ShareDialog
