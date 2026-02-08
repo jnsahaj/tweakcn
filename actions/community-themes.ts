@@ -362,9 +362,12 @@ export async function getCommunityDataForTheme(
   communityThemeId: string;
   author: { id: string; name: string; image: string | null };
   likeCount: number;
+  isLikedByMe: boolean;
   publishedAt: string;
 } | null> {
   try {
+    const userId = await getOptionalUserId();
+
     const likeCountSubquery = db
       .select({
         themeId: themeLike.themeId,
@@ -385,6 +388,15 @@ export async function getCommunityDataForTheme(
           sql<number>`coalesce(${likeCountSubquery.likeCount}, 0)`.as(
             "total_likes"
           ),
+        ...(userId
+          ? {
+              isLikedByMe: sql<boolean>`exists(
+                select 1 from theme_like
+                where theme_like.theme_id = ${communityTheme.id}
+                and theme_like.user_id = ${userId}
+              )`.as("is_liked_by_me"),
+            }
+          : {}),
       })
       .from(communityTheme)
       .innerJoin(userTable, eq(communityTheme.userId, userTable.id))
@@ -405,6 +417,8 @@ export async function getCommunityDataForTheme(
         image: result.authorImage,
       },
       likeCount: Number(result.likeCount),
+      isLikedByMe:
+        "isLikedByMe" in result ? Boolean(result.isLikedByMe) : false,
       publishedAt: result.publishedAt.toISOString(),
     };
   } catch (error) {

@@ -22,11 +22,14 @@ export const metadata: Metadata = {
 export default function CommunityPage() {
   return (
     <div className="flex flex-1 flex-col">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Community Themes</h1>
-          <p className="text-muted-foreground mt-2">
-            Discover beautiful themes created by the community.
+      <div className="container mx-auto px-4 py-10">
+        <div className="mb-10 max-w-2xl">
+          <h1 className="text-4xl font-bold tracking-tight">
+            Community Themes
+          </h1>
+          <p className="text-muted-foreground mt-3 text-lg">
+            Discover and explore beautiful shadcn/ui themes created by the
+            community. Like your favorites and open them in the editor.
           </p>
         </div>
         <CommunityThemesContent />

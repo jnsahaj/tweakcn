@@ -44,7 +44,11 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!checkValidSession("signin", "LIKE_THEME", { communityThemeId: theme.id })) {
+    if (
+      !checkValidSession("signin", "LIKE_THEME", {
+        communityThemeId: theme.id,
+      })
+    ) {
       return;
     }
 
@@ -52,7 +56,6 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
   };
 
   const colorSwatches = useMemo(() => {
-    // Use light mode for the card preview
     const mode = "light";
     return swatchDefinitions.map((def) => ({
       name: def.name,
@@ -71,10 +74,15 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
     .slice(0, 2)
     .toUpperCase();
 
+  const publishedDate = new Date(theme.publishedAt).toLocaleDateString(
+    "en-US",
+    { day: "numeric", month: "short" }
+  );
+
   return (
     <Link href={`/themes/${theme.themeId}`}>
-      <Card className="group overflow-hidden border shadow-sm transition-all duration-300 hover:shadow-md">
-        <div className="relative flex h-32">
+      <Card className="group overflow-hidden border shadow-sm transition-all duration-200 hover:shadow-md hover:border-foreground/20">
+        <div className="relative flex h-36">
           {colorSwatches.map((swatch) => (
             <div
               key={swatch.name + swatch.bg}
@@ -100,36 +108,40 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
         </div>
 
         <div className="bg-background p-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="text-foreground truncate text-sm font-medium">
+              <h3 className="text-foreground truncate text-sm font-semibold">
                 {theme.name}
               </h3>
-              <div className="mt-1 flex items-center gap-1.5">
-                <Avatar className="h-4 w-4">
-                  {theme.author.image && (
-                    <AvatarImage
-                      src={theme.author.image}
-                      alt={theme.author.name}
-                    />
-                  )}
-                  <AvatarFallback className="text-[8px]">
-                    {authorInitials}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-muted-foreground truncate text-xs">
-                  {theme.author.name}
+              <div className="mt-1.5 flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <Avatar className="h-4 w-4">
+                    {theme.author.image && (
+                      <AvatarImage
+                        src={theme.author.image}
+                        alt={theme.author.name}
+                      />
+                    )}
+                    <AvatarFallback className="text-[8px]">
+                      {authorInitials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-muted-foreground truncate text-xs">
+                    {theme.author.name}
+                  </span>
+                </div>
+                <span className="text-muted-foreground/60 text-xs">
+                  {publishedDate}
                 </span>
               </div>
             </div>
             <button
               onClick={handleLike}
               className={cn(
-                "flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors",
-                "hover:bg-accent",
+                "flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
                 theme.isLikedByMe
-                  ? "text-red-500"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-red-500/10 text-red-500"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
               )}
             >
               <Heart

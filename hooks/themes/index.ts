@@ -2,7 +2,6 @@ export { useThemesData, useThemeData, usePrefetchThemes, themeKeys } from "./use
 export { useCreateTheme, useUpdateTheme, useDeleteTheme } from "./use-theme-mutations";
 export {
   useCommunityThemes,
-  useMyPublishedThemeIds,
   usePublishTheme,
   useUnpublishTheme,
   useToggleLike,

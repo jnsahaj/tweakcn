@@ -73,6 +73,7 @@ export function usePublishTheme() {
       });
       queryClient.invalidateQueries({ queryKey: communityKeys.all });
       queryClient.invalidateQueries({ queryKey: communityKeys.myPublished() });
+      queryClient.invalidateQueries({ queryKey: themeKeys.lists() });
     },
     onError: (error) => {
       if (
@@ -103,6 +104,7 @@ export function useUnpublishTheme() {
       });
       queryClient.invalidateQueries({ queryKey: communityKeys.all });
       queryClient.invalidateQueries({ queryKey: communityKeys.myPublished() });
+      queryClient.invalidateQueries({ queryKey: themeKeys.lists() });
     },
     onError: (error) => {
       toast({

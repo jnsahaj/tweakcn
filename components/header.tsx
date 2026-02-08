@@ -30,12 +30,6 @@ export function Header() {
           </Link>
         </div>
         <div className="flex items-center gap-3.5">
-          <Link
-            href="/community"
-            className="text-muted-foreground hover:text-foreground hidden text-sm font-medium transition-colors md:block"
-          >
-            Community
-          </Link>
           <GetProCTA className="h-8" />
 
           <SocialLink

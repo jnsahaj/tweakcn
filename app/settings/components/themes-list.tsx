@@ -10,27 +10,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useMyPublishedThemeIds } from "@/hooks/themes";
 import type { Theme } from "@/types/theme";
 import { ArrowUpDown, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ThemeCard } from "./theme-card";
 
+interface ThemeWithPublished extends Theme {
+  isPublished: boolean;
+}
+
 interface ThemesListProps {
-  themes: Theme[];
+  themes: ThemeWithPublished[];
 }
 
 export function ThemesList({ themes }: ThemesListProps) {
-  const [filteredThemes, setFilteredThemes] = useState<Theme[]>(themes);
+  const [filteredThemes, setFilteredThemes] =
+    useState<ThemeWithPublished[]>(themes);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("newest");
   const isMobile = useIsMobile();
-  const { data: publishedIds } = useMyPublishedThemeIds();
-
-  const publishedSet = useMemo(
-    () => new Set(publishedIds ?? []),
-    [publishedIds]
-  );
 
   useEffect(() => {
     const filtered = themes.filter((theme) =>
@@ -90,11 +88,11 @@ export function ThemesList({ themes }: ThemesListProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredThemes.map((theme: Theme) => (
+            {filteredThemes.map((theme) => (
               <ThemeCard
                 key={theme.id}
                 theme={theme}
-                isPublished={publishedSet.has(theme.id)}
+                isPublished={theme.isPublished}
               />
             ))}
           </div>
