@@ -3,11 +3,18 @@
 import { useCommunityThemes } from "@/hooks/themes";
 import type { CommunitySortOption } from "@/types/community";
 import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Flame, Clock, Loader2 } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import { Flame, Clock, Loader2, Info } from "lucide-react";
 import { CommunityThemeCard } from "./community-theme-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 const sortOptions: {
   value: CommunitySortOption;
@@ -35,30 +42,73 @@ export function CommunityThemesContent() {
   const themes = data?.pages.flatMap((page) => page.themes) ?? [];
 
   return (
-    <div className="space-y-8">
-      <Tabs
-        value={sort}
-        onValueChange={(v) => setSort(v as CommunitySortOption)}
-      >
-        <TabsList>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-1">
           {sortOptions.map((option) => (
-            <TabsTrigger
+            <button
               key={option.value}
-              value={option.value}
-              className="gap-1.5"
+              onClick={() => setSort(option.value)}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                sort === option.value
+                  ? "bg-foreground/10 text-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+              )}
             >
               {option.icon}
               {option.label}
-            </TabsTrigger>
+            </button>
           ))}
-        </TabsList>
-      </Tabs>
+        </div>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground gap-1.5 text-xs"
+            >
+              <Info className="size-3.5" />
+              <span className="hidden sm:inline">How to publish</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-72 p-0">
+            <div className="p-4">
+              <p className="text-sm font-medium">Publish your theme</p>
+              <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">
+                After saving a theme, click the{" "}
+                <span className="text-foreground font-medium">
+                  Publish
+                </span>{" "}
+                button in the editor to share it.
+              </p>
+            </div>
+            <Separator />
+            <div className="p-4">
+              <p className="text-muted-foreground text-xs leading-relaxed">
+                You can also manage all your saved themes from{" "}
+                <Link
+                  href="/settings/themes"
+                  className="text-foreground font-medium underline underline-offset-2"
+                >
+                  Settings
+                </Link>
+                .
+              </p>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
 
       {isLoading ? (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="space-y-0 overflow-hidden rounded-lg border">
-              <Skeleton className="h-32 rounded-none" />
+            <div
+              key={i}
+              className="space-y-0 overflow-hidden rounded-xl border"
+            >
+              <Skeleton className="h-36 rounded-none" />
               <div className="space-y-2 p-3">
                 <Skeleton className="h-4 w-2/3" />
                 <Skeleton className="h-3 w-1/3" />
@@ -68,7 +118,7 @@ export function CommunityThemesContent() {
         </div>
       ) : themes.length === 0 ? (
         <div className="py-24 text-center">
-          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
+          <div className="bg-muted mx-auto mb-4 flex size-16 items-center justify-center rounded-full">
             <Flame className="text-muted-foreground size-8" />
           </div>
           <h3 className="mb-2 text-lg font-semibold">No themes yet</h3>

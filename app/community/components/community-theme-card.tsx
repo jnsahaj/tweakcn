@@ -83,7 +83,7 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
 
   return (
     <Link href={`/themes/${theme.themeId}`}>
-      <Card className="group overflow-hidden border shadow-sm transition-all duration-200 hover:shadow-md hover:border-foreground/20">
+      <Card className="group overflow-hidden rounded-xl border shadow-sm transition-all duration-200 hover:shadow-md hover:border-foreground/20">
         <div className="relative flex h-36">
           {colorSwatches.map((swatch) => (
             <div
@@ -108,17 +108,17 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
             </div>
           ))}
           {theme.tags.length > 0 && (
-            <div className="absolute top-2 left-2 flex items-center gap-1 pointer-events-none">
+            <div className="pointer-events-none absolute top-2 left-2 flex items-center gap-1">
               {theme.tags.slice(0, 2).map((tag) => (
                 <Badge
                   key={tag}
-                  className="bg-background/80 text-foreground border-0 backdrop-blur-sm text-[10px] px-1.5 py-0 shadow-sm"
+                  className="border-0 bg-background/80 px-1.5 py-0 text-[10px] text-foreground shadow-sm backdrop-blur-sm"
                 >
                   {tag}
                 </Badge>
               ))}
               {theme.tags.length > 2 && (
-                <Badge className="bg-background/80 text-foreground border-0 backdrop-blur-sm text-[10px] px-1.5 py-0 shadow-sm">
+                <Badge className="border-0 bg-background/80 px-1.5 py-0 text-[10px] text-foreground shadow-sm backdrop-blur-sm">
                   +{theme.tags.length - 2}
                 </Badge>
               )}
@@ -129,7 +129,7 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
         <div className="bg-background p-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="text-foreground truncate text-sm font-semibold">
+              <h3 className="truncate text-sm font-semibold text-foreground">
                 {theme.name}
               </h3>
               <div className="mt-1.5 flex items-center gap-3">
@@ -145,11 +145,11 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
                       {authorInitials}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="truncate text-xs text-muted-foreground">
                     {theme.author.name}
                   </span>
                 </div>
-                <span className="text-muted-foreground/60 text-xs">
+                <span className="text-xs text-muted-foreground/60">
                   {publishedDate}
                 </span>
               </div>

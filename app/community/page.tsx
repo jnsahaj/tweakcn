@@ -24,16 +24,25 @@ export const metadata: Metadata = {
 export default function CommunityPage() {
   return (
     <div className="flex flex-1 flex-col">
-      <div className="container mx-auto px-4 py-10">
-        <div className="mb-10 max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight">
-            Community Themes
-          </h1>
-          <p className="text-muted-foreground mt-3 text-lg">
-            Discover and explore beautiful shadcn/ui themes created by the
-            community. Like your favorites and open them in the editor.
-          </p>
+      {/* Hero section */}
+      <div className="from-background via-background to-muted/30 relative overflow-hidden border-b bg-gradient-to-b">
+        <div className="bg-primary/5 absolute top-0 right-0 size-96 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl" />
+        <div className="bg-primary/5 absolute bottom-0 left-0 size-64 -translate-x-1/3 translate-y-1/3 rounded-full blur-3xl" />
+        <div className="relative container mx-auto px-4 pt-16 pb-12">
+          <div className="max-w-2xl">
+            <h1 className="from-foreground to-foreground/70 bg-gradient-to-r bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl">
+              Community Themes
+            </h1>
+            <p className="text-muted-foreground mt-3 text-lg text-pretty">
+              Discover and explore beautiful shadcn/ui themes created by the
+              community. Like your favorites and open them in the editor.
+            </p>
+          </div>
         </div>
+      </div>
+
+      {/* Content */}
+      <div className="container mx-auto px-4 py-8">
         <CommunityThemesContent />
       </div>
     </div>
