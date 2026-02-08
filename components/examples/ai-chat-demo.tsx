@@ -35,7 +35,7 @@ export function AIChatDemo({
   return (
     <div
       className={cn(
-        "bg-background/50 flex h-full w-full min-w-[350px] origin-top-left flex-col overflow-hidden backdrop-blur-lg"
+        "bg-transparent flex h-full w-full min-w-[350px] origin-top-left flex-col overflow-hidden"
       )}
       aria-hidden="true"
       tabIndex={-1}
@@ -46,7 +46,7 @@ export function AIChatDemo({
         <div
           ref={ref}
           className={cn(
-            "flex flex-col gap-4 p-4 select-none",
+            "flex flex-col gap-6 p-6 select-none",
             disabled ? "pointer-events-none" : "",
             className
           )}

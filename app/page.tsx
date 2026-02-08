@@ -8,9 +8,8 @@ import { Features } from "@/components/home/features";
 import { Header } from "@/components/home/header";
 import { Hero } from "@/components/home/hero";
 import { HowItWorks } from "@/components/home/how-it-works";
-import { Roadmap } from "@/components/home/roadmap";
 import { Testimonials } from "@/components/home/testimonials";
-import { ThemePresetSelector } from "@/components/home/theme-preset-selector";
+// import { ThemePresetSelector } from "@/components/home/theme-preset-selector";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -39,12 +38,11 @@ export default function Home() {
       />
       <main className="w-full flex-1">
         <Hero />
-        <ThemePresetSelector />
+        {/* <ThemePresetSelector /> */}
         <Testimonials />
         <Features />
         <AIGenerationCTA />
         <HowItWorks />
-        <Roadmap />
         <FAQ />
         <CTA />
       </main>

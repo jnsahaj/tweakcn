@@ -1,164 +1,133 @@
-import ShadcnLogo from "@/assets/shadcn.svg";
-import { Spotlight } from "@/components/effects/spotlight";
-import { Badge } from "@/components/ui/badge";
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Check, Circle, Copy, Eye, Palette } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
+import { useEditorStore } from "@/store/editor-store";
+import { defaultPresets } from "@/utils/theme-presets";
+import { ThemePresetButtons } from "@/components/home/theme-preset-buttons";
+
+const presetNames = Object.keys(defaultPresets);
 
 export function Hero() {
+  const { themeState, applyThemePreset } = useEditorStore();
+  const mode = themeState.currentMode;
+
   return (
-    <section className="relative isolate container mx-auto w-full py-20 md:py-32 lg:py-40">
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        <Spotlight
-          className="top-0 left-0 -translate-x-1/3 -translate-y-1/3 opacity-50"
-          fill="white"
-        />
-      </motion.div>
+    <section className="relative isolate w-full overflow-hidden bg-background pt-20 pb-32 md:pt-32 md:pb-40">
+      {/* Background Effects */}
+      <div className="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
 
-      <div className="relative z-10 px-4 md:px-6">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          {/* Left Column - Text Content */}
-          <div className="mx-auto max-w-2xl text-left lg:mx-0">
-            <div>
-              <Badge
-                className="mb-4 rounded-full px-4 py-1.5 text-sm font-medium shadow-sm transition-none"
-                variant="secondary"
+
+      <div className="container relative z-20 mx-auto px-4 md:px-6">
+        <div className="flex flex-col items-center text-center">
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="max-w-4xl bg-gradient-to-br from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-5xl font-bold tracking-tight text-transparent sm:text-6xl md:text-7xl lg:text-8xl"
+          >
+            Design Your <span className="font-serif italic font-light text-foreground">Perfect</span>{" "}
+            <span className="relative inline-block">
+              <span className="absolute -inset-1 rounded-lg bg-primary/10 blur-xl opacity-50"></span>
+              <span className="relative text-primary inline-flex items-center gap-2">
+                shadcn/ui
+              </span>
+            </span>{" "}
+            Theme
+          </motion.h1>
+
+          {/* Description */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed"
+          >
+            Customize colors, typography, and layouts with a real-time preview. No signup
+            required.
+          </motion.p>
+
+          {/* Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          >
+            <Link href="/editor/theme">
+              <Button
+                size="lg"
+                className="h-12 min-w-[180px] rounded-full px-8 text-base shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:shadow-primary/40"
               >
-                <span className="text-primary mr-1">✦</span> Visual Theme Editor
-              </Badge>
-            </div>
-            <h1 className="from-foreground via-foreground/90 to-foreground/70 mb-6 bg-gradient-to-r bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
-              Design Your <span className="font-serif font-light italic">Perfect</span>{" "}
-              <span className="text-primary inline-flex items-baseline gap-1">
-                <div className="bg-primary/10 flex items-center justify-center rounded-full p-1 md:p-2">
-                  <ShadcnLogo className="size-6 md:size-8" />
-                </div>
-                <span>shadcn/ui</span>
-              </span>{" "}
-              Theme
-            </h1>
-            <p className="text-muted-foreground mb-8 text-lg leading-relaxed md:text-xl">
-              Customize colors, typography, and layouts with a real-time preview. No signup
-              required.
-            </p>
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Link href="/editor/theme">
-                <Button
-                  size="lg"
-                  className="h-12 cursor-pointer rounded-full px-8 text-base shadow-md transition-transform duration-300 hover:translate-y-[-2px] hover:shadow-lg"
-                >
-                  Start Customizing
-                  <ArrowRight className="ml-2 size-4" />
-                </Button>
-              </Link>
-              <a href="#examples">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-primary/20 hover:border-primary/50 h-12 cursor-pointer rounded-full px-8 text-base transition-transform duration-300 hover:translate-y-[-2px]"
-                >
-                  View Examples
-                </Button>
-              </a>
-            </div>
-            <div className="mt-8 flex flex-wrap items-center gap-6">
-              <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                <Check className="text-primary size-5" />
-                <span>Real-time Preview</span>
-              </div>
-              <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                <Check className="text-primary size-5" />
-                <span>Export to Tailwind</span>
-              </div>
-              <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                <Check className="text-primary size-5" />
-                <span>Beautiful Presets</span>
-              </div>
-            </div>
-          </div>
+                Start Customizing
+                <ArrowRight className="ml-2 size-4" />
+              </Button>
+            </Link>
+            <a href="#examples">
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 min-w-[180px] rounded-full border-primary/20 bg-background/50 px-8 text-base backdrop-blur-sm transition-all hover:bg-accent/50 hover:border-primary/50"
+              >
+                View Examples
+              </Button>
+            </a>
+          </motion.div>
 
-          {/* Right Column - Preview Card */}
-          <div className="relative hidden lg:block">
-            <Card className="border-border/40 from-background to-background/95 relative overflow-hidden rounded-2xl bg-gradient-to-b shadow-xl backdrop-blur">
-              <CardContent className="p-0">
-                {/* Header */}
-                <div className="flex items-center justify-between border-b p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex gap-2">
-                      <div className="size-3 rounded-full bg-red-500"></div>
-                      <div className="size-3 rounded-full bg-yellow-500"></div>
-                      <div className="size-3 rounded-full bg-green-500"></div>
-                    </div>
-                  </div>
-                </div>
+          {/* Features List */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-muted-foreground"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-full bg-primary/10 p-1">
+                <Check className="size-3 text-primary" />
+              </div>
+              <span>Real-time Preview</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="rounded-full bg-primary/10 p-1">
+                <Check className="size-3 text-primary" />
+              </div>
+              <span>Export to Tailwind</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="rounded-full bg-primary/10 p-1">
+                <Check className="size-3 text-primary" />
+              </div>
+              <span>Beautiful Presets</span>
+            </div>
+          </motion.div>
 
-                {/* Content */}
-                <div className="space-y-6 p-6">
-                  {/* Color Palette */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">Color Palette</div>
-                      <Palette className="text-muted-foreground size-4" />
-                    </div>
-                    <div className="space-y-2 text-center">
-                      <div className="from-primary via-secondary via-accent via-muted to-background h-24 w-full rounded-xl bg-gradient-to-r"></div>
-                      <div className="text-muted-foreground grid grid-cols-5 gap-2 text-xs">
-                        <div>Primary</div>
-                        <div>Secondary</div>
-                        <div>Accent</div>
-                        <div>Muted</div>
-                        <div>Background</div>
-                      </div>
-                    </div>
-                  </div>
+          {/* Carousel */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className="mt-20 w-full max-w-[100vw] overflow-hidden"
+          >
+            <div className="relative py-1">
+              {/* Gradient Masks for Carousel */}
+              <div className="absolute left-0 top-0 bottom-0 z-10 w-20 md:w-40 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
+              <div className="absolute right-0 top-0 bottom-0 z-10 w-20 md:w-40 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
 
-                  {/* Preview */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">Preview</div>
-                      <Eye className="text-muted-foreground size-4" />
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <Button className="w-full shadow-sm transition-none" variant="secondary">
-                          <Copy className="mr-2 size-4" />
-                          Copy Code
-                        </Button>
-                        <Button className="w-full shadow-sm transition-none" variant="outline">
-                          <Circle className="mr-2 size-4" />
-                          oklch, hsl, rgb, hex
-                        </Button>
-                      </div>
-                      <Card className="w-full">
-                        <CardContent className="p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-primary/10 flex size-8 items-center justify-center rounded-full">
-                              <span className="text-primary text-xs">UI</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="bg-foreground/90 mb-2 h-2 w-24 rounded"></div>
-                              <div className="bg-muted-foreground/60 h-2 w-16 rounded"></div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              <ThemePresetButtons
+                presetNames={presetNames}
+                mode={mode}
+                themeState={themeState}
+                applyThemePreset={applyThemePreset}
+              />
+            </div>
+          </motion.div>
+
         </div>
       </div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_90%_30%,var(--muted),transparent_35%)] blur-3xl"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_10%_70%,var(--muted),transparent_10%)] blur-3xl"></div>
     </section>
   );
 }

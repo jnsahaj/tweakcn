@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion, useMotionValue, useReducedMotion } from "motion/react";
@@ -234,19 +233,13 @@ export function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mb-12 flex flex-col items-center justify-center space-y-4 text-center"
+          className="mb-16 flex flex-col items-center justify-center space-y-4 text-center"
         >
-          <Badge
-            className="rounded-full px-4 py-1.5 text-sm font-medium shadow-sm"
-            variant="secondary"
-          >
-            <span className="text-primary mr-1">✦</span> Testimonials
-          </Badge>
-          <h2 className="from-foreground to-foreground/80 max-w-[600px] bg-gradient-to-r bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
-            Loved by developers worldwide
+          <h2 className="text-3xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+            Loved by <span className="text-primary font-serif italic">developers</span>
           </h2>
-          <p className="text-muted-foreground max-w-[500px] md:text-lg">
-            See what the community is saying about tweakcn
+          <p className="text-muted-foreground max-w-[600px] text-lg md:text-xl">
+            Join thousands of developers building beautiful interfaces.
           </p>
         </motion.div>
 

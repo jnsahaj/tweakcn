@@ -25,15 +25,11 @@
 
 ## Motivation
 
-Websites made with shadcn/ui famously look the same. tweakcn is a tool that helps you customize shadcn/ui components visually, to make your components stand-out. The goal is to build a platform where a user can discover endless customization options and then have the ability to put their own twist on it. Check our roadmap for more information
+Websites made with shadcn/ui famously look the same. tweakcn is a tool that helps you customize shadcn/ui components visually, to make your components stand-out. The goal is to build a platform where a user can discover endless customization options and then have the ability to put their own twist on it.
 
 ## Current Features
 
 You can find the full feature list here: https://tweakcn.com/#features
-
-## Roadmap
-
-You can find the updated roadmap here: https://tweakcn.com/#roadmap
 
 ## Run Locally
 

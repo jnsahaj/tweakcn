@@ -1,22 +1,21 @@
-import { Badge } from "@/components/ui/badge";
 import { motion } from "motion/react";
 
 const steps = [
   {
     step: "01",
-    title: "Select Theme Preset",
-    description: "Choose the theme you want to customize from our growing library.",
+    title: "Select Preset",
+    description: "Start with a pre-made theme from our library.",
   },
   {
     step: "02",
-    title: "Customize Visually",
+    title: "Customize",
     description:
-      "Use our intuitive interface to adjust colors, dimensions, typography, and other properties.",
+      "Adjust colors, radius, and typography visually.",
   },
   {
     step: "03",
-    title: "Copy Code",
-    description: "Copy the generated Tailwind CSS code directly into your project.",
+    title: "Export Code",
+    description: "Copy the Tailwind CSS config to your project.",
   },
 ];
 
@@ -24,33 +23,28 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="w-full py-20 md:py-32 bg-muted/30 relative overflow-hidden isolate"
+      className="w-full py-24 md:py-32 relative overflow-hidden isolate"
     >
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(from_var(--muted-foreground)_r_g_b_/_0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(from_var(--muted-foreground)_r_g_b_/_0.05)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+           <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="max-w-2xl"
+           >
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+                    Three Steps to <br/>
+                    <span className="text-primary">Perfection</span>
+                </h2>
+                <p className="text-muted-foreground text-lg md:text-xl max-w-[600px]">
+                    We&apos;ve simplified the theming process so you can focus on building your app.
+                </p>
+           </motion.div>
+        </div>
 
-      <div className="container mx-auto px-4 md:px-6 relative">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
-        >
-          <Badge
-            className="rounded-full px-4 py-1.5 text-sm font-medium shadow-sm"
-            variant="secondary"
-          >
-            <span className="mr-1 text-primary">✦</span> How It Works
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
-            Simple Process, Beautiful Results
-          </h2>
-          <p className="max-w-[800px] text-muted-foreground md:text-lg">
-            Customize your shadcn/ui components in just a few simple steps.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-8 md:gap-12 relative">
+        <div className="grid md:grid-cols-3 gap-8">
           {steps.map((step, i) => (
             <motion.div
               key={i}
@@ -58,20 +52,16 @@ export function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.2 }}
-              className="relative z-10 flex flex-col items-center text-center space-y-4"
+              className="relative group"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-xl font-bold shadow-lg relative">
-                {step.step}
-                <div
-                  className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-75"
-                  style={{
-                    animationDuration: "3s",
-                    animationDelay: `${i * 0.5}s`,
-                  }}
-                ></div>
+              <div className="mb-6 relative">
+                 <span className="text-8xl font-bold text-muted/20 group-hover:text-primary/10 transition-colors duration-500 block">
+                    {step.step}
+                 </span>
+                 <div className="absolute bottom-4 left-2 w-12 h-1 bg-primary rounded-full"></div>
               </div>
-              <h3 className="text-xl font-bold">{step.title}</h3>
-              <p className="text-muted-foreground">{step.description}</p>
+              <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
+              <p className="text-muted-foreground text-lg leading-relaxed">{step.description}</p>
             </motion.div>
           ))}
         </div>

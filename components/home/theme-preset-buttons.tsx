@@ -6,7 +6,7 @@ import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
 import { cn } from "@/lib/utils";
 import { colorFormatter } from "@/utils/color-converter";
 import { ThemeEditorState } from "@/types/editor";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 // ColorBox component remains internal to ThemePresetButtons
 const ColorBox = ({ color }: { color: string }) => {
@@ -35,57 +35,59 @@ export function ThemePresetButtons({
   const presetsToShow = presetNames || [];
   const numUniquePresets = presetsToShow.length;
 
-  // Avoid rendering if no presets
-  if (numUniquePresets === 0) {
-    return null;
-  }
-
   // --- Configuration ---
   const numRows = 3;
-  const buttonWidthPx = 160; // Keep consistent with previous style
+  const buttonWidthPx = 200; // Keep consistent with previous style
   const gapPx = 16; // space-x-4 -> 1rem = 16px
   const rowGapPx = 16; // gap-y-4 -> 1rem = 16px
   const duplicationFactor = 4; // Duplicate multiple times for wider screens
   const baseDurationPerItem = 5; // Seconds per item for animation speed
   // ---------------------
 
-  // Distribute presets somewhat evenly across rows
-  const presetsByRow: string[][] = Array.from({ length: numRows }, () => []);
-  presetsToShow.forEach((preset, index) => {
-    presetsByRow[index % numRows].push(preset);
-  });
+  const rowsData = useMemo(() => {
+    // Distribute presets somewhat evenly across rows
+    const presetsByRow: string[][] = Array.from({ length: numRows }, () => []);
+    presetsToShow.forEach((preset, index) => {
+      presetsByRow[index % numRows].push(preset);
+    });
 
-  // Function to create props for a single row
-  const createRowProps = (rowIndex: number) => {
-    const rowPresets = presetsByRow[rowIndex];
-    const numPresetsInRow = rowPresets.length;
-    if (numPresetsInRow === 0) return null;
+    // Function to create props for a single row
+    const createRowProps = (rowIndex: number) => {
+      const rowPresets = presetsByRow[rowIndex];
+      const numPresetsInRow = rowPresets.length;
+      if (numPresetsInRow === 0) return null;
 
-    const duplicatedRowPresets = Array(duplicationFactor)
-      .fill(rowPresets)
-      .flat();
-    const totalWidth = numPresetsInRow * (buttonWidthPx + gapPx);
-    const duration = numPresetsInRow * baseDurationPerItem;
+      const duplicatedRowPresets = Array(duplicationFactor)
+        .fill(rowPresets)
+        .flat();
+      const totalWidth = numPresetsInRow * (buttonWidthPx + gapPx);
+      const duration = numPresetsInRow * baseDurationPerItem;
 
-    const initialOffset = 0;
+      const initialOffset = rowIndex === 1 ? -100 : 0;
 
-    return {
-      key: `row-${rowIndex}`,
-      presets: duplicatedRowPresets,
-      numOriginalPresets: numPresetsInRow,
-      animate: { x: [initialOffset, initialOffset - totalWidth] }, // Animate based on original set width, starting from offset
-      transition: {
-        duration,
-        ease: "linear" as const,
-        repeat: Infinity,
-      },
-      style: { x: initialOffset }, // Apply initial offset
+      return {
+        key: `row-${rowIndex}`,
+        presets: duplicatedRowPresets,
+        numOriginalPresets: numPresetsInRow,
+        animate: { x: [initialOffset, initialOffset - totalWidth] }, // Animate based on original set width, starting from offset
+        transition: {
+          duration,
+          ease: "linear" as const,
+          repeat: Infinity,
+        },
+        style: { x: initialOffset }, // Apply initial offset
+      };
     };
-  };
 
-  const rowsData = Array.from({ length: numRows }, (_, i) =>
-    createRowProps(i)
-  ).filter(Boolean);
+    return Array.from({ length: numRows }, (_, i) =>
+      createRowProps(i)
+    ).filter(Boolean);
+  }, [presetsToShow, numRows, buttonWidthPx, gapPx, duplicationFactor, baseDurationPerItem]);
+
+  // Avoid rendering if no presets
+  if (numUniquePresets === 0) {
+    return null;
+  }
 
   return (
     // Container for the rows with vertical gap
@@ -120,7 +122,7 @@ export function ThemePresetButtons({
                 // Wrapper for each button
                 <motion.div
                   key={`${presetName}-${rowData!.key}-${index}`} // More unique key
-                  className="flex-shrink-0 min-w-[160px]" // Fixed width
+                  className="flex-shrink-0 w-[200px]" // Fixed width
                   whileHover={{ scale: 1.02, y: -3, zIndex: 20 }} // Pop on hover
                   transition={{ duration: 0.2, ease: "easeOut" }}
                 >
@@ -146,7 +148,7 @@ export function ThemePresetButtons({
                         <ColorBox color={themeStyles.secondary} />
                         <ColorBox color={themeStyles.accent} />
                       </div>
-                      <span className="capitalize px-1 leading-tight">
+                      <span className="capitalize px-1 leading-tight truncate">
                         {presetName.replace(/-/g, " ")}
                       </span>
                     </div>

@@ -4,98 +4,81 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "motion/react";
 
 const faqs = [
   {
     question: "What is tweakcn?",
     answer:
-      "tweakcn is a visual theme editor for shadcn/ui components with Tailwind CSS support. It comes with a set of pre-built themes that you can use to customize your project.",
+      "tweakcn is a visual theme editor for shadcn/ui components. It allows you to customize your theme visually and export the code for your project.",
   },
   {
-    question: "Is tweakcn free to use?",
+    question: "Is it free?",
     answer:
-      "Yes, tweakcn is completely free to use. We may introduce premium features in the future, but the core functionality will always remain free.",
+      "Yes, the core features are completely free. We offer a Pro plan for advanced AI features.",
   },
   {
-    question: "What is tweakcn Pro and what does it include?",
+    question: "What's included in Pro?",
     answer:
-      "tweakcn Pro is a premium subscription service available for $8 per month. It unlocks all of tweakcn's advanced features, including powerful AI theme generation. You can cancel your subscription at any time and still benefit from the core functionality.",
+      "Pro includes AI theme generation from images and prompts, as well as cloud saving for multiple themes.",
   },
   {
-    question: "How do I customize a shadcn/ui theme?",
+    question: "Supports Tailwind v4?",
     answer:
-      "You can customize a shadcn/ui theme by selecting the a preset theme you want to use from the dropdown menu and then adjusting the colors to you liking. Once you are happy with the theme, you can export the code by either copying it or running the command to apply the theme to your project automatically.",
+      "Yes! We support both Tailwind CSS v3 and v4, along with OKLCH, HSL, and other color formats.",
   },
   {
-    question: "Does tweakcn support Tailwind CSS v4?",
+    question: "Can I use with existing projects?",
     answer:
-      "Yes, tweakcn supports Tailwind CSS v4 (and v3). You can choose the version of Tailwind CSS you want to use from the dropdown menu in the Code section. It also supports multiple color formats to best suit your project.",
-  },
-  {
-    question: "Do I need to know Tailwind CSS to use tweakcn?",
-    answer:
-      "No, you don't need to know Tailwind CSS to use tweakcn. Our visual editor makes it easy to customize components without writing any code. However, having some knowledge of Tailwind CSS will help you understand the generated code better.",
-  },
-  {
-    question: "Can I use tweakcn with my existing shadcn/ui project?",
-    answer:
-      "Yes, tweakcn is designed to work with existing shadcn/ui projects. You can export the generated code by either copying it or running the command to apply the theme to your project automatically.",
-  },
-  {
-    question: "Is tweakcn open source?",
-    answer:
-      "Yes :) tweakcn is open source. You can find the source code on GitHub and contribute to the project if you'd like to help improve it. You can also join the discord server to get help from the community.",
+      "Absolutely. Just copy the generated configuration into your existing project.",
   },
 ];
 
 export function FAQ() {
   return (
-    <section id="faq" className="w-full py-20 md:py-32">
+    <section id="faq" className="w-full py-24 md:py-32">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-12 flex flex-col items-center justify-center space-y-4 text-center"
-        >
-          <Badge
-            className="rounded-full px-4 py-1.5 text-sm font-medium shadow-sm"
-            variant="secondary"
+        <div className="grid lg:grid-cols-12 gap-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-4"
           >
-            <span className="text-primary mr-1">✦</span> FAQ
-          </Badge>
-          <h2 className="from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-3xl font-bold tracking-tight text-transparent md:text-4xl">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-muted-foreground max-w-[800px] md:text-lg">
-            Find answers to common questions about tweakcn.
-          </p>
-        </motion.div>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
+              FAQ
+            </h2>
+            <p className="text-muted-foreground text-lg mb-8">
+              Got questions? We&apos;ve got answers. If you can&apos;t find what you&apos;re looking for, feel free to reach out.
+            </p>
+            <div className="text-sm text-muted-foreground">
+              <p>Contact us at <a href="#" className="text-primary underline">sahaj@tweakcn.com</a></p>
+            </div>
+          </motion.div>
 
-        <div className="mx-auto max-w-3xl">
-          <Accordion type="single" collapsible className="w-full">
-            {faqs.map((faq, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: i * 0.05 }}
-              >
-                <AccordionItem value={`item-${i}`} className="border-border/40 group border-b py-2">
-                  <AccordionTrigger className="group-hover:text-primary text-left font-medium transition-colors hover:no-underline">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              </motion.div>
-            ))}
-          </Accordion>
+          <div className="lg:col-span-8">
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {faqs.map((faq, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: i * 0.05 }}
+                >
+                  <AccordionItem value={`item-${i}`} className="border rounded-lg px-4 bg-muted/20">
+                    <AccordionTrigger className="hover:no-underline text-lg font-medium py-6">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground pb-6 text-base">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                </motion.div>
+              ))}
+            </Accordion>
+          </div>
         </div>
       </div>
     </section>

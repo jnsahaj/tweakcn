@@ -1,9 +1,5 @@
-import { FrameHighlight } from "@/components/effects/frame-highlight";
-import { NoiseEffect } from "@/components/effects/noise-effect";
 import { AIChatDemo } from "@/components/examples/ai-chat-demo";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { ArrowRight, Check } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
@@ -12,11 +8,11 @@ export function AIGenerationCTA() {
   return (
     <section
       id="ai-generation-cta"
-      className="bg-muted/35 relative isolate w-full overflow-hidden py-20 md:py-32 lg:py-42"
+      className="bg-muted/35 relative isolate w-full overflow-hidden py-24 md:py-32 lg:py-40"
     >
       <div className="relative isolate">
         <div className="relative z-10 container mx-auto w-full px-4 md:px-6">
-          <div className="relative grid items-center gap-12 lg:grid-cols-2">
+          <div className="relative grid items-center gap-16 lg:grid-cols-2">
             {/* Left Column - Text Content */}
             <div className="mx-auto max-w-2xl lg:mx-0">
               <motion.div
@@ -26,52 +22,51 @@ export function AIGenerationCTA() {
                 transition={{ duration: 0.5 }}
                 className="space-y-8"
               >
-                <div className="justify-left relative flex flex-col items-start gap-4">
-                  <Badge
-                    className="rounded-full px-4 py-1.5 text-sm font-medium shadow-sm transition-none"
-                    variant="secondary"
-                  >
-                    <span className="text-primary mr-1">✦</span> Pro Features
-                  </Badge>
-                  <h2 className="from-foreground to-foreground/80 gap-2 bg-gradient-to-r bg-clip-text text-3xl font-bold tracking-tight text-pretty text-transparent md:text-4xl lg:text-5xl">
-                    Generate Themes With
-                    <FrameHighlight className="text-primary">AI</FrameHighlight>
-                    in Seconds
+                <div className="justify-left relative flex flex-col items-start gap-6">
+                  <h2 className="text-foreground text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+                    Generate Themes in <br />
+                    <span className="text-primary font-serif italic">Seconds</span>
                   </h2>
-                  <p className="text-muted-foreground text-base leading-relaxed text-pretty md:text-lg">
-                    Create stunning ready-to-use themes. Just provide an image or text prompt, and
-                    our AI does the rest.
+                  <p className="text-muted-foreground max-w-lg text-lg leading-relaxed md:text-xl">
+                    Just provide an image or text prompt, and our AI will create a stunning,
+                    production-ready theme for you.
                   </p>
                 </div>
 
-                <div className="flex w-fit flex-col gap-4 md:flex-row">
+                <div className="flex flex-col gap-4 sm:flex-row">
                   <Link href="/ai">
                     <Button
                       size="lg"
-                      className="border-primary/20 hover:border-primary/50 h-12 cursor-pointer rounded-full px-8 text-base transition-transform duration-250 hover:translate-y-[-2px]"
+                      className="hover:shadow-primary/25 h-14 rounded-full px-8 text-lg shadow-lg transition-all hover:scale-105"
                     >
-                      Try it Free <ArrowRight className="ml-2" />
+                      Generate with AI <ArrowRight className="ml-2 size-5" />
                     </Button>
                   </Link>
-
                   <Link href="/pricing">
                     <Button
                       size="lg"
                       variant="outline"
-                      className="border-primary/20 hover:border-primary/50 h-12 cursor-pointer rounded-full px-8 text-base transition-transform duration-300 hover:translate-y-[-2px]"
+                      className="border-primary/20 bg-background/50 hover:bg-accent/50 h-14 rounded-full px-8 text-lg backdrop-blur-sm"
                     >
-                      Get Pro
+                      View Pricing
                     </Button>
                   </Link>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-6">
-                  {["Theme Preview", "Checkpoint Restoration", "Image Uploads"].map((feature) => (
+                <div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2">
+                  {[
+                    "Theme Preview",
+                    "Checkpoint Restoration",
+                    "Image Extraction",
+                    "Text-to-Theme",
+                  ].map((feature) => (
                     <div
                       key={feature}
-                      className="text-muted-foreground flex items-center gap-2 text-sm"
+                      className="text-muted-foreground flex items-center gap-3 text-base"
                     >
-                      <Check className="text-primary size-5" />
+                      <div className="bg-primary/10 flex size-6 items-center justify-center rounded-full">
+                        <Check className="text-primary size-3.5" />
+                      </div>
                       <span>{feature}</span>
                     </div>
                   ))}
@@ -80,51 +75,27 @@ export function AIGenerationCTA() {
             </div>
 
             {/* Right Column - Visual Preview */}
-            <div className="relative hidden flex-col items-center justify-center space-y-4 lg:flex">
+            <div className="relative hidden lg:block">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="relative"
               >
-                <div className="border-border/50! hover:border-border! relative h-[500px] overflow-hidden rounded-lg border-2 mask-b-from-85% backdrop-blur-xs transition-all delay-150 duration-300">
-                  <NoiseEffect />
-
-                  <AIChatDemo disabled={false} className="pb-16" />
+                {/* Glassmorphism Container */}
+                <div className="relative z-10 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-xl dark:border-white/5 dark:bg-black/5">
+                  <div className="relative h-[550px] w-full p-6">
+                    <AIChatDemo disabled={false} className="h-full pb-0 bg-transparent" />
+                  </div>
                 </div>
+
+                {/* Background Glow */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-secondary/20 blur-3xl -z-10 rounded-full opacity-50" />
               </motion.div>
             </div>
           </div>
         </div>
-
-        {/* ----- Background effects ----- */}
-        {/* Base */}
-        <div
-          className={cn(
-            "-skew-12 mask-b-from-60% mask-l-from-40% mask-l-to-75%",
-            "absolute inset-0 -z-20 bg-[linear-gradient(to_right,rgba(from_var(--primary)_r_g_b_/_0.25)_1px,transparent_1px),linear-gradient(to_bottom,rgba(from_var(--primary)_r_g_b_/_0.25)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]"
-          )}
-        />
-
-        {/* Top Right - Primary */}
-        <div
-          className={cn(
-            "-skew-12 animate-pulse [mask-composite:intersect]",
-            "absolute inset-0 -z-20 bg-[linear-gradient(to_right,rgba(from_var(--primary)_r_g_b_/_0.20)_1px,transparent_1px),linear-gradient(to_bottom,rgba(from_var(--primary)_r_g_b_/_0.20)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]",
-            "[mask-image:linear-gradient(to_bottom,transparent_0%,transparent_25%,#000_25%,#000_50%,transparent_50%),linear-gradient(to_right,transparent_0%,transparent_50%,#000_50%,#000_100%)]"
-          )}
-        />
-
-        {/* Bottom Left - Muted */}
-        <div
-          className={cn(
-            "-skew-12",
-            "absolute inset-0 -z-20 bg-[linear-gradient(to_right,rgba(from_var(--muted)_r_g_b_/_0.25)_1px,transparent_1px),linear-gradient(to_bottom,rgba(from_var(--muted)_r_g_b_/_0.25)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem]",
-            "[mask-image:linear-gradient(to_bottom,transparent_0%,transparent_50%,#000_50%,#000_75%,transparent_75%),linear-gradient(to_right,#000_0%,#000_50%,transparent_50%)]",
-            "[mask-composite:intersect]"
-          )}
-        />
-        {/* ----- Background effects ----- */}
       </div>
     </section>
   );

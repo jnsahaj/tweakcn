@@ -40,7 +40,7 @@ export default function Message({
 
   return (
     <div className={cn("flex w-full items-start gap-4", isUser ? "justify-end" : "justify-start")}>
-      <div className={cn("flex w-full max-w-[90%] items-start")}>
+      <div className={cn("flex w-full max-w-[90%] items-start", isUser ? "justify-end" : "")}>
         <div
           className={cn(
             "group/message relative flex w-full flex-col gap-2 wrap-anywhere whitespace-pre-wrap"
@@ -86,22 +86,22 @@ function AssistantMessage({ message, isLastMessageStreaming }: AssistantMessageP
   const { themeState } = useEditorStore();
 
   return (
-    <div className="flex items-start gap-1.5">
+    <div className="flex items-start gap-3">
       {isLastMessageStreaming ? (
-        <div className="relative flex size-6 shrink-0 items-center justify-center">
+        <div className="relative flex size-8 shrink-0 items-center justify-center">
           <LoadingLogo />
         </div>
       ) : (
         <div
           className={cn(
-            "border-border/50! bg-foreground relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none"
+            "border-border/40 bg-background shadow-sm relative flex size-8 shrink-0 items-center justify-center rounded-full border select-none"
           )}
         >
-          <Logo className={cn("text-background size-full p-0.5")} />
+          <Logo className={cn("text-foreground size-5")} />
         </div>
       )}
 
-      <div className="relative flex w-full flex-col gap-3">
+      <div className="relative flex w-full flex-col gap-3 mt-1.5">
         {message.parts.map((part, idx) => {
           const { type } = part;
           const key = `message-${message.id}-part-${idx}`;
@@ -111,7 +111,7 @@ function AssistantMessage({ message, isLastMessageStreaming }: AssistantMessageP
               <StreamText
                 key={key}
                 text={part.text}
-                className="w-fit text-sm"
+                className="w-fit text-sm leading-relaxed"
                 animate={isLastMessageStreaming}
                 markdown
               />
@@ -128,10 +128,10 @@ function AssistantMessage({ message, isLastMessageStreaming }: AssistantMessageP
                   key={key}
                   status="complete"
                   themeStyles={themeStyles}
-                  className="p-0"
+                  className="p-0 border-border/40 shadow-sm overflow-hidden rounded-xl"
                 >
                   <ScrollArea className="h-48">
-                    <div className="p-2">
+                    <div className="p-3">
                       <ColorPreview styles={themeStyles} currentMode={themeState.currentMode} />
                     </div>
                   </ScrollArea>
@@ -186,17 +186,17 @@ function UserMessage({
 
     if (images.length === 1) {
       return (
-        <div className="self-end">
-          <ChatImagePreview src={images[0].url} alt="Image preview" />
+        <div className="self-end mb-2">
+          <ChatImagePreview src={images[0].url} alt="Image preview" className="rounded-xl border border-border/20 shadow-sm" />
         </div>
       );
     } else if (images.length > 1) {
       return (
-        <div className="flex flex-row items-center justify-end gap-1 self-end">
+        <div className="flex flex-row items-center justify-end gap-2 self-end mb-2">
           {images.map((image, idx) => (
             <div key={idx} className="aspect-square size-full max-w-32 flex-1">
               <ChatImagePreview
-                className="size-full object-cover"
+                className="size-full object-cover rounded-xl border border-border/20 shadow-sm"
                 src={image.url}
                 alt="Image preview"
               />
@@ -224,13 +224,13 @@ function UserMessage({
   }
 
   return (
-    <div className="relative flex flex-col gap-1">
+    <div className="relative flex flex-col items-end gap-1">
       {msgImages}
 
       {shouldDisplayMsgContent && (
         <div
           className={cn(
-            "bg-card/75 text-card-foreground/90 w-fit self-end rounded-lg border p-3 text-sm"
+            "bg-primary text-primary-foreground w-fit self-end rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm shadow-sm leading-relaxed"
           )}
         >
           {msgContent}
