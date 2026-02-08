@@ -64,7 +64,7 @@ export function ActionBarButtons({
         <EditButton themeId={themeState.preset as string} disabled={isGeneratingTheme} />
       )}
       <ShareButton onClick={() => onShareClick(themeState.preset)} disabled={isGeneratingTheme} />
-      {isSavedPreset ? (
+      {isSavedPreset && !hasUnsavedChanges() ? (
         <PublishButton
           themeId={themeState.preset as string}
           isPublished={isPublished}
