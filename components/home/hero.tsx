@@ -67,7 +67,7 @@ export function Hero() {
                 <ArrowRight className="ml-2 size-4" />
               </Button>
             </Link>
-            <a href="#examples">
+            <a href="/community">
               <Button
                 size="lg"
                 variant="outline"

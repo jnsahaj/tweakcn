@@ -19,10 +19,6 @@ interface HeaderProps {
 
 const navbarItems = [
   {
-    label: "Examples",
-    href: "#examples",
-  },
-  {
     label: "Features",
     href: "#features",
   },
