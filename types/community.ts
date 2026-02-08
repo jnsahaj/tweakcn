@@ -15,6 +15,7 @@ export interface CommunityTheme {
   likeCount: number;
   isLikedByMe: boolean;
   publishedAt: string;
+  tags: string[];
 }
 
 export type CommunitySortOption = "popular" | "newest" | "oldest";

@@ -16,18 +16,26 @@ export async function generateMetadata({ params }: ThemePageProps): Promise<Meta
     getCommunityDataForTheme(themeId),
   ]);
 
+  const tags = communityData?.tags ?? [];
+  const authorName = communityData?.author?.name;
+  const description =
+    tags.length > 0 && authorName
+      ? `A ${tags.join(", ")} shadcn/ui theme by ${authorName}`
+      : `Discover shadcn/ui themes - ${theme?.name} theme`;
+
   return {
     title: theme?.name + " - tweakcn",
-    description: `Discover shadcn/ui themes - ${theme?.name} theme`,
+    description,
+    keywords: tags.length > 0 ? tags : undefined,
     openGraph: {
       title: `${theme?.name} - tweakcn`,
-      description: `Discover shadcn/ui themes - ${theme?.name} theme`,
+      description,
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: `${theme?.name} - tweakcn`,
-      description: `Discover shadcn/ui themes - ${theme?.name} theme`,
+      description,
     },
     robots: {
       index: !!communityData,

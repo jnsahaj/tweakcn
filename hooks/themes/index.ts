@@ -5,5 +5,6 @@ export {
   usePublishTheme,
   useUnpublishTheme,
   useToggleLike,
+  useUpdateCommunityThemeTags,
   communityKeys,
 } from "./use-community-themes";

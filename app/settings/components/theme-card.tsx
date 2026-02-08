@@ -22,6 +22,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { TagSelector } from "@/components/tag-selector";
+import {
   MoreVertical,
   Trash2,
   Edit,
@@ -31,11 +40,17 @@ import {
   Copy,
   Globe,
   GlobeLock,
+  Tag,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
 import { useEditorStore } from "@/store/editor-store";
 import { useDeleteTheme } from "@/hooks/themes";
-import { usePublishTheme, useUnpublishTheme } from "@/hooks/themes";
+import {
+  usePublishTheme,
+  useUnpublishTheme,
+  useUpdateCommunityThemeTags,
+} from "@/hooks/themes";
 import Link from "next/link";
 import { toast } from "@/components/ui/use-toast";
 
@@ -68,8 +83,11 @@ export function ThemeCard({
   const deleteThemeMutation = useDeleteTheme();
   const publishMutation = usePublishTheme();
   const unpublishMutation = useUnpublishTheme();
+  const updateTagsMutation = useUpdateCommunityThemeTags();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [showEditTagsDialog, setShowEditTagsDialog] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const mode = themeState.currentMode;
 
   const handleDelete = () => {
@@ -104,11 +122,32 @@ export function ThemeCard({
   };
 
   const handleConfirmPublish = () => {
-    publishMutation.mutate(theme.id, {
-      onSuccess: () => {
-        setShowPublishDialog(false);
-      },
-    });
+    publishMutation.mutate(
+      { themeId: theme.id, tags: selectedTags },
+      {
+        onSuccess: () => {
+          setShowPublishDialog(false);
+          setSelectedTags([]);
+        },
+      }
+    );
+  };
+
+  const handleEditTags = () => {
+    setSelectedTags([]);
+    setShowEditTagsDialog(true);
+  };
+
+  const handleConfirmEditTags = () => {
+    updateTagsMutation.mutate(
+      { themeId: theme.id, tags: selectedTags },
+      {
+        onSuccess: () => {
+          setShowEditTagsDialog(false);
+          setSelectedTags([]);
+        },
+      }
+    );
   };
 
   const handleUnpublish = () => {
@@ -212,18 +251,27 @@ export function ThemeCard({
             </DropdownMenuItem>
             <DropdownMenuSeparator className="mx-2" />
             {isPublished ? (
-              <DropdownMenuItem
-                onClick={handleUnpublish}
-                className="gap-2"
-                disabled={unpublishMutation.isPending}
-              >
-                {unpublishMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <GlobeLock className="h-4 w-4" />
-                )}
-                Unpublish from Community
-              </DropdownMenuItem>
+              <>
+                <DropdownMenuItem
+                  onClick={handleEditTags}
+                  className="gap-2"
+                >
+                  <Tag className="h-4 w-4" />
+                  Edit Tags
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleUnpublish}
+                  className="gap-2"
+                  disabled={unpublishMutation.isPending}
+                >
+                  {unpublishMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <GlobeLock className="h-4 w-4" />
+                  )}
+                  Unpublish from Community
+                </DropdownMenuItem>
+              </>
             ) : (
               <DropdownMenuItem
                 onClick={handlePublish}
@@ -288,24 +336,30 @@ export function ThemeCard({
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog
-        open={showPublishDialog}
-        onOpenChange={setShowPublishDialog}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
+      <Dialog open={showPublishDialog} onOpenChange={setShowPublishDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
               Publish &quot;{theme.name}&quot; to the community?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Your theme will be visible to everyone on the community page.
-              Others will be able to view, like, and open it in the editor. You
-              can unpublish it at any time.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+            </DialogTitle>
+            <DialogDescription>
+              Your theme will be publicly visible on the community page. You can
+              unpublish it at any time.
+            </DialogDescription>
+          </DialogHeader>
+          <TagSelector
+            selectedTags={selectedTags}
+            onTagsChange={setSelectedTags}
+            disabled={publishMutation.isPending}
+          />
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowPublishDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
               onClick={handleConfirmPublish}
               disabled={publishMutation.isPending}
             >
@@ -317,10 +371,47 @@ export function ThemeCard({
               ) : (
                 "Publish"
               )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showEditTagsDialog} onOpenChange={setShowEditTagsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Tags</DialogTitle>
+            <DialogDescription>
+              Update the tags for &quot;{theme.name}&quot;.
+            </DialogDescription>
+          </DialogHeader>
+          <TagSelector
+            selectedTags={selectedTags}
+            onTagsChange={setSelectedTags}
+            disabled={updateTagsMutation.isPending}
+          />
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowEditTagsDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmEditTags}
+              disabled={updateTagsMutation.isPending}
+            >
+              {updateTagsMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save Tags"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

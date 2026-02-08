@@ -4,11 +4,12 @@ import { z } from "zod";
 import { db } from "@/db";
 import {
   communityTheme,
+  communityThemeTag,
   themeLike,
   theme as themeTable,
   user as userTable,
 } from "@/db/schema";
-import { eq, and, desc, asc, sql, count } from "drizzle-orm";
+import { eq, and, desc, asc, sql, count, inArray } from "drizzle-orm";
 import cuid from "cuid";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -21,7 +22,11 @@ import {
   actionSuccess,
   type ActionResult,
 } from "@/types/errors";
-import { COMMUNITY_THEMES_PAGE_SIZE } from "@/lib/constants";
+import {
+  COMMUNITY_THEMES_PAGE_SIZE,
+  COMMUNITY_THEME_TAGS,
+  MAX_TAGS_PER_THEME,
+} from "@/lib/constants";
 import type {
   CommunityTheme,
   CommunitySortOption,
@@ -180,6 +185,28 @@ export async function getCommunityThemes(
       }
     }
 
+    // Fetch tags for all themes in the page
+    const communityThemeIds = themes.map((t) => t.id);
+    const tagsRows =
+      communityThemeIds.length > 0
+        ? await db
+            .select({
+              communityThemeId: communityThemeTag.communityThemeId,
+              tag: communityThemeTag.tag,
+            })
+            .from(communityThemeTag)
+            .where(
+              inArray(communityThemeTag.communityThemeId, communityThemeIds)
+            )
+        : [];
+
+    const tagsMap = new Map<string, string[]>();
+    for (const row of tagsRows) {
+      const existing = tagsMap.get(row.communityThemeId) ?? [];
+      existing.push(row.tag);
+      tagsMap.set(row.communityThemeId, existing);
+    }
+
     const mappedThemes: CommunityTheme[] = themes.map((row) => ({
       id: row.id,
       themeId: row.themeId,
@@ -193,6 +220,7 @@ export async function getCommunityThemes(
       likeCount: Number(row.likeCount),
       isLikedByMe: "isLikedByMe" in row ? Boolean(row.isLikedByMe) : false,
       publishedAt: row.publishedAt.toISOString(),
+      tags: tagsMap.get(row.id) ?? [],
     }));
 
     return { themes: mappedThemes, nextCursor };
@@ -203,7 +231,8 @@ export async function getCommunityThemes(
 }
 
 export async function publishTheme(
-  themeId: string
+  themeId: string,
+  tags: string[] = []
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const userId = await getCurrentUserId();
@@ -211,6 +240,16 @@ export async function publishTheme(
     if (!themeId) {
       throw new ValidationError("Theme ID required");
     }
+
+    // Validate tags
+    if (tags.length > MAX_TAGS_PER_THEME) {
+      throw new ValidationError(
+        `You can select at most ${MAX_TAGS_PER_THEME} tags`
+      );
+    }
+    const validTags = tags.filter((t): t is string =>
+      (COMMUNITY_THEME_TAGS as readonly string[]).includes(t)
+    );
 
     // Verify theme ownership
     const [existingTheme] = await db
@@ -255,6 +294,21 @@ export async function publishTheme(
       userId,
       publishedAt: new Date(),
     });
+
+    if (validTags.length > 0) {
+      try {
+        await db.insert(communityThemeTag).values(
+          validTags.map((tag) => ({
+            communityThemeId: id,
+            tag,
+          }))
+        );
+      } catch (tagError) {
+        // Roll back the community theme row if tags insert fails
+        await db.delete(communityTheme).where(eq(communityTheme.id, id));
+        throw tagError;
+      }
+    }
 
     return actionSuccess({ id });
   } catch (error) {
@@ -364,6 +418,7 @@ export async function getCommunityDataForTheme(
   likeCount: number;
   isLikedByMe: boolean;
   publishedAt: string;
+  tags: string[];
 } | null> {
   try {
     const userId = await getOptionalUserId();
@@ -409,6 +464,12 @@ export async function getCommunityDataForTheme(
 
     if (!result) return null;
 
+    // Fetch tags for this community theme
+    const tagRows = await db
+      .select({ tag: communityThemeTag.tag })
+      .from(communityThemeTag)
+      .where(eq(communityThemeTag.communityThemeId, result.id));
+
     return {
       communityThemeId: result.id,
       author: {
@@ -420,6 +481,7 @@ export async function getCommunityDataForTheme(
       isLikedByMe:
         "isLikedByMe" in result ? Boolean(result.isLikedByMe) : false,
       publishedAt: result.publishedAt.toISOString(),
+      tags: tagRows.map((r) => r.tag),
     };
   } catch (error) {
     logError(error as Error, {
@@ -442,6 +504,69 @@ export async function getMyPublishedThemeIds(): Promise<string[]> {
     return published.map((p) => p.themeId);
   } catch (error) {
     logError(error as Error, { action: "getMyPublishedThemeIds" });
+    throw error;
+  }
+}
+
+export async function updateCommunityThemeTags(
+  themeId: string,
+  tags: string[]
+): Promise<ActionResult<{ tags: string[] }>> {
+  try {
+    const userId = await getCurrentUserId();
+
+    if (!themeId) {
+      throw new ValidationError("Theme ID required");
+    }
+
+    if (tags.length > MAX_TAGS_PER_THEME) {
+      throw new ValidationError(
+        `You can select at most ${MAX_TAGS_PER_THEME} tags`
+      );
+    }
+
+    const validTags = tags.filter((t): t is string =>
+      (COMMUNITY_THEME_TAGS as readonly string[]).includes(t)
+    );
+
+    // Verify ownership via the community_theme row
+    const [ct] = await db
+      .select({ id: communityTheme.id })
+      .from(communityTheme)
+      .where(
+        and(
+          eq(communityTheme.themeId, themeId),
+          eq(communityTheme.userId, userId)
+        )
+      )
+      .limit(1);
+
+    if (!ct) {
+      throw new ThemeNotFoundError(
+        "Published theme not found or not owned by user"
+      );
+    }
+
+    // Delete existing tags and insert new ones
+    await db
+      .delete(communityThemeTag)
+      .where(eq(communityThemeTag.communityThemeId, ct.id));
+
+    if (validTags.length > 0) {
+      await db.insert(communityThemeTag).values(
+        validTags.map((tag) => ({
+          communityThemeId: ct.id,
+          tag,
+        }))
+      );
+    }
+
+    return actionSuccess({ tags: validTags });
+  } catch (error) {
+    logError(error as Error, {
+      action: "updateCommunityThemeTags",
+      themeId,
+    });
     throw error;
   }
 }

@@ -178,6 +178,20 @@ export const communityTheme = pgTable(
   (table) => [index("community_theme_published_at_idx").on(table.publishedAt)]
 );
 
+export const communityThemeTag = pgTable(
+  "community_theme_tag",
+  {
+    communityThemeId: text("community_theme_id")
+      .notNull()
+      .references(() => communityTheme.id, { onDelete: "cascade" }),
+    tag: text("tag").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.communityThemeId, table.tag] }),
+    index("community_theme_tag_tag_idx").on(table.tag),
+  ]
+);
+
 export const themeLike = pgTable(
   "theme_like",
   {

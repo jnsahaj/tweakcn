@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -106,6 +107,23 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
               </div>
             </div>
           ))}
+          {theme.tags.length > 0 && (
+            <div className="absolute top-2 left-2 flex items-center gap-1 pointer-events-none">
+              {theme.tags.slice(0, 2).map((tag) => (
+                <Badge
+                  key={tag}
+                  className="bg-background/80 text-foreground border-0 backdrop-blur-sm text-[10px] px-1.5 py-0 shadow-sm"
+                >
+                  {tag}
+                </Badge>
+              ))}
+              {theme.tags.length > 2 && (
+                <Badge className="bg-background/80 text-foreground border-0 backdrop-blur-sm text-[10px] px-1.5 py-0 shadow-sm">
+                  +{theme.tags.length - 2}
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="bg-background p-3">

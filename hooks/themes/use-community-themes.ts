@@ -10,6 +10,7 @@ import {
   unpublishTheme,
   toggleLikeTheme,
   getMyPublishedThemeIds,
+  updateCommunityThemeTags,
 } from "@/actions/community-themes";
 import { toast } from "@/components/ui/use-toast";
 import type {
@@ -53,8 +54,14 @@ export function usePublishTheme() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (themeId: string) => {
-      const result = await publishTheme(themeId);
+    mutationFn: async ({
+      themeId,
+      tags = [],
+    }: {
+      themeId: string;
+      tags?: string[];
+    }) => {
+      const result = await publishTheme(themeId, tags);
       if (!result.success) {
         if (result.error.code === ErrorCode.ALREADY_PUBLISHED) {
           toast({
@@ -182,6 +189,41 @@ export function useToggleLike() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: communityKeys.all });
+    },
+  });
+}
+
+export function useUpdateCommunityThemeTags() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      themeId,
+      tags,
+    }: {
+      themeId: string;
+      tags: string[];
+    }) => {
+      const result = await updateCommunityThemeTags(themeId, tags);
+      if (!result.success) {
+        throw new Error(result.error.message);
+      }
+      return result.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Tags updated",
+        description: "Your theme tags have been updated.",
+      });
+      queryClient.invalidateQueries({ queryKey: communityKeys.all });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to update tags",
+        description:
+          (error as Error).message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
     },
   });
 }

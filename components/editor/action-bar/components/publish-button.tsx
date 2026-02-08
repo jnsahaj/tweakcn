@@ -3,15 +3,14 @@
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { TagSelector } from "@/components/tag-selector";
 import { cn } from "@/lib/utils";
 import { Globe, Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -32,6 +31,7 @@ export function PublishButton({
 }: PublishButtonProps) {
   const publishMutation = usePublishTheme();
   const [showDialog, setShowDialog] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   if (isPublished) {
     return (
@@ -50,11 +50,15 @@ export function PublishButton({
   }
 
   const handleConfirmPublish = () => {
-    publishMutation.mutate(themeId, {
-      onSuccess: () => {
-        setShowDialog(false);
-      },
-    });
+    publishMutation.mutate(
+      { themeId, tags: selectedTags },
+      {
+        onSuccess: () => {
+          setShowDialog(false);
+          setSelectedTags([]);
+        },
+      }
+    );
   };
 
   return (
@@ -76,19 +80,25 @@ export function PublishButton({
         </Button>
       </TooltipWrapper>
 
-      <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Publish to the community?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Your theme will be visible to everyone on the community page.
-              Others will be able to view, like, and open it in the editor. You
-              can unpublish it at any time from your settings.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Publish to the community?</DialogTitle>
+            <DialogDescription>
+              Your theme will be publicly visible on the community page. You can
+              unpublish it at any time.
+            </DialogDescription>
+          </DialogHeader>
+          <TagSelector
+            selectedTags={selectedTags}
+            onTagsChange={setSelectedTags}
+            disabled={publishMutation.isPending}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDialog(false)}>
+              Cancel
+            </Button>
+            <Button
               onClick={handleConfirmPublish}
               disabled={publishMutation.isPending}
             >
@@ -100,10 +110,10 @@ export function PublishButton({
               ) : (
                 "Publish"
               )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -30,6 +30,7 @@ interface CommunityData {
   likeCount: number;
   isLikedByMe: boolean;
   publishedAt: string;
+  tags: string[];
 }
 
 interface ThemeViewProps {
@@ -106,20 +107,31 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
               )}
             </div>
             {communityData && (
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <CommunityAuthorInfo communityData={communityData} />
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="size-3.5" />
-                  <span>{publishedDate}</span>
+              <>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                  <CommunityAuthorInfo communityData={communityData} />
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="size-3.5" />
+                    <span>{publishedDate}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Heart className="size-3.5" />
+                    <span>
+                      {communityData.likeCount}{" "}
+                      {communityData.likeCount === 1 ? "like" : "likes"}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Heart className="size-3.5" />
-                  <span>
-                    {communityData.likeCount}{" "}
-                    {communityData.likeCount === 1 ? "like" : "likes"}
-                  </span>
-                </div>
-              </div>
+                {communityData.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {communityData.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
           <div className="flex shrink-0 items-center gap-2">
