@@ -1,5 +1,14 @@
 import { ThemeStyles } from "@/types/theme";
-import { pgTable, json, timestamp, boolean, text, integer } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  json,
+  timestamp,
+  boolean,
+  text,
+  integer,
+  primaryKey,
+  index,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -99,3 +108,86 @@ export const subscription = pgTable("subscription", {
   customFieldData: text("customFieldData"), // JSON string
   userId: text("userId").references(() => user.id),
 });
+
+// OAuth 2.0 tables
+
+export const oauthApp = pgTable("oauth_app", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  clientId: text("client_id").notNull().unique(),
+  clientSecretHash: text("client_secret_hash").notNull(),
+  redirectUris: json("redirect_uris").$type<string[]>().notNull(),
+  scopes: json("scopes").$type<string[]>().notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+export const oauthAuthorizationCode = pgTable("oauth_authorization_code", {
+  id: text("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  appId: text("app_id")
+    .notNull()
+    .references(() => oauthApp.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  scopes: json("scopes").$type<string[]>().notNull(),
+  redirectUri: text("redirect_uri").notNull(),
+  codeChallenge: text("code_challenge"),
+  codeChallengeMethod: text("code_challenge_method"),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
+  createdAt: timestamp("created_at").notNull(),
+});
+
+export const oauthToken = pgTable("oauth_token", {
+  id: text("id").primaryKey(),
+  accessTokenHash: text("access_token_hash").notNull().unique(),
+  refreshTokenHash: text("refresh_token_hash").unique(),
+  appId: text("app_id")
+    .notNull()
+    .references(() => oauthApp.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  scopes: json("scopes").$type<string[]>().notNull(),
+  accessTokenExpiresAt: timestamp("access_token_expires_at").notNull(),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  revokedAt: timestamp("revoked_at"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+// Community themes
+
+export const communityTheme = pgTable(
+  "community_theme",
+  {
+    id: text("id").primaryKey(),
+    themeId: text("theme_id")
+      .notNull()
+      .unique()
+      .references(() => theme.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    publishedAt: timestamp("published_at").notNull(),
+  },
+  (table) => [index("community_theme_published_at_idx").on(table.publishedAt)]
+);
+
+export const themeLike = pgTable(
+  "theme_like",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    themeId: text("theme_id")
+      .notNull()
+      .references(() => communityTheme.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.themeId] })]
+);

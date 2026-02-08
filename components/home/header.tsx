@@ -19,6 +19,10 @@ interface HeaderProps {
 
 const navbarItems = [
   {
+    label: "Community",
+    href: "/community",
+  },
+  {
     label: "Examples",
     href: "#examples",
   },

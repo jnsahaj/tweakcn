@@ -1,4 +1,5 @@
 import { getTheme } from "@/actions/themes";
+import { getCommunityDataForTheme } from "@/actions/community-themes";
 import ThemeView from "@/components/theme-view";
 import { Metadata } from "next";
 
@@ -10,7 +11,10 @@ interface ThemePageProps {
 
 export async function generateMetadata({ params }: ThemePageProps): Promise<Metadata> {
   const { themeId } = await params;
-  const theme = await getTheme(themeId);
+  const [theme, communityData] = await Promise.all([
+    getTheme(themeId),
+    getCommunityDataForTheme(themeId),
+  ]);
 
   return {
     title: theme?.name + " - tweakcn",
@@ -26,7 +30,7 @@ export async function generateMetadata({ params }: ThemePageProps): Promise<Meta
       description: `Discover shadcn/ui themes - ${theme?.name} theme`,
     },
     robots: {
-      index: false,
+      index: !!communityData,
       follow: true,
     },
   };
@@ -34,12 +38,15 @@ export async function generateMetadata({ params }: ThemePageProps): Promise<Meta
 
 export default async function ThemePage({ params }: ThemePageProps) {
   const { themeId } = await params;
-  const theme = await getTheme(themeId);
+  const [theme, communityData] = await Promise.all([
+    getTheme(themeId),
+    getCommunityDataForTheme(themeId),
+  ]);
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="container mx-auto px-4 py-8">
-        <ThemeView theme={theme} />
+        <ThemeView theme={theme} communityData={communityData} />
       </div>
     </div>
   );
