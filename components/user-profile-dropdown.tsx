@@ -63,7 +63,7 @@ export function UserProfileDropdown() {
           <Button
             variant="link"
             onClick={() => openAuthDialog("signin")}
-            className="text-foreground hover:text-primary h-8 px-0 hover:no-underline"
+            className="text-foreground hover:text-primary hidden h-8 px-0 hover:no-underline md:inline-flex"
           >
             Sign In
           </Button>

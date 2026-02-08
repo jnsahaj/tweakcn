@@ -57,7 +57,7 @@ export function Header() {
             className="flex h-8 items-center gap-2"
           >
             <FigmaIcon className="size-4" />
-            Export to Figma
+            <span className="hidden md:inline">Export to Figma</span>
           </Button>
           <UserProfileDropdown />
         </div>
