@@ -2,6 +2,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getThemes, getTheme } from "@/actions/themes";
 import { Theme } from "@/types/theme";
 
+export type ThemeWithPublished = Awaited<ReturnType<typeof getThemes>>[number];
+
 export const themeKeys = {
   all: ["themes"] as const,
   lists: () => [...themeKeys.all, "list"] as const,
@@ -10,7 +12,7 @@ export const themeKeys = {
   detail: (id: string) => [...themeKeys.details(), { id }] as const,
 };
 
-export function useThemesData(initialData?: Theme[]) {
+export function useThemesData(initialData?: ThemeWithPublished[]) {
   return useQuery({
     queryKey: themeKeys.lists(),
     queryFn: getThemes,

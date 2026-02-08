@@ -31,8 +31,8 @@ const navbarItems = [
     href: "/pricing",
   },
   {
-    label: "Roadmap",
-    href: "#roadmap",
+    label: "Community",
+    href: "/community",
   },
   {
     label: "FAQ",
