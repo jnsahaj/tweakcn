@@ -30,8 +30,11 @@ export default function CommunityPage() {
         <div className="bg-primary/5 absolute bottom-0 left-0 size-64 -translate-x-1/3 translate-y-1/3 rounded-full blur-3xl" />
         <div className="relative container mx-auto px-4 pt-16 pb-12">
           <div className="max-w-2xl">
-            <h1 className="from-foreground to-foreground/70 bg-gradient-to-r bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl">
+            <h1 className="from-foreground to-foreground/70 flex items-center bg-gradient-to-r bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl">
               Community Themes
+              <span className="bg-primary text-primary-foreground ml-3 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                New
+              </span>
             </h1>
             <p className="text-muted-foreground mt-3 text-lg text-pretty">
               Discover and explore beautiful shadcn/ui themes created by the

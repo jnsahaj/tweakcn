@@ -73,7 +73,7 @@ export function Hero() {
                 variant="outline"
                 className="h-12 min-w-[180px] rounded-full border-primary/20 bg-background/50 px-8 text-base backdrop-blur-sm transition-all hover:bg-accent/50 hover:border-primary/50"
               >
-                View Examples
+                Browse Community
               </Button>
             </a>
           </motion.div>

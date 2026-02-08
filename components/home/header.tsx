@@ -23,6 +23,10 @@ const navbarItems = [
     href: "#features",
   },
   {
+    label: "AI",
+    href: "/ai",
+  },
+  {
     label: "Pricing",
     href: "/pricing",
   },
@@ -57,14 +61,14 @@ export function Header({ isScrolled, mobileMenuOpen, setMobileMenuOpen }: Header
         isScrolled ? "bg-background/90 border-border/20 border-b shadow-xs" : "bg-transparent"
       )}
     >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+      <div className="container mx-auto relative flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/">
           <div className="flex items-center gap-2 font-bold">
             <Logo className="size-6" />
             <span className="hidden lg:block">tweakcn</span>
           </div>
         </Link>
-        <nav className="hidden items-center gap-4 md:flex lg:gap-8">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-4 md:flex lg:gap-8">
           {navbarItems.map((item, i) => (
             <motion.a
               key={item.label}
