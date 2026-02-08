@@ -3,12 +3,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
 import { useEditorStore } from "@/store/editor-store";
 import { useToggleLike } from "@/hooks/themes";
@@ -16,7 +10,7 @@ import { useSessionGuard } from "@/hooks/use-guards";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import type { Theme } from "@/types/theme";
 import { cn } from "@/lib/utils";
-import { Calendar, Edit, Heart, Moon, MoreVertical, Share, Sun } from "lucide-react";
+import { Calendar, Edit, Heart, Moon, Share, Sun } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CodeButton } from "./editor/action-bar/components/code-button";
@@ -96,16 +90,9 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold">{theme.name}</h1>
-              {communityData && (
-                <Badge variant="secondary" className="text-xs">
-                  Published
-                </Badge>
-              )}
-            </div>
+            <h1 className="text-3xl font-bold">{theme.name}</h1>
             {communityData && (
               <>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
@@ -134,7 +121,7 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
               </>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
             {communityData && <LikeButton communityData={communityData} />}
             <Button variant="outline" size="icon" onClick={toggleTheme}>
               {currentMode === "dark" ? (
@@ -152,26 +139,17 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
               <Share className="size-4" />
               Share
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreVertical className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem className="gap-2" onClick={handleOpenInEditor}>
-                  <Edit className="size-4" />
-                  Open in Editor
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant="outline" size="default" onClick={handleOpenInEditor}>
+              <Edit className="size-4" />
+              Open in Editor
+            </Button>
           </div>
         </div>
       </div>
 
       <DialogActionsProvider>
         <div className="-m-4 mt-6 flex h-[min(80svh,900px)] flex-col">
-          <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
+          <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} themeId={theme.id} />
         </div>
 
         <CodePanelDialog

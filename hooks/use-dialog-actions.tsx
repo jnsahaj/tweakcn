@@ -205,7 +205,8 @@ function useDialogActionsStore(): DialogActionsContextType {
     if (!presetId) return;
 
     const currentPreset = getPreset(presetId);
-    const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";
+    // If an explicit ID is passed but not found in presets, treat as a saved/database theme
+    const isSavedPreset = id ? true : !!currentPreset && currentPreset.source === "SAVED";
     const themeName = currentPreset?.label || presetId;
 
     posthog.capture("OPEN_IN_V0", {
@@ -223,12 +224,17 @@ function useDialogActionsStore(): DialogActionsContextType {
   };
 
   const handleOpenInV0 = (id?: string) => {
+    if (id) {
+      openInV0(id);
+      return;
+    }
+
     if (hasThemeChangedFromCheckpoint()) {
       handleSaveClick({ openInV0AfterSave: true });
       return;
     }
 
-    openInV0(id);
+    openInV0();
   };
 
   const handleUpdateExisting = async () => {
