@@ -3,6 +3,7 @@
 import { useCommunityThemes } from "@/hooks/themes";
 import type { CommunitySortOption } from "@/types/community";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +37,25 @@ export function CommunityThemesContent() {
     useCommunityThemes(sort);
 
   const themes = data?.pages.flatMap((page) => page.themes) ?? [];
+
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <div className="space-y-6">
@@ -134,25 +154,11 @@ export function CommunityThemesContent() {
             ))}
           </div>
 
-          {hasNextPage && (
-            <div className="flex justify-center pt-4">
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-              >
-                {isFetchingNextPage ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Loading...
-                  </>
-                ) : (
-                  "Load More"
-                )}
-              </Button>
-            </div>
-          )}
+          <div ref={sentinelRef} className="flex justify-center pt-4">
+            {isFetchingNextPage && (
+              <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
+            )}
+          </div>
         </>
       )}
     </div>
