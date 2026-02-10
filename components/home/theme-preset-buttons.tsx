@@ -9,11 +9,11 @@ import { ThemeEditorState } from "@/types/editor";
 import { useEffect, useMemo, useRef } from "react";
 
 // ColorBox component remains internal to ThemePresetButtons
-const ColorBox = ({ color }: { color: string }) => {
+const ColorBox = ({ color, radius }: { color: string; radius: string }) => {
   return (
     <div
-      className="w-3 h-3 rounded-sm border"
-      style={{ backgroundColor: color }}
+      className="w-3 h-3 border"
+      style={{ backgroundColor: color, borderRadius: `calc(${radius} * 0.35)` }}
     />
   );
 };
@@ -139,16 +139,22 @@ export function ThemePresetButtons({
                         .replace(/\s+/g, ", ")
                         .replace(")", ", 0.10)"),
                       color: themeStyles.foreground,
+                      borderRadius: themeStyles.radius,
                     }}
                     onClick={() => applyThemePreset(presetName)}
                   >
                     <div className="flex items-center gap-2.5 text-center">
                       <div className="flex gap-1">
-                        <ColorBox color={themeStyles.primary} />
-                        <ColorBox color={themeStyles.secondary} />
-                        <ColorBox color={themeStyles.accent} />
+                        <ColorBox color={themeStyles.primary} radius={themeStyles.radius} />
+                        <ColorBox color={themeStyles.secondary} radius={themeStyles.radius} />
+                        <ColorBox color={themeStyles.accent} radius={themeStyles.radius} />
                       </div>
-                      <span className="capitalize px-1 leading-tight truncate">
+                      <span
+                        className="capitalize px-1 leading-tight truncate"
+                        style={{
+                          fontFamily: themeStyles["font-sans"],
+                        }}
+                      >
                         {presetName.replace(/-/g, " ")}
                       </span>
                     </div>

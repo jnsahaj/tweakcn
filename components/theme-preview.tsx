@@ -124,7 +124,7 @@ export function ThemePreview({ styles, name, className }: ThemePreviewProps) {
 
       {/* Typography - bottom left */}
       <div
-        className="absolute bottom-3 left-3.5 max-w-[80%] truncate font-medium"
+        className="absolute bottom-3 left-4 max-w-[80%] truncate font-medium"
         style={{
           fontSize: "1.5rem",
           color: c.fg,

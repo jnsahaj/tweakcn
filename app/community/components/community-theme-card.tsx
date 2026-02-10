@@ -57,7 +57,7 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
 
   return (
     <Link href={`/themes/${theme.themeId}`} className="group">
-      <div className="relative h-42 w-full overflow-hidden rounded-xl border shadow-sm transition-all duration-200 group-hover:shadow-md group-hover:border-foreground/20">
+      <div className="relative h-44 w-full overflow-hidden rounded-xl border shadow-sm transition-all duration-200 group-hover:shadow-md group-hover:border-foreground/20">
         <ThemePreview
           styles={theme.styles[currentTheme]}
           name={theme.name}
