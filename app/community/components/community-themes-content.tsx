@@ -2,7 +2,7 @@
 
 import { useCommunityThemes } from "@/hooks/themes";
 import type { CommunitySortOption } from "@/types/community";
-import { useState } from "react";
+import { useQueryState, parseAsStringLiteral } from "nuqs";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,12 @@ const sortOptions: {
   ];
 
 export function CommunityThemesContent() {
-  const [sort, setSort] = useState<CommunitySortOption>("popular");
+  const [sort, setSort] = useQueryState(
+    "sort",
+    parseAsStringLiteral(["popular", "newest", "oldest"] as const).withDefault(
+      "popular"
+    )
+  );
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useCommunityThemes(sort);
 
