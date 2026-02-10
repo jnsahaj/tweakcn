@@ -20,10 +20,10 @@ const sortOptions: {
   value: CommunitySortOption;
   label: string;
 }[] = [
-  { value: "popular", label: "Popular" },
-  { value: "newest", label: "Newest" },
-  { value: "oldest", label: "Oldest" },
-];
+    { value: "popular", label: "Popular" },
+    { value: "newest", label: "Newest" },
+    { value: "oldest", label: "Oldest" },
+  ];
 
 export function CommunityThemesContent() {
   const [sort, setSort] = useState<CommunitySortOption>("popular");
@@ -123,7 +123,7 @@ export function CommunityThemesContent() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {themes.map((theme) => (
               <CommunityThemeCard key={theme.id} theme={theme} />
             ))}

@@ -43,7 +43,7 @@ import {
   Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useEditorStore } from "@/store/editor-store";
 import { useDeleteTheme } from "@/hooks/themes";
 import {
@@ -53,26 +53,13 @@ import {
 } from "@/hooks/themes";
 import Link from "next/link";
 import { toast } from "@/components/ui/use-toast";
+import { ThemePreview } from "@/components/theme-preview";
 
 interface ThemeCardProps {
   theme: Theme;
   isPublished?: boolean;
   className?: string;
 }
-
-type SwatchDefinition = {
-  name: string;
-  bgKey: keyof Theme["styles"]["light" | "dark"];
-  fgKey: keyof Theme["styles"]["light" | "dark"];
-};
-
-const swatchDefinitions: SwatchDefinition[] = [
-  { name: "Primary", bgKey: "primary", fgKey: "primary-foreground" },
-  { name: "Secondary", bgKey: "secondary", fgKey: "secondary-foreground" },
-  { name: "Accent", bgKey: "accent", fgKey: "accent-foreground" },
-  { name: "Muted", bgKey: "muted", fgKey: "muted-foreground" },
-  { name: "Background", bgKey: "background", fgKey: "foreground" },
-];
 
 export function ThemeCard({
   theme,
@@ -154,17 +141,6 @@ export function ThemeCard({
     unpublishMutation.mutate(theme.id);
   };
 
-  const colorSwatches = useMemo(() => {
-    return swatchDefinitions.map((def) => ({
-      name: def.name,
-      bg: theme.styles[mode][def.bgKey] || "#ffffff",
-      fg:
-        theme.styles[mode][def.fgKey] ||
-        theme.styles[mode].foreground ||
-        "#000000",
-    }));
-  }, [mode, theme.styles]);
-
   return (
     <Card
       className={cn(
@@ -172,29 +148,12 @@ export function ThemeCard({
         className
       )}
     >
-      <div className="relative flex h-36">
-        {colorSwatches.map((swatch) => (
-          <div
-            key={swatch.name + swatch.bg}
-            className={cn(
-              "group/swatch relative h-full flex-1 transition-all duration-300 ease-in-out",
-              "hover:flex-grow-[1.5]"
-            )}
-            style={{ backgroundColor: swatch.bg }}
-          >
-            <div
-              className={cn(
-                "absolute inset-0 flex items-center justify-center",
-                "opacity-0 group-hover/swatch:opacity-100",
-                "transition-opacity duration-300 ease-in-out",
-                "pointer-events-none text-xs font-medium"
-              )}
-              style={{ color: swatch.fg }}
-            >
-              {swatch.name}
-            </div>
-          </div>
-        ))}
+      <div className="relative h-36 w-full overflow-hidden bg-muted">
+        <ThemePreview
+          styles={theme.styles[mode]}
+          name={theme.name}
+          className="transition-transform duration-300 group-hover:scale-105"
+        />
       </div>
 
       <div className="bg-background flex items-center justify-between p-4">
