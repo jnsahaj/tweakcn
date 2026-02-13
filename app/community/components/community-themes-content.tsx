@@ -113,9 +113,7 @@ export function CommunityThemesContent() {
     <div className="flex gap-8">
       {/* Desktop sidebar */}
       <aside className="hidden w-52 shrink-0 lg:block">
-        <div className="sticky top-24">
-          <CommunitySidebarContent {...sidebarProps} />
-        </div>
+        <CommunitySidebarContent {...sidebarProps} />
       </aside>
 
       {/* Main content */}
