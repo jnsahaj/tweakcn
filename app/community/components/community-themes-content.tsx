@@ -37,10 +37,10 @@ const sortOptions: {
   value: CommunitySortOption;
   label: string;
 }[] = [
-  { value: "popular", label: "Popular" },
-  { value: "newest", label: "Newest" },
-  { value: "oldest", label: "Oldest" },
-];
+    { value: "popular", label: "Popular" },
+    { value: "newest", label: "Newest" },
+    { value: "oldest", label: "Oldest" },
+  ];
 
 export function CommunityThemesContent() {
   const [sort, setSort] = useQueryState(
@@ -113,7 +113,7 @@ export function CommunityThemesContent() {
     <div className="flex flex-1">
       {/* Desktop sidebar */}
       <aside className="hidden w-56 shrink-0 border-r lg:block">
-        <div className="p-6">
+        <div className="p-4">
           <Link href="/community" className="block">
             <h1 className="text-lg font-semibold tracking-tight">
               Community Themes
@@ -123,7 +123,7 @@ export function CommunityThemesContent() {
             </p>
           </Link>
         </div>
-        <Separator />
+
         <div className="p-4">
           <CommunitySidebarContent {...sidebarProps} />
         </div>
@@ -131,7 +131,7 @@ export function CommunityThemesContent() {
 
       {/* Main content */}
       <div className="min-w-0 flex-1">
-        <div className="space-y-6 p-6">
+        <div className="space-y-6 p-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               {/* Mobile filter button */}
