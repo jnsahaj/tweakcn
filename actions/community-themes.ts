@@ -30,6 +30,7 @@ import {
 import type {
   CommunityTheme,
   CommunitySortOption,
+  CommunityFilterOption,
   CommunityThemesResponse,
 } from "@/types/community";
 import { Ratelimit } from "@upstash/ratelimit";
@@ -79,15 +80,25 @@ const getCommunityThemesSchema = z.object({
   sort: z.enum(["popular", "newest", "oldest"]).default("popular"),
   cursor: z.union([z.string(), z.number()]).optional(),
   limit: z.number().min(1).max(50).default(COMMUNITY_THEMES_PAGE_SIZE),
+  filter: z.enum(["all", "mine", "liked"]).default("all"),
+  tags: z.array(z.string()).default([]),
 });
 
 export async function getCommunityThemes(
   sort: CommunitySortOption = "popular",
   cursor?: string | number,
-  limit: number = COMMUNITY_THEMES_PAGE_SIZE
+  limit: number = COMMUNITY_THEMES_PAGE_SIZE,
+  filter: CommunityFilterOption = "all",
+  tags: string[] = []
 ): Promise<CommunityThemesResponse> {
   try {
-    const validation = getCommunityThemesSchema.safeParse({ sort, cursor, limit });
+    const validation = getCommunityThemesSchema.safeParse({
+      sort,
+      cursor,
+      limit,
+      filter,
+      tags,
+    });
     if (!validation.success) {
       throw new ValidationError("Invalid input", validation.error.format());
     }
@@ -104,6 +115,30 @@ export async function getCommunityThemes(
       .from(themeLike)
       .groupBy(themeLike.themeId)
       .as("like_counts");
+
+    // Build where conditions
+    const conditions = [];
+
+    if (filter === "mine") {
+      if (!userId) throw new UnauthorizedError();
+      conditions.push(eq(communityTheme.userId, userId));
+    }
+
+    if (filter === "liked") {
+      if (!userId) throw new UnauthorizedError();
+      conditions.push(
+        sql`exists(select 1 from theme_like where theme_like.theme_id = ${communityTheme.id} and theme_like.user_id = ${userId})`
+      );
+    }
+
+    if (tags.length > 0) {
+      conditions.push(
+        sql`exists(select 1 from community_theme_tag where community_theme_tag.community_theme_id = ${communityTheme.id} and community_theme_tag.tag in (${sql.join(
+          tags.map((t) => sql`${t}`),
+          sql`, `
+        )}))`
+      );
+    }
 
     // Base query with joins
     const baseQuery = db
@@ -143,32 +178,31 @@ export async function getCommunityThemes(
       // Offset-based for popular sort (order is dynamic)
       const offset = typeof cursor === "number" ? cursor : 0;
       results = await baseQuery
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
         .orderBy(sql`total_likes desc`, desc(communityTheme.publishedAt))
         .limit(fetchLimit)
         .offset(offset);
     } else if (sort === "newest") {
       if (cursor && typeof cursor === "string") {
-        results = await baseQuery
-          .where(sql`${communityTheme.publishedAt} < ${cursor}`)
-          .orderBy(desc(communityTheme.publishedAt))
-          .limit(fetchLimit);
-      } else {
-        results = await baseQuery
-          .orderBy(desc(communityTheme.publishedAt))
-          .limit(fetchLimit);
+        conditions.push(
+          sql`${communityTheme.publishedAt} < ${cursor}`
+        );
       }
+      results = await baseQuery
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(communityTheme.publishedAt))
+        .limit(fetchLimit);
     } else {
       // oldest
       if (cursor && typeof cursor === "string") {
-        results = await baseQuery
-          .where(sql`${communityTheme.publishedAt} > ${cursor}`)
-          .orderBy(asc(communityTheme.publishedAt))
-          .limit(fetchLimit);
-      } else {
-        results = await baseQuery
-          .orderBy(asc(communityTheme.publishedAt))
-          .limit(fetchLimit);
+        conditions.push(
+          sql`${communityTheme.publishedAt} > ${cursor}`
+        );
       }
+      results = await baseQuery
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(asc(communityTheme.publishedAt))
+        .limit(fetchLimit);
     }
 
     const hasMore = results.length > limit;
@@ -568,5 +602,25 @@ export async function updateCommunityThemeTags(
       themeId,
     });
     throw error;
+  }
+}
+
+export async function getCommunityTagCounts(): Promise<
+  { tag: string; count: number }[]
+> {
+  try {
+    const rows = await db
+      .select({
+        tag: communityThemeTag.tag,
+        count: count().as("tag_count"),
+      })
+      .from(communityThemeTag)
+      .groupBy(communityThemeTag.tag)
+      .orderBy(sql`tag_count desc`);
+
+    return rows.map((r) => ({ tag: r.tag, count: Number(r.count) }));
+  } catch (error) {
+    logError(error as Error, { action: "getCommunityTagCounts" });
+    return [];
   }
 }

@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import {
   getCommunityThemes,
+  getCommunityTagCounts,
   publishTheme,
   unpublishTheme,
   toggleLikeTheme,
@@ -16,6 +17,7 @@ import { toast } from "@/components/ui/use-toast";
 import type {
   CommunityTheme,
   CommunitySortOption,
+  CommunityFilterOption,
   CommunityThemesResponse,
 } from "@/types/community";
 import { themeKeys } from "./use-themes-data";
@@ -23,22 +25,38 @@ import { ErrorCode } from "@/types/errors";
 
 export const communityKeys = {
   all: ["community-themes"] as const,
-  list: (sort: CommunitySortOption) =>
-    [...communityKeys.all, "list", { sort }] as const,
+  list: (
+    sort: CommunitySortOption,
+    filter: CommunityFilterOption = "all",
+    tags: string[] = []
+  ) => [...communityKeys.all, "list", { sort, filter, tags }] as const,
   myPublished: () => [...communityKeys.all, "my-published"] as const,
+  tagCounts: () => [...communityKeys.all, "tag-counts"] as const,
 };
 
-export function useCommunityThemes(sort: CommunitySortOption) {
+export function useCommunityThemes(
+  sort: CommunitySortOption,
+  filter: CommunityFilterOption = "all",
+  tags: string[] = []
+) {
   return useInfiniteQuery({
-    queryKey: communityKeys.list(sort),
+    queryKey: communityKeys.list(sort, filter, tags),
     queryFn: async ({ pageParam }) => {
-      return getCommunityThemes(sort, pageParam);
+      return getCommunityThemes(sort, pageParam, undefined, filter, tags);
     },
     initialPageParam: undefined as string | number | undefined,
     getNextPageParam: (lastPage: CommunityThemesResponse) => {
       return lastPage.nextCursor ?? undefined;
     },
     staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+}
+
+export function useCommunityTagCounts() {
+  return useQuery({
+    queryKey: communityKeys.tagCounts(),
+    queryFn: getCommunityTagCounts,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 

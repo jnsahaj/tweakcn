@@ -25,27 +25,25 @@ export default function CommunityPage() {
   return (
     <div className="flex flex-1 flex-col">
       {/* Hero section */}
-      <div className="from-background via-background to-muted/30 relative overflow-hidden border-b bg-gradient-to-b">
-        <div className="bg-primary/5 absolute top-0 right-0 size-96 translate-x-1/3 -translate-y-1/3 rounded-full blur-3xl" />
-        <div className="bg-primary/5 absolute bottom-0 left-0 size-64 -translate-x-1/3 translate-y-1/3 rounded-full blur-3xl" />
-        <div className="relative container mx-auto px-4 pt-16 pb-12">
-          <div className="max-w-2xl">
-            <h1 className="from-foreground to-foreground/70 flex items-center bg-gradient-to-r bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl">
-              Community Themes
-              <span className="bg-primary text-primary-foreground ml-3 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold">
-                New
-              </span>
+      <div className="relative isolate overflow-hidden border-b">
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_40%,transparent_100%)]" />
+        <div className="relative mx-auto px-4 pt-16 pb-12 sm:px-6 lg:px-8">
+          <div className="max-w-xl">
+            <p className="text-muted-foreground text-sm font-medium tracking-wide uppercase">
+              Community
+            </p>
+            <h1 className="mt-2 bg-gradient-to-br from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl">
+              Themes
             </h1>
-            <p className="text-muted-foreground mt-3 text-lg text-pretty">
-              Discover and explore beautiful shadcn/ui themes created by the
-              community. Like your favorites and open them in the editor.
+            <p className="text-muted-foreground mt-3 text-base text-pretty leading-relaxed">
+              Discover beautiful shadcn/ui themes created by the community.
             </p>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
         <CommunityThemesContent />
       </div>
     </div>
