@@ -1,5 +1,4 @@
 import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
 
 export default function CommunityLayout({
   children,
@@ -7,9 +6,8 @@ export default function CommunityLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col">
-      <Header />
-      <main className="flex min-h-screen flex-1 flex-col">{children}</main>
+    <div className="flex min-h-screen flex-col">
+      <main className="flex flex-1 flex-col">{children}</main>
       <Footer />
     </div>
   );
