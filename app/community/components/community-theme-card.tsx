@@ -85,8 +85,8 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
       <div className="flex items-start justify-between gap-2 px-1 pt-2">
         <div className="min-w-0 flex-1">
           <div className="mt-1 flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
-              <Avatar className="h-4 w-4">
+            <div className="flex min-w-0 max-w-[120px] items-center gap-1.5">
+              <Avatar className="h-4 w-4 shrink-0">
                 {theme.author.image && (
                   <AvatarImage
                     src={theme.author.image}
