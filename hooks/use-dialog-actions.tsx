@@ -289,8 +289,8 @@ function useDialogActionsStore(): DialogActionsContextType {
     });
 
     const themeUrl = isSavedPreset
-      ? `https://tweakcn.com/r/v0/${presetId}`
-      : `https://tweakcn.com/r/v0/${presetId}.json`;
+      ? `https://tweakcn.com/r/themes/${presetId}`
+      : `https://tweakcn.com/r/themes/${presetId}.json`;
     const playgroundUrl = `https://play.blocks.so/api/open?url=${encodeURIComponent(themeUrl)}`;
     window.open(playgroundUrl, "_blank", "noopener,noreferrer");
   };
