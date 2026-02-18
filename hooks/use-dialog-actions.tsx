@@ -14,7 +14,7 @@ import { parseCssInput } from "@/utils/parse-css-input";
 import { usePostHog } from "posthog-js/react";
 import { createContext, ReactNode, useContext, useState } from "react";
 
-type PendingAction = "share" | "v0" | null;
+type PendingAction = "share" | "v0" | "playground" | null;
 
 // Get contextual copy for the save dialog based on the pending action
 function getSaveDialogCopy(pendingAction: PendingAction) {
@@ -30,6 +30,12 @@ function getSaveDialogCopy(pendingAction: PendingAction) {
         title: "Save to open in v0",
         description: "Save your theme first to open it in v0.",
         ctaLabel: "Save & Open in v0",
+      };
+    case "playground":
+      return {
+        title: "Save to open in Playground",
+        description: "Save your theme first to open it in shadcn playground.",
+        ctaLabel: "Save & Open in Playground",
       };
     default:
       return {};
@@ -58,9 +64,14 @@ interface DialogActionsContextType {
 
   // Handler functions
   handleCssImport: (css: string) => void;
-  handleSaveClick: (options?: { shareAfterSave?: boolean; openInV0AfterSave?: boolean }) => void;
+  handleSaveClick: (options?: {
+    shareAfterSave?: boolean;
+    openInV0AfterSave?: boolean;
+    openInPlaygroundAfterSave?: boolean;
+  }) => void;
   handleShareClick: (id?: string) => Promise<void>;
   handleOpenInV0: (id?: string) => void;
+  handleOpenInPlayground: (id?: string) => void;
   saveTheme: (themeName: string) => Promise<void>;
   handleUpdateExisting: () => Promise<void>;
 }
@@ -74,8 +85,13 @@ function useDialogActionsStore(): DialogActionsContextType {
   const [shareUrl, setShareUrl] = useState("");
   const [dialogKey, _setDialogKey] = useState(0);
 
-  const { themeState, setThemeState, applyThemePreset, hasThemeChangedFromCheckpoint, hasUnsavedChanges } =
-    useEditorStore();
+  const {
+    themeState,
+    setThemeState,
+    applyThemePreset,
+    hasThemeChangedFromCheckpoint,
+    hasUnsavedChanges,
+  } = useEditorStore();
   const { getPreset } = useThemePresetStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
@@ -85,7 +101,8 @@ function useDialogActionsStore(): DialogActionsContextType {
   const posthog = usePostHog();
 
   const currentPreset = themeState?.preset ? getPreset(themeState.preset) : undefined;
-  const isOnSavedPreset = !!currentPreset && currentPreset.source === "SAVED" && hasUnsavedChanges();
+  const isOnSavedPreset =
+    !!currentPreset && currentPreset.source === "SAVED" && hasUnsavedChanges();
   const existingThemeName = isOnSavedPreset ? currentPreset.label : undefined;
 
   usePostLoginAction("SAVE_THEME", () => {
@@ -100,6 +117,11 @@ function useDialogActionsStore(): DialogActionsContextType {
   usePostLoginAction("SAVE_THEME_FOR_V0", () => {
     setSaveDialogOpen(true);
     setPendingAction("v0");
+  });
+
+  usePostLoginAction("SAVE_THEME_FOR_PLAYGROUND", () => {
+    setSaveDialogOpen(true);
+    setPendingAction("playground");
   });
 
   const handleCssImport = (css: string) => {
@@ -121,11 +143,20 @@ function useDialogActionsStore(): DialogActionsContextType {
     });
   };
 
-  const handleSaveClick = (options?: { shareAfterSave?: boolean; openInV0AfterSave?: boolean }) => {
+  const handleSaveClick = (options?: {
+    shareAfterSave?: boolean;
+    openInV0AfterSave?: boolean;
+    openInPlaygroundAfterSave?: boolean;
+  }) => {
     if (!session) {
-      let action: "SAVE_THEME" | "SAVE_THEME_FOR_SHARE" | "SAVE_THEME_FOR_V0" = "SAVE_THEME";
+      let action:
+        | "SAVE_THEME"
+        | "SAVE_THEME_FOR_SHARE"
+        | "SAVE_THEME_FOR_V0"
+        | "SAVE_THEME_FOR_PLAYGROUND" = "SAVE_THEME";
       if (options?.shareAfterSave) action = "SAVE_THEME_FOR_SHARE";
       if (options?.openInV0AfterSave) action = "SAVE_THEME_FOR_V0";
+      if (options?.openInPlaygroundAfterSave) action = "SAVE_THEME_FOR_PLAYGROUND";
       openAuthDialog("signin", action);
       return;
     }
@@ -136,6 +167,9 @@ function useDialogActionsStore(): DialogActionsContextType {
     }
     if (options?.openInV0AfterSave) {
       setPendingAction("v0");
+    }
+    if (options?.openInPlaygroundAfterSave) {
+      setPendingAction("playground");
     }
   };
 
@@ -158,6 +192,9 @@ function useDialogActionsStore(): DialogActionsContextType {
         setPendingAction(null);
       } else if (pendingAction === "v0") {
         openInV0(theme?.id);
+        setPendingAction(null);
+      } else if (pendingAction === "playground") {
+        openInPlayground(theme?.id);
         setPendingAction(null);
       }
       setTimeout(() => {
@@ -237,6 +274,41 @@ function useDialogActionsStore(): DialogActionsContextType {
     openInV0();
   };
 
+  const openInPlayground = (id?: string) => {
+    const presetId = id ?? themeState.preset;
+    if (!presetId) return;
+
+    const currentPreset = getPreset(presetId);
+    const isSavedPreset = id ? true : !!currentPreset && currentPreset.source === "SAVED";
+    const themeName = currentPreset?.label || presetId;
+
+    posthog.capture("OPEN_IN_PLAYGROUND", {
+      theme_id: presetId,
+      theme_name: themeName,
+      is_saved: isSavedPreset,
+    });
+
+    const themeUrl = isSavedPreset
+      ? `https://tweakcn.com/r/themes/${presetId}`
+      : `https://tweakcn.com/r/themes/${presetId}.json`;
+    const playgroundUrl = `https://play.blocks.so/api/open?url=${encodeURIComponent(themeUrl)}`;
+    window.open(playgroundUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleOpenInPlayground = (id?: string) => {
+    if (id) {
+      openInPlayground(id);
+      return;
+    }
+
+    if (hasThemeChangedFromCheckpoint()) {
+      handleSaveClick({ openInPlaygroundAfterSave: true });
+      return;
+    }
+
+    openInPlayground();
+  };
+
   const handleUpdateExisting = async () => {
     if (!themeState.preset) return;
     try {
@@ -278,6 +350,7 @@ function useDialogActionsStore(): DialogActionsContextType {
     handleSaveClick,
     handleShareClick,
     handleOpenInV0,
+    handleOpenInPlayground,
     saveTheme,
     handleUpdateExisting,
   };

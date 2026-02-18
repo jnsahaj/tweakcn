@@ -34,6 +34,17 @@ const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
 const TypographyDemo = lazy(() => import("@/components/examples/typography/typography-demo"));
 const CustomDemo = lazy(() => import("@/components/examples/custom"));
 
+const PlaygroundLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path
+      stroke="currentColor"
+      strokeWidth="25"
+      strokeLinecap="round"
+      d="M208 128l-80 80M192 40L40 192"
+    />
+  </svg>
+);
+
 const V0Logo = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     <path
@@ -56,7 +67,7 @@ const ThemePreviewPanel = ({
   const [activeTab, setActiveTab] = useQueryState("p", {
     defaultValue: "cards",
   });
-  const { handleOpenInV0 } = useDialogActions();
+  const { handleOpenInV0, handleOpenInPlayground } = useDialogActions();
 
   const {
     rootRef,
@@ -118,9 +129,24 @@ const ThemePreviewPanel = ({
 
             <div className="flex items-center gap-0.5">
               <TooltipWrapper label="Open theme in v0" asChild>
-                <Button variant="ghost" onClick={() => handleOpenInV0(themeId)} className="group px-2.5">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleOpenInV0(themeId)}
+                  className="group px-2.5"
+                >
                   <span className="flex items-center justify-center gap-1 transition-all group-hover:scale-110">
                     Open in <V0Logo className="mb-0.5 !size-5" />
+                  </span>
+                </Button>
+              </TooltipWrapper>
+              <TooltipWrapper label="Open theme in shadcn playground" asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleOpenInPlayground(themeId)}
+                  className="group px-2.5"
+                >
+                  <span className="flex items-center justify-center gap-1 transition-all group-hover:scale-110">
+                    Open in <PlaygroundLogo className="!size-5" />
                   </span>
                 </Button>
               </TooltipWrapper>
