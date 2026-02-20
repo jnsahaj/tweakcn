@@ -7,7 +7,7 @@ import { useGithubStars } from "@/hooks/use-github-stars";
 import { cn } from "@/lib/utils";
 import { formatCompactNumber } from "@/utils/format";
 import { Menu, X } from "lucide-react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -77,35 +77,37 @@ export function FigmaHeader({ isScrolled, mobileMenuOpen, setMobileMenuOpen }: F
       </div>
 
       {/* Mobile menu - simplified */}
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="bg-background/95 absolute inset-x-0 top-16 border-b backdrop-blur-lg md:hidden"
-        >
-          <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="border-border/30 border-t pt-2"
-            >
-              <Button variant="ghost" asChild className="w-full justify-start">
-                <a
-                  href="https://github.com/jnsahaj/tweakcn"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <GitHubIcon className="mr-2 size-5" />
-                  GitHub {stargazersCount > 0 && `(${formatCompactNumber(stargazersCount)})`}
-                </a>
-              </Button>
-            </motion.div>
-          </div>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-background/95 absolute inset-x-0 top-16 border-b backdrop-blur-lg md:hidden"
+          >
+            <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                className="border-border/30 border-t pt-2"
+              >
+                <Button variant="ghost" asChild className="w-full justify-start">
+                  <a
+                    href="https://github.com/jnsahaj/tweakcn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <GitHubIcon className="mr-2 size-5" />
+                    GitHub {stargazersCount > 0 && `(${formatCompactNumber(stargazersCount)})`}
+                  </a>
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
