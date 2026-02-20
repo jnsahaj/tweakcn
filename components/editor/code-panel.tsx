@@ -21,7 +21,11 @@ import {
 import { usePostHog } from "posthog-js/react";
 import { useEditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
-import { generateThemeCode, generateTailwindConfigCode } from "@/utils/theme-style-generator";
+import {
+  generateThemeCode,
+  generateTailwindConfigCode,
+  generateLayoutCode,
+} from "@/utils/theme-style-generator";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { useDialogActions } from "@/hooks/use-dialog-actions";
 import { ColorFormat } from "@/types";
@@ -53,6 +57,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
 
   const code = generateThemeCode(themeEditorState, colorFormat, tailwindVersion);
   const configCode = generateTailwindConfigCode(themeEditorState, colorFormat, tailwindVersion);
+  const layoutCode = generateLayoutCode(themeEditorState);
 
   const getRegistryCommand = (preset: string) => {
     const url = isSavedPreset
@@ -180,6 +185,8 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             setTailwindVersion(value);
             if (value === "4" && colorFormat === "hsl") {
               setColorFormat("oklch");
+            }
+            if (activeTab === "tailwind.config.ts") {
               setActiveTab("index.css");
             }
           }}
@@ -221,6 +228,9 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
                 tailwind.config.ts
               </TabsTrigger>
             )}
+            <TabsTrigger value="layout.tsx" className="h-7 px-3 text-sm font-medium">
+              layout.tsx (Next.js)
+            </TabsTrigger>
             <TabsIndicator className="bg-background rounded-sm" />
           </TabsList>
 
@@ -228,7 +238,15 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => copyToClipboard(activeTab === "index.css" ? code : configCode)}
+              onClick={() =>
+                copyToClipboard(
+                  activeTab === "index.css"
+                    ? code
+                    : activeTab === "layout.tsx"
+                      ? layoutCode
+                      : configCode
+                )
+              }
               className="h-8"
               aria-label={copied ? "Copied to clipboard" : "Copy to clipboard"}
             >
@@ -268,6 +286,18 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             </ScrollArea>
           </TabsContent>
         )}
+
+        <TabsContent value="layout.tsx" className="overflow-hidden">
+          <ScrollArea className="relative h-full">
+            <CodeBlock
+              code={layoutCode}
+              language="tsx"
+              className="h-full rounded-none border-0"
+            />
+            <ScrollBar orientation="horizontal" />
+            <ScrollBar orientation="vertical" />
+          </ScrollArea>
+        </TabsContent>
       </Tabs>
     </div>
   );
