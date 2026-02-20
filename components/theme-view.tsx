@@ -149,7 +149,7 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
 
       <DialogActionsProvider>
         <div className="-m-4 mt-6 flex h-[min(80svh,900px)] flex-col">
-          <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} themeId={theme.id} />
+          <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} themeId={theme.id} themeName={theme.name} />
         </div>
 
         <CodePanelDialog

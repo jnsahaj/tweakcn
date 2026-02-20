@@ -51,7 +51,8 @@ const ThemePreviewPanel = ({
   styles,
   currentMode,
   themeId,
-}: ThemeEditorPreviewProps & { themeId?: string }) => {
+  themeName,
+}: ThemeEditorPreviewProps & { themeId?: string; themeName?: string }) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const [activeTab, setActiveTab] = useQueryState("p", {
     defaultValue: "cards",
@@ -118,7 +119,7 @@ const ThemePreviewPanel = ({
 
             <div className="flex items-center gap-0.5">
               <TooltipWrapper label="Open theme in v0" asChild>
-                <Button variant="ghost" onClick={() => handleOpenInV0(themeId)} className="group px-2.5">
+                <Button variant="ghost" onClick={() => handleOpenInV0(themeId, themeName)} className="group px-2.5">
                   <span className="flex items-center justify-center gap-1 transition-all group-hover:scale-110">
                     Open in <V0Logo className="mb-0.5 !size-5" />
                   </span>

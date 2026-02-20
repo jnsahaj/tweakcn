@@ -60,7 +60,7 @@ interface DialogActionsContextType {
   handleCssImport: (css: string) => void;
   handleSaveClick: (options?: { shareAfterSave?: boolean; openInV0AfterSave?: boolean }) => void;
   handleShareClick: (id?: string) => Promise<void>;
-  handleOpenInV0: (id?: string) => void;
+  handleOpenInV0: (id?: string, name?: string) => void;
   saveTheme: (themeName: string) => Promise<void>;
   handleUpdateExisting: () => Promise<void>;
 }
@@ -200,14 +200,14 @@ function useDialogActionsStore(): DialogActionsContextType {
   };
 
   // Internal helper to open v0 with a theme
-  const openInV0 = (id?: string) => {
+  const openInV0 = (id?: string, name?: string) => {
     const presetId = id ?? themeState.preset;
     if (!presetId) return;
 
     const currentPreset = getPreset(presetId);
     // If an explicit ID is passed but not found in presets, treat as a saved/database theme
     const isSavedPreset = id ? true : !!currentPreset && currentPreset.source === "SAVED";
-    const themeName = currentPreset?.label || presetId;
+    const themeName = name || currentPreset?.label || presetId;
 
     posthog.capture("OPEN_IN_V0", {
       theme_id: presetId,
@@ -218,14 +218,14 @@ function useDialogActionsStore(): DialogActionsContextType {
     const themeUrl = isSavedPreset
       ? `https://tweakcn.com/r/v0/${presetId}`
       : `https://tweakcn.com/r/v0/${presetId}.json`;
-    const title = `"${themeName}" from tweakcn`;
+    const title = `"${themeName}" from tweakcn`.slice(0, 32);
     const v0Url = `https://v0.dev/chat/api/open?url=${encodeURIComponent(themeUrl)}&title=${encodeURIComponent(title)}`;
     window.open(v0Url, "_blank", "noopener,noreferrer");
   };
 
-  const handleOpenInV0 = (id?: string) => {
+  const handleOpenInV0 = (id?: string, name?: string) => {
     if (id) {
-      openInV0(id);
+      openInV0(id, name);
       return;
     }
 
