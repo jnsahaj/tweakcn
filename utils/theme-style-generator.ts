@@ -267,6 +267,12 @@ module.exports = {
 }`;
 };
 
+const indentBlock = (str: string): string =>
+  str
+    .split("\n")
+    .map((line) => (line.length > 0 ? `  ${line}` : line))
+    .join("\n");
+
 export const generateThemeCode = (
   themeEditorState: ThemeEditorState,
   colorFormat: ColorFormat = "hsl",
@@ -285,15 +291,54 @@ export const generateThemeCode = (
 
   const lightTheme = generateThemeVariables(themeStyles, "light", formatColor);
   const darkTheme = generateThemeVariables(themeStyles, "dark", formatColor);
-  const tailwindV4Theme =
-    tailwindVersion === "4" ? `\n\n${generateTailwindV4ThemeInline(themeStyles)}` : "";
 
-  const bodyLetterSpacing =
-    themeStyles["light"]["letter-spacing"] !== "0em"
-      ? "\n\nbody {\n  letter-spacing: var(--tracking-normal);\n}"
-      : "";
+  if (tailwindVersion === "4") {
+    const tailwindV4Theme = generateTailwindV4ThemeInline(themeStyles);
 
-  return `${lightTheme}\n\n${darkTheme}${tailwindV4Theme}${bodyLetterSpacing}`;
+    const bodyLetterSpacing =
+      themeStyles["light"]["letter-spacing"] !== "0em"
+        ? "\n    letter-spacing: var(--tracking-normal);"
+        : "";
+
+    return `@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+${lightTheme}
+
+${darkTheme}
+
+${tailwindV4Theme}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;${bodyLetterSpacing}
+  }
+}`;
+  }
+
+  // Tailwind v3
+  return `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+${indentBlock(lightTheme)}
+
+${indentBlock(darkTheme)}
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}`;
 };
 
 export const generateTailwindConfigCode = (
