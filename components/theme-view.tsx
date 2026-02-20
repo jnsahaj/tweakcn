@@ -156,6 +156,7 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
           open={codePanelOpen}
           onOpenChange={setCodePanelOpen}
           themeEditorState={themeState}
+          themeId={theme.id}
         />
       </DialogActionsProvider>
     </>

@@ -12,9 +12,10 @@ interface CodePanelDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   themeEditorState: ThemeEditorState;
+  themeId?: string;
 }
 
-export function CodePanelDialog({ open, onOpenChange, themeEditorState }: CodePanelDialogProps) {
+export function CodePanelDialog({ open, onOpenChange, themeEditorState, themeId }: CodePanelDialogProps) {
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent className="h-[90dvh] max-h-[90dvh] overflow-hidden shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl">
@@ -25,7 +26,7 @@ export function CodePanelDialog({ open, onOpenChange, themeEditorState }: CodePa
               View and copy the code for your theme.
             </ResponsiveDialogDescription>
           </ResponsiveDialogHeader>
-          <CodePanel themeEditorState={themeEditorState} />
+          <CodePanel themeEditorState={themeEditorState} themeId={themeId} />
         </div>
       </ResponsiveDialogContent>
     </ResponsiveDialog>

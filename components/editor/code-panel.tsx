@@ -32,9 +32,10 @@ import { ColorFormat } from "@/types";
 
 interface CodePanelProps {
   themeEditorState: ThemeEditorState;
+  themeId?: string;
 }
 
-const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
+const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState, themeId }) => {
   const [registryCopied, setRegistryCopied] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("index.css");
@@ -59,10 +60,10 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   const configCode = generateTailwindConfigCode(themeEditorState, colorFormat, tailwindVersion);
   const layoutCode = generateLayoutCode(themeEditorState);
 
-  const getRegistryCommand = (preset: string) => {
-    const url = isSavedPreset
-      ? `https://tweakcn.com/r/themes/${preset}`
-      : `https://tweakcn.com/r/themes/${preset}.json`;
+  const getRegistryCommand = (id: string, isSaved: boolean) => {
+    const url = isSaved
+      ? `https://tweakcn.com/r/themes/${id}`
+      : `https://tweakcn.com/r/themes/${id}.json`;
     switch (packageManager) {
       case "pnpm":
         return `pnpm dlx shadcn@latest add ${url}`;
@@ -75,9 +76,12 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
     }
   };
 
+  const registryId = themeId ?? preset;
+  const isRegistrySaved = !!themeId || !!isSavedPreset;
+
   const copyRegistryCommand = async () => {
     try {
-      await navigator.clipboard.writeText(getRegistryCommand(preset ?? "default"));
+      await navigator.clipboard.writeText(getRegistryCommand(registryId ?? "default", isRegistrySaved));
       setRegistryCopied(true);
       setTimeout(() => setRegistryCopied(false), 2000);
       captureCopyEvent("COPY_REGISTRY_COMMAND");
@@ -107,8 +111,9 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
   };
 
   const showRegistryCommand = useMemo(() => {
+    if (themeId) return true;
     return preset && preset !== "default" && !hasUnsavedChanges();
-  }, [preset, hasUnsavedChanges]);
+  }, [themeId, preset, hasUnsavedChanges]);
 
   const PackageManagerHeader = ({ actionButton }: { actionButton: React.ReactNode }) => (
     <div className="flex border-b">
@@ -166,7 +171,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState }) => {
             {showRegistryCommand ? (
               <ScrollArea className="w-full">
                 <div className="overflow-y-hidden pb-2 whitespace-nowrap">
-                  <code className="font-mono text-sm">{getRegistryCommand(preset as string)}</code>
+                  <code className="font-mono text-sm">{getRegistryCommand(registryId as string, isRegistrySaved)}</code>
                 </div>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
