@@ -1,0 +1,62 @@
+# TweakCN
+> TweakCN is a comprehensive theme customization platform for shadcn/ui components, offering real-time theme previews, pre-built theme presets, and advanced customization tools for modern web applications.
+
+Important notes:
+- TweakCN specializes in shadcn/ui theme customization with live preview capabilities
+- Offers both free and Pro plans for different levels of theme building functionality
+- Includes AI-powered theme generation tools and extensive typography customization options
+- Features a comprehensive theme registry with community-contributed themes
+
+## Core Tools
+- [Theme Customization Tool](https://tweakcn.com/): Main interface for customizing shadcn/ui themes with real-time previews and presets
+- [Theme Editor](https://tweakcn.com/editor/theme): Create and edit beautiful themes for shadcn/ui components with advanced customization options
+- [AI Theme Generator](https://tweakcn.com/editor/theme?tab=ai): AI-powered theme generator for automated theme creation
+- [Typography Settings](https://tweakcn.com/editor/theme?tab=typography): Advanced typography settings and custom font options
+- [AI Theme Options](https://tweakcn.com/ai): Explore various AI-powered themes for creative projects
+
+## Pre-built Themes
+### Minimalist & Clean
+- [Amber Minimal Theme](https://tweakcn.com/r/themes/amber-minimal.json): A minimalistic theme with customizable styles and colors
+- [Clean Slate Theme](https://tweakcn.com/r/themes/clean-slate.json): A clean and modern theme with customizable styles
+- [Graphite Theme](https://tweakcn.com/r/themes/graphite.json): A modern theme with customizable styles and colors
+
+### Colorful & Vibrant
+- [Bubblegum Theme](https://tweakcn.com/r/themes/bubblegum.json): A vibrant theme with customizable styles and colors
+- [Tangerine Theme](https://tweakcn.com/r/themes/tangerine.json): A stylish theme with customizable colors and fonts
+- [Soft Pop Theme](https://tweakcn.com/r/themes/soft-pop.json): A stylish theme with customizable colors and typography
+- [Northern Lights Theme](https://tweakcn.com/r/themes/northern-lights.json): Explore the Northern Lights theme with customizable styles
+
+### Premium & Unique
+- [Amethyst Haze Theme](https://tweakcn.com/r/themes/amethyst-haze.json): A stylish theme with customizable colors and fonts
+- [Perpetuity Theme](https://tweakcn.com/r/themes/perpetuity.json): A stylish theme with customizable CSS variables and styles
+- [Claymorphism Design](https://tweakcn.com/r/themes/claymorphism.json): Explore the claymorphism design style with CSS variables
+
+### Brand-Inspired
+- [Claude Theme](https://tweakcn.com/r/themes/claude.json): A comprehensive style theme with customizable CSS variables
+- [Green Claude Theme](https://tweakcn.com/r/themes/cmd92gaek000204ldcgfbdxp3): Explore the Green Claude theme with customizable styles
+- [Vercel Theme Styles](https://tweakcn.com/r/themes/vercel.json): Explore Vercel theme with customizable styles and variables
+- [Supabase Theme Registry](https://tweakcn.com/r/themes/supabase.json): A comprehensive style registry for Supabase themes
+
+## Custom Themes & Collections
+- [Customizable Web Theme](https://tweakcn.com/r/themes/cmd39aat1000e04ldahphbdyd): Explore a modern, customizable theme for web design
+- [Steen Theme Styles](https://tweakcn.com/r/themes/cmdhqo0b6000k04k05k3cf5n3): Explore the Steen theme with customizable styles and colors
+- [Care Theme Styles](https://tweakcn.com/r/themes/cmdhn8gna000q04ju2o2r27w8): Explore the Care theme with customizable styles and colors
+- [Navy Theme Styles](https://tweakcn.com/r/themes/cmdbcik7z000104ju3a5n6w3m): Explore the Navy theme with customizable styles and colors
+- [The Horta Theme](https://tweakcn.com/r/themes/cmd71bs8b000804ky58rrckjr): Explore The Horta theme with customizable styles and colors
+- [Healthy Brain Theme](https://tweakcn.com/r/themes/cmdhqo1s7000l04k0ez6w832v): Explore a stylish theme for a healthy brain
+- [Versatile Design Themes](https://tweakcn.com/r/themes/cmdcun05x000f04l2dxkdd2xa): Explore versatile design styles and customizable themes
+- [Epic Labs Themes](https://tweakcn.com/r/themes/cmdf5mjkq000e04k1cqhzgra9): Explore Epic Labs' stylish themes and design options
+- [Stylish Theme Customization](https://tweakcn.com/r/themes/cmdd2dzfk000304if4ic9hrsm): Explore a stylish theme with customizable CSS variables
+
+## Dashboard Templates
+- [Intropic MUI Dashboard](https://tweakcn.com/themes/cmcxgdxz2000a04ilfi4b36bm): Dashboard template for managing subscriptions, revenue, and exercise goals
+- [Subscription Management Dashboard](https://tweakcn.com/themes/cmd9a3wgy000204jm0av9ecot): Dashboard for managing subscriptions, revenue, and team collaboration
+- [Subscription Management Dashboard](https://tweakcn.com/themes/cmc0csctl000i04jyfdcb35yt): Manage subscriptions, payments, and team collaboration effectively
+- [App Management Dashboard](https://tweakcn.com/themes/cmdga4fyc000604l50mjpdyjv): Dashboard for managing subscriptions, revenue, and team collaboration
+- [Subscription Management Dashboard](https://tweakcn.com/themes/cmdd1w2zm000204l7at2q5te4): Manage subscriptions, payments, and team collaboration effectively
+
+## Pricing & Plans
+- [Theme Building Plans](https://tweakcn.com/pricing): Choose between free and Pro plans for theme building with different feature sets
+
+## Alternative Access Points
+- [Theme Customization Tool](https://tweakcn.com/?ref=shadcnregistry.com&utm_source=shadcnregistry.com): Access TweakCN through shadcn registry referral
