@@ -168,7 +168,7 @@ export function AuthDialog({
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-muted text-muted-foreground px-2">
+                  <span className="bg-background text-muted-foreground px-2">
                     {isSignIn ? "New to tweakcn?" : "Already have an account?"}
                   </span>
                 </div>
