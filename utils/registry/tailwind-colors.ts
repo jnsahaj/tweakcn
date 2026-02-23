@@ -2,6 +2,15 @@ import { ValidTailwindShade } from "@/types";
 
 // Complete Tailwind CSS color palette
 export const TAILWIND_PALETTE = {
+  white: {
+    DEFAULT: "oklch(1 0 0)",
+  },
+  black: {
+    DEFAULT: "oklch(0 0 0)",
+  },
+  transparent: {
+    DEFAULT: "transparent",
+  },
   red: {
     50: "oklch(0.971 0.013 17.38)",
     100: "oklch(0.936 0.032 17.717)",

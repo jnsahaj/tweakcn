@@ -117,11 +117,11 @@ export function ColorSelectorPopover({ currentColor, onChange }: ColorSelectorPo
                           >
                             <ColorSwatch
                               color={color}
-                              name={`${key}-${shade}`}
+                              name={shade === "DEFAULT" ? key : `${key}-${shade}`}
                               isSelected={isSelected}
                               size="md"
                             />
-                            <span>{`${key}-${shade}`}</span>
+                            <span>{shade === "DEFAULT" ? key : `${key}-${shade}`}</span>
                             {isSelected && <Check className="ml-auto size-4 opacity-70" />}
                           </CommandItem>
                         );
@@ -143,7 +143,7 @@ export function ColorSelectorPopover({ currentColor, onChange }: ColorSelectorPo
                         return (
                           <ColorSwatch
                             key={`${key}-${shade}`}
-                            name={`${key}-${shade}`}
+                            name={shade === "DEFAULT" ? key : `${key}-${shade}`}
                             color={color}
                             isSelected={isColorSelected(color)}
                             onClick={() => handleColorSelect(color)}
