@@ -184,17 +184,23 @@ function ColorSwatch({
     md: "size-6",
     lg: "size-8",
   };
+
+  const isTransparent = color === "transparent";
+
   return (
     <button
       aria-label={`Select color ${name}`}
       title={name}
       className={cn(
-        "group relative cursor-pointer rounded-md border bg-(--color) transition-all hover:z-10 hover:scale-110 hover:shadow-lg",
+        "group relative cursor-pointer rounded-md border transition-all hover:z-10 hover:scale-110 hover:shadow-lg",
+        isTransparent
+          ? "[background-image:linear-gradient(45deg,#ccc_25%,transparent_25%),linear-gradient(-45deg,#ccc_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#ccc_75%),linear-gradient(-45deg,transparent_75%,#ccc_75%)] [background-size:8px_8px] [background-position:0_0,0_4px,4px_-4px,-4px_0px]"
+          : "bg-(--color)",
         sizeClasses[size],
-        isSelected && "ring-2 ring-(--color)",
+        isSelected && (isTransparent ? "ring-2 ring-border" : "ring-2 ring-(--color)"),
         className
       )}
-      style={{ "--color": color } as React.CSSProperties}
+      style={!isTransparent ? ({ "--color": color } as React.CSSProperties) : undefined}
       {...props}
     >
       <div className="group-hover:ring-foreground/50 absolute inset-0 rounded-[inherit] ring-2 ring-transparent transition-all duration-200" />
