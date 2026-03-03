@@ -16,6 +16,8 @@ services:
       sh -c "npx drizzle-kit push && npm run dev"
 
   db:
+    security_opt:
+      - "no-new-privileges:true"
     image: postgres:15
     restart: always
     environment:
