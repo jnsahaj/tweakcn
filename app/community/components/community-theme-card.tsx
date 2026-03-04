@@ -9,15 +9,15 @@ import { useTheme } from "@/components/theme-provider";
 import { useToggleLike } from "@/hooks/themes";
 import { useSessionGuard } from "@/hooks/use-guards";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
-import Link from "next/link";
 import { ThemePreview } from "@/components/theme-preview";
 import type { CommunityTheme } from "@/types/community";
 
 interface CommunityThemeCardProps {
   theme: CommunityTheme;
+  onPreview: (theme: CommunityTheme) => void;
 }
 
-export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
+export function CommunityThemeCard({ theme, onPreview }: CommunityThemeCardProps) {
   const { theme: currentTheme } = useTheme();
   const toggleLike = useToggleLike();
   const { checkValidSession } = useSessionGuard();
@@ -56,7 +56,12 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
   );
 
   return (
-    <Link href={`/themes/${theme.themeId}`} className="group">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => onPreview(theme)}
+      className="group cursor-pointer"
+    >
       <div className="relative h-44 w-full overflow-hidden rounded-xl border shadow-sm transition-all duration-200 group-hover:shadow-md group-hover:border-foreground/20">
         <ThemePreview
           styles={theme.styles[currentTheme]}
@@ -124,6 +129,6 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
           {theme.likeCount > 0 && <span>{theme.likeCount}</span>}
         </button>
       </div>
-    </Link>
+    </div>
   );
 }

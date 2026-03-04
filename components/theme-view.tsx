@@ -10,7 +10,7 @@ import { useSessionGuard } from "@/hooks/use-guards";
 import { usePostLoginAction } from "@/hooks/use-post-login-action";
 import type { Theme } from "@/types/theme";
 import { cn } from "@/lib/utils";
-import { Calendar, Edit, Heart, Moon, Share, Sun } from "lucide-react";
+import { Calendar, Edit, Heart, Moon, Share2, Sun } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CodeButton } from "./editor/action-bar/components/code-button";
@@ -136,7 +136,7 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
               onClick={() => setCodePanelOpen(true)}
             />
             <Button variant="outline" size="default" onClick={handleShare}>
-              <Share className="size-4" />
+              <Share2 className="size-4" />
               Share
             </Button>
             <Button variant="outline" size="default" onClick={handleOpenInEditor}>
