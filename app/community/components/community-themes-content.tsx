@@ -104,9 +104,7 @@ export function CommunityThemesContent() {
 
   const handleTagToggle = useCallback(
     (tag: string) => {
-      setTags((prev) =>
-        prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-      );
+      setTags((prev) => (prev.includes(tag) ? [] : [tag]));
     },
     [setTags]
   );
