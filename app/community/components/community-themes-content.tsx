@@ -2,8 +2,8 @@
 
 import { useCommunityThemes } from "@/hooks/themes";
 import type {
-  CommunitySortOption,
   CommunityFilterOption,
+  CommunityTimeRange,
 } from "@/types/community";
 import {
   useQueryState,
@@ -27,19 +27,35 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Flame, Loader2, Info, SlidersHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Flame, Loader2, Info, SlidersHorizontal, ChevronDown, Check } from "lucide-react";
 import { CommunityThemeCard } from "./community-theme-card";
 import { CommunitySidebarContent } from "./community-sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 
-const sortOptions: {
-  value: CommunitySortOption;
+const popularOptions: {
+  timeRange: CommunityTimeRange;
   label: string;
 }[] = [
-    { value: "popular", label: "Popular" },
-    { value: "newest", label: "Newest" },
-    { value: "oldest", label: "Oldest" },
+    { timeRange: "all", label: "All Time" },
+    { timeRange: "monthly", label: "This Month" },
+    { timeRange: "weekly", label: "This Week" },
+  ];
+
+const otherSortOptions: {
+  sort: "newest" | "oldest";
+  label: string;
+}[] = [
+    { sort: "newest", label: "Newest" },
+    { sort: "oldest", label: "Oldest" },
   ];
 
 export function CommunityThemesContent() {
@@ -56,6 +72,12 @@ export function CommunityThemesContent() {
   const [tags, setTags] = useQueryState(
     "tags",
     parseAsArrayOf(parseAsString, ",").withDefault([])
+  );
+  const [timeRange, setTimeRange] = useQueryState(
+    "t",
+    parseAsStringLiteral(["weekly", "monthly", "all"] as const).withDefault(
+      "all"
+    )
   );
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -77,7 +99,7 @@ export function CommunityThemesContent() {
   );
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useCommunityThemes(sort, filter, tags);
+    useCommunityThemes(sort, filter, tags, sort === "popular" ? timeRange : "all");
 
   const themes = data?.pages.flatMap((page) => page.themes) ?? [];
 
@@ -164,26 +186,58 @@ export function CommunityThemesContent() {
                 </SheetContent>
               </Sheet>
 
-              <div className="flex items-center">
-                {sortOptions.map((option, i) => (
-                  <div key={option.value} className="flex items-center">
-                    {i > 0 && (
-                      <Separator orientation="vertical" className="mx-1 h-4" />
-                    )}
-                    <button
-                      onClick={() => setSort(option.value)}
-                      className={cn(
-                        "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                        sort === option.value
-                          ? "bg-foreground/10 text-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
-                      )}
-                    >
-                      {option.label}
-                    </button>
-                  </div>
-                ))}
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5"
+                  >
+                    {sort === "popular"
+                      ? `Popular / ${popularOptions.find((o) => o.timeRange === timeRange)?.label ?? "All Time"}`
+                      : sort === "newest"
+                        ? "Newest"
+                        : "Oldest"}
+                    <ChevronDown className="size-3.5 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-44">
+                  <DropdownMenuLabel>Popular</DropdownMenuLabel>
+                  {popularOptions.map((option) => {
+                    const isActive =
+                      sort === "popular" && timeRange === option.timeRange;
+                    return (
+                      <DropdownMenuItem
+                        key={option.timeRange}
+                        onClick={() => {
+                          setSort("popular");
+                          setTimeRange(option.timeRange);
+                        }}
+                        className="cursor-pointer justify-between"
+                      >
+                        {option.label}
+                        {isActive && <Check className="size-3.5" />}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                  <DropdownMenuSeparator />
+                  {otherSortOptions.map((option) => {
+                    const isActive = sort === option.sort;
+                    return (
+                      <DropdownMenuItem
+                        key={option.sort}
+                        onClick={() => {
+                          setSort(option.sort);
+                        }}
+                        className="cursor-pointer justify-between"
+                      >
+                        {option.label}
+                        {isActive && <Check className="size-3.5" />}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <Popover>

@@ -31,6 +31,7 @@ import type {
   CommunityTheme,
   CommunitySortOption,
   CommunityFilterOption,
+  CommunityTimeRange,
   CommunityThemesResponse,
 } from "@/types/community";
 import { unstable_cache, revalidateTag } from "next/cache";
@@ -83,6 +84,7 @@ const getCommunityThemesSchema = z.object({
   limit: z.number().min(1).max(50).default(COMMUNITY_THEMES_PAGE_SIZE),
   filter: z.enum(["all", "mine", "liked"]).default("all"),
   tags: z.array(z.string()).default([]),
+  timeRange: z.enum(["weekly", "monthly", "all"]).default("all"),
 });
 
 // Core query logic for community themes (no headers() access — cacheable)
@@ -92,7 +94,8 @@ async function fetchCommunityThemesCore(
   limit: number,
   filter: string,
   tags: string[],
-  userId: string | null
+  userId: string | null,
+  timeRange: string = "all"
 ): Promise<CommunityThemesResponse> {
   const fetchLimit = limit + 1;
   const conditions = [];
@@ -118,27 +121,40 @@ async function fetchCommunityThemesCore(
     );
   }
 
+  // For weekly/monthly popular sort, filter to themes published within the time range
+  if (sort === "popular" && timeRange !== "all") {
+    const intervalSql =
+      timeRange === "weekly"
+        ? sql`interval '7 days'`
+        : sql`interval '30 days'`;
+    conditions.push(
+      sql`${communityTheme.publishedAt} > now() - ${intervalSql}`
+    );
+  }
+
+  const selectFields = {
+    id: communityTheme.id,
+    themeId: communityTheme.themeId,
+    publishedAt: communityTheme.publishedAt,
+    themeName: themeTable.name,
+    themeStyles: themeTable.styles,
+    authorId: userTable.id,
+    authorName: userTable.name,
+    authorImage: userTable.image,
+    likeCount: communityTheme.likeCount,
+    ...(userId
+      ? {
+          isLikedByMe: sql<boolean>`exists(
+            select 1 from theme_like
+            where theme_like.theme_id = ${communityTheme.id}
+            and theme_like.user_id = ${userId}
+          )`.as("is_liked_by_me"),
+        }
+      : {}),
+  };
+
   const baseQuery = db
-    .select({
-      id: communityTheme.id,
-      themeId: communityTheme.themeId,
-      publishedAt: communityTheme.publishedAt,
-      themeName: themeTable.name,
-      themeStyles: themeTable.styles,
-      authorId: userTable.id,
-      authorName: userTable.name,
-      authorImage: userTable.image,
-      likeCount: communityTheme.likeCount,
-      ...(userId
-        ? {
-            isLikedByMe: sql<boolean>`exists(
-              select 1 from theme_like
-              where theme_like.theme_id = ${communityTheme.id}
-              and theme_like.user_id = ${userId}
-            )`.as("is_liked_by_me"),
-          }
-        : {}),
-    })
+    .select(selectFields)
     .from(communityTheme)
     .innerJoin(themeTable, eq(communityTheme.themeId, themeTable.id))
     .innerJoin(userTable, eq(communityTheme.userId, userTable.id));
@@ -149,10 +165,7 @@ async function fetchCommunityThemesCore(
     const offset = typeof cursor === "number" ? cursor : 0;
     results = await baseQuery
       .where(conditions.length > 0 ? and(...conditions) : undefined)
-      .orderBy(
-        desc(communityTheme.likeCount),
-        desc(communityTheme.publishedAt)
-      )
+      .orderBy(desc(communityTheme.likeCount), desc(communityTheme.publishedAt))
       .limit(fetchLimit)
       .offset(offset);
   } else if (sort === "newest") {
@@ -237,7 +250,8 @@ export async function getCommunityThemes(
   cursor?: string | number,
   limit: number = COMMUNITY_THEMES_PAGE_SIZE,
   filter: CommunityFilterOption = "all",
-  tags: string[] = []
+  tags: string[] = [],
+  timeRange: CommunityTimeRange = "all"
 ): Promise<CommunityThemesResponse> {
   try {
     const validation = getCommunityThemesSchema.safeParse({
@@ -246,6 +260,7 @@ export async function getCommunityThemes(
       limit,
       filter,
       tags,
+      timeRange,
     });
     if (!validation.success) {
       throw new ValidationError("Invalid input", validation.error.format());
@@ -258,7 +273,8 @@ export async function getCommunityThemes(
       limit,
       filter,
       tags,
-      userId
+      userId,
+      timeRange
     );
   } catch (error) {
     logError(error as Error, { action: "getCommunityThemes", sort, cursor });

@@ -19,6 +19,7 @@ export interface CommunityTheme {
 }
 
 export type CommunitySortOption = "popular" | "newest" | "oldest";
+export type CommunityTimeRange = "weekly" | "monthly" | "all";
 export type CommunityFilterOption = "all" | "mine" | "liked";
 
 export interface CommunityThemesResponse {
