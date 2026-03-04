@@ -83,13 +83,13 @@ export function CommunityThemesContent() {
     )
   );
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [previewTheme, setPreviewTheme] = useState<CommunityTheme | null>(null);
+  const [previewThemeId, setPreviewThemeId] = useState<string | null>(null);
   const { themeState, setThemeState } = useEditorStore();
 
   const handlePreview = useCallback(
     (theme: CommunityTheme) => {
       setThemeState({ ...themeState, styles: theme.styles });
-      setPreviewTheme(theme);
+      setPreviewThemeId(theme.id);
     },
     [themeState, setThemeState]
   );
@@ -115,6 +115,9 @@ export function CommunityThemesContent() {
     useCommunityThemes(sort, filter, tags, sort === "popular" ? timeRange : "all");
 
   const themes = data?.pages.flatMap((page) => page.themes) ?? [];
+  const previewTheme = previewThemeId
+    ? themes.find((t) => t.id === previewThemeId) ?? null
+    : null;
 
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -347,9 +350,9 @@ export function CommunityThemesContent() {
       <CommunityThemePreviewDialog
         theme={previewTheme}
         themes={themes}
-        open={!!previewTheme}
+        open={!!previewThemeId}
         onOpenChange={(open) => {
-          if (!open) setPreviewTheme(null);
+          if (!open) setPreviewThemeId(null);
         }}
         onNavigate={handlePreview}
       />
