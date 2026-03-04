@@ -174,8 +174,12 @@ export const communityTheme = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     publishedAt: timestamp("published_at").notNull(),
+    likeCount: integer("like_count").notNull().default(0),
   },
-  (table) => [index("community_theme_published_at_idx").on(table.publishedAt)]
+  (table) => [
+    index("community_theme_published_at_idx").on(table.publishedAt),
+    index("community_theme_like_count_idx").on(table.likeCount),
+  ]
 );
 
 export const communityThemeTag = pgTable(

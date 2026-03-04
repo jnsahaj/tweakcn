@@ -29,6 +29,13 @@
       "when": 1770585276556,
       "tag": "0003_bumpy_quasimodo",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1772635867749,
+      "tag": "0004_red_monster_badoon",
+      "breakpoints": true
     }
   ]
 }

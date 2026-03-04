@@ -48,7 +48,7 @@ export function useCommunityThemes(
     getNextPageParam: (lastPage: CommunityThemesResponse) => {
       return lastPage.nextCursor ?? undefined;
     },
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
@@ -56,7 +56,7 @@ export function useCommunityTagCounts() {
   return useQuery({
     queryKey: communityKeys.tagCounts(),
     queryFn: getCommunityTagCounts,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 15, // 15 minutes
   });
 }
 
@@ -64,7 +64,7 @@ export function useMyPublishedThemeIds() {
   return useQuery({
     queryKey: communityKeys.myPublished(),
     queryFn: getMyPublishedThemeIds,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 10, // 10 minutes
   });
 }
 
