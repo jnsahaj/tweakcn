@@ -15,7 +15,7 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
-import * as SwitchPrimitives from "@radix-ui/react-switch";
+import { Switch as SwitchPrimitives } from "radix-ui";
 import { BookLock, Gem, Loader2, LogOut, Moon, Settings, Sun } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";

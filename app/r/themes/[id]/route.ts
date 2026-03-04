@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getTheme } from "@/actions/themes";
 import { generateThemeRegistryItemFromStyles } from "@/utils/registry/themes";
-import { registryItemSchema } from "shadcn/registry";
+import { registryItemSchema } from "shadcn/schema";
 import { getBuiltInThemeStyles } from "@/utils/theme-preset-helper";
 import { ThemeStyles } from "@/types/theme";
 

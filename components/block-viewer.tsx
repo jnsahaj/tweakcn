@@ -1,7 +1,7 @@
 "use client";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import React from "react";
-import { ImperativePanelHandle } from "react-resizable-panels";
+import { PanelImperativeHandle } from "react-resizable-panels";
 
 import { ComponentErrorBoundary } from "@/components/error-boundary";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -9,7 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 
 type BlockViewerContext = {
-  resizablePanelRef: React.RefObject<ImperativePanelHandle | null>;
+  resizablePanelRef: React.RefObject<PanelImperativeHandle | null>;
   toggleValue: string;
   setToggleValue: (value: string) => void;
 };
@@ -25,7 +25,7 @@ function useBlockViewer() {
 }
 
 function BlockViewerProvider({ children }: { children: React.ReactNode }) {
-  const resizablePanelRef = React.useRef<ImperativePanelHandle>(null);
+  const resizablePanelRef = React.useRef<PanelImperativeHandle>(null);
   const [toggleValue, setToggleValue] = React.useState("100");
 
   return (
@@ -151,20 +151,20 @@ export function BlockViewerDisplay({
         className={cn("size-full min-h-0 gap-4 overflow-hidden", className)}
         {...props}
       >
-        <ResizablePanelGroup direction="horizontal" className="relative isolate z-10 size-full">
+        <ResizablePanelGroup orientation="horizontal" className="relative isolate z-10 size-full">
           <div className="bg-muted absolute inset-0 right-3 [background-image:radial-gradient(var(--muted-foreground),transparent_1px)] [background-size:1rem_1rem] opacity-60 dark:opacity-35" />
 
           <ResizablePanel
-            ref={resizablePanelRef}
+            panelRef={resizablePanelRef}
             className="bg-background relative min-w-[350px] lg:aspect-auto"
-            defaultSize={100}
-            minSize={30}
+            defaultSize="100%"
+            minSize="30%"
           >
             {children}
           </ResizablePanel>
 
           <ResizableHandle className="after:bg-border relative inset-x-0 mx-auto hidden w-3 border-l bg-transparent after:absolute after:top-1/2 after:h-8 after:w-[4px] after:-translate-y-1/2 after:rounded-full after:transition-all hover:after:h-12 active:after:h-12 lg:block" />
-          <ResizablePanel defaultSize={0} minSize={0} />
+          <ResizablePanel defaultSize="0%" minSize="0%" />
         </ResizablePanelGroup>
       </div>
     </ComponentErrorBoundary>

@@ -58,7 +58,7 @@ const CssImportDialog: React.FC<CssImportDialogProps> = ({ open, onOpenChange, o
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent className="flex max-h-[90dvh] flex-col overflow-hidden shadow-lg sm:max-h-[min(640px,80dvh)] sm:max-w-[550px] sm:pt-6">
-        <ScrollArea className="flex h-full flex-col" viewPortClassName="pb-2 *:space-y-6">
+        <ScrollArea className="flex h-full flex-col [&>[data-slot=scroll-area-viewport]]:pb-2 [&>[data-slot=scroll-area-viewport]>div]:space-y-6">
           <ResponsiveDialogHeader className="px-6">
             <ResponsiveDialogTitle>Import Custom CSS</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>
