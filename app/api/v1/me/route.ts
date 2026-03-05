@@ -1,21 +1,12 @@
 import { db } from "@/db";
 import { user as userTable } from "@/db/schema";
-import { oauthError, requireScope, resolveUserFromBearerToken } from "@/lib/oauth";
+import { oauthError, requireAuth } from "@/lib/oauth";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const tokenData = await resolveUserFromBearerToken(
-    req.headers.get("authorization")
-  );
-
-  if (!tokenData) {
-    return oauthError("invalid_token", "Invalid or expired access token", 401);
-  }
-
-  if (!requireScope(tokenData.scopes, "profile:read")) {
-    return oauthError("insufficient_scope", "Requires profile:read scope", 403);
-  }
+  const auth = await requireAuth(req, "profile:read");
+  if (auth.error) return auth.error;
 
   const [profile] = await db
     .select({
@@ -25,7 +16,7 @@ export async function GET(req: NextRequest) {
       image: userTable.image,
     })
     .from(userTable)
-    .where(eq(userTable.id, tokenData.userId))
+    .where(eq(userTable.id, auth.tokenData.userId))
     .limit(1);
 
   if (!profile) {

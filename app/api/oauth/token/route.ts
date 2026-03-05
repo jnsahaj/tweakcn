@@ -51,7 +51,15 @@ async function handleAuthorizationCode(body: FormData) {
 
   // Look up the authorization code
   const [authCode] = await db
-    .select()
+    .select({
+      id: oauthAuthorizationCode.id,
+      expiresAt: oauthAuthorizationCode.expiresAt,
+      redirectUri: oauthAuthorizationCode.redirectUri,
+      codeChallenge: oauthAuthorizationCode.codeChallenge,
+      codeChallengeMethod: oauthAuthorizationCode.codeChallengeMethod,
+      userId: oauthAuthorizationCode.userId,
+      scopes: oauthAuthorizationCode.scopes,
+    })
     .from(oauthAuthorizationCode)
     .where(
       and(
@@ -128,7 +136,12 @@ async function handleRefreshToken(body: FormData) {
   // Look up the refresh token
   const refreshTokenHash = hashToken(refreshToken);
   const [tokenRecord] = await db
-    .select()
+    .select({
+      id: oauthToken.id,
+      userId: oauthToken.userId,
+      scopes: oauthToken.scopes,
+      refreshTokenExpiresAt: oauthToken.refreshTokenExpiresAt,
+    })
     .from(oauthToken)
     .where(
       and(

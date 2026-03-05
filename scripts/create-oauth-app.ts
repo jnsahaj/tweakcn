@@ -12,8 +12,8 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { oauthApp } from "../db/schema";
+import { generateSecureToken, hashSecret } from "../lib/oauth";
 import { randomBytes } from "crypto";
-import bcrypt from "bcryptjs";
 import cuid from "cuid";
 import { config } from "dotenv";
 
@@ -50,8 +50,8 @@ async function main() {
   const db = drizzle({ client: sql });
 
   const clientId = randomBytes(16).toString("hex");
-  const clientSecret = randomBytes(32).toString("hex");
-  const clientSecretHash = await bcrypt.hash(clientSecret, 10);
+  const clientSecret = generateSecureToken();
+  const clientSecretHash = await hashSecret(clientSecret);
 
   const redirectUris = args["redirect-uris"].split(",").map((u) => u.trim());
   const scopes = args.scopes

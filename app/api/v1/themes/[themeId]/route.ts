@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { theme as themeTable } from "@/db/schema";
-import { oauthError, requireScope, resolveUserFromBearerToken } from "@/lib/oauth";
+import { oauthError, requireAuth } from "@/lib/oauth";
 import { eq, and } from "drizzle-orm";
 import { NextRequest } from "next/server";
 
@@ -8,17 +8,8 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ themeId: string }> }
 ) {
-  const tokenData = await resolveUserFromBearerToken(
-    req.headers.get("authorization")
-  );
-
-  if (!tokenData) {
-    return oauthError("invalid_token", "Invalid or expired access token", 401);
-  }
-
-  if (!requireScope(tokenData.scopes, "themes:read")) {
-    return oauthError("insufficient_scope", "Requires themes:read scope", 403);
-  }
+  const auth = await requireAuth(req, "themes:read");
+  if (auth.error) return auth.error;
 
   const { themeId } = await params;
 
@@ -32,15 +23,12 @@ export async function GET(
     })
     .from(themeTable)
     .where(
-      and(eq(themeTable.id, themeId), eq(themeTable.userId, tokenData.userId))
+      and(eq(themeTable.id, themeId), eq(themeTable.userId, auth.tokenData.userId))
     )
     .limit(1);
 
   if (!theme) {
-    return Response.json(
-      { error: "not_found", error_description: "Theme not found" },
-      { status: 404 }
-    );
+    return oauthError("not_found", "Theme not found", 404);
   }
 
   return Response.json({ data: theme });

@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
 
   // Look up OAuth app
   const [app] = await db
-    .select()
+    .select({ id: oauthApp.id, redirectUris: oauthApp.redirectUris })
     .from(oauthApp)
     .where(and(eq(oauthApp.clientId, clientId), eq(oauthApp.isActive, true)))
     .limit(1);

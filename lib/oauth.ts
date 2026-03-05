@@ -8,6 +8,7 @@ import { eq, and, isNull } from "drizzle-orm";
 import { randomBytes, createHash } from "crypto";
 import bcrypt from "bcryptjs";
 import cuid from "cuid";
+import { NextRequest } from "next/server";
 
 // --- Token generation & hashing ---
 
@@ -126,7 +127,11 @@ export async function resolveUserFromBearerToken(
   const tokenHash = hashToken(token);
 
   const [record] = await db
-    .select()
+    .select({
+      userId: oauthToken.userId,
+      scopes: oauthToken.scopes,
+      accessTokenExpiresAt: oauthToken.accessTokenExpiresAt,
+    })
     .from(oauthToken)
     .where(
       and(eq(oauthToken.accessTokenHash, tokenHash), isNull(oauthToken.revokedAt))
@@ -143,6 +148,34 @@ export function requireScope(scopes: string[], required: OAuthScope): boolean {
   return scopes.includes(required);
 }
 
+export async function requireAuth(
+  req: NextRequest,
+  scope: OAuthScope
+): Promise<
+  | { tokenData: { userId: string; scopes: string[] }; error: null }
+  | { tokenData: null; error: Response }
+> {
+  const tokenData = await resolveUserFromBearerToken(
+    req.headers.get("authorization")
+  );
+
+  if (!tokenData) {
+    return {
+      tokenData: null,
+      error: oauthError("invalid_token", "Invalid or expired access token", 401),
+    };
+  }
+
+  if (!requireScope(tokenData.scopes, scope)) {
+    return {
+      tokenData: null,
+      error: oauthError("insufficient_scope", `Requires ${scope} scope`, 403),
+    };
+  }
+
+  return { tokenData, error: null };
+}
+
 // --- Client authentication ---
 
 export async function authenticateClient(
@@ -150,7 +183,10 @@ export async function authenticateClient(
   clientSecret: string
 ) {
   const [app] = await db
-    .select()
+    .select({
+      id: oauthApp.id,
+      clientSecretHash: oauthApp.clientSecretHash,
+    })
     .from(oauthApp)
     .where(and(eq(oauthApp.clientId, clientId), eq(oauthApp.isActive, true)))
     .limit(1);

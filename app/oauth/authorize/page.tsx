@@ -17,8 +17,7 @@ export default function OAuthAuthorizePage() {
   const searchParams = useSearchParams();
   const { data: session, isPending } = authClient.useSession();
 
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isGithubLoading, setIsGithubLoading] = useState(false);
+  const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [appName, setAppName] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState(false);
@@ -58,25 +57,16 @@ export default function OAuthAuthorizePage() {
 
   const callbackURL = `/oauth/authorize?${searchParams.toString()}`;
 
-  const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
+  const handleSignIn = async (provider: "google" | "github") => {
+    setLoadingProvider(provider);
     try {
-      await authClient.signIn.social({ provider: "google", callbackURL });
+      await authClient.signIn.social({ provider, callbackURL });
     } catch {
-      setIsGoogleLoading(false);
+      setLoadingProvider(null);
     }
   };
 
-  const handleGithubSignIn = async () => {
-    setIsGithubLoading(true);
-    try {
-      await authClient.signIn.social({ provider: "github", callbackURL });
-    } catch {
-      setIsGithubLoading(false);
-    }
-  };
-
-  const isLoading = isGoogleLoading || isGithubLoading;
+  const isLoading = loadingProvider !== null;
 
   if (error) {
     return (
@@ -111,24 +101,24 @@ export default function OAuthAuthorizePage() {
         <div className="space-y-3">
           <Button
             variant="outline"
-            onClick={handleGoogleSignIn}
+            onClick={() => handleSignIn("google")}
             className="h-10 w-full justify-center gap-2"
             disabled={isLoading}
           >
             <Google className="h-4 w-4" />
             Continue with Google
-            {isGoogleLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            {loadingProvider === "google" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           </Button>
 
           <Button
             variant="outline"
-            onClick={handleGithubSignIn}
+            onClick={() => handleSignIn("github")}
             className="h-10 w-full justify-center gap-2"
             disabled={isLoading}
           >
             <Github className="h-4 w-4" />
             Continue with GitHub
-            {isGithubLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            {loadingProvider === "github" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           </Button>
         </div>
 
