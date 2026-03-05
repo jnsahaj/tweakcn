@@ -210,7 +210,7 @@ export function FontPicker({
                 value={selectedCategory}
                 onValueChange={(value) => setSelectedCategory(value as FilterFontCategory)}
               >
-                <SelectTrigger className="focus bg-input/25 h-8 px-2 text-xs outline-none">
+                <SelectTrigger size="sm" className="focus bg-input/25 px-2 text-xs outline-none">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
