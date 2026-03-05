@@ -88,9 +88,63 @@ curl -X POST https://tweakcn.com/api/oauth/revoke \
   -d token=ACCESS_OR_REFRESH_TOKEN
 ```
 
+## Using with Better Auth's genericOAuth
+
+tweakcn works as a provider with Better Auth's `genericOAuth` plugin:
+
+```typescript
+// server
+import { genericOAuth } from "better-auth/plugins";
+
+export const auth = betterAuth({
+  plugins: [
+    genericOAuth({
+      config: [
+        {
+          providerId: "tweakcn",
+          clientId: process.env.TWEAKCN_CLIENT_ID,
+          clientSecret: process.env.TWEAKCN_CLIENT_SECRET,
+          authorizationUrl: "https://tweakcn.com/api/oauth/authorize",
+          tokenUrl: "https://tweakcn.com/api/oauth/token",
+          userInfoUrl: "https://tweakcn.com/api/oauth/userinfo",
+          scopes: ["themes:read", "profile:read"],
+        },
+      ],
+    }),
+  ],
+});
+```
+
+```typescript
+// client
+import { genericOAuthClient } from "better-auth/client/plugins";
+
+const authClient = createAuthClient({
+  plugins: [genericOAuthClient()],
+});
+
+await authClient.signIn.oauth2({
+  providerId: "tweakcn",
+  callbackURL: "/dashboard",
+});
+```
+
 ## API endpoints
 
 All endpoints require `Authorization: Bearer <access_token>`.
+
+### `GET /api/oauth/userinfo`
+
+OIDC-compatible userinfo endpoint. Returns flat user fields. Requires `profile:read` scope.
+
+```json
+{
+  "sub": "user_123",
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "picture": "https://..."
+}
+```
 
 ### `GET /api/v1/me`
 
