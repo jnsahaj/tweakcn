@@ -1,9 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { authClient } from "@/lib/auth-client";
@@ -288,8 +287,8 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
             <ChevronDown className="size-4 shrink-0" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0" align="center">
-          <Command className="h-100 w-full">
+        <PopoverContent className="w-[400px] p-0" align="center">
+          <Command className="w-full">
             <div className="flex w-full items-center">
               <div className="flex w-full items-center border-b px-3 py-1">
                 <Search className="size-4 shrink-0 opacity-50" />
@@ -309,7 +308,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
               <ThemeControls />
             </div>
             <Separator />
-            <ScrollArea className="h-[500px] max-h-[70vh]">
+            <CommandList className="max-h-[500px]">
               <CommandEmpty>No themes found.</CommandEmpty>
 
               {/* Saved Themes Group */}
@@ -421,7 +420,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                   </Button>
                 </Link>
               </div>
-            </ScrollArea>
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>
