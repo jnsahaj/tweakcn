@@ -88,7 +88,7 @@ const CssImportDialog: React.FC<CssImportDialogProps> = ({ open, onOpenChange, o
   /* And more */
 }
             `}
-              className="text-foreground min-h-[300px] font-mono text-sm"
+              className="text-foreground min-h-[300px] max-h-[400px] field-sizing-fixed overflow-y-auto resize-none font-mono text-sm"
               value={cssText}
               onChange={(e) => {
                 setCssText(e.target.value);
