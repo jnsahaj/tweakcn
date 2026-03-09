@@ -198,7 +198,7 @@ const HslAdjustmentControls = () => {
         <Button
           variant="ghost"
           size="sm"
-          className="text-muted-foreground mb-4 flex w-full items-center justify-center text-xs"
+          className="text-muted-foreground mb-2 flex w-full items-center justify-center text-xs"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? "Hide" : "Show more"} presets
@@ -218,7 +218,7 @@ const HslAdjustmentControls = () => {
         min={-180}
         max={180}
         step={1}
-        label="Hue Shift"
+        label="Hue"
       />
       <SliderWithInput
         value={currentHslAdjustments.saturationScale}
@@ -227,7 +227,7 @@ const HslAdjustmentControls = () => {
         min={0}
         max={2}
         step={0.01}
-        label="Saturation Multiplier"
+        label="Saturation"
       />
       <SliderWithInput
         value={currentHslAdjustments.lightnessScale}
@@ -236,7 +236,7 @@ const HslAdjustmentControls = () => {
         min={0.2}
         max={2}
         step={0.01}
-        label="Lightness Multiplier"
+        label="Lightness"
       />
     </div>
   );

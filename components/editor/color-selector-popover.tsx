@@ -62,7 +62,7 @@ export function ColorSelectorPopover({ currentColor, onChange }: ColorSelectorPo
           <Button
             variant="ghost"
             size="sm"
-            className="group bg-input/25 size-8 rounded border shadow-none"
+            className="group bg-input/25 size-7 rounded border shadow-none"
           >
             <TailwindCSS className="text-foreground group-hover:text-accent-foreground size-4 transition-colors" />
           </Button>

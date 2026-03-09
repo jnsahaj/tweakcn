@@ -4,7 +4,7 @@ import { AlertCircle, Sparkle } from "lucide-react";
 import React from "react";
 
 import { ChatInterface } from "@/components/editor/ai/chat-interface";
-import ColorPicker from "@/components/editor/color-picker";
+import { ColorsTabContent } from "@/components/editor/colors-tab-content";
 import ControlSection from "@/components/editor/control-section";
 import { FontPicker } from "@/components/editor/font-picker";
 import HslAdjustmentControls from "@/components/editor/hsl-adjustment-controls";
@@ -103,298 +103,77 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
           </HorizontalScrollArea>
 
           <TabsContent value="colors" className="mt-1 size-full overflow-hidden">
-            <ScrollArea className="h-full px-4">
-              <ControlSection title="Primary Colors" expanded>
-                <ColorPicker
-                  name="primary"
-                  color={currentStyles.primary}
-                  onChange={(color) => updateStyle("primary", color)}
-                  label="Primary"
-                />
-                <ColorPicker
-                  name="primary-foreground"
-                  color={currentStyles["primary-foreground"]}
-                  onChange={(color) => updateStyle("primary-foreground", color)}
-                  label="Primary Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Secondary Colors" expanded>
-                <ColorPicker
-                  name="secondary"
-                  color={currentStyles.secondary}
-                  onChange={(color) => updateStyle("secondary", color)}
-                  label="Secondary"
-                />
-                <ColorPicker
-                  name="secondary-foreground"
-                  color={currentStyles["secondary-foreground"]}
-                  onChange={(color) => updateStyle("secondary-foreground", color)}
-                  label="Secondary Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Accent Colors">
-                <ColorPicker
-                  name="accent"
-                  color={currentStyles.accent}
-                  onChange={(color) => updateStyle("accent", color)}
-                  label="Accent"
-                />
-                <ColorPicker
-                  name="accent-foreground"
-                  color={currentStyles["accent-foreground"]}
-                  onChange={(color) => updateStyle("accent-foreground", color)}
-                  label="Accent Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Base Colors">
-                <ColorPicker
-                  name="background"
-                  color={currentStyles.background}
-                  onChange={(color) => updateStyle("background", color)}
-                  label="Background"
-                />
-                <ColorPicker
-                  name="foreground"
-                  color={currentStyles.foreground}
-                  onChange={(color) => updateStyle("foreground", color)}
-                  label="Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Card Colors">
-                <ColorPicker
-                  name="card"
-                  color={currentStyles.card}
-                  onChange={(color) => updateStyle("card", color)}
-                  label="Card Background"
-                />
-                <ColorPicker
-                  name="card-foreground"
-                  color={currentStyles["card-foreground"]}
-                  onChange={(color) => updateStyle("card-foreground", color)}
-                  label="Card Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Popover Colors">
-                <ColorPicker
-                  name="popover"
-                  color={currentStyles.popover}
-                  onChange={(color) => updateStyle("popover", color)}
-                  label="Popover Background"
-                />
-                <ColorPicker
-                  name="popover-foreground"
-                  color={currentStyles["popover-foreground"]}
-                  onChange={(color) => updateStyle("popover-foreground", color)}
-                  label="Popover Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Muted Colors">
-                <ColorPicker
-                  name="muted"
-                  color={currentStyles.muted}
-                  onChange={(color) => updateStyle("muted", color)}
-                  label="Muted"
-                />
-                <ColorPicker
-                  name="muted-foreground"
-                  color={currentStyles["muted-foreground"]}
-                  onChange={(color) => updateStyle("muted-foreground", color)}
-                  label="Muted Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Destructive Colors">
-                <ColorPicker
-                  name="destructive"
-                  color={currentStyles.destructive}
-                  onChange={(color) => updateStyle("destructive", color)}
-                  label="Destructive"
-                />
-                <ColorPicker
-                  name="destructive-foreground"
-                  color={currentStyles["destructive-foreground"]}
-                  onChange={(color) => updateStyle("destructive-foreground", color)}
-                  label="Destructive Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Border & Input Colors">
-                <ColorPicker
-                  name="border"
-                  color={currentStyles.border}
-                  onChange={(color) => updateStyle("border", color)}
-                  label="Border"
-                />
-                <ColorPicker
-                  name="input"
-                  color={currentStyles.input}
-                  onChange={(color) => updateStyle("input", color)}
-                  label="Input"
-                />
-                <ColorPicker
-                  name="ring"
-                  color={currentStyles.ring}
-                  onChange={(color) => updateStyle("ring", color)}
-                  label="Ring"
-                />
-              </ControlSection>
-
-              <ControlSection title="Chart Colors">
-                <ColorPicker
-                  name="chart-1"
-                  color={currentStyles["chart-1"]}
-                  onChange={(color) => updateStyle("chart-1", color)}
-                  label="Chart 1"
-                />
-                <ColorPicker
-                  name="chart-2"
-                  color={currentStyles["chart-2"]}
-                  onChange={(color) => updateStyle("chart-2", color)}
-                  label="Chart 2"
-                />
-                <ColorPicker
-                  name="chart-3"
-                  color={currentStyles["chart-3"]}
-                  onChange={(color) => updateStyle("chart-3", color)}
-                  label="Chart 3"
-                />
-                <ColorPicker
-                  name="chart-4"
-                  color={currentStyles["chart-4"]}
-                  onChange={(color) => updateStyle("chart-4", color)}
-                  label="Chart 4"
-                />
-                <ColorPicker
-                  name="chart-5"
-                  color={currentStyles["chart-5"]}
-                  onChange={(color) => updateStyle("chart-5", color)}
-                  label="Chart 5"
-                />
-              </ControlSection>
-
-              <ControlSection title="Sidebar Colors">
-                <ColorPicker
-                  name="sidebar"
-                  color={currentStyles.sidebar}
-                  onChange={(color) => updateStyle("sidebar", color)}
-                  label="Sidebar Background"
-                />
-                <ColorPicker
-                  name="sidebar-foreground"
-                  color={currentStyles["sidebar-foreground"]}
-                  onChange={(color) => updateStyle("sidebar-foreground", color)}
-                  label="Sidebar Foreground"
-                />
-                <ColorPicker
-                  name="sidebar-primary"
-                  color={currentStyles["sidebar-primary"]}
-                  onChange={(color) => updateStyle("sidebar-primary", color)}
-                  label="Sidebar Primary"
-                />
-                <ColorPicker
-                  name="sidebar-primary-foreground"
-                  color={currentStyles["sidebar-primary-foreground"]}
-                  onChange={(color) => updateStyle("sidebar-primary-foreground", color)}
-                  label="Sidebar Primary Foreground"
-                />
-                <ColorPicker
-                  name="sidebar-accent"
-                  color={currentStyles["sidebar-accent"]}
-                  onChange={(color) => updateStyle("sidebar-accent", color)}
-                  label="Sidebar Accent"
-                />
-                <ColorPicker
-                  name="sidebar-accent-foreground"
-                  color={currentStyles["sidebar-accent-foreground"]}
-                  onChange={(color) => updateStyle("sidebar-accent-foreground", color)}
-                  label="Sidebar Accent Foreground"
-                />
-                <ColorPicker
-                  name="sidebar-border"
-                  color={currentStyles["sidebar-border"]}
-                  onChange={(color) => updateStyle("sidebar-border", color)}
-                  label="Sidebar Border"
-                />
-                <ColorPicker
-                  name="sidebar-ring"
-                  color={currentStyles["sidebar-ring"]}
-                  onChange={(color) => updateStyle("sidebar-ring", color)}
-                  label="Sidebar Ring"
-                />
-              </ControlSection>
-            </ScrollArea>
+            <ColorsTabContent currentStyles={currentStyles} updateStyle={updateStyle} />
           </TabsContent>
 
           <TabsContent value="typography" className="mt-1 size-full overflow-hidden">
             <ScrollArea className="h-full px-4">
-              <div className="bg-muted/50 mb-4 flex items-start gap-2.5 rounded-md border p-3">
-                <AlertCircle className="text-muted-foreground mt-0.5 h-5 w-5 shrink-0" />
-                <div className="text-muted-foreground text-sm">
-                  <p>
-                    To use custom fonts, embed them in your project. <br />
-                    See{" "}
-                    <a
-                      href="https://tailwindcss.com/docs/font-family"
-                      target="_blank"
-                      className="hover:text-muted-foreground/90 underline underline-offset-2"
-                    >
-                      Tailwind docs
-                    </a>{" "}
-                    for details.
-                  </p>
-                </div>
+              <div className="text-muted-foreground mb-2 flex items-center gap-2 text-[11px]">
+                <AlertCircle className="size-3.5 shrink-0" />
+                <p>
+                  Custom fonts require embedding.{" "}
+                  <a
+                    href="https://tailwindcss.com/docs/font-family"
+                    target="_blank"
+                    className="text-foreground/70 hover:text-foreground underline underline-offset-2 transition-colors"
+                  >
+                    Learn more
+                  </a>
+                </p>
               </div>
 
-              <ControlSection title="Font Family" expanded className="p-3">
-                <div className="mb-4">
-                  <Label htmlFor="font-sans" className="mb-1.5 block text-xs">
-                    Sans-Serif Font
-                  </Label>
-                  <FontPicker
-                    value={getAppliedThemeFont(themeState, "font-sans") || undefined}
-                    category="sans-serif"
-                    placeholder="Choose a sans-serif font..."
-                    onSelect={(font: FontInfo) => {
-                      const fontFamily = buildFontFamily(font.family, font.category);
-                      updateStyle("font-sans", fontFamily);
-                    }}
-                  />
-                </div>
+              <ControlSection title="Font Family" expanded>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="font-sans" className="text-muted-foreground w-16 shrink-0 text-[11px] font-medium">
+                      Sans-Serif
+                    </Label>
+                    <div className="min-w-0 flex-1">
+                      <FontPicker
+                        value={getAppliedThemeFont(themeState, "font-sans") || undefined}
+                        category="sans-serif"
+                        placeholder="Sans-serif font..."
+                        onSelect={(font: FontInfo) => {
+                          const fontFamily = buildFontFamily(font.family, font.category);
+                          updateStyle("font-sans", fontFamily);
+                        }}
+                      />
+                    </div>
+                  </div>
 
-                <div className="mb-4">
-                  <Label htmlFor="font-serif" className="mb-1.5 block text-xs">
-                    Serif Font
-                  </Label>
-                  <FontPicker
-                    value={getAppliedThemeFont(themeState, "font-serif") || undefined}
-                    category="serif"
-                    placeholder="Choose a serif font..."
-                    onSelect={(font: FontInfo) => {
-                      const fontFamily = buildFontFamily(font.family, font.category);
-                      updateStyle("font-serif", fontFamily);
-                    }}
-                  />
-                </div>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="font-serif" className="text-muted-foreground w-16 shrink-0 text-[11px] font-medium">
+                      Serif
+                    </Label>
+                    <div className="min-w-0 flex-1">
+                      <FontPicker
+                        value={getAppliedThemeFont(themeState, "font-serif") || undefined}
+                        category="serif"
+                        placeholder="Serif font..."
+                        onSelect={(font: FontInfo) => {
+                          const fontFamily = buildFontFamily(font.family, font.category);
+                          updateStyle("font-serif", fontFamily);
+                        }}
+                      />
+                    </div>
+                  </div>
 
-                <div>
-                  <Label htmlFor="font-mono" className="mb-1.5 block text-xs">
-                    Monospace Font
-                  </Label>
-                  <FontPicker
-                    value={getAppliedThemeFont(themeState, "font-mono") || undefined}
-                    category="monospace"
-                    placeholder="Choose a monospace font..."
-                    onSelect={(font: FontInfo) => {
-                      const fontFamily = buildFontFamily(font.family, font.category);
-                      updateStyle("font-mono", fontFamily);
-                    }}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="font-mono" className="text-muted-foreground w-16 shrink-0 text-[11px] font-medium">
+                      Mono
+                    </Label>
+                    <div className="min-w-0 flex-1">
+                      <FontPicker
+                        value={getAppliedThemeFont(themeState, "font-mono") || undefined}
+                        category="monospace"
+                        placeholder="Monospace font..."
+                        onSelect={(font: FontInfo) => {
+                          const fontFamily = buildFontFamily(font.family, font.category);
+                          updateStyle("font-mono", fontFamily);
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </ControlSection>
 
@@ -406,7 +185,7 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
                   max={0.5}
                   step={0.025}
                   unit="em"
-                  label="Letter Spacing"
+                  label="Tracking"
                 />
               </ControlSection>
             </ScrollArea>

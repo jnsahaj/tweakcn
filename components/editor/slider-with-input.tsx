@@ -36,29 +36,13 @@ export const SliderWithInput = ({
   };
 
   return (
-    <div className="mb-3">
-      <div className="flex items-center justify-between mb-1.5">
-        <Label
-          htmlFor={`slider-${label.replace(/\s+/g, "-").toLowerCase()}`}
-          className="text-xs font-medium"
-        >
-          {label}
-        </Label>
-        <div className="flex items-center gap-1">
-          <Input
-            id={`input-${label.replace(/\s+/g, "-").toLowerCase()}`}
-            type="number"
-            value={localValue}
-            onChange={handleChange}
-            onBlur={() => setLocalValue(value.toString())}
-            min={min}
-            max={max}
-            step={step}
-            className="h-6 w-18 text-xs px-2"
-          />
-          <span className="text-xs text-muted-foreground">{unit}</span>
-        </div>
-      </div>
+    <div className="flex items-center gap-2 py-0.5">
+      <Label
+        htmlFor={`slider-${label.replace(/\s+/g, "-").toLowerCase()}`}
+        className="text-muted-foreground w-16 shrink-0 text-[11px] font-medium"
+      >
+        {label}
+      </Label>
       <Slider
         id={`slider-${label.replace(/\s+/g, "-").toLowerCase()}`}
         value={[value]}
@@ -70,8 +54,22 @@ export const SliderWithInput = ({
           setLocalValue(newValue.toString());
           onChange(newValue);
         }}
-        className="py-1"
+        className="min-w-0 flex-1"
       />
+      <div className="flex shrink-0 items-center gap-1">
+        <Input
+          id={`input-${label.replace(/\s+/g, "-").toLowerCase()}`}
+          type="number"
+          value={localValue}
+          onChange={handleChange}
+          onBlur={() => setLocalValue(value.toString())}
+          min={min}
+          max={max}
+          step={step}
+          className="h-6 w-14 px-1.5 text-xs"
+        />
+        <span className="text-muted-foreground w-5 text-[11px]">{unit}</span>
+      </div>
     </div>
   );
 };

@@ -110,9 +110,9 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
               defaultSize="30%"
               minSize="20%"
               maxSize="40%"
-              className="z-1 min-w-[max(20%,22rem)]"
+              className="z-1"
             >
-              <div className="relative isolate flex h-full flex-1 flex-col">
+              <div className="relative isolate flex h-full flex-1 flex-col overflow-hidden">
                 <ThemeControlPanel
                   styles={styles}
                   onChange={handleStyleChange}

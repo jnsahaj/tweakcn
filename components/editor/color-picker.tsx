@@ -1,4 +1,3 @@
-import { Label } from "@/components/ui/label";
 import { DEBOUNCE_DELAY } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useColorControlFocus } from "@/store/color-control-focus-store";
@@ -24,7 +23,6 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
   }, [name, registerColor, unregisterColor]);
 
   useEffect(() => {
-    // Update the text input value using ref when color prop changes
     if (textInputRef.current) {
       textInputRef.current.value = color;
     }
@@ -97,41 +95,35 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
     <div
       ref={rootRef}
       className={cn(
-        "mb-3 transition-all duration-300",
-        shouldAnimate && "bg-border/50 ring-primary -m-1.5 mb-1.5 rounded-sm p-1.5 ring-2"
+        "group hover:bg-muted/50 -mx-1 flex items-center gap-2.5 rounded-lg px-2 py-0.5 transition-all duration-200",
+        shouldAnimate && "bg-muted ring-primary ring-2"
       )}
     >
-      <div className="mb-1.5 flex items-center justify-between">
-        <Label
-          htmlFor={`color-${label.replace(/\s+/g, "-").toLowerCase()}`}
-          className="text-xs font-medium"
-        >
-          {label}
-        </Label>
+      <div
+        className="relative flex size-7 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border shadow-sm"
+        style={{ backgroundColor: color }}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <input
+          type="color"
+          id={`color-${label.replace(/\s+/g, "-").toLowerCase()}`}
+          value={color}
+          onChange={handleColorChange}
+          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+        />
       </div>
-      <div className="relative flex items-center gap-1">
-        <div
-          className="relative flex h-8 w-8 cursor-pointer items-center justify-center overflow-hidden rounded border"
-          style={{ backgroundColor: color }}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <input
-            type="color"
-            id={`color-${label.replace(/\s+/g, "-").toLowerCase()}`}
-            value={color}
-            onChange={handleColorChange}
-            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-          />
-        </div>
+
+      <span className="text-foreground min-w-0 shrink-0 text-[13px] font-medium">{label}</span>
+
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-1">
         <input
           ref={textInputRef}
           type="text"
           defaultValue={color}
           onChange={handleTextInputChange}
-          className="bg-input/25 border-border/20 h-8 flex-1 rounded border px-2 text-sm"
-          placeholder="Enter color (hex or tailwind class)"
+          className="bg-muted/50 text-muted-foreground focus:text-foreground focus:border-ring h-7 w-full min-w-0 rounded border px-2 text-xs font-mono transition-colors outline-none"
+          placeholder="hex or tailwind"
         />
-
         <ColorSelectorPopover currentColor={color} onChange={onChange} />
       </div>
     </div>
