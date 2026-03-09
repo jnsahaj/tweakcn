@@ -5,6 +5,7 @@ export type ControlSectionProps = {
   children: React.ReactNode;
   expanded?: boolean;
   className?: string;
+  headerAction?: React.ReactNode;
 };
 
 export type ColorPickerProps = {

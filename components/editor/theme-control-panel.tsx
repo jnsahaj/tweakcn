@@ -67,6 +67,19 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
     [onChange, styles, currentMode, currentStyles]
   );
 
+  const updateStyles = React.useCallback(
+    (updates: Partial<ThemeStyleProps>) => {
+      onChange({
+        ...styles,
+        [currentMode]: {
+          ...currentStyles,
+          ...updates,
+        },
+      });
+    },
+    [onChange, styles, currentMode, currentStyles]
+  );
+
   // Ensure we have valid styles for the current mode
   if (!currentStyles) {
     return null; // Or some fallback UI
@@ -103,7 +116,7 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
           </HorizontalScrollArea>
 
           <TabsContent value="colors" className="mt-1 size-full overflow-hidden">
-            <ColorsTabContent currentStyles={currentStyles} updateStyle={updateStyle} />
+            <ColorsTabContent currentStyles={currentStyles} updateStyle={updateStyle} updateStyles={updateStyles} />
           </TabsContent>
 
           <TabsContent value="typography" className="mt-1 size-full overflow-hidden">
