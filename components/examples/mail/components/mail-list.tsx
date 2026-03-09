@@ -6,17 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Mail } from "@/components/examples/mail/data";
 import { useMail } from "@/components/examples/mail/use-mail";
-import { useFullscreen } from "@/hooks/use-fullscreen";
+
 interface MailListProps {
   items: Mail[];
 }
 
 export function MailList({ items }: MailListProps) {
   const [mail, setMail] = useMail();
-  const { isFullscreen } = useFullscreen();
 
   return (
-    <ScrollArea className={cn("h-screen", isFullscreen && "h-[75%]")}>
+    <ScrollArea className="h-full">
       <div className="flex flex-col gap-2 p-4 pt-0">
         {items.map((item) => (
           <button

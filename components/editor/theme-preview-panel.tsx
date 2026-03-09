@@ -168,9 +168,9 @@ const ThemePreviewPanel = ({
             </div>
           </HorizontalScrollArea>
 
-          <section className="relative size-full overflow-hidden p-4 pt-1">
+          <section className={cn("relative size-full overflow-hidden", activeTab === "cards" ? "pb-4" : "p-4 pt-1")}>
             <div
-              className="relative isolate size-full overflow-hidden rounded-lg border"
+              className={cn("relative isolate size-full overflow-hidden", activeTab !== "cards" && "rounded-lg")}
               ref={rootRef}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
@@ -232,7 +232,7 @@ const ThemePreviewPanel = ({
               <TabsContent value="mail" className="@container m-0 size-full">
                 <ExamplesPreviewContainer className="size-full">
                   <ScrollArea className="size-full">
-                    <div className="size-full min-w-[1300px]">
+                    <div className="size-full min-w-[1300px] rounded-lg border">
                       <DemoMail />
                     </div>
                     <ScrollBar orientation="horizontal" />
