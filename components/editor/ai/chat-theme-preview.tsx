@@ -49,7 +49,7 @@ export function ChatThemePreview({
 
   if (loading) {
     return (
-      <Card className={cn("w-full max-w-[550px] overflow-hidden rounded-lg shadow-none")}>
+      <Card className={cn("w-full max-w-[550px] gap-0 overflow-hidden rounded-lg py-0 shadow-none")}>
         <div className="flex size-full h-10 items-center gap-2 p-1.5">
           <div className="bg-muted flex size-7 items-center justify-center rounded-sm">
             <Loader2 className="text-muted-foreground size-4 animate-spin" />
@@ -63,7 +63,7 @@ export function ChatThemePreview({
 
   if (status === "error")
     return (
-      <Card className={cn("max-w-[550px] overflow-hidden rounded-lg shadow-none")}>
+      <Card className={cn("max-w-[550px] gap-0 overflow-hidden rounded-lg py-0 shadow-none")}>
         <div className="flex size-full h-10 items-center gap-2 p-1.5">
           <div className="bg-destructive flex size-7 items-center justify-center rounded-sm">
             <AlertCircle className="text-destructive-foreground size-4" />
@@ -81,7 +81,7 @@ export function ChatThemePreview({
 
   if (status === "complete")
     return (
-      <Card className={cn("max-w-[550px] overflow-hidden rounded-lg shadow-none")}>
+      <Card className={cn("max-w-[550px] gap-0 overflow-hidden rounded-lg py-0 shadow-none")}>
         <div
           className={cn(
             "group/control hover:bg-background/50 flex h-10 w-full shrink-0 cursor-pointer items-center gap-2 p-1.5 pr-2 transition-colors duration-300 ease-in-out",
