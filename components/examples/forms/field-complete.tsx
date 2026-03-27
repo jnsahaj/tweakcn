@@ -48,8 +48,9 @@ export function FormsFieldComplete() {
             id="complete-email"
             type="email"
             placeholder="john@example.com"
+            aria-describedby="complete-email-help"
           />
-          <p className="text-muted-foreground text-sm">
+          <p id="complete-email-help" className="text-muted-foreground text-sm">
             Your primary contact email.
           </p>
         </div>

@@ -28,8 +28,8 @@ export function FormsFieldDefault() {
       <CardContent className="grid gap-4">
         <div className="flex flex-col gap-2">
           <Label htmlFor="default-input">Email</Label>
-          <Input id="default-input" placeholder="you@example.com" />
-          <p className="text-muted-foreground text-sm">
+          <Input id="default-input" placeholder="you@example.com" aria-describedby="default-input-help" />
+          <p id="default-input-help" className="text-muted-foreground text-sm">
             We&apos;ll never share your email.
           </p>
         </div>
