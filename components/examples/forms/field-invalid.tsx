@@ -34,8 +34,9 @@ export function FormsFieldInvalid() {
             id="invalid-input"
             defaultValue="not-an-email"
             aria-invalid="true"
+            aria-describedby="invalid-input-error"
           />
-          <p className="text-destructive text-sm">
+          <p id="invalid-input-error" className="text-destructive text-sm">
             Please enter a valid email address.
           </p>
         </div>
@@ -45,8 +46,9 @@ export function FormsFieldInvalid() {
             id="invalid-textarea"
             defaultValue="Hi"
             aria-invalid="true"
+            aria-describedby="invalid-textarea-error"
           />
-          <p className="text-destructive text-sm">
+          <p id="invalid-textarea-error" className="text-destructive text-sm">
             Bio must be at least 10 characters.
           </p>
         </div>
@@ -56,6 +58,7 @@ export function FormsFieldInvalid() {
             <SelectTrigger
               id="invalid-select"
               aria-invalid="true"
+              aria-describedby="invalid-select-error"
               className="w-full"
             >
               <SelectValue placeholder="Select a country" />
@@ -66,7 +69,7 @@ export function FormsFieldInvalid() {
               <SelectItem value="br">Brazil</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-destructive text-sm">
+          <p id="invalid-select-error" className="text-destructive text-sm">
             Please select a country.
           </p>
         </div>
