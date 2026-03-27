@@ -24,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 export function FormsFieldComplete() {
   return (
-    <Card>
+    <Card className="@container">
       <CardHeader>
         <CardTitle className="text-lg">Complete Form</CardTitle>
         <CardDescription>
