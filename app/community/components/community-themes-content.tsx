@@ -97,9 +97,12 @@ export function CommunityThemesContent() {
   const handleFilterChange = useCallback(
     (newFilter: CommunityFilterOption) => {
       setFilter(newFilter);
+      if (newFilter === "all") {
+        setTags([]);
+      }
       setSheetOpen(false);
     },
-    [setFilter]
+    [setFilter, setTags]
   );
 
   const handleTagToggle = useCallback(
