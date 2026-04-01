@@ -296,7 +296,7 @@ export function CommunityThemesContent() {
 
           {isLoading? (
             <div className="grid gap-5  grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
-              {Array.from({ length: 80 }).map((_, i) => (
+              {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
                   className="space-y-0 overflow-hidden rounded-xl border"
