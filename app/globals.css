@@ -161,9 +161,6 @@ body {
     width: 8px;
   }
 }
-*{
-  @apply scrollbar-thin
-}
 @utility scrollbar-gutter-stable {
   scrollbar-gutter: stable;
 }
