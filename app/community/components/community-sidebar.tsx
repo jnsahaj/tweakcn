@@ -45,7 +45,7 @@ export function CommunitySidebarContent({
           onClick={() => handleFilterClick(item.value)}
           className={cn(
             "flex w-full items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-            filter === item.value
+            filter === item.value && selectedTags.length === 0
               ? "bg-foreground/10 text-foreground"
               : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
           )}
