@@ -28,6 +28,7 @@ import ExamplesPreviewContainer from "./theme-preview/examples-preview-container
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 
 const DemoCards = lazy(() => import("@/components/examples/cards"));
+const DemoOpenClaw = lazy(() => import("@/components/examples/openclaw"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
 const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
@@ -93,6 +94,7 @@ const ThemePreviewPanel = ({
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="custom">Custom</TabsTriggerPill>
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
+              <TabsTriggerPill value="openclaw">OpenClaw</TabsTriggerPill>
 
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
@@ -180,6 +182,16 @@ const ThemePreviewPanel = ({
                   <ScrollArea className="size-full">
                     <DemoCards />
                   </ScrollArea>
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="openclaw" className="@container m-0 size-full">
+                <ExamplesPreviewContainer className="size-full">
+                  <div className="size-full overflow-x-auto overflow-y-hidden">
+                    <div className="h-full min-w-[1100px]">
+                      <DemoOpenClaw />
+                    </div>
+                  </div>
                 </ExamplesPreviewContainer>
               </TabsContent>
 
