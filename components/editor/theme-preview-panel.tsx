@@ -1,6 +1,5 @@
 "use client";
 
-import ShadcnBlocksLogo from "@/assets/shadcnblocks.svg";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -19,7 +18,6 @@ import { useThemeInspector } from "@/hooks/use-theme-inspector";
 import { cn } from "@/lib/utils";
 import { ThemeEditorPreviewProps } from "@/types/theme";
 import { Inspect, Maximize, Minimize, MoreVertical } from "lucide-react";
-import Link from "next/link";
 import { useQueryState } from "nuqs";
 import { lazy } from "react";
 import InspectorOverlay from "./inspector-overlay";
@@ -234,27 +232,6 @@ const ThemePreviewPanel = ({
 
               <TabsContent value="pricing" className="@container mt-0 h-full space-y-6">
                 <ExamplesPreviewContainer className="size-full">
-                  <div className="absolute top-4 right-4 z-10">
-                    <Link
-                      href="https://shadcnblocks.com?utm_source=tweakcn&utm_medium=theme-editor-preview"
-                      target="_blank"
-                    >
-                      <Button variant="outline" className="group h-12 shadow-sm">
-                        <div className="flex items-center gap-2">
-                          <ShadcnBlocksLogo
-                            className="shrink-0"
-                            style={{ width: "24px", height: "24px" }}
-                          />
-                          <div className="text-left">
-                            <div className="font-bold">Shadcnblocks.com</div>
-                            <div className="text-muted-foreground group-hover:text-accent-foreground text-xs transition-colors">
-                              600+ extra shadcn blocks
-                            </div>
-                          </div>
-                        </div>
-                      </Button>
-                    </Link>
-                  </div>
                   <ScrollArea className="size-full">
                     <DemoPricing />
                   </ScrollArea>
