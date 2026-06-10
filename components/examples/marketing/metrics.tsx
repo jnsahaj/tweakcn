@@ -1,6 +1,6 @@
 import { SectionHeading } from "@/components/examples/marketing/section-heading";
 import { Button } from "@/components/ui/button";
-import { ArrowRightIcon, ImageIcon } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
 
 const metrics = [
   { label: "12,500+", subLabel: "Projects completed", action: "Our clients" },
@@ -37,8 +37,12 @@ export function Metrics() {
         </div>
 
         {/* Right column: image */}
-        <div className="bg-muted flex aspect-square items-center justify-center overflow-hidden rounded-xl">
-          <ImageIcon className="text-muted-foreground/40 size-10" />
+        <div className="bg-muted relative aspect-square overflow-hidden rounded-xl">
+          <img
+            src="/examples/marketing/metrics.webp"
+            alt="Team at work"
+            className="size-full object-cover"
+          />
         </div>
       </div>
     </section>

@@ -44,7 +44,7 @@ const activityItems: ActivityItem[] = [
   },
   {
     type: "task-completed",
-    actor: { name: "Lucy Aniston", avatar: "/avatars/05.png" },
+    actor: { name: "Lucy Aniston", avatar: "/examples/avatars/person-5.webp" },
     action: "completed",
     target: "Sprint 12",
     badge: "All tasks completed",
@@ -52,7 +52,7 @@ const activityItems: ActivityItem[] = [
   },
   {
     type: "file-upload",
-    actor: { name: "Lucy Aniston", avatar: "/avatars/05.png" },
+    actor: { name: "Lucy Aniston", avatar: "/examples/avatars/person-5.webp" },
     action: "uploaded a file to",
     target: "Legal folder",
     badge: "Report.pdf",
@@ -60,7 +60,7 @@ const activityItems: ActivityItem[] = [
   },
   {
     type: "file-upload",
-    actor: { name: "Jackson Lee", avatar: "/avatars/02.png" },
+    actor: { name: "Jackson Lee", avatar: "/examples/avatars/person-4.webp" },
     action: "uploaded a file to",
     target: "Design assets",
     badge: "Homepage_v3.fig",
@@ -68,7 +68,7 @@ const activityItems: ActivityItem[] = [
   },
   {
     type: "event-scheduled",
-    actor: { name: "Emma Wilson", avatar: "/avatars/03.png" },
+    actor: { name: "Emma Wilson", avatar: "/examples/avatars/person-3.webp" },
     action: "scheduled a review on Friday at",
     target: "10:00 AM - 11:00 AM",
     badge: "Quarterly review",
@@ -76,7 +76,7 @@ const activityItems: ActivityItem[] = [
   },
   {
     type: "task-completed",
-    actor: { name: "William Kim", avatar: "/avatars/04.png" },
+    actor: { name: "William Kim", avatar: "/examples/avatars/person-2.webp" },
     action: "completed",
     target: "Onboarding flow",
     badge: "All tasks completed",

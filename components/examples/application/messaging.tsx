@@ -21,7 +21,7 @@ type Message = {
 
 const contact = {
   name: "Alex Rivera",
-  avatar: "/avatars/01.png",
+  avatar: "/examples/avatars/person-1.webp",
 };
 
 const initialMessages: Message[] = [

@@ -1,7 +1,6 @@
 import { SectionHeading } from "@/components/examples/marketing/section-heading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ImageIcon } from "lucide-react";
 
 const posts = [
   {
@@ -11,7 +10,8 @@ const posts = [
     readTime: "8 min read",
     date: "4 Sept, 2025",
     authorName: "Sophie Tan",
-    authorAvatar: "/avatars/01.png",
+    authorAvatar: "/examples/avatars/person-1.webp",
+    image: "/examples/marketing/blog-1.webp",
   },
   {
     title: "The End of Context Switching",
@@ -20,7 +20,8 @@ const posts = [
     readTime: "7 min read",
     date: "4 Sept, 2025",
     authorName: "Hanna Lee",
-    authorAvatar: "/avatars/03.png",
+    authorAvatar: "/examples/avatars/person-6.webp",
+    image: "/examples/marketing/blog-2.webp",
   },
   {
     title: "Why Small Teams Win Big with AI",
@@ -29,7 +30,8 @@ const posts = [
     readTime: "3 min read",
     date: "4 Sept, 2025",
     authorName: "Alex Morgan",
-    authorAvatar: "/avatars/02.png",
+    authorAvatar: "/examples/avatars/person-2.webp",
+    image: "/examples/marketing/blog-3.webp",
   },
 ];
 
@@ -69,6 +71,7 @@ function InsightCard({
   date,
   authorName,
   authorAvatar,
+  image,
 }: (typeof posts)[number]) {
   const initials = authorName
     .split(" ")
@@ -77,8 +80,12 @@ function InsightCard({
 
   return (
     <div className="group/insight-card flex flex-col">
-      <div className="bg-muted flex aspect-3/2 w-full items-center justify-center rounded-xl">
-        <ImageIcon className="text-muted-foreground/40 size-10" />
+      <div className="bg-muted relative aspect-3/2 w-full overflow-hidden rounded-xl">
+        <img
+          src={image}
+          alt={title}
+          className="size-full object-cover transition group-hover/insight-card:opacity-90"
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-3 py-3.5">

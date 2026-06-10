@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ImageIcon, PlayIcon } from "lucide-react";
+import { PlayIcon } from "lucide-react";
 
 export function Hero() {
   return (
@@ -22,8 +22,12 @@ export function Hero() {
         </div>
 
         {/* Media showcase container */}
-        <div className="bg-muted relative flex aspect-[5/3] w-full items-center justify-center overflow-hidden rounded-xl">
-          <ImageIcon className="text-muted-foreground/40 size-10" />
+        <div className="bg-muted relative aspect-[5/3] w-full overflow-hidden rounded-xl">
+          <img
+            src="/examples/marketing/hero.webp"
+            alt="Product showcase"
+            className="size-full object-cover"
+          />
 
           <button
             className="bg-background group absolute inset-0 z-10 m-auto flex size-16 items-center justify-center rounded-full p-3 shadow-2xs"

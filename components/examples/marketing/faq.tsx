@@ -50,9 +50,9 @@ const faqs: { icon: LucideIcon; title: string; description: string }[] = [
 ];
 
 const contactAvatars = [
-  { src: "/avatars/01.png", fallback: "01" },
-  { src: "/avatars/02.png", fallback: "02" },
-  { src: "/avatars/03.png", fallback: "03" },
+  { src: "/examples/avatars/cartoon-2.webp", fallback: "01" },
+  { src: "/examples/avatars/cartoon-3.webp", fallback: "02" },
+  { src: "/examples/avatars/cartoon-4.webp", fallback: "03" },
 ];
 
 export function FAQ() {

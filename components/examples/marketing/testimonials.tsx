@@ -1,11 +1,11 @@
 import { LogoMark2 } from "@/components/examples/marketing/logo-strip";
-import { ImageIcon, MessageSquareQuoteIcon, StarIcon } from "lucide-react";
+import { MessageSquareQuoteIcon, StarIcon } from "lucide-react";
 
 const testimonials = [
-  { name: "Alex Morgan", role: "Product Manager" },
-  { name: "Sophie Tan", role: "UX Researcher" },
-  { name: "Emily Carter", role: "Product Manager" },
-  { name: "Hannah Lee", role: "Software Engineer" },
+  { name: "Alex Morgan", role: "Product Manager", image: "/examples/avatars/person-2.webp" },
+  { name: "Sophie Tan", role: "UX Researcher", image: "/examples/avatars/person-1.webp" },
+  { name: "Emily Carter", role: "Product Manager", image: "/examples/avatars/person-3.webp" },
+  { name: "Hannah Lee", role: "Software Engineer", image: "/examples/avatars/person-6.webp" },
 ];
 
 export function Testimonials() {
@@ -40,7 +40,11 @@ export function Testimonials() {
               key={testimonial.name}
               className="bg-muted relative isolate flex aspect-3/4 items-end overflow-hidden rounded-lg p-3 lg:p-5"
             >
-              <ImageIcon className="text-muted-foreground/40 absolute inset-0 z-0 m-auto size-10" />
+              <img
+                src={testimonial.image}
+                alt={`${testimonial.name} - ${testimonial.role}`}
+                className="absolute inset-0 z-0 size-full object-cover object-top"
+              />
 
               <div className="bg-background/80 z-10 w-full rounded-xl border p-4 backdrop-blur-sm">
                 <div className="flex flex-col items-start gap-1">
