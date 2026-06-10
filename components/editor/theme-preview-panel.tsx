@@ -30,7 +30,6 @@ const DemoApplication = lazy(() => import("@/components/examples/application"));
 const DemoMarketing = lazy(() => import("@/components/examples/marketing"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
-const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
 const TypographyDemo = lazy(() => import("@/components/examples/typography/typography-demo"));
 const CustomDemo = lazy(() => import("@/components/examples/custom"));
 
@@ -100,7 +99,6 @@ const ThemePreviewPanel = ({
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
               </div>
               <TabsTriggerPill value="marketing">Marketing</TabsTriggerPill>
-              <TabsTriggerPill value="pricing">Pricing</TabsTriggerPill>
               <TabsTriggerPill value="colors">Color Palette</TabsTriggerPill>
 
               <DropdownMenu>
@@ -226,14 +224,6 @@ const ThemePreviewPanel = ({
                 <ExamplesPreviewContainer className="size-full">
                   <ScrollArea className="size-full">
                     <DemoMarketing />
-                  </ScrollArea>
-                </ExamplesPreviewContainer>
-              </TabsContent>
-
-              <TabsContent value="pricing" className="@container mt-0 h-full space-y-6">
-                <ExamplesPreviewContainer className="size-full">
-                  <ScrollArea className="size-full">
-                    <DemoPricing />
                   </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
