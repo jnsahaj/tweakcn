@@ -5,17 +5,20 @@ export function SectionHeading({
   title,
   body,
   align = "center",
+  className,
 }: {
   tagline?: string;
   title: string;
   body?: string;
   align?: "left" | "center";
+  className?: string;
 }) {
   return (
     <div
       className={cn(
         "flex w-full max-w-3xl flex-col gap-3",
-        align === "center" ? "mx-auto items-center text-center" : "items-start text-left"
+        align === "center" ? "mx-auto items-center text-center" : "items-start text-left",
+        className
       )}
     >
       {tagline && <span className="text-primary text-base font-medium">{tagline}</span>}
