@@ -28,6 +28,7 @@ import ExamplesPreviewContainer from "./theme-preview/examples-preview-container
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
 
 const DemoCards = lazy(() => import("@/components/examples/cards"));
+const DemoApplication = lazy(() => import("@/components/examples/application"));
 const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
 const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
@@ -96,6 +97,7 @@ const ThemePreviewPanel = ({
 
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
+                <TabsTriggerPill value="application">Application</TabsTriggerPill>
                 <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
               </div>
               <TabsTriggerPill value="pricing">Pricing</TabsTriggerPill>
@@ -119,7 +121,11 @@ const ThemePreviewPanel = ({
 
             <div className="flex items-center gap-0.5">
               <TooltipWrapper label="Open theme in v0" asChild>
-                <Button variant="ghost" onClick={() => handleOpenInV0(themeId, themeName)} className="group px-2.5">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleOpenInV0(themeId, themeName)}
+                  className="group px-2.5"
+                >
                   <span className="flex items-center justify-center gap-1 transition-all group-hover:scale-110">
                     Open in <V0Logo className="mb-0.5 !size-5" />
                   </span>
@@ -168,9 +174,17 @@ const ThemePreviewPanel = ({
             </div>
           </HorizontalScrollArea>
 
-          <section className={cn("relative size-full overflow-hidden", activeTab === "cards" ? "pb-4" : "p-4 pt-1")}>
+          <section
+            className={cn(
+              "relative size-full overflow-hidden",
+              activeTab === "cards" ? "pb-4" : "p-4 pt-1"
+            )}
+          >
             <div
-              className={cn("relative isolate size-full overflow-hidden", activeTab !== "cards" && "rounded-lg")}
+              className={cn(
+                "relative isolate size-full overflow-hidden",
+                activeTab !== "cards" && "rounded-lg"
+              )}
               ref={rootRef}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
@@ -196,6 +210,14 @@ const ThemePreviewPanel = ({
                       <DemoDashboard />
                     </div>
                     <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="application" className="@container m-0 size-full">
+                <ExamplesPreviewContainer className="size-full">
+                  <ScrollArea className="size-full">
+                    <DemoApplication />
                   </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
