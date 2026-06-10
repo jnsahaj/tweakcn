@@ -27,7 +27,9 @@ export default function ApplicationDemo() {
           <Transactions />
         </div>
         <ActivityFeed />
-        <MessagingPanel />
+        <div className="@3xl:col-span-2 @6xl:col-span-1">
+          <MessagingPanel />
+        </div>
       </div>
     </div>
   );
