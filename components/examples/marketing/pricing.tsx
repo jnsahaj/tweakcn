@@ -34,7 +34,12 @@ const plans: Plan[] = [
     title: "Starter",
     description: "For individuals who want AI assistance in their daily workflow.",
     amounts: { yearly: 10, monthly: 15 },
-    features: ["Unlimited projects", "AI-powered insights", "Seamless integrations"],
+    features: [
+      "Unlimited projects",
+      "AI-powered insights",
+      "Seamless integrations",
+      "Community support",
+    ],
     buttonVariant: "outline",
   },
   {
@@ -55,7 +60,12 @@ const plans: Plan[] = [
     title: "Enterprise",
     description: "For organizations that need security, control, and support at scale.",
     amounts: { yearly: 48, monthly: 60 },
-    features: ["Everything in Pro", "SSO & audit logs", "Dedicated success manager"],
+    features: [
+      "Everything in Pro",
+      "SSO & audit logs",
+      "Dedicated success manager",
+      "Custom integrations",
+    ],
     buttonVariant: "outline",
   },
 ];
