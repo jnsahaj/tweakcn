@@ -6,11 +6,11 @@ import { Transactions } from "@/components/examples/application/transactions";
 
 export default function ApplicationDemo() {
   return (
-    <div className="flex flex-col gap-4 p-2 **:data-[slot=card]:shadow-none md:p-4 md:pt-1">
+    <div className="flex flex-col gap-4 **:data-[slot=card]:shadow-none">
       <p className="text-muted-foreground text-xs">
         Application blocks from{" "}
         <a
-          href="https://shadcncraft.com"
+          href="https://shadcncraft.com?atp=tweakcn&src=application-preview"
           target="_blank"
           rel="noopener noreferrer"
           className="hover:text-foreground underline underline-offset-4"

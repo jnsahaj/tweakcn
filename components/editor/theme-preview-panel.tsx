@@ -96,10 +96,8 @@ const ThemePreviewPanel = ({
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
                 <TabsTriggerPill value="application">Application</TabsTriggerPill>
-                <TabsTriggerPill value="mail">Mail</TabsTriggerPill>
               </div>
               <TabsTriggerPill value="marketing">Marketing</TabsTriggerPill>
-              <TabsTriggerPill value="colors">Color Palette</TabsTriggerPill>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -110,8 +108,12 @@ const ThemePreviewPanel = ({
                   </TooltipWrapper>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleTabChange("mail")}>Mail</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleTabChange("typography")}>
                     Typography
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleTabChange("colors")}>
+                    Color Palette
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -222,7 +224,7 @@ const ThemePreviewPanel = ({
 
               <TabsContent value="marketing" className="@container m-0 size-full">
                 <ExamplesPreviewContainer className="size-full">
-                  <ScrollArea className="size-full">
+                  <ScrollArea className="size-full [&_[data-slot=scroll-area-scrollbar]]:z-[60]">
                     <DemoMarketing />
                   </ScrollArea>
                 </ExamplesPreviewContainer>
