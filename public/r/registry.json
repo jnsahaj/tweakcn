@@ -962,7 +962,7 @@
       },
       "cssVars": {
         "theme": {
-          "font-sans": "Inter, sans-serif",
+          "font-sans": "Montserrat, sans-serif",
           "font-mono": "Fira Code, monospace",
           "font-serif": "Georgia, serif",
           "radius": "0.35rem",
@@ -1061,7 +1061,7 @@
           "sidebar-accent-foreground": "oklch(0.89 0 0)",
           "sidebar-border": "oklch(0.33 0 0)",
           "sidebar-ring": "oklch(0.71 0 0)",
-          "font-sans": "Inter, sans-serif",
+          "font-sans": "Montserrat, sans-serif",
           "font-serif": "Georgia, serif",
           "font-mono": "Fira Code, monospace",
           "shadow-color": "hsl(0 0% 20% / 0.1)",
@@ -1097,9 +1097,9 @@
       },
       "cssVars": {
         "theme": {
-          "font-sans": "Source Code Pro, monospace",
-          "font-mono": "Source Code Pro, monospace",
-          "font-serif": "Source Code Pro, monospace",
+          "font-sans": "Courier New, monospace",
+          "font-mono": "Courier New, monospace",
+          "font-serif": "Courier New, monospace",
           "radius": "0.125rem",
           "tracking-tighter": "calc(var(--tracking-normal) - 0.05em)",
           "tracking-tight": "calc(var(--tracking-normal) - 0.025em)",
@@ -1196,9 +1196,9 @@
           "sidebar-accent-foreground": "oklch(0.85 0.13 195.04)",
           "sidebar-border": "oklch(0.38 0.06 216.50)",
           "sidebar-ring": "oklch(0.85 0.13 195.04)",
-          "font-sans": "Source Code Pro, monospace",
-          "font-serif": "Source Code Pro, monospace",
-          "font-mono": "Source Code Pro, monospace",
+          "font-sans": "Courier New, monospace",
+          "font-serif": "Courier New, monospace",
+          "font-mono": "Courier New, monospace",
           "shadow-color": "hsl(180 70% 60% / 0.2)",
           "shadow-opacity": "0.2",
           "shadow-blur": "2px",
