@@ -1,101 +1,97 @@
 import { AIChatDemo } from "@/components/examples/ai-chat-demo";
-import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
+
+const aiFeatures = [
+  "Theme Preview",
+  "Checkpoint Restoration",
+  "Image Extraction",
+  "Text-to-Theme",
+];
 
 export function AIGenerationCTA() {
   return (
     <section
       id="ai-generation-cta"
-      className="bg-muted/35 relative isolate w-full overflow-hidden py-24 md:py-32 lg:py-40"
+      className="w-full border-b border-[var(--hp-rule)] bg-[var(--hp-surface)]"
     >
-      <div className="relative isolate">
-        <div className="relative z-10 container mx-auto w-full px-4 md:px-6">
-          <div className="relative grid items-center gap-16 lg:grid-cols-2">
-            {/* Left Column - Text Content */}
-            <div className="mx-auto max-w-2xl lg:mx-0">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="space-y-8"
-              >
-                <div className="justify-left relative flex flex-col items-start gap-6">
-                  <h2 className="text-foreground text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-                    Generate Themes in <br />
-                    <span className="text-primary font-serif italic">Seconds</span>
-                  </h2>
-                  <p className="text-muted-foreground max-w-lg text-lg leading-relaxed md:text-xl">
-                    Just provide an image or text prompt, and our AI will create a stunning,
-                    production-ready theme for you.
-                  </p>
-                </div>
+      <div className="container mx-auto grid items-center gap-0 px-4 md:px-6 lg:grid-cols-2 lg:divide-x lg:divide-[var(--hp-rule)]">
+        {/* Left — text */}
+        <motion.div
+          initial={{ opacity: 0, x: -16 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+          className="py-16 pr-0 lg:pr-16"
+        >
+          <span className="mb-4 flex items-center gap-3">
+            <span className="h-px w-6 bg-[var(--hp-accent)]" />
+            <span className="font-mono text-xs tracking-widest uppercase text-[var(--hp-accent)]">
+              Pro Feature
+            </span>
+          </span>
 
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <Link href="/ai">
-                    <Button
-                      size="lg"
-                      className="hover:shadow-primary/25 h-14 rounded-full px-8 text-lg shadow-lg transition-all hover:scale-105"
-                    >
-                      Generate with AI <ArrowRight className="ml-2 size-5" />
-                    </Button>
-                  </Link>
-                  <Link href="/pricing">
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="border-primary/20 bg-background/50 hover:bg-accent/50 h-14 rounded-full px-8 text-lg backdrop-blur-sm"
-                    >
-                      View Pricing
-                    </Button>
-                  </Link>
-                </div>
+          <h2 className="font-mono text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
+            Generate themes
+            <br />
+            in seconds.
+          </h2>
 
-                <div className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2">
-                  {[
-                    "Theme Preview",
-                    "Checkpoint Restoration",
-                    "Image Extraction",
-                    "Text-to-Theme",
-                  ].map((feature) => (
-                    <div
-                      key={feature}
-                      className="text-muted-foreground flex items-center gap-3 text-base"
-                    >
-                      <div className="bg-primary/10 flex size-6 items-center justify-center rounded-full">
-                        <Check className="text-primary size-3.5" />
-                      </div>
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
+          <p className="mt-5 max-w-md text-sm leading-relaxed text-[var(--hp-text-secondary)] md:text-base">
+            Provide an image or text prompt and the AI returns a complete,
+            production-ready shadcn/ui theme. No manual tweaking required.
+          </p>
+
+          <ul className="mt-8 grid grid-cols-2 gap-3">
+            {aiFeatures.map((f) => (
+              <li key={f} className="flex items-center gap-2 text-sm text-[var(--hp-text-secondary)]">
+                <span className="flex size-4 shrink-0 items-center justify-center border border-[var(--hp-accent)]/40">
+                  <Check className="size-2.5 text-[var(--hp-accent)]" />
+                </span>
+                <span className="font-mono text-xs">{f}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <Link href="/ai">
+              <button className="group inline-flex h-10 items-center gap-2 bg-[var(--hp-accent)] px-6 font-mono text-sm font-semibold text-black transition-colors hover:bg-[var(--hp-accent-dim)]">
+                Generate with AI
+                <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+              </button>
+            </Link>
+            <Link href="/pricing">
+              <button className="inline-flex h-10 items-center border border-[var(--hp-rule)] px-6 font-mono text-sm text-[var(--hp-text-secondary)] transition-colors hover:border-white/30 hover:text-white">
+                View Pricing
+              </button>
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Right — demo */}
+        <motion.div
+          initial={{ opacity: 0, x: 16 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45, delay: 0.1 }}
+          className="hidden py-16 pl-0 lg:block lg:pl-16"
+        >
+          <div className="border border-[var(--hp-rule)] bg-[var(--hp-surface-raised)] overflow-hidden">
+            {/* Fake window chrome */}
+            <div className="flex items-center gap-1.5 border-b border-[var(--hp-rule)] px-4 py-3">
+              <span className="size-2.5 rounded-full bg-[var(--hp-rule)]" />
+              <span className="size-2.5 rounded-full bg-[var(--hp-rule)]" />
+              <span className="size-2.5 rounded-full bg-[var(--hp-rule)]" />
+              <span className="ml-3 font-mono text-[10px] text-[var(--hp-text-secondary)]">
+                AI Theme Generator — tweakcn Pro
+              </span>
             </div>
-
-            {/* Right Column - Visual Preview */}
-            <div className="relative hidden lg:block">
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="relative"
-              >
-                {/* Glassmorphism Container */}
-                <div className="relative z-10 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-xl dark:border-white/5 dark:bg-black/5">
-                  <div className="relative h-[550px] w-full p-6">
-                    <AIChatDemo disabled={false} className="h-full pb-0 bg-transparent" />
-                  </div>
-                </div>
-
-                {/* Background Glow */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-secondary/20 blur-3xl -z-10 rounded-full opacity-50" />
-              </motion.div>
+            <div className="h-[480px] p-4">
+              <AIChatDemo disabled={false} className="h-full pb-0 bg-transparent" />
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

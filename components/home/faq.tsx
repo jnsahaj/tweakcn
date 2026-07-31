@@ -10,68 +10,94 @@ const faqs = [
   {
     question: "What is tweakcn?",
     answer:
-      "tweakcn is a visual theme editor for shadcn/ui components. It allows you to customize your theme visually and export the code for your project.",
+      "tweakcn is a visual theme editor for shadcn/ui. Customize your design tokens interactively, preview changes on real components, and export clean CSS for your project.",
   },
   {
     question: "Is it free?",
     answer:
-      "Yes, the core features are completely free. We offer a Pro plan for advanced AI features.",
+      "Yes. The core editor, presets, and code export are completely free with no account required. A Pro plan unlocks AI generation features.",
   },
   {
     question: "What's included in Pro?",
     answer:
-      "Pro includes AI theme generation from images and prompts, as well as cloud saving for multiple themes.",
+      "Pro includes AI theme generation from images and prompts, checkpoint restoration, and cloud saving for multiple themes.",
   },
   {
-    question: "Supports Tailwind v4?",
+    question: "Does it support Tailwind v4?",
     answer:
-      "Yes! We support both Tailwind CSS v3 and v4, along with OKLCH, HSL, and other color formats.",
+      "Yes. tweakcn exports to both Tailwind CSS v3 and v4, with support for OKLCH, HSL, and other color formats.",
   },
   {
-    question: "Can I use with existing projects?",
+    question: "Can I use it with an existing project?",
     answer:
-      "Absolutely. Just copy the generated configuration into your existing project.",
+      "Absolutely. Generate your theme, copy the CSS variables, and paste them into your existing project globals. No migration needed.",
   },
 ];
 
 export function FAQ() {
   return (
-    <section id="faq" className="w-full py-24 md:py-32">
+    <section id="faq" className="w-full border-b border-[var(--hp-rule)]">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid lg:grid-cols-12 gap-12">
+        {/* Header row */}
+        <div className="border-b border-[var(--hp-rule)] py-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
+          >
+            <span className="mb-3 flex items-center gap-3">
+              <span className="h-px w-6 bg-[var(--hp-accent)]" />
+              <span className="font-mono text-xs tracking-widest uppercase text-[var(--hp-accent)]">
+                FAQ
+              </span>
+            </span>
+            <h2 className="font-mono text-3xl font-bold tracking-tight text-white md:text-4xl">
+              Questions &amp; answers.
+            </h2>
+          </motion.div>
+        </div>
+
+        {/* Content */}
+        <div className="grid gap-12 py-12 lg:grid-cols-12">
+          {/* Side note */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
             className="lg:col-span-4"
           >
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
-              FAQ
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              Got questions? We&apos;ve got answers. If you can&apos;t find what you&apos;re looking for, feel free to reach out.
+            <p className="text-sm leading-relaxed text-[var(--hp-text-secondary)]">
+              {"Can't"} find what {"you're"} looking for? Reach out directly.
             </p>
-            <div className="text-sm text-muted-foreground">
-              <p>Contact us at <a href="#" className="text-primary underline">sahaj@tweakcn.com</a></p>
-            </div>
+            <a
+              href="mailto:sahaj@tweakcn.com"
+              className="mt-3 inline-block font-mono text-xs text-[var(--hp-accent)] hover:underline"
+            >
+              sahaj@tweakcn.com
+            </a>
           </motion.div>
 
+          {/* Accordion */}
           <div className="lg:col-span-8">
-            <Accordion type="single" collapsible className="w-full space-y-4">
+            <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 6 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: i * 0.05 }}
                 >
-                  <AccordionItem value={`item-${i}`} className="border rounded-lg px-4 bg-muted/20">
-                    <AccordionTrigger className="hover:no-underline text-lg font-medium py-6">
+                  <AccordionItem
+                    value={`item-${i}`}
+                    className="border-b border-[var(--hp-rule)] last:border-0"
+                  >
+                    <AccordionTrigger className="py-5 font-mono text-sm font-semibold text-white hover:text-[var(--hp-accent)] hover:no-underline transition-colors [&[data-state=open]]:text-[var(--hp-accent)]">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground pb-6 text-base">
+                    <AccordionContent className="pb-5 text-sm leading-relaxed text-[var(--hp-text-secondary)]">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>

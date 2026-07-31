@@ -1,7 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useEditorStore } from "@/store/editor-store";
@@ -15,119 +14,110 @@ export function Hero() {
   const mode = themeState.currentMode;
 
   return (
-    <section className="relative isolate w-full overflow-hidden bg-background pt-20 pb-32 md:pt-32 md:pb-40">
-      {/* Background Effects */}
-      <div className="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+    <section className="relative w-full overflow-hidden border-b border-[var(--hp-rule)]">
+      {/* Fine dot grid */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, oklch(0.28 0 0) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          maskImage: "radial-gradient(ellipse 80% 60% at 50% 0%, black 50%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 80% 60% at 50% 0%, black 50%, transparent 100%)",
+        }}
+      />
 
+      {/* Hero content */}
+      <div className="container mx-auto px-4 md:px-6 pt-24 pb-0 md:pt-32">
+        {/* Eyebrow label */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-6 flex items-center gap-3"
+        >
+          <span className="h-px w-8 bg-[var(--hp-accent)]" />
+          <span className="font-mono text-xs tracking-widest uppercase text-[var(--hp-accent)]">
+            Theme Editor for shadcn/ui
+          </span>
+        </motion.div>
 
-      <div className="container relative z-20 mx-auto px-4 md:px-6">
-        <div className="flex flex-col items-center text-center">
-
-          {/* Headline */}
+        {/* Headline */}
+        <div className="max-w-5xl">
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="max-w-4xl bg-gradient-to-br from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-5xl font-bold tracking-tight text-transparent sm:text-6xl md:text-7xl lg:text-8xl"
+            transition={{ duration: 0.5, delay: 0.08 }}
+            className="font-mono text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl"
           >
-            Design Your <span className="font-serif italic font-light text-foreground">Perfect</span>{" "}
-            <span className="relative inline-block">
-              <span className="absolute -inset-1 rounded-lg bg-primary/10 blur-xl opacity-50"></span>
-              <span className="relative text-primary inline-flex items-center gap-2">
-                shadcn/ui
-              </span>
-            </span>{" "}
-            Theme
+            Design your
+            <br />
+            <span className="text-[var(--hp-accent)]">perfect</span> theme.
           </motion.h1>
 
-          {/* Description */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed"
+            transition={{ duration: 0.5, delay: 0.18 }}
+            className="mt-6 max-w-xl text-base leading-relaxed text-[var(--hp-text-secondary)] md:text-lg"
           >
-            Customize colors, typography, and layouts with a real-time preview. No signup
-            required.
+            Customize colors, typography, and radius with a live preview.
+            Export Tailwind v3 or v4 CSS. No sign-up required.
           </motion.p>
 
-          {/* Buttons */}
+          {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+            transition={{ duration: 0.45, delay: 0.26 }}
+            className="mt-10 flex flex-wrap items-center gap-4"
           >
             <Link href="/editor/theme">
-              <Button
-                size="lg"
-                className="h-12 min-w-[180px] rounded-full px-8 text-base shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:shadow-primary/40"
-              >
+              <button className="group inline-flex h-11 items-center gap-2 bg-[var(--hp-accent)] px-6 font-mono text-sm font-semibold text-black transition-colors hover:bg-[var(--hp-accent-dim)]">
                 Start Customizing
-                <ArrowRight className="ml-2 size-4" />
-              </Button>
+                <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+              </button>
             </Link>
-            <a href="/community">
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-12 min-w-[180px] rounded-full border-primary/20 bg-background/50 px-8 text-base backdrop-blur-sm transition-all hover:bg-accent/50 hover:border-primary/50"
-              >
+            <Link href="/community">
+              <button className="inline-flex h-11 items-center gap-2 border border-[var(--hp-rule)] px-6 font-mono text-sm text-[var(--hp-text-secondary)] transition-colors hover:border-white/30 hover:text-white">
                 Browse Community
-              </Button>
-            </a>
+              </button>
+            </Link>
           </motion.div>
 
-          {/* Features List */}
+          {/* Social proof strip */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.38 }}
+            className="mt-10 flex flex-wrap items-center gap-6 border-t border-[var(--hp-rule)] pt-8 text-xs font-mono text-[var(--hp-text-secondary)]"
           >
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-primary/10 p-1">
-                <Check className="size-3 text-primary" />
-              </div>
-              <span>Real-time Preview</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-primary/10 p-1">
-                <Check className="size-3 text-primary" />
-              </div>
-              <span>Export to Tailwind</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-primary/10 p-1">
-                <Check className="size-3 text-primary" />
-              </div>
-              <span>Beautiful Presets</span>
-            </div>
+            <span>Free core · Open source</span>
+            <span className="h-3 w-px bg-[var(--hp-rule)]" />
+            <span>Tailwind v3 &amp; v4</span>
+            <span className="h-3 w-px bg-[var(--hp-rule)]" />
+            <span>OKLCH &amp; HSL</span>
+            <span className="h-3 w-px bg-[var(--hp-rule)]" />
+            <span>AI generation</span>
           </motion.div>
-
-          {/* Carousel */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className="mt-20 w-full max-w-[100vw] overflow-hidden"
-          >
-            <div className="relative py-1">
-              {/* Gradient Masks for Carousel */}
-              <div className="absolute left-0 top-0 bottom-0 z-10 w-20 md:w-40 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
-              <div className="absolute right-0 top-0 bottom-0 z-10 w-20 md:w-40 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
-
-              <ThemePresetButtons
-                presetNames={presetNames}
-                mode={mode}
-                themeState={themeState}
-                applyThemePreset={applyThemePreset}
-              />
-            </div>
-          </motion.div>
-
         </div>
       </div>
+
+      {/* Preset showcase ticker */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="mt-16 w-full border-t border-[var(--hp-rule)] bg-[var(--hp-surface)] py-6"
+      >
+        <ThemePresetButtons
+          presetNames={presetNames}
+          mode={mode}
+          themeState={themeState}
+          applyThemePreset={applyThemePreset}
+        />
+      </motion.div>
     </section>
   );
 }

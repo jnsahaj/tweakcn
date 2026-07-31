@@ -3,112 +3,125 @@ import { motion } from "motion/react";
 
 const features = [
   {
+    index: "01",
     title: "Color Control",
     description:
-      "Customize background, text, and border colors with an intuitive color picker interface.",
-    icon: <Paintbrush className="size-6" />,
+      "Customize background, text, and border colors with an intuitive color picker and live OKLCH preview.",
+    icon: <Paintbrush className="size-4" />,
   },
   {
+    index: "02",
     title: "Typography Settings",
-    description: "Fine-tune font size, weight, and text transform to create the perfect look.",
-    icon: <FileCode className="size-6" />,
+    description: "Fine-tune font family, size, weight, and letter spacing across every scale.",
+    icon: <FileCode className="size-4" />,
   },
   {
+    index: "03",
     title: "Tailwind v4 & v3",
     description:
-      "Seamlessly switch between Tailwind versions with support for OKLCH & HSL formats.",
-    icon: <Code className="size-6" />,
+      "Seamlessly export to either Tailwind version with full OKLCH and HSL format support.",
+    icon: <Code className="size-4" />,
   },
   {
+    index: "04",
     title: "Detailed Properties",
     description:
-      "Fine-tune every aspect including radius, spacing, shadows, and other properties.",
-    icon: <Layers className="size-6" />,
+      "Adjust radius, spacing, shadows, and every CSS custom property shadcn/ui exposes.",
+    icon: <Layers className="size-4" />,
   },
   {
+    index: "05",
     title: "Contrast Checker",
     description:
-      "Ensure designs meet accessibility standards with built-in contrast ratio checking.",
-    icon: <Contrast className="size-6" />,
+      "Ensure your palette meets WCAG accessibility standards with built-in contrast ratio analysis.",
+    icon: <Contrast className="size-4" />,
   },
   {
+    index: "06",
     title: "AI Theme Generation",
     description:
-      "Create stunning, ready-to-use themes in seconds. Just provide an image or prompt.",
-    icon: <BrainCircuit className="size-6" />,
+      "Provide an image or text prompt and the AI returns a production-ready shadcn/ui theme instantly.",
+    icon: <BrainCircuit className="size-4" />,
     pro: true,
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
-
 export function Features() {
   return (
-    <section id="features" className="relative isolate w-full py-20 md:py-32">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(from_var(--primary)_r_g_b_/_0.03),transparent_70%)]"></div>
-
+    <section id="features" className="w-full border-b border-[var(--hp-rule)] bg-[var(--hp-surface)]">
+      {/* Section header */}
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid gap-12 lg:grid-cols-[1fr_2fr]">
+        <div className="flex items-end justify-between border-b border-[var(--hp-rule)] py-10">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col justify-center space-y-4"
+            transition={{ duration: 0.4 }}
           >
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl text-left">
-              Powerful Tools <br className="hidden lg:block" />
-              <span className="text-muted-foreground">For Total Control</span>
+            <span className="mb-3 flex items-center gap-3">
+              <span className="h-px w-6 bg-[var(--hp-accent)]" />
+              <span className="font-mono text-xs tracking-widest uppercase text-[var(--hp-accent)]">
+                Capabilities
+              </span>
+            </span>
+            <h2 className="font-mono text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
+              Total control.
             </h2>
-            <p className="text-muted-foreground max-w-[400px] text-lg">
-              Everything you need to customize your shadcn/ui components and make them unique.
-            </p>
           </motion.div>
-
-          <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="show"
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="grid gap-6 sm:grid-cols-2"
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="hidden max-w-xs text-right text-sm leading-relaxed text-[var(--hp-text-secondary)] md:block"
           >
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                variants={item}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              >
-                <div className="group h-full rounded-2xl border border-border/40 bg-card/50 p-6 transition-all hover:bg-card hover:shadow-lg">
-                    <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                      {feature.icon}
-                    </div>
-                    <h3 className="mb-2 flex items-center gap-2 text-xl font-bold">
-                      {feature.title}
-                      {feature.pro && (
-                        <span className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold">
-                          <Gem className="size-3" />
-                          Pro
-                        </span>
-                      )}
-                    </h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+            Every knob shadcn/ui exposes, surfaced in one editor with live preview and instant export.
+          </motion.p>
+        </div>
+      </div>
+
+      {/* Feature grid — editorial table layout */}
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="grid divide-y divide-[var(--hp-rule)] sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-3">
+          {features.map((feature, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.35, delay: i * 0.07 }}
+              className="group relative border-b border-[var(--hp-rule)] p-8 transition-colors hover:bg-[var(--hp-surface)] sm:border-r last:border-b-0 sm:last:border-b"
+            >
+              {/* Index + icon row */}
+              <div className="mb-6 flex items-center justify-between">
+                <span className="font-mono text-xs text-[var(--hp-text-secondary)]">
+                  {feature.index}
+                </span>
+                <span className="flex size-8 items-center justify-center border border-[var(--hp-rule)] text-[var(--hp-text-secondary)] transition-colors group-hover:border-[var(--hp-accent)]/40 group-hover:text-[var(--hp-accent)]">
+                  {feature.icon}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3 className="mb-2 flex items-center gap-2 font-mono text-base font-semibold text-white">
+                {feature.title}
+                {feature.pro && (
+                  <span className="inline-flex items-center gap-1 border border-[var(--hp-accent)]/40 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-[var(--hp-accent)]">
+                    <Gem className="size-2.5" />
+                    PRO
+                  </span>
+                )}
+              </h3>
+
+              {/* Description */}
+              <p className="text-sm leading-relaxed text-[var(--hp-text-secondary)]">
+                {feature.description}
+              </p>
+
+              {/* Hover accent bar */}
+              <div className="absolute bottom-0 left-0 h-px w-0 bg-[var(--hp-accent)] transition-all duration-300 group-hover:w-full" />
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

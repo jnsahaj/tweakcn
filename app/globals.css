@@ -169,3 +169,43 @@ body {
 @utility scrollbar-gutter-both {
   scrollbar-gutter: stable both-edges;
 }
+
+/* ─────────────────────────────────────────────
+   Homepage editorial design tokens
+   These supplement the editor theme tokens and
+   are used exclusively on the landing page.
+───────────────────────────────────────────── */
+:root {
+  /* Homepage accent — vivid amber */
+  --hp-accent: oklch(0.78 0.18 60);
+  --hp-accent-dim: oklch(0.60 0.14 60);
+  --hp-rule: oklch(0.22 0 0);
+  --hp-surface: oklch(0.07 0 0);
+  --hp-surface-raised: oklch(0.10 0 0);
+  --hp-text-secondary: oklch(0.52 0 0);
+}
+
+/* Ticker/marquee pause on hover */
+.hp-ticker-row:hover .hp-ticker-inner {
+  animation-play-state: paused;
+}
+
+@keyframes hp-ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes hp-ticker-rev {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.hp-ticker-inner {
+  display: flex;
+  width: max-content;
+  animation: hp-ticker 40s linear infinite;
+}
+
+.hp-ticker-inner--rev {
+  animation: hp-ticker-rev 38s linear infinite;
+}

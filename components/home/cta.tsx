@@ -1,80 +1,54 @@
-import { Button } from "@/components/ui/button";
-import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
+import { motion } from "motion/react";
 import Link from "next/link";
 
 export function CTA() {
   return (
-    <section className="w-full py-20 md:py-32 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground relative overflow-hidden isolate">
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(from_var(--primary-foreground)_r_g_b_/_0.075)_1px,transparent_1px),linear-gradient(to_bottom,rgba(from_var(--primary-foreground)_r_g_b_/_0.075)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
-      <div className="absolute -top-24 -left-24 w-64 h-64 bg-foreground/15 rounded-full blur-3xl animate-pulse"></div>
-      <div
-        className="absolute -bottom-24 -right-24 w-64 h-64 bg-foreground/15 rounded-full blur-3xl animate-pulse"
-        style={{ animationDelay: "1.5s" }}
-      ></div>
-
-      <div className="container mx-auto px-4 md:px-6 relative">
+    <section className="w-full border-b border-[var(--hp-rule)] bg-[var(--hp-surface)]">
+      <div className="container mx-auto px-4 md:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center justify-center space-y-6 text-center"
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+          className="flex flex-col items-start gap-8 py-20 md:flex-row md:items-end md:justify-between md:py-24"
         >
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight"
-          >
-            Ready to Make Your Components Stand Out?
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mx-auto max-w-[700px] text-primary-foreground/80 md:text-xl"
-          >
-            Start customizing your shadcn/ui components today and create a unique
-            look for your application.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-col sm:flex-row gap-4 mt-4"
-          >
+          {/* Left */}
+          <div className="max-w-xl">
+            <span className="mb-4 flex items-center gap-3">
+              <span className="h-px w-6 bg-[var(--hp-accent)]" />
+              <span className="font-mono text-xs tracking-widest uppercase text-[var(--hp-accent)]">
+                Get started
+              </span>
+            </span>
+            <h2 className="font-mono text-3xl font-bold leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+              Make your components
+              <br />
+              <span className="text-[var(--hp-accent)]">stand out.</span>
+            </h2>
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-[var(--hp-text-secondary)] md:text-base">
+              Open the editor — no sign-up, no friction. Free forever for core features.
+            </p>
+          </div>
+
+          {/* Right — actions */}
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center md:flex-col md:items-end lg:flex-row">
             <Link href="/editor/theme">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="rounded-full h-12 px-8 text-base cursor-pointer shadow-md hover:shadow-lg transition-all duration-300 hover:translate-y-[-2px]"
-              >
-                Try It Now
-                <ArrowRight className="ml-2 size-4" />
-              </Button>
+              <button className="group inline-flex h-12 items-center gap-2 bg-[var(--hp-accent)] px-8 font-mono text-sm font-semibold text-black transition-colors hover:bg-[var(--hp-accent-dim)]">
+                Open Editor
+                <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+              </button>
             </Link>
-            <Link href="https://github.com/jnsahaj/tweakcn">
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-full bg-transparent h-12 px-8 text-base transition-all duration-300 hover:translate-y-[-2px]"
-              >
+            <a
+              href="https://github.com/jnsahaj/tweakcn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <button className="inline-flex h-12 items-center border border-[var(--hp-rule)] px-8 font-mono text-sm text-[var(--hp-text-secondary)] transition-colors hover:border-white/30 hover:text-white">
                 View on GitHub
-              </Button>
-            </Link>
-          </motion.div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-sm text-primary-foreground/80 mt-4"
-          >
-            No login required. Free to use. Open source.
-          </motion.p>
+              </button>
+            </a>
+          </div>
         </motion.div>
       </div>
     </section>
