@@ -18,60 +18,71 @@ const faqs = [
       "Yes, the core features are completely free. We offer a Pro plan for advanced AI features.",
   },
   {
-    question: "What's included in Pro?",
+    question: "What is included in Pro?",
     answer:
       "Pro includes AI theme generation from images and prompts, as well as cloud saving for multiple themes.",
   },
   {
-    question: "Supports Tailwind v4?",
+    question: "Does it support Tailwind v4?",
     answer:
-      "Yes! We support both Tailwind CSS v3 and v4, along with OKLCH, HSL, and other color formats.",
+      "Yes. We support both Tailwind CSS v3 and v4, along with OKLCH, HSL, and other color formats.",
   },
   {
-    question: "Can I use with existing projects?",
+    question: "Can I use it with existing projects?",
     answer:
-      "Absolutely. Just copy the generated configuration into your existing project.",
+      "Absolutely. Just copy the generated configuration into your existing project. No migration needed.",
   },
 ];
 
 export function FAQ() {
   return (
-    <section id="faq" className="w-full py-24 md:py-32">
+    <section id="faq" className="w-full border-b border-border/60">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid lg:grid-cols-12 gap-12">
+        <div className="grid lg:grid-cols-[1fr_2fr] gap-0">
+
+          {/* Left label column */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-4"
+            transition={{ duration: 0.4 }}
+            className="py-16 md:py-24 border-r-0 lg:border-r border-border/60 pr-0 lg:pr-16 flex flex-col justify-between"
           >
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
-              FAQ
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              Got questions? We&apos;ve got answers. If you can&apos;t find what you&apos;re looking for, feel free to reach out.
-            </p>
-            <div className="text-sm text-muted-foreground">
-              <p>Contact us at <a href="#" className="text-primary underline">sahaj@tweakcn.com</a></p>
+            <div>
+              <p className="label-eyebrow mb-4">FAQ</p>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1]">
+                Common
+                <br />
+                <em className="not-italic font-light font-serif text-muted-foreground">questions.</em>
+              </h2>
+              <p className="mt-6 text-sm text-muted-foreground leading-relaxed max-w-[240px]">
+                {"Can't"} find your answer? Reach out at{" "}
+                <a href="mailto:sahaj@tweakcn.com" className="text-foreground underline underline-offset-4 hover:text-primary transition-colors">
+                  sahaj@tweakcn.com
+                </a>
+              </p>
             </div>
           </motion.div>
 
-          <div className="lg:col-span-8">
-            <Accordion type="single" collapsible className="w-full space-y-4">
+          {/* Right: accordion */}
+          <div className="py-16 md:py-24 pl-0 lg:pl-16">
+            <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 6 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: i * 0.05 }}
                 >
-                  <AccordionItem value={`item-${i}`} className="border rounded-lg px-4 bg-muted/20">
-                    <AccordionTrigger className="hover:no-underline text-lg font-medium py-6">
+                  <AccordionItem
+                    value={`item-${i}`}
+                    className="border-b border-border/60 last:border-0"
+                  >
+                    <AccordionTrigger className="hover:no-underline text-base font-medium py-5 text-left pr-4">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground pb-6 text-base">
+                    <AccordionContent className="text-muted-foreground pb-5 text-sm leading-relaxed">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>

@@ -27,7 +27,7 @@ crazy how easy this shit is now`,
 ▪️ full stack Next.js
 ▪️ how to build a focused product people love
 
-… look no further than tweakcn[0] by 
+… look no further than tweakcn by 
 @iamsahaj_xyz. It's an open-source @shadcn theme builder.
 `,
     href: "https://x.com/rauchg/status/1938745259204493738",
@@ -68,7 +68,7 @@ Grab  the CSS → drop into Bolt = cohesive design`,
   },
   {
     image: "https://pbs.twimg.com/profile_images/1937802227672109056/JHRKKC9G_400x400.jpg",
-    name: "Tanpreet Jolly 🌂",
+    name: "Tanpreet Jolly",
     tag: "JollyTanpreet",
     description:
       "I just tried tweakcn and seems like you nailed it. This is what I have been looking for, awesome job!",
@@ -90,7 +90,7 @@ Grab  the CSS → drop into Bolt = cohesive design`,
   },
   {
     image: "https://pbs.twimg.com/profile_images/1903255064149442560/TYvinGL9_400x400.jpg",
-    name: "Matt Silverlock 🐀",
+    name: "Matt Silverlock",
     tag: "elithrar",
     description: `used this shadcn theme editor to make it a little less plain: tweakcn.com`,
     href: "https://x.com/elithrar/status/1905704716589510889",
@@ -170,12 +170,12 @@ const MarqueeRow = ({
 
   return (
     <div
-      className="relative w-full overflow-hidden py-2"
+      className="relative w-full overflow-hidden py-1.5"
       style={{
         maskImage:
-          "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+          "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
         WebkitMaskImage:
-          "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+          "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
       }}
     >
       <motion.div
@@ -183,33 +183,33 @@ const MarqueeRow = ({
         style={{ x: x.current }}
         onMouseEnter={pause}
         onMouseLeave={resume}
-        className={`flex w-max items-stretch gap-4 ${reverse ? "flex-row-reverse" : ""}`}
+        className={`flex w-max items-stretch gap-3 ${reverse ? "flex-row-reverse" : ""}`}
       >
         {repeatedItems.map((testimonial, i) => (
           <Card
             key={i}
-            className="border-border/40 from-card to-card/50 hover:border-primary/20 group focus-within:ring-primary max-h-[240px] w-full max-w-[420px] min-w-[260px] overflow-hidden border bg-gradient-to-b backdrop-blur transition-all focus-within:ring-2 focus-within:ring-offset-2 hover:shadow-lg sm:max-w-[400px] sm:min-w-[300px]"
+            className="border border-border/60 bg-card hover:border-border hover:bg-card/80 group max-h-[220px] w-full max-w-[400px] min-w-[280px] overflow-hidden transition-all rounded-sm shadow-none"
           >
             <Link
               href={testimonial.href}
-              className="focus:ring-primary h-full rounded-lg focus:ring-2 focus:ring-offset-2 focus:outline-none"
+              className="h-full block focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <CardContent className="flex h-full w-[300px] flex-col gap-4 p-4 md:w-[400px]">
+              <CardContent className="flex h-full w-[280px] flex-col gap-3 p-4 md:w-[380px]">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-9 w-9 rounded-sm">
                     <AvatarImage src={testimonial.image} alt={testimonial.name} loading="lazy" />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
+                    <AvatarFallback className="bg-muted text-muted-foreground text-sm font-semibold rounded-sm">
                       {testimonial.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="text-foreground text-xl font-semibold">{testimonial.name}</h3>
-                    <p className="text-muted-foreground text-sm">@{testimonial.tag}</p>
+                    <p className="text-sm font-semibold leading-tight">{testimonial.name}</p>
+                    <p className="text-xs text-muted-foreground">@{testimonial.tag}</p>
                   </div>
                 </div>
-                <p className="text-foreground line-clamp-4 overflow-hidden text-ellipsis whitespace-pre-wrap md:line-clamp-5">
+                <p className="text-sm text-foreground/80 line-clamp-4 whitespace-pre-wrap leading-relaxed">
                   {testimonial.description}
                 </p>
               </CardContent>
@@ -221,33 +221,43 @@ const MarqueeRow = ({
   );
 };
 
-// Testimonials Main Section
 export function Testimonials() {
   return (
-    <section id="testimonials" className="relative isolate w-full py-20 md:py-32">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(from_var(--primary)_r_g_b_/_0.03),transparent_70%)]" />
-
+    <section id="testimonials" className="w-full border-b border-border/60">
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-16 flex flex-col items-center justify-center space-y-4 text-center"
-        >
-          <h2 className="text-3xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-            Loved by <span className="text-primary font-serif italic">developers</span>
-          </h2>
-          <p className="text-muted-foreground max-w-[600px] text-lg md:text-xl">
-            Join thousands of developers building beautiful interfaces.
-          </p>
-        </motion.div>
-
-        {/* 🚀 Two Marquee Rows */}
-        <div className="flex flex-col gap-y-0">
-          <MarqueeRow items={testimonials.slice(0, 5)} reverse={false} />
-          <MarqueeRow items={testimonials.slice(5, 10)} reverse={true} />
+        {/* Section header */}
+        <div className="border-b border-border/60 py-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
+              <p className="label-eyebrow mb-4">Social proof</p>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1]">
+                Loved by
+                <br />
+                <em className="not-italic font-light font-serif text-muted-foreground">developers.</em>
+              </h2>
+            </motion.div>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              className="text-muted-foreground text-base max-w-xs md:text-right leading-relaxed"
+            >
+              Join thousands of developers building beautiful interfaces with tweakcn.
+            </motion.p>
+          </div>
         </div>
+      </div>
+
+      {/* Full-bleed marquee rows */}
+      <div className="py-8 flex flex-col gap-3">
+        <MarqueeRow items={testimonials.slice(0, 5)} reverse={false} />
+        <MarqueeRow items={testimonials.slice(5, 10)} reverse={true} />
       </div>
     </section>
   );

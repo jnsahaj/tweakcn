@@ -6,109 +6,121 @@ const features = [
     title: "Color Control",
     description:
       "Customize background, text, and border colors with an intuitive color picker interface.",
-    icon: <Paintbrush className="size-6" />,
+    icon: <Paintbrush className="size-5" />,
+    index: "01",
   },
   {
     title: "Typography Settings",
     description: "Fine-tune font size, weight, and text transform to create the perfect look.",
-    icon: <FileCode className="size-6" />,
+    icon: <FileCode className="size-5" />,
+    index: "02",
   },
   {
     title: "Tailwind v4 & v3",
     description:
       "Seamlessly switch between Tailwind versions with support for OKLCH & HSL formats.",
-    icon: <Code className="size-6" />,
+    icon: <Code className="size-5" />,
+    index: "03",
   },
   {
     title: "Detailed Properties",
     description:
       "Fine-tune every aspect including radius, spacing, shadows, and other properties.",
-    icon: <Layers className="size-6" />,
+    icon: <Layers className="size-5" />,
+    index: "04",
   },
   {
     title: "Contrast Checker",
     description:
       "Ensure designs meet accessibility standards with built-in contrast ratio checking.",
-    icon: <Contrast className="size-6" />,
+    icon: <Contrast className="size-5" />,
+    index: "05",
   },
   {
     title: "AI Theme Generation",
     description:
       "Create stunning, ready-to-use themes in seconds. Just provide an image or prompt.",
-    icon: <BrainCircuit className="size-6" />,
+    icon: <BrainCircuit className="size-5" />,
     pro: true,
+    index: "06",
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
-
 export function Features() {
   return (
-    <section id="features" className="relative isolate w-full py-20 md:py-32">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(from_var(--primary)_r_g_b_/_0.03),transparent_70%)]"></div>
-
+    <section id="features" className="w-full border-b border-border/60">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid gap-12 lg:grid-cols-[1fr_2fr]">
+
+        {/* Section header row */}
+        <div className="grid lg:grid-cols-[1fr_2fr] border-b border-border/60">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -12 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col justify-center space-y-4"
+            transition={{ duration: 0.4 }}
+            className="py-16 pr-0 lg:pr-16 border-r-0 lg:border-r border-border/60 flex flex-col justify-end"
           >
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl text-left">
-              Powerful Tools <br className="hidden lg:block" />
-              <span className="text-muted-foreground">For Total Control</span>
+            <p className="label-eyebrow mb-4">Capabilities</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1]">
+              Powerful tools.
+              <br />
+              <span className="text-muted-foreground font-light">Total control.</span>
             </h2>
-            <p className="text-muted-foreground max-w-[400px] text-lg">
-              Everything you need to customize your shadcn/ui components and make them unique.
-            </p>
           </motion.div>
 
           <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="show"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="grid gap-6 sm:grid-cols-2"
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="py-16 pl-0 lg:pl-16 flex items-end"
           >
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                variants={item}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              >
-                <div className="group h-full rounded-2xl border border-border/40 bg-card/50 p-6 transition-all hover:bg-card hover:shadow-lg">
-                    <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                      {feature.icon}
-                    </div>
-                    <h3 className="mb-2 flex items-center gap-2 text-xl font-bold">
-                      {feature.title}
-                      {feature.pro && (
-                        <span className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold">
-                          <Gem className="size-3" />
-                          Pro
-                        </span>
-                      )}
-                    </h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                </div>
-              </motion.div>
-            ))}
+            <p className="text-muted-foreground text-lg max-w-lg leading-relaxed">
+              Everything you need to customize your shadcn/ui components and make them uniquely yours — from micro-level token control to full theme generation.
+            </p>
           </motion.div>
+        </div>
+
+        {/* Feature grid - table-style rows */}
+        <div>
+          {features.map((feature, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: i * 0.06 }}
+            >
+              <div className="grid grid-cols-[auto_1fr_1fr] md:grid-cols-[64px_1fr_2fr_auto] items-center gap-0 border-b border-border/40 py-6 group hover:bg-muted/20 transition-colors px-0 cursor-default">
+                {/* Index */}
+                <span className="hidden md:block text-xs text-muted-foreground/50 font-mono w-16 flex-shrink-0">
+                  {feature.index}
+                </span>
+
+                {/* Icon + Title */}
+                <div className="flex items-center gap-4 col-span-1">
+                  <div className="flex size-9 items-center justify-center rounded-sm bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-colors flex-shrink-0">
+                    {feature.icon}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-semibold">{feature.title}</h3>
+                    {feature.pro && (
+                      <span className="inline-flex items-center gap-1 rounded-sm bg-primary/10 text-primary px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                        <Gem className="size-2.5" />
+                        Pro
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="hidden md:block text-sm text-muted-foreground col-span-1 pl-8 pr-4">{feature.description}</p>
+
+                {/* Arrow */}
+                <span className="hidden md:block text-muted-foreground/30 group-hover:text-muted-foreground transition-colors text-lg pr-2">→</span>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
