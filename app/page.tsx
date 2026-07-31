@@ -30,7 +30,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-background text-foreground flex min-h-[100dvh] flex-col items-center justify-items-center">
+    <div className="bg-[var(--hp-surface)] text-white flex min-h-[100dvh] flex-col items-center justify-items-center">
       <Header
         isScrolled={isScrolled}
         mobileMenuOpen={mobileMenuOpen}

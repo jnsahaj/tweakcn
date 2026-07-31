@@ -14,7 +14,7 @@ export function Hero() {
   const mode = themeState.currentMode;
 
   return (
-    <section className="relative w-full overflow-hidden border-b border-[var(--hp-rule)]">
+    <section className="relative w-full overflow-hidden border-b border-[var(--hp-rule)] bg-[var(--hp-surface)]">
       {/* Fine dot grid */}
       <div
         className="pointer-events-none absolute inset-0 -z-10"

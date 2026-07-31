@@ -29,7 +29,7 @@ export function Footer() {
           <div className="sm:col-span-2">
             <Link href="/" className="mb-4 flex items-center gap-2">
               <Logo className="size-5" />
-              <span className="font-mono text-sm font-semibold">tweakcn</span>
+              <span className="font-mono text-sm font-semibold text-white">tweakcn</span>
             </Link>
             <p className="max-w-xs text-xs leading-relaxed text-[var(--hp-text-secondary)]">
               A visual theme editor for shadcn/ui. Customize, preview, and export Tailwind CSS
@@ -62,7 +62,7 @@ export function Footer() {
 
           {/* Product links */}
           <div>
-            <h4 className="mb-4 font-mono text-xs font-semibold uppercase tracking-widest text-foreground">
+            <h4 className="mb-4 font-mono text-xs font-semibold uppercase tracking-widest text-white">
               Product
             </h4>
             <ul className="space-y-2.5">
@@ -81,7 +81,7 @@ export function Footer() {
 
           {/* Resources links */}
           <div>
-            <h4 className="mb-4 font-mono text-xs font-semibold uppercase tracking-widest text-foreground">
+            <h4 className="mb-4 font-mono text-xs font-semibold uppercase tracking-widest text-white">
               Resources
             </h4>
             <ul className="space-y-2.5">
@@ -92,14 +92,14 @@ export function Footer() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-mono text-xs text-[var(--hp-text-secondary)] transition-colors hover:text-foreground"
+                      className="font-mono text-xs text-[var(--hp-text-secondary)] transition-colors hover:text-white"
                     >
                       {link.label}
                     </a>
                   ) : (
                     <Link
                       href={link.href}
-                      className="font-mono text-xs text-[var(--hp-text-secondary)] transition-colors hover:text-foreground"
+                      className="font-mono text-xs text-[var(--hp-text-secondary)] transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>

@@ -36,7 +36,7 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="w-full border-b border-[var(--hp-rule)]">
+    <section id="faq" className="w-full border-b border-[var(--hp-rule)] bg-[var(--hp-surface)]">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header row */}
         <div className="border-b border-[var(--hp-rule)] py-10">

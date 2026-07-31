@@ -177,7 +177,7 @@ function MarqueeRow({ items, reverse = false }: { items: typeof testimonials; re
 
 export function Testimonials() {
   return (
-    <section id="testimonials" className="w-full border-b border-[var(--hp-rule)] py-20 md:py-28 overflow-hidden">
+    <section id="testimonials" className="w-full border-b border-[var(--hp-rule)] bg-[var(--hp-surface)] py-20 md:py-28 overflow-hidden">
       <div className="container mx-auto mb-12 px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 12 }}

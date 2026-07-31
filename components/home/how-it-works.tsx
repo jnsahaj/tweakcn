@@ -23,7 +23,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="w-full border-b border-[var(--hp-rule)]">
+    <section id="how-it-works" className="w-full border-b border-[var(--hp-rule)] bg-[var(--hp-surface)]">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header row */}
         <div className="flex items-end justify-between border-b border-[var(--hp-rule)] py-10">
