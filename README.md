@@ -78,10 +78,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 # Star History
 
 <p align="center">
-  <a target="_blank" href="https://star-history.com/#jnsahaj/tweakcn&Date">
+  <a target="_blank" href="https://star-history.dera.page/#jnsahaj/tweakcn&type=Date">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=jnsahaj/tweakcn&type=Date&theme=dark">
-      <img alt="GitHub Star History for jnsahaj/tweakcn" src="https://api.star-history.com/svg?repos=jnsahaj/tweakcn&type=Date">
+      <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=jnsahaj/tweakcn&type=Date&theme=dark">
+      <img alt="GitHub Star History for jnsahaj/tweakcn" src="https://star-history.dera.page/svg?repos=jnsahaj/tweakcn&type=Date">
     </picture>
   </a>
 </p>
