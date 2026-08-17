@@ -3,6 +3,7 @@ import { MAX_SVG_FILE_SIZE } from "@/lib/constants";
 import { PromptImage } from "@/types/ai";
 import {
   ALLOWED_IMAGE_TYPES,
+  compressImageToDataUrl,
   optimizeSvgContent,
   validateSvgContent,
 } from "@/utils/ai/image-upload";
@@ -73,38 +74,7 @@ export function useImageUpload({ maxFiles, maxFileSize, images, dispatch }: UseI
     dispatch({ type: "ADD", payload: filesWithTempUrls });
 
     filesWithTempUrls.forEach(({ url: tempUrl, file }) => {
-      const reader = new FileReader();
-
-      const handleSuccess = (result: string) => {
-        let finalUrl: string;
-
-        if (file.type === "image/svg+xml") {
-          try {
-            const isValidSvg = validateSvgContent(result);
-            if (!isValidSvg) {
-              toast({
-                title: "Potentially unsafe SVG",
-                description: `"${file.name}" may contain unsafe content but will be processed anyway.`,
-              });
-            }
-
-            const optimizedSvg = optimizeSvgContent(result);
-            const encodedSvg = encodeURIComponent(optimizedSvg);
-
-            if (encodedSvg.length > MAX_SVG_FILE_SIZE) {
-              handleError();
-              return;
-            }
-
-            finalUrl = `data:image/svg+xml,${encodedSvg}`;
-          } catch (error) {
-            handleError();
-            return;
-          }
-        } else {
-          finalUrl = result;
-        }
-
+      const handleSuccess = (finalUrl: string) => {
         dispatch({ type: "UPDATE_URL", payload: { tempUrl, finalUrl } });
         URL.revokeObjectURL(tempUrl);
       };
@@ -122,23 +92,48 @@ export function useImageUpload({ maxFiles, maxFileSize, images, dispatch }: UseI
         URL.revokeObjectURL(tempUrl);
       };
 
+      if (file.type !== "image/svg+xml") {
+        // Raster images are downscaled and re-encoded so the chat payload stays within the
+        // serverless request body limit
+        compressImageToDataUrl(file).then(handleSuccess).catch(handleError);
+        return;
+      }
+
+      const reader = new FileReader();
+
       reader.onload = (e) => {
         const result = e.target?.result;
         if (!result || typeof result !== "string") {
           handleError();
           return;
         }
-        handleSuccess(result);
+
+        try {
+          const isValidSvg = validateSvgContent(result);
+          if (!isValidSvg) {
+            toast({
+              title: "Potentially unsafe SVG",
+              description: `"${file.name}" may contain unsafe content but will be processed anyway.`,
+            });
+          }
+
+          const optimizedSvg = optimizeSvgContent(result);
+          const encodedSvg = encodeURIComponent(optimizedSvg);
+
+          if (encodedSvg.length > MAX_SVG_FILE_SIZE) {
+            handleError();
+            return;
+          }
+
+          handleSuccess(`data:image/svg+xml,${encodedSvg}`);
+        } catch {
+          handleError();
+        }
       };
 
       reader.onerror = handleError;
       reader.onabort = handleError;
-
-      if (file.type === "image/svg+xml") {
-        reader.readAsText(file);
-      } else {
-        reader.readAsDataURL(file);
-      }
+      reader.readAsText(file);
     });
   };
 

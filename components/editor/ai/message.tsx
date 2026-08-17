@@ -192,7 +192,7 @@ function UserMessage({
       );
     } else if (images.length > 1) {
       return (
-        <div className="flex flex-row items-center justify-end gap-2 self-end mb-2">
+        <div className="flex flex-row flex-wrap items-center justify-end gap-2 self-end mb-2">
           {images.map((image, idx) => (
             <div key={idx} className="aspect-square size-full max-w-32 flex-1">
               <ChatImagePreview

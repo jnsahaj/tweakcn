@@ -4,9 +4,18 @@ export const DEBOUNCE_DELAY = 50;
 
 export const AI_REQUEST_FREE_TIER_LIMIT = 5;
 
-export const MAX_IMAGE_FILES = 2;
+export const MAX_IMAGE_FILES = 5;
 export const MAX_IMAGE_FILE_SIZE = 4 * 1024 * 1024; // 4MB
 export const MAX_SVG_FILE_SIZE = 1 * 1024 * 1024; // 1MB
+
+// Uploaded images are inlined as base64 in every chat request, so they are downscaled and
+// re-encoded before being attached to keep the payload under the serverless body limit.
+export const MAX_IMAGE_DIMENSION = 1536; // px, longest edge
+export const TARGET_IMAGE_BYTES = 300 * 1024; // encoded bytes, ~400KB once base64'd
+
+// Serverless functions reject request bodies larger than 4.5MB before they ever run, so the
+// chat history is kept comfortably below that.
+export const MAX_CHAT_REQUEST_BYTES = 3.5 * 1024 * 1024;
 
 export const MAX_FREE_THEMES = 10;
 

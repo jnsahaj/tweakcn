@@ -5,6 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { ChatMessage } from "@/types/ai";
 import { applyGeneratedTheme } from "@/utils/ai/apply-theme";
+import { trimMessagesToRequestBudget } from "@/utils/ai/messages";
 
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { useChat } from "@ai-sdk/react";
@@ -30,6 +31,15 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const chat = useChat<ChatMessage>({
     transport: new DefaultChatTransport({
       api: "/api/generate-theme",
+      prepareSendMessagesRequest: ({ id, messages, trigger, messageId, body }) => ({
+        body: {
+          id,
+          trigger,
+          messageId,
+          ...body,
+          messages: trimMessagesToRequestBudget(messages),
+        },
+      }),
     }),
     onError: (error) => {
       const defaultMessage = "Failed to generate theme. Please try again.";
