@@ -59,8 +59,8 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
     }
 
     if (coords) {
-      root.style.setProperty("--x", `${coords.x}px`);
-      root.style.setProperty("--y", `${coords.y}px`);
+      root.style.setProperty("--x", `${(coords.x / window.innerWidth) * 100}%`);
+      root.style.setProperty("--y", `${(coords.y / window.innerHeight) * 100}%`);
     }
 
     document.startViewTransition(() => {
