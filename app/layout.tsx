@@ -4,6 +4,7 @@ import { GetProDialogWrapper } from "@/components/get-pro-dialog-wrapper";
 import { PostHogInit } from "@/components/posthog-init";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
+import { ThemeEditorProvider } from "@/components/floating-theme-editor";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ChatProvider } from "@/hooks/use-chat-context";
@@ -87,7 +88,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <AuthDialogWrapper />
                   <GetProDialogWrapper />
                   <Toaster />
-                  <ChatProvider>{children}</ChatProvider>
+                  <ChatProvider>
+                    <ThemeEditorProvider>{children}</ThemeEditorProvider>
+                  </ChatProvider>
                 </TooltipProvider>
               </ThemeProvider>
             </QueryProvider>
