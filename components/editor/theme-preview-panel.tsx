@@ -32,6 +32,7 @@ const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
 const TypographyDemo = lazy(() => import("@/components/examples/typography/typography-demo"));
 const CustomDemo = lazy(() => import("@/components/examples/custom"));
+const DemoForms = lazy(() => import("@/components/examples/forms"));
 
 const V0Logo = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -92,6 +93,7 @@ const ThemePreviewPanel = ({
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="custom">Custom</TabsTriggerPill>
               <TabsTriggerPill value="cards">Cards</TabsTriggerPill>
+              <TabsTriggerPill value="forms">Forms</TabsTriggerPill>
 
               <div className="hidden md:flex">
                 <TabsTriggerPill value="dashboard">Dashboard</TabsTriggerPill>
@@ -193,6 +195,14 @@ const ThemePreviewPanel = ({
                 <ExamplesPreviewContainer className="size-full">
                   <ScrollArea className="size-full">
                     <DemoCards />
+                  </ScrollArea>
+                </ExamplesPreviewContainer>
+              </TabsContent>
+
+              <TabsContent value="forms" className="m-0 size-full">
+                <ExamplesPreviewContainer className="size-full">
+                  <ScrollArea className="size-full">
+                    <DemoForms />
                   </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
