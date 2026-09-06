@@ -146,10 +146,11 @@ export function CommunityThemesContent() {
   };
 
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1  overflow-y-hidden">
       {/* Desktop sidebar */}
-      <aside className="hidden w-56 shrink-0 border-r lg:block">
-        <div className="p-4">
+      <aside className="hidden w-56  shrink-0 border-r   lg:flex flex-col ">
+        
+        <div className="p-4  ">
           <Link href="/community" className="block">
             <h1 className="text-lg font-semibold tracking-tight">
               Community Themes
@@ -160,13 +161,13 @@ export function CommunityThemesContent() {
           </Link>
         </div>
 
-        <div className="p-4">
+        <div className="p-4 flex-1 flex-col  flex   overflow-y-auto ">
           <CommunitySidebarContent {...sidebarProps} />
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 no-scrollbar overflow-y-auto">
         <div className="space-y-6 p-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -293,8 +294,8 @@ export function CommunityThemesContent() {
             </Popover>
           </div>
 
-          {isLoading ? (
-            <div className="grid gap-5 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
+          {isLoading? (
+            <div className="grid gap-5  grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}

@@ -161,11 +161,36 @@ body {
     width: 8px;
   }
 }
-
 @utility scrollbar-gutter-stable {
   scrollbar-gutter: stable;
 }
 
 @utility scrollbar-gutter-both {
   scrollbar-gutter: stable both-edges;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;     
+}
+.fade-y {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
 }

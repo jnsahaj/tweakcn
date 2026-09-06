@@ -26,6 +26,7 @@ export function CommunitySidebarContent({
   onFilterChange,
   onTagToggle,
 }: CommunitySidebarProps) {
+
   const { data: tagCounts = [], isLoading: isLoadingTags } =
     useCommunityTagCounts();
   const { checkValidSession } = useSessionGuard();
@@ -36,9 +37,9 @@ export function CommunitySidebarContent({
     }
     onFilterChange(value);
   };
-
+  
   return (
-    <nav className="space-y-1">
+    <nav className="space-y-1 flex flex-col overflow-auto   flex-1  ">
       {filterItems.map((item) => (
         <button
           key={item.value}
@@ -68,7 +69,7 @@ export function CommunitySidebarContent({
           ))}
         </div>
       ) : tagCounts.length > 0 ? (
-        <div className="space-y-0.5">
+        <div  className="space-y-0.5 overflow-y-scroll pb-10 pt-6 -translate-y-5 no-scrollbar  fade-y flex flex-col flex-1 ">
           {tagCounts.map(({ tag, count }) => (
             <button
               key={tag}
