@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useQueryState } from "nuqs";
 import { useWebsitePreviewStore } from "@/store/website-preview-store";
 
 const LOADING_TIMEOUT_MS = 5000;
@@ -41,16 +42,73 @@ export interface UseWebsitePreviewProps {
   allowCrossOrigin?: boolean;
 }
 
+/**
+ * Simplified version with clear source of truth priority:
+ * 1. URL param exists → Always use it, override persisted state and input
+ * 2. URL param doesn't exist → Use persisted currentUrl
+ *
+ * - inputValue: Local state for input field (uncontrolled, ephemeral)
+ * - currentUrl: Persisted store state (only used when URL param doesn't exist)
+ * - URL param: Single source of truth when it exists
+ */
 export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePreviewProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const inputUrl = useWebsitePreviewStore((state) => state.inputUrl);
+  // Input field value (uncontrolled, just for typing)
+  const [inputValue, setInputValue] = useState("");
+
+  const [activeTab] = useQueryState("p");
+  const [urlParam, setUrlParam] = useQueryState("url");
+  const isCustomTab = activeTab === "custom";
+
   const currentUrl = useWebsitePreviewStore((state) => state.currentUrl);
-  const setInputUrlStore = useWebsitePreviewStore((state) => state.setInputUrl);
   const setCurrentUrlStore = useWebsitePreviewStore((state) => state.setCurrentUrl);
   const resetStore = useWebsitePreviewStore((state) => state.reset);
+
+  // Helper function to load URL into iframe
+  const loadUrlIntoIframe = useCallback((url: string, cacheBuster: string = "_t") => {
+    if (!iframeRef.current) return;
+    try {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set(cacheBuster, Date.now().toString());
+      iframeRef.current.src = urlObj.toString();
+    } catch {
+      // Fallback for invalid URLs
+      iframeRef.current.src = url + `?${cacheBuster}=${Date.now()}`;
+    }
+  }, []);
+
+  // Sync effect: keep URL param and store in sync based on tab
+  useEffect(() => {
+    // Leaving custom tab: remove url param if present
+    if (!isCustomTab) {
+      if (urlParam) setUrlParam(null).catch(() => {});
+      return;
+    }
+
+    // On custom tab:
+    if (urlParam) {
+      // URL is source of truth: reflect it in store and input
+      if (urlParam !== currentUrl) setCurrentUrlStore(urlParam);
+      if (urlParam !== inputValue) setInputValue(urlParam);
+      return;
+    }
+
+    // No url param: restore from persisted store if available
+    if (!urlParam && currentUrl) {
+      setUrlParam(currentUrl).catch(() => {});
+    }
+  }, [isCustomTab, urlParam, currentUrl, setUrlParam, setCurrentUrlStore]);
+
+  // Loader effect: load iframe whenever currentUrl changes
+  useEffect(() => {
+    if (!currentUrl) return;
+    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: "CLEAR_ERROR" });
+    loadUrlIntoIframe(currentUrl);
+  }, [currentUrl, loadUrlIntoIframe]);
 
   const clearLoadingTimeout = () => {
     if (loadingTimeoutRef.current) {
@@ -87,51 +145,35 @@ export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePrevie
     }
   }, [state.isLoading, currentUrl]);
 
-  const setInputUrl = useCallback(
-    (url: string) => {
-      setInputUrlStore(url);
-      dispatch({ type: "CLEAR_ERROR" });
-    },
-    [setInputUrlStore]
-  );
+  const setInputValueHandler = useCallback((url: string) => {
+    setInputValue(url);
+    dispatch({ type: "CLEAR_ERROR" });
+  }, []);
 
   const loadUrl = useCallback(() => {
-    if (!inputUrl.trim()) {
+    if (!inputValue.trim()) {
       dispatch({ type: "SET_LOAD_ERROR", payload: "Please enter a valid URL" });
       return;
     }
 
-    let formattedUrl = inputUrl.trim();
+    let formattedUrl = inputValue.trim();
     if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
       formattedUrl = "https://" + formattedUrl;
     }
 
+    // Save to currentUrl (persisted)
     setCurrentUrlStore(formattedUrl);
-    dispatch({ type: "SET_LOADING", payload: true });
-    dispatch({ type: "CLEAR_ERROR" });
-
-    if (iframeRef.current) {
-      try {
-        const url = new URL(formattedUrl);
-        url.searchParams.set("_t", Date.now().toString());
-        iframeRef.current.src = url.toString();
-      } catch {
-        iframeRef.current.src = formattedUrl + "?_t=" + Date.now();
-      }
+    // If on custom tab, also update URL param
+    if (isCustomTab) {
+      setUrlParam(formattedUrl).catch(() => {});
     }
-  }, [inputUrl, setCurrentUrlStore]);
+  }, [inputValue, setCurrentUrlStore, isCustomTab, setUrlParam, loadUrlIntoIframe]);
 
   const refreshIframe = useCallback(() => {
-    if (!currentUrl || !iframeRef.current) return;
+    if (!currentUrl) return;
     dispatch({ type: "SET_LOADING", payload: true });
-    try {
-      const url = new URL(currentUrl);
-      url.searchParams.set("_refresh", Date.now().toString());
-      iframeRef.current.src = url.toString();
-    } catch {
-      iframeRef.current.src = currentUrl + "?_refresh=" + Date.now();
-    }
-  }, [currentUrl]);
+    loadUrlIntoIframe(currentUrl, "_refresh");
+  }, [currentUrl, loadUrlIntoIframe]);
 
   const openInNewTab = useCallback(() => {
     if (!currentUrl) return;
@@ -141,16 +183,18 @@ export function useWebsitePreview({ allowCrossOrigin = false }: UseWebsitePrevie
   const reset = useCallback(() => {
     clearLoadingTimeout();
     resetStore();
+    setInputValue("");
+    if (isCustomTab) setUrlParam(null).catch(() => {});
     dispatch({ type: "RESET" });
-  }, [resetStore]);
+  }, [resetStore, isCustomTab, setUrlParam]);
 
   return {
-    inputUrl,
+    inputValue,
     currentUrl,
+    setInputValue: setInputValueHandler,
     isLoading: state.isLoading,
     error: state.error,
     iframeRef,
-    setInputUrl,
     loadUrl,
     refreshIframe,
     openInNewTab,

@@ -231,8 +231,8 @@ function DynamicWebsitePreviewContent({ name }: { name: string }) {
 
 function Controls() {
   const {
-    inputUrl,
-    setInputUrl,
+    inputValue,
+    setInputValue,
     currentUrl,
     isLoading: previewIsLoading,
     loadUrl,
@@ -245,9 +245,9 @@ function Controls() {
   const handleReset = () => {
     if (currentUrl) {
       reset();
-      setInputUrl("");
+      setInputValue("");
     } else {
-      setInputUrl("");
+      setInputValue("");
     }
   };
 
@@ -261,10 +261,10 @@ function Controls() {
               ? "Enter same-origin URL for direct theme injection"
               : "Enter website URL (e.g. http://localhost:3000/login)"
           }
-          value={inputUrl}
-          onChange={(e) => setInputUrl(e.target.value)}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => {
-            if (!inputUrl.trim()) return;
+            if (!inputValue.trim()) return;
             if (e.key === "Enter") {
               loadUrl();
             }
@@ -283,7 +283,7 @@ function Controls() {
           )}
         />
 
-        {(currentUrl || inputUrl) && (
+        {(currentUrl || inputValue) && (
           <TooltipWrapper asChild label="Reset">
             <Button
               variant="ghost"
