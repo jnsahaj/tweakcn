@@ -188,11 +188,11 @@ const MarqueeRow = ({
         {repeatedItems.map((testimonial, i) => (
           <Card
             key={i}
-            className="border-border/40 from-card to-card/50 hover:border-primary/20 group focus-within:ring-primary max-h-[240px] w-full max-w-[420px] min-w-[260px] overflow-hidden border bg-gradient-to-b backdrop-blur transition-all focus-within:ring-2 focus-within:ring-offset-2 hover:shadow-lg sm:max-w-[400px] sm:min-w-[300px]"
+            className="border-border/40 from-card to-card/50 hover:border-primary/20 group focus-within:ring-primary max-h-[240px] w-full max-w-[420px] min-w-[260px] overflow-hidden border bg-gradient-to-b backdrop-blur transition-all focus-within:ring-2 focus-within:ring-offset-2 hover:shadow-lg sm:max-w-[400px] sm:min-w-[300px] py-0"
           >
             <Link
               href={testimonial.href}
-              className="focus:ring-primary h-full rounded-lg focus:ring-2 focus:ring-offset-2 focus:outline-none"
+              className="focus:ring-primary h-full rounded-lg focus:ring-2 focus:ring-offset-2 focus:outline-none py-6"
               target="_blank"
               rel="noopener noreferrer"
             >
