@@ -11,7 +11,7 @@ export const getShadowMap = (themeEditorState: ThemeEditorState) => {
   };
 
   const shadowColor = styles["shadow-color"];
-  const hsl = colorFormatter(shadowColor, "hsl", "3");
+  const hsl = colorFormatter(shadowColor, "hsl", "3", false);
   const offsetX = styles["shadow-offset-x"];
   const offsetY = styles["shadow-offset-y"];
   const blur = styles["shadow-blur"];

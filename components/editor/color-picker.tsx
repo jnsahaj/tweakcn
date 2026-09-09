@@ -2,6 +2,7 @@ import { DEBOUNCE_DELAY } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useColorControlFocus } from "@/store/color-control-focus-store";
 import { ColorPickerProps } from "@/types";
+import { formatColorInputHex, formatDisplayHex } from "@/utils/color-converter";
 import { debounce } from "@/utils/debounce";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { ColorSelectorPopover } from "./color-selector-popover";
@@ -15,6 +16,8 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
   const animationTimerRef = useRef<NodeJS.Timeout | null>(null);
   const sectionCtx = useContext(SectionContext);
   const { registerColor, unregisterColor, highlightTarget } = useColorControlFocus();
+  const displayColor = useMemo(() => formatDisplayHex(color), [color]);
+  const colorInputValue = useMemo(() => formatColorInputHex(color), [color]);
 
   useEffect(() => {
     if (!name) return;
@@ -24,9 +27,9 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
 
   useEffect(() => {
     if (textInputRef.current) {
-      textInputRef.current.value = color;
+      textInputRef.current.value = displayColor;
     }
-  }, [color]);
+  }, [displayColor]);
 
   const debouncedOnChange = useMemo(
     () =>
@@ -46,8 +49,7 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
 
   const handleTextInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const colorString = e.target.value;
-      debouncedOnChange(colorString);
+      debouncedOnChange(formatDisplayHex(e.target.value));
     },
     [debouncedOnChange]
   );
@@ -107,7 +109,7 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
         <input
           type="color"
           id={`color-${label.replace(/\s+/g, "-").toLowerCase()}`}
-          value={color}
+          value={colorInputValue}
           onChange={handleColorChange}
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
         />
@@ -119,8 +121,11 @@ const ColorPicker = ({ color, onChange, label, name }: ColorPickerProps) => {
         <input
           ref={textInputRef}
           type="text"
-          defaultValue={color}
+          defaultValue={displayColor}
           onChange={handleTextInputChange}
+          onBlur={(e) => {
+            e.currentTarget.value = formatDisplayHex(e.currentTarget.value);
+          }}
           className="bg-muted/50 text-muted-foreground focus:text-foreground focus:border-ring h-7 w-full min-w-0 rounded border px-2 text-xs font-mono transition-colors outline-none"
           placeholder="hex or tailwind"
         />

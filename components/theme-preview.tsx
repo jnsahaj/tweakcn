@@ -22,7 +22,7 @@ function computeBoxShadow(styles: ThemeStyleProps): string | undefined {
   const offsetY = styles["shadow-offset-y"] || "1px";
 
   try {
-    const hsl = colorFormatter(shadowColor, "hsl", "3");
+    const hsl = colorFormatter(shadowColor, "hsl", "3", false);
     const color = `hsl(${hsl} / ${shadowOpacity.toFixed(2)})`;
     return `${offsetX} ${offsetY} ${shadowBlur} ${shadowSpread} ${color}`;
   } catch {

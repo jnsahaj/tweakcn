@@ -53,7 +53,7 @@ const parseColorVariables = (
       }
 
       const colorValue = processColorValue(value);
-      const formattedValue = colorFormatter(colorValue, "hex");
+      const formattedValue = colorFormatter(colorValue, "oklch");
       target[cleanName as keyof ThemeStyleProps] = formattedValue;
     }
   });

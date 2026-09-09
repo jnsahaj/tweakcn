@@ -5,7 +5,7 @@ import { SliderWithInput } from "./slider-with-input";
 import { useEditorStore } from "../../store/editor-store";
 import { COMMON_STYLES, defaultThemeState } from "../../config/theme";
 import { ThemeEditorState } from "@/types/editor";
-import { converter, formatHex, Hsl } from "culori";
+import { converter, formatHex, formatHex8, Hsl } from "culori";
 import { debounce } from "@/utils/debounce";
 import { isDeepEqual } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ function adjustColorByHsl(
   const h = hsl?.h;
   const s = hsl?.s;
   const l = hsl?.l;
+  const alpha = hsl?.alpha;
 
   if (h === undefined || s === undefined || l === undefined) {
     return color;
@@ -33,10 +34,11 @@ function adjustColorByHsl(
     h: (((h + hueShift) % 360) + 360) % 360,
     s: Math.min(1, Math.max(0, s * saturationScale)),
     l: Math.min(1, Math.max(0.1, l * lightnessScale)),
+    alpha,
   };
 
   const out = converter("hsl")(adjustedHsl as Hsl);
-  return formatHex(out);
+  return alpha !== undefined && alpha < 1 ? formatHex8(out) : formatHex(out);
 }
 
 // Preset HSL adjustment values
