@@ -5,8 +5,9 @@ export function applyStyleToElement(
 ) {
   const currentStyle = element.getAttribute("style") || "";
   // Remove the existing variable definitions with the same name
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const cleanedStyle = currentStyle.replace(
-    new RegExp(`--${key}:\\s*[^;]+;?`, "g"), 
+    new RegExp(`--${escapedKey}:\\s*[^;]+;?`, "g"), 
     ""
   ).trim();
 
