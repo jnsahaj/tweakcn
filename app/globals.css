@@ -50,15 +50,19 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Computed Shadow Variants */
-  --shadow-2xs: var(--shadow-2xs);
-  --shadow-xs: var(--shadow-xs);
-  --shadow-sm: var(--shadow-sm);
-  --shadow: var(--shadow);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);
+  /* Shadow utilities are NOT declared here -- see the `@utility shadow-*`
+     rules below and the comment on that block for why (#124). Explicitly
+     unset Tailwind's own built-in shadow-* theme keys so it doesn't also
+     generate its default (non-themeable) `.shadow-md` etc utilities, which
+     would otherwise silently win over ours. */
+  --shadow-2xs: initial;
+  --shadow-xs: initial;
+  --shadow-sm: initial;
+  --shadow: initial;
+  --shadow-md: initial;
+  --shadow-lg: initial;
+  --shadow-xl: initial;
+  --shadow-2xl: initial;
 
   --tracking-tighter: calc(var(--letter-spacing) - 0.05em);
   --tracking-tight: calc(var(--letter-spacing) - 0.025em);
@@ -66,6 +70,111 @@
   --tracking-wide: calc(var(--letter-spacing) + 0.025em);
   --tracking-wider: calc(var(--letter-spacing) + 0.05em);
   --tracking-widest: calc(var(--letter-spacing) + 0.1em);
+}
+
+/*
+ * Hand-written shadow utilities (fix for #124: "Shadow variables overrides
+ * shadow-[color] classes").
+ *
+ * The theme editor's shadow settings (color/opacity/blur/spread/offset) are
+ * user-configurable at runtime, so their values live in plain CSS custom
+ * properties that utils/shadows.ts writes onto <html> (--shadow-x,
+ * --shadow-y, --shadow-blur, --shadow-spread, --shadow-opacity,
+ * --shadow-color). We used to let Tailwind's `@theme inline` turn those
+ * straight into `shadow-md` etc utilities, but that only works by having
+ * Tailwind emit `.shadow-md { --tw-shadow:
+ * var(--shadow-md) }` -- a single, opaque reference to an *inherited*
+ * custom property. Once `--shadow-md` bakes a literal color into its value
+ * at :root, that value can't be overridden per-element: a nested var() only
+ * re-resolves at the element where the custom property containing it is
+ * declared, not at whatever element later inherits it. So a `shadow-{color}`
+ * utility applied alongside `shadow-md` had nothing to hook into.
+ *
+ * These utilities avoid that by composing the box-shadow directly in the
+ * rule that matches the element -- the same place Tailwind's own built-in
+ * (non-inline) shadow utilities put `var(--tw-shadow-color, <fallback>)` --
+ * so `shadow-blue-500` (etc) applied on the same element correctly wins over
+ * the theme's shadow color, while `shadow-md` alone still uses it.
+ */
+@utility shadow-2xs {
+  --tw-shadow: var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread)
+    var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 0.5)));
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+    var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow-xs {
+  /* Same formula as shadow-2xs -- matches the pre-existing shadowMap in utils/shadows.ts */
+  --tw-shadow: var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread)
+    var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 0.5)));
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+    var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow-sm {
+  --tw-shadow:
+    var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1))),
+    var(--shadow-x) 1px 2px calc(var(--shadow-spread) - 1px)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1)));
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+    var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow {
+  /* Alias for shadow-sm -- matches the pre-existing shadowMap in utils/shadows.ts */
+  --tw-shadow:
+    var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1))),
+    var(--shadow-x) 1px 2px calc(var(--shadow-spread) - 1px)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1)));
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+    var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow-md {
+  --tw-shadow:
+    var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1))),
+    var(--shadow-x) 2px 4px calc(var(--shadow-spread) - 1px)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1)));
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+    var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow-lg {
+  --tw-shadow:
+    var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1))),
+    var(--shadow-x) 4px 6px calc(var(--shadow-spread) - 1px)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1)));
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+    var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow-xl {
+  --tw-shadow:
+    var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1))),
+    var(--shadow-x) 8px 10px calc(var(--shadow-spread) - 1px)
+      var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 1)));
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+    var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow-2xl {
+  --tw-shadow: var(--shadow-x) var(--shadow-y) var(--shadow-blur) var(--shadow-spread)
+    var(--tw-shadow-color, hsl(from var(--shadow-color) h s l / calc(var(--shadow-opacity) * 2.5)));
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+    var(--tw-ring-shadow), var(--tw-shadow);
 }
 
 @layer base {
