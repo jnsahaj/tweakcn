@@ -91,7 +91,7 @@ Tuned from the starting table, verified with `npx tsx features/brand-palettes/de
 | card, popover | Neutral | 50 (or white) | 900 |
 | foreground, card-foreground, popover-foreground | Neutral | 950 | 50 |
 | muted | Neutral | 100 | 800 |
-| muted-foreground | Neutral | 600, darker until 4.5:1 on background *(tuned: was 500; in practice lands on 700)* | 400, lighter until 4.5:1 on background |
+| muted-foreground | Neutral | 600, darker until 4.5:1 on background, muted and card *(tuned: was 500; in practice lands on 700)* | 400, lighter until 4.5:1 on background, muted and card *(2026-11-16: was background only; dark muted/card are lighter than background)* |
 | border, input | Neutral | 200 | 800 |
 | primary | Primary | anchor (exact brand colour; warning if < 3:1 on background) | anchor, lighter until 3:1 on background |
 | primary-foreground | Primary | auto contrast on primary | auto contrast on primary |
@@ -100,16 +100,18 @@ Tuned from the starting table, verified with `npx tsx features/brand-palettes/de
 | secondary-foreground | Secondary | 900 if ≥ 4.5:1, else auto contrast | 100 if ≥ 4.5:1, else auto contrast |
 | accent | Secondary | 100 | 800 |
 | accent-foreground | Secondary | 900 if ≥ 4.5:1, else auto contrast | 100 if ≥ 4.5:1, else auto contrast |
-| destructive | Destructive | 600, darker until 3:1 on background | 400, lighter until 3:1 on background *(tuned: was 500 — a mid red can't carry 4.5:1 text with white/50/950)* |
+| destructive | Destructive (built-in red while unassigned) | 600, darker until 4.5:1 on background and on its own 10% tint | 400, lighter until 4.5:1 on background and on its own 20% tint *(tuned: was 500 — a mid red can't carry 4.5:1 text with white/50/950. 2026-11-16: was 3:1 on background only)* |
 | destructive-foreground | Destructive | auto contrast | auto contrast |
-| chart-1 | Primary | 600 | 400 |
-| chart-2 | Secondary | 400 | 300 |
-| chart-3 | Primary | 800 | 200 |
-| chart-4 | Secondary | 700 | 600 |
-| chart-5 | Primary | 300 | 700 |
+| chart-1 | Primary | 600, darker until 3:1 on card | 400, lighter until 3:1 on card |
+| chart-2 | Secondary | 400, darker until 3:1 on card | 300, lighter until 3:1 on card |
+| chart-3 | Primary | 800, same, skipping chart-1's step | 200, same, skipping chart-1's step |
+| chart-4 | Secondary | 700, same, skipping chart-2's step | 600, same, skipping chart-2's step |
+| chart-5 | Primary | 300, same, skipping chart-1/3's steps | 700, same, skipping chart-1/3's steps |
 | sidebar, sidebar-foreground, sidebar-primary(-foreground), sidebar-accent(-foreground), sidebar-border, sidebar-ring | as their main token | = background, foreground, primary(-foreground), accent(-foreground), border, ring | same |
 
 "auto contrast" = highest contrast of white / palette 50 / palette 950; warning if under 4.5:1. Charts alternate palette and lightness so neighbouring series differ in both hue and lightness.
+
+**2026-11-16 – rules aligned with the app shell's theme:check.** Every brand-palette theme failed `theme:check` on the same pairs (muted-foreground on muted/card in dark, chart-2/4/5 on card, destructive on its badge tint), because the rules only checked against background. The surfaces now match `TEXT_PAIRS`/`GRAPHIC_PAIRS` in `scripts/theme/rules.mjs`; keep them in sync when either changes. Destructive follows a built-in red (`FALLBACK_DESTRUCTIVE`, #DC2626, no brand reference, label "Default red …") while the role is unassigned but at least one other role is, since shadcn's default dark red fails the badge check on most brand backgrounds. Tested in `roles.test.ts` ("role rules pass the app shell theme check"). Still open: light primary on background (a light brand colour as button colour) and primary-foreground on a mid-tone dark primary.
 
 ### Fixes
 

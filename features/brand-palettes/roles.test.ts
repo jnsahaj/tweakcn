@@ -15,6 +15,10 @@ import {
   type RoleState,
 } from "./roles";
 import { toHex } from "./scale";
+import { parseTheme } from "@/scripts/theme/lib.mjs";
+import { checkTheme } from "@/scripts/theme/rules.mjs";
+import { generateTailwindV4Css } from "@/features/app-shell/generate-css";
+import { defaultThemeState as editorDefaults } from "@/config/theme";
 
 const fresh = (): RoleState => {
   let s: RoleState = {
@@ -43,13 +47,27 @@ const pal = (s: RoleState, id: string) => s.brandPalettes!.find((p) => p.id === 
 const contrast = (a: unknown, b: unknown) => wcagContrast(String(a), String(b));
 
 describe("role rules", () => {
-  it("unassigned roles leave tokens exactly as they are", () => {
+  it("unassigned roles leave tokens exactly as they are (except Destructive)", () => {
     const s0 = fresh();
     const s = assignRole(s0, "neutral", "grey");
     assert.equal(s.styles.light.primary, s0.styles.light.primary);
-    assert.equal(s.styles.dark["destructive"], s0.styles.dark["destructive"]);
     assert.equal(s.styles.light["chart-2"], s0.styles.light["chart-2"]);
     assert.notEqual(s.styles.light.background, s0.styles.light.background);
+  });
+
+  it("unassigned Destructive follows the built-in red, without a brand reference", () => {
+    const s = withRoles();
+    const status = getTokenRoleStatus(s, "dark", "destructive");
+    assert.equal(status?.kind, "auto");
+    assert.match((status as { label: string }).label, /^Default red \d+$/);
+    assert.equal(s.brandRefs?.dark["destructive"], undefined);
+    assert.notEqual(s.styles.dark["destructive"], fresh().styles.dark["destructive"]);
+  });
+
+  it("no roles assigned: Destructive is left alone too", () => {
+    const s0 = fresh();
+    const s = syncRoles({ ...s0, brandRoles: { assignments: {}, auto: { light: {}, dark: {} }, manual: { light: [], dark: [] } } });
+    assert.equal(s.styles.dark["destructive"], s0.styles.dark["destructive"]);
   });
 
   it("follows the step table and stores references", () => {
@@ -176,7 +194,7 @@ describe("auto vs manual", () => {
   it("tokens are Auto with a readable label", () => {
     const s = withRoles();
     assert.deepEqual(getTokenRoleStatus(s, "light", "secondary"), { kind: "auto", label: "Secondary 100", warning: undefined });
-    assert.equal(getTokenRoleStatus(s, "light", "destructive"), null); // role unassigned
+    assert.equal(getTokenRoleStatus(fresh(), "light", "secondary"), null); // no roles at all
   });
 
   it("swapping the primary palette re-colours every Auto primary token in both modes", () => {
@@ -260,4 +278,35 @@ describe("auto vs manual", () => {
     const s = withRoles();
     assert.equal(syncRoles(s), s);
   });
+});
+
+// The rules must produce themes that pass the app shell's own theme:check (scripts/theme/rules.mjs).
+// Primary on background is a separate design question (a light brand colour as button colour) and
+// is left out here.
+describe("role rules pass the app shell theme check", () => {
+  const PRIMARY_PAIRS = /(^|\s)(sidebar-)?primary på (background|sidebar)/;
+  const cases: [string, string, string][] = [
+    ["lime on teal grey", "#C6E85B", "#2F5D55"],
+    ["dark green on warm grey", "#0B3D2E", "#78716C"],
+    ["blue on cool grey", "#1D4ED8", "#64748B"],
+    ["pale yellow on neutral", "#F5E6A8", "#737373"],
+  ];
+  for (const [name, primary, neutral] of cases) {
+    for (const destructive of [true, false]) {
+      it(`${name}${destructive ? "" : ", Destructive unassigned"}`, () => {
+        let s = fresh();
+        s = addPalette(s, createPalette("P", primary, "p"));
+        s = addPalette(s, createPalette("N", neutral, "n"));
+        s = assignRole(s, "neutral", "n");
+        s = assignRole(s, "primary", "p");
+        s = assignRole(s, "secondary", "orange");
+        if (destructive) s = assignRole(s, "destructive", "red");
+        const css = generateTailwindV4Css({ ...editorDefaults, styles: s.styles } as never, "app-shell");
+        const fails = checkTheme(parseTheme(css), name)
+          .filter((r: { status: string; check: string }) => r.status === "fail" && !PRIMARY_PAIRS.test(r.check))
+          .map((r: { mode: string; check: string; detail: string }) => `${r.mode} ${r.check} ${r.detail}`);
+        assert.deepEqual(fails, []);
+      });
+    }
+  }
 });
