@@ -93,7 +93,9 @@ Tuned from the starting table, verified with `npx tsx features/brand-palettes/de
 | muted | Neutral | 100 | 800 |
 | muted-foreground | Neutral | 600, darker until 4.5:1 on background, muted and card *(tuned: was 500; in practice lands on 700)* | 400, lighter until 4.5:1 on background, muted and card *(2026-11-16: was background only; dark muted/card are lighter than background)* |
 | border, input | Neutral | 200 | 800 |
-| primary | Primary | anchor (exact brand colour; warning if < 3:1 on background) | anchor, lighter until 3:1 on background |
+| brand | Primary | anchor (exact brand colour) | anchor |
+| brand-foreground | Primary | auto contrast on brand | auto contrast on brand |
+| primary | Primary | anchor, darker until 4.5:1 on background *(2026-11-16: was the anchor as-is with a warning)* | anchor, lighter until 4.5:1 on background *(was 3:1)* |
 | primary-foreground | Primary | auto contrast on primary | auto contrast on primary |
 | ring | Primary | 400 | 500 |
 | secondary | Secondary | 100 | 800 |
@@ -167,3 +169,14 @@ opacity, Figma/DTCG postponed, fixes change lightness only and only errors, Font
   load (which failed `next build`). The other Polar code didn't throw at load. With the secret, unchanged.
 - **`prebuild` uses `npm run`** instead of `pnpm` (pnpm isn't installed; npm works everywhere). The generated
   `public/r/v0/` is now in `.gitignore` next to `public/r/themes`.
+
+
+## Brand token: buttons keep the brand colour, primary reads as text (2026-11-16)
+
+A light brand colour (e.g. lime) can't be both the button fill and the colour of links, switches, checkboxes and progress on a light page (1.3:1). The app shell (v1.1.0) therefore has an optional `brand` / `brand-foreground` token for the default `Button` and `Badge`; everything else keeps using `primary`.
+
+- **Rules:** `brand` = the exact brand colour in both modes, `brand-foreground` = auto contrast on it. `primary` starts at the brand colour and walks darker (light) / lighter (dark) until it has 4.5:1 on background, since the app shell uses it as text (`TEXT_PAIRS`) as well as for small controls.
+- **Optional, falls back to primary:** `brand` is only written by the role rules (no default value), exported only when set, and the app shell's `@theme inline` maps `--color-brand: var(--brand, var(--primary))`. Presets and plain shadcn themes therefore look the same as before. `scripts/theme/lib.mjs` (`COLOR_FALLBACKS`) makes `theme:check` read a missing `brand` as `primary`.
+- **Editor:** two controls under Primary ("Brand (buttons)", "Brand FG") that show the primary value until set. The preview's `Button` and `Badge` use `bg-brand` (same change as the app shell's `components/ui`); the editor chrome has no `--brand`, so it is unchanged.
+- **Only the app shell export carries it.** tweakcn's own shadcn exports don't know `brand`; with a primary role assigned they get the darker `primary` on buttons.
+- Verified across 752 palette combinations (12 primaries × 4 neutrals × 4 secondaries, with/without destructive role and white background): all pass `theme:check` except mid grey #808080 as primary (no foreground reaches 4.5:1; the editor warns) and two near-identical greens as primary and secondary (chart-4 = chart-5).

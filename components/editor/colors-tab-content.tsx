@@ -15,6 +15,7 @@ import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { cn } from "@/lib/utils";
 import { FocusColorId } from "@/store/color-control-focus-store";
 import { ThemeStyleProps } from "@/types/theme";
+import { COLOR_FALLBACKS } from "@/scripts/theme/lib.mjs";
 
 type ColorEntry = {
   key: keyof ThemeStyleProps;
@@ -35,6 +36,9 @@ const COLOR_GROUPS: ColorGroup[] = [
     colors: [
       { key: "primary", name: "primary", label: "Background" },
       { key: "primary-foreground", name: "primary-foreground", label: "Foreground" },
+      // Modified by Abtion: button/badge fill, falls back to primary (see COLOR_FALLBACKS)
+      { key: "brand", name: "brand", label: "Brand (buttons)" },
+      { key: "brand-foreground", name: "brand-foreground", label: "Brand FG" },
     ],
   },
   {
@@ -119,6 +123,9 @@ const COLOR_GROUPS: ColorGroup[] = [
     ],
   },
 ];
+
+/** Optional tokens show the token they fall back to until they're set (same as the app shell). */
+const FALLBACK_KEY = COLOR_FALLBACKS as Partial<Record<keyof ThemeStyleProps, keyof ThemeStyleProps>>;
 
 // Maps sidebar color keys to their base counterparts
 const SIDEBAR_SYNC_MAP: Partial<Record<keyof ThemeStyleProps, keyof ThemeStyleProps>> = {
@@ -282,7 +289,7 @@ export function ColorsTabContent({ currentStyles, updateStyle, updateStyles }: C
               <ColorPicker
                 key={color.name}
                 name={color.name}
-                color={currentStyles[color.key] as string}
+                color={(currentStyles[color.key] ?? currentStyles[FALLBACK_KEY[color.key] ?? color.key]) as string}
                 onChange={(value) => wrappedUpdateStyle(color.key, value as ThemeStyleProps[typeof color.key])}
                 label={color.label}
                 brandRef={liveRefs[color.key]}

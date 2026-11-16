@@ -42,6 +42,18 @@ export const COLOR_TOKENS = [
   "sidebar-ring",
 ]
 
+/**
+ * Valgfrie farvetokens og det token, de falder tilbage på, når temaet ikke har
+ * dem (samme fallback som i globals.css). `brand` er knappers og badges'
+ * baggrund – så `primary` kan være mørk nok til tekst og små kontroller,
+ * mens en lys brandfarve stadig bruges på knapperne.
+ */
+export const COLOR_FALLBACKS = {
+  brand: "primary",
+  "brand-foreground": "primary-foreground",
+}
+export const OPTIONAL_COLOR_TOKENS = Object.keys(COLOR_FALLBACKS)
+
 /** Øvrige tokens, der skal findes i :root (arves af .dark, hvis de mangler dér). */
 export const ROOT_TOKENS = [
   "radius",

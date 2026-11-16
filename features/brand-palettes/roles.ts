@@ -111,10 +111,14 @@ export const TOKEN_RULES: Record<string, TokenRule> = {
   border: { role: "neutral", light: step(200), dark: step(800) },
   input: { role: "neutral", light: step(200), dark: step(800) },
 
+  // brand = the exact brand colour, for buttons and badges (app shell `bg-brand`). primary is used for
+  // text, links and small controls on the page, so it walks from the brand colour until it reads as text.
+  brand: { role: "primary", light: step("anchor"), dark: step("anchor") },
+  "brand-foreground": { role: "primary", light: on("brand"), dark: on("brand") },
   primary: {
     role: "primary",
-    light: step("anchor", { warnBelow: { against: "background", ratio: UI_CONTRAST } }),
-    dark: step("anchor", { min: darkUI() }),
+    light: step("anchor", { min: lightText("background") }),
+    dark: step("anchor", { min: darkText("background") }),
   },
   "primary-foreground": { role: "primary", light: on("primary"), dark: on("primary") },
   ring: { role: "primary", light: step(400), dark: step(500) },

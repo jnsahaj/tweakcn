@@ -17,6 +17,9 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  /* Modified by Abtion: button/badge fill (app shell), falls back to primary */
+  --color-brand: var(--brand, var(--primary));
+  --color-brand-foreground: var(--brand-foreground, var(--primary-foreground));
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);

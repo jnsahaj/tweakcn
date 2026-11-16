@@ -5,7 +5,7 @@ import {
   defaultLightThemeStyles,
   defaultThemeState,
 } from "@/config/theme";
-import { formatColor } from "@/features/app-shell/generate-css";
+import { OPTIONAL_COLOR_KEYS, formatColor } from "@/features/app-shell/generate-css";
 import type { ThemeEditorState } from "@/types/editor";
 import { applyStyleToElement } from "@/utils/apply-style-to-element";
 import { getShadowMap } from "@/utils/shadows";
@@ -37,6 +37,10 @@ export function applyScopedTheme(themeState: ThemeEditorState, element: HTMLElem
       // formatColor keeps alpha (e.g. dark borders `oklch(1 0 0 / 10%)`); tweakcn's formatter drops it.
       applyStyleToElement(element, key, formatColor(value, "hsl"));
     }
+  }
+  // Optional brand colours: without them the preview falls back to primary in CSS.
+  for (const key of OPTIONAL_COLOR_KEYS) {
+    if (!current[key]) element.style.removeProperty(`--${key}`);
   }
   for (const [name, value] of Object.entries(getShadowMap(themeState))) {
     applyStyleToElement(element, name, value);

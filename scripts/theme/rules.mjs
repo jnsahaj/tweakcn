@@ -19,7 +19,12 @@ import {
   wcagContrast,
 } from "culori"
 
-import { COLOR_TOKENS, ROOT_TOKENS } from "./lib.mjs"
+import {
+  COLOR_FALLBACKS,
+  COLOR_TOKENS,
+  OPTIONAL_COLOR_TOKENS,
+  ROOT_TOKENS,
+} from "./lib.mjs"
 
 const toRgb = toGamut("rgb", "oklch")
 const toOklch = converter("oklch")
@@ -34,6 +39,7 @@ export const TEXT_PAIRS = [
   ["card-foreground", "card"],
   ["popover-foreground", "popover"],
   ["primary-foreground", "primary"],
+  ["brand-foreground", "brand", "knapper og badges"],
   ["secondary-foreground", "secondary"],
   ["accent-foreground", "accent"],
   ["muted-foreground", "background"],
@@ -68,11 +74,17 @@ export const fmt = (n) => n.toFixed(2).replace(".", ",")
 
 const MODE_LABEL = { light: "lyst", dark: "mørkt" }
 
-/** Slår et token op og følger var(--x) (inden for samme blok, ellers :root). */
+/**
+ * Slår et token op og følger var(--x) (inden for samme blok, ellers :root).
+ * Valgfrie tokens, temaet ikke har, slås op via COLOR_FALLBACKS.
+ */
 export function lookup(theme, mode, token, seen = new Set()) {
   const block = mode === "dark" ? theme.dark : theme.root
   const raw = block.get(token) ?? theme.root.get(token)
-  if (raw == null) return null
+  if (raw == null) {
+    const fallback = COLOR_FALLBACKS[token]
+    return fallback ? lookup(theme, mode, fallback, seen) : null
+  }
   const m = raw.match(/^var\(--([\w-]+)\)$/)
   if (m && !seen.has(m[1])) {
     seen.add(m[1])
@@ -199,7 +211,11 @@ export function checkTheme(theme, name = "tema") {
         const l = Number(m[1]) / (m[2] ? 100 : 1)
         if (l > 1) bad(token, `--${token} har OKLCH-lyshed ${m[1]} (max 1)`)
       }
-      if (COLOR_TOKENS.includes(token) || token === "shadow-color") {
+      if (
+        COLOR_TOKENS.includes(token) ||
+        OPTIONAL_COLOR_TOKENS.includes(token) ||
+        token === "shadow-color"
+      ) {
         if (!/^var\(/.test(value) && !parse(value))
           bad(token, `--${token} kan ikke læses som farve (${value})`)
       }

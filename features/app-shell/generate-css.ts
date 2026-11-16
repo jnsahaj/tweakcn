@@ -23,6 +23,9 @@ import { asLength, VAR_SHADOWS } from "./shadows";
 export type CssExportVariant = "app-shell" | "standalone";
 type Mode = "light" | "dark";
 
+/** Optional colours (app shell `COLOR_FALLBACKS`): exported only when set. */
+export const OPTIONAL_COLOR_KEYS = ["brand", "brand-foreground"] as const satisfies readonly (keyof ThemeStyleProps)[];
+
 export const COLOR_KEYS = [
   "background",
   "foreground",
@@ -89,6 +92,11 @@ function block(state: ThemeEditorState, mode: Mode, formatColor: (c: string) => 
   const v = (name: string, value: string) => lines.push(`  --${name}: ${value};`);
 
   for (const key of COLOR_KEYS) v(key, formatColor(s[key]));
+  // Optional: without them the app shell falls back to primary / primary-foreground
+  for (const key of OPTIONAL_COLOR_KEYS) {
+    const value = s[key];
+    if (value) v(key, formatColor(value));
+  }
 
   v("font-sans", formatFontStack(s["font-sans"], "font-sans"));
   v("font-serif", formatFontStack(s["font-serif"], "font-serif"));
@@ -117,6 +125,8 @@ function block(state: ThemeEditorState, mode: Mode, formatColor: (c: string) => 
 /** The app shell's `@theme inline` mapping (theme-generator-krav.md 2.1), verbatim. */
 export const APP_SHELL_THEME_INLINE = `@theme inline {
 ${COLOR_KEYS.map((k) => `  --color-${k}: var(--${k});`).join("\n")}
+  --color-brand: var(--brand, var(--primary));
+  --color-brand-foreground: var(--brand-foreground, var(--primary-foreground));
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);

@@ -12,6 +12,8 @@ export type FocusColorId =
   | "popover-foreground"
   | "primary"
   | "primary-foreground"
+  | "brand"
+  | "brand-foreground"
   | "secondary"
   | "secondary-foreground"
   | "accent"

@@ -14,6 +14,12 @@ export const themeStylePropsSchema = z.object({
   "popover-foreground": z.string().describe("Paired with `popover`."),
   primary: z.string().describe("The main color, paired with `primary-foreground`."),
   "primary-foreground": z.string().describe("Paired with `primary`."),
+  // Modified by Abtion: optional button/badge fill (app shell). Without it the app shell uses primary.
+  brand: z
+    .string()
+    .optional()
+    .describe("Optional fill for buttons and badges, paired with `brand-foreground`. Falls back to `primary`."),
+  "brand-foreground": z.string().optional().describe("Paired with `brand`. Falls back to `primary-foreground`."),
   secondary: z.string().describe("A secondary color, paired with `secondary-foreground`."),
   "secondary-foreground": z.string().describe("Paired with `secondary`."),
   muted: z.string().describe("A muted background color, paired with `muted-foreground`."),

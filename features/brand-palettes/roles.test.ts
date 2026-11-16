@@ -89,10 +89,10 @@ describe("role rules", () => {
     assert.equal(s.brandRefs!.light.primary, "forest-green-900");
   });
 
-  it("primary in dark mode moves lighter until it has 3:1 against the background", () => {
+  it("primary in dark mode moves lighter until it has 4.5:1 against the background", () => {
     const s = withRoles(); // forest green anchors at 900: far too dark on a dark background
     const ratio = contrast(s.styles.dark.primary, s.styles.dark.background);
-    assert.ok(ratio >= 3, `ratio ${ratio}`);
+    assert.ok(ratio >= 4.5, `ratio ${ratio}`);
     // nearest lighter step that passes: the step just darker than it must fail
     const ref = s.brandRefs!.dark.primary!;
     const stepNum = Number(ref.split("-").pop());
@@ -100,7 +100,7 @@ describe("role rules", () => {
     const darker = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950][
       [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].indexOf(stepNum) + 1
     ] as 900;
-    assert.ok(contrast(pal(s, "green").steps[darker].value, s.styles.dark.background) < 3);
+    assert.ok(contrast(pal(s, "green").steps[darker].value, s.styles.dark.background) < 4.5);
   });
 
   it("keeps the anchor in dark mode when it already has 3:1", () => {
@@ -282,10 +282,7 @@ describe("auto vs manual", () => {
 });
 
 // The rules must produce themes that pass the app shell's own theme:check (scripts/theme/rules.mjs).
-// Primary on background is a separate design question (a light brand colour as button colour) and
-// is left out here.
 describe("role rules pass the app shell theme check", () => {
-  const PRIMARY_PAIRS = /(^|\s)(sidebar-)?primary på (background|sidebar)/;
   const cases: [string, string, string][] = [
     ["lime on teal grey", "#C6E85B", "#2F5D55"],
     ["dark green on warm grey", "#0B3D2E", "#78716C"],
@@ -304,7 +301,7 @@ describe("role rules pass the app shell theme check", () => {
         if (destructive) s = assignRole(s, "destructive", "red");
         const css = generateTailwindV4Css({ ...editorDefaults, styles: s.styles } as never, "app-shell");
         const fails = checkTheme(parseTheme(css), name)
-          .filter((r: { status: string; check: string }) => r.status === "fail" && !PRIMARY_PAIRS.test(r.check))
+          .filter((r: { status: string }) => r.status === "fail")
           .map((r: { mode: string; check: string; detail: string }) => `${r.mode} ${r.check} ${r.detail}`);
         assert.deepEqual(fails, []);
       });
@@ -343,5 +340,26 @@ describe("destructive stays recognisably red", () => {
     for (const mode of ["light", "dark"] as const) {
       assert.ok(allowed(mode).includes(String(s.styles[mode].destructive)), `${mode}: ${s.styles[mode].destructive}`);
     }
+  });
+});
+
+describe("brand and primary", () => {
+  it("brand keeps the exact brand colour; primary darkens until it reads as text", () => {
+    let s = fresh();
+    s = addPalette(s, createPalette("Lime", "#C6E85B", "lime"));
+    s = assignRole(s, "neutral", "grey");
+    s = assignRole(s, "primary", "lime");
+    const lime = pal(s, "lime");
+    for (const mode of ["light", "dark"] as const) {
+      assert.equal(s.styles[mode].brand, lime.steps[lime.anchorStep].value, mode);
+      assert.ok(contrast(s.styles[mode]["brand-foreground"], s.styles[mode].brand) >= 4.5, `${mode} brand fg`);
+      assert.ok(contrast(s.styles[mode].primary, s.styles[mode].background) >= 4.5, `${mode} primary`);
+    }
+    assert.notEqual(s.styles.light.primary, s.styles.light.brand);
+  });
+
+  it("no primary role: brand is not set, so the app shell falls back to primary", () => {
+    const s = assignRole(fresh(), "neutral", "grey");
+    assert.equal(s.styles.light.brand, undefined);
   });
 });
