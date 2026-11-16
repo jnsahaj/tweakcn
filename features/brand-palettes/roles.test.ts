@@ -329,3 +329,19 @@ describe("switching preset", () => {
     assert.deepEqual(s.brandRoles!.manual, { light: [], dark: [] });
   });
 });
+
+describe("destructive stays recognisably red", () => {
+  it("never walks past 800 (light) / 200 (dark), and warns instead", () => {
+    let s = fresh();
+    s = addPalette(s, createPalette("Teal", "#2F5D55", "teal"));
+    s = addPalette(s, createPalette("Lime", "#C6E85B", "lime"));
+    s = assignRole(s, "neutral", "teal");
+    s = assignRole(s, "primary", "lime");
+    const red = createPalette("Red", "#DC2626", "x");
+    const allowed = (mode: "light" | "dark") =>
+      (mode === "light" ? [600, 700, 800] : [400, 300, 200]).map((n) => red.steps[n as 200].value);
+    for (const mode of ["light", "dark"] as const) {
+      assert.ok(allowed(mode).includes(String(s.styles[mode].destructive)), `${mode}: ${s.styles[mode].destructive}`);
+    }
+  });
+});

@@ -100,7 +100,7 @@ Tuned from the starting table, verified with `npx tsx features/brand-palettes/de
 | secondary-foreground | Secondary | 900 if ≥ 4.5:1, else auto contrast | 100 if ≥ 4.5:1, else auto contrast |
 | accent | Secondary | 100 | 800 |
 | accent-foreground | Secondary | 900 if ≥ 4.5:1, else auto contrast | 100 if ≥ 4.5:1, else auto contrast |
-| destructive | Destructive (built-in red while unassigned) | 600, darker until 4.5:1 on background and on its own 10% tint | 400, lighter until 4.5:1 on background and on its own 20% tint *(tuned: was 500 — a mid red can't carry 4.5:1 text with white/50/950. 2026-11-16: was 3:1 on background only)* |
+| destructive | Destructive (built-in red while unassigned) | 600, darker until 4.5:1 on background and on its own 10% tint, at most 800 | 400, lighter until 4.5:1 on background and on its own 20% tint, at most 200 *(tuned: was 500 — a mid red can't carry 4.5:1 text with white/50/950. 2026-11-16: was 3:1 on background only)* |
 | destructive-foreground | Destructive | auto contrast | auto contrast |
 | chart-1 | Primary | 600, darker until 3:1 on card | 400, lighter until 3:1 on card |
 | chart-2 | Secondary | 400, darker until 3:1 on card | 300, lighter until 3:1 on card |

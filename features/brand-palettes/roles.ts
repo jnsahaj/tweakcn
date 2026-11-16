@@ -50,6 +50,8 @@ export type ModeRule =
       whiteOption?: boolean;
       /** skip steps whose value equals one of these tokens (keeps chart series apart while walking) */
       avoid?: string[];
+      /** last step the walk may reach (keeps a colour recognisable instead of fading to white/black) */
+      limit?: ScaleStep;
     }
   /** a foreground for `on`: `prefer` if it reaches 4.5:1, else the best of white / 50 / 950 */
   | { kind: "on"; on: string; prefer?: ScaleStep }
@@ -125,8 +127,9 @@ export const TOKEN_RULES: Record<string, TokenRule> = {
   destructive: {
     role: "destructive",
     // error text on the page, and destructive text on its own tint (badges, outline buttons)
-    light: step(600, { min: lightText(["background", { tint: 0.1, over: "background" }]) }),
-    dark: step(400, { min: darkText(["background", { tint: 0.2, over: "background" }]) }),
+    // stops at 800 / 200: past that red turns into near-black / near-white and stops reading as an error
+    light: step(600, { min: lightText(["background", { tint: 0.1, over: "background" }]), limit: 800 }),
+    dark: step(400, { min: darkText(["background", { tint: 0.2, over: "background" }]), limit: 200 }),
   },
   "destructive-foreground": { role: "destructive", light: on("destructive"), dark: on("destructive") },
 
@@ -282,10 +285,11 @@ export function resolveRule(rule: ModeRule, ctx: Ctx): AutoEntry {
     const taken = new Set((rule.avoid ?? []).map((t) => String(ctx.styles[t] ?? "")));
     const i0 = SCALE_STEPS.indexOf(start);
     const dir = min.towards === "lighter" ? -1 : 1;
+    const iEnd = rule.limit !== undefined ? SCALE_STEPS.indexOf(rule.limit) : dir < 0 ? 0 : SCALE_STEPS.length - 1;
     let best = result;
     let bestWorst = worstContrast(result.value, min, ctx.styles);
     let found = bestWorst.ratio >= min.ratio;
-    for (let i = i0 + dir; !found && i >= 0 && i < SCALE_STEPS.length; i += dir) {
+    for (let i = i0 + dir; !found && (dir < 0 ? i >= iEnd : i <= iEnd); i += dir) {
       const candidate = fromStep(ctx, SCALE_STEPS[i]);
       if (taken.has(candidate.value)) continue;
       const w = worstContrast(candidate.value, min, ctx.styles);
