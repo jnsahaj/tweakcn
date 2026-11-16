@@ -1,6 +1,7 @@
+// Modified by Abtion: focusing a colour opens the Colors tab (no longer the default tab).
 import { create } from "zustand";
 
-import { DEFAULT_TAB, useControlsTabFromUrl } from "@/hooks/use-controls-tab-from-url";
+import { COLORS_TAB, useControlsTabFromUrl } from "@/hooks/use-controls-tab-from-url";
 
 export type FocusColorId =
   | "background"
@@ -11,6 +12,8 @@ export type FocusColorId =
   | "popover-foreground"
   | "primary"
   | "primary-foreground"
+  | "brand"
+  | "brand-foreground"
   | "secondary"
   | "secondary-foreground"
   | "accent"
@@ -92,7 +95,7 @@ export const useColorControlFocus = () => {
   const { handleSetTab } = useControlsTabFromUrl();
 
   const focusColor = (name: FocusColorId) => {
-    handleSetTab(DEFAULT_TAB);
+    handleSetTab(COLORS_TAB);
     requestAnimationFrame(() => {
       useColorControlFocusStore.getState().focusColor(name);
     });

@@ -1,4 +1,6 @@
+// Modified by Abtion: portals inside the theme preview render into its themed portal container.
 "use client"
+import { usePreviewPortalContainer } from "@/features/preview-scope/preview-theme-scope"
 
 import * as React from "react"
 import { Popover as PopoverPrimitive } from "radix-ui"
@@ -24,7 +26,7 @@ function PopoverContent({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Content>) {
   return (
-    <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Portal container={usePreviewPortalContainer()}>
       <PopoverPrimitive.Content
         data-slot="popover-content"
         align={align}

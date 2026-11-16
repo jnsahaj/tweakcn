@@ -1,4 +1,6 @@
+// Modified by Abtion: portals inside the theme preview render into its themed portal container.
 "use client";
+import { usePreviewPortalContainer } from "@/features/preview-scope/preview-theme-scope"
 
 import * as React from "react";
 
@@ -129,7 +131,7 @@ const ResponsiveDialogPortal = ({
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) => {
   const { shouldUseDialog } = useResponsiveDialog();
   const ResponsiveDialogPortal = shouldUseDialog ? DialogPrimitive.Portal : DrawerPrimitive.Portal;
-  return <ResponsiveDialogPortal {...props} />;
+  return <ResponsiveDialogPortal container={usePreviewPortalContainer()} {...props} />;
 };
 ResponsiveDialogPortal.displayName = "ResponsiveDialogPortal";
 

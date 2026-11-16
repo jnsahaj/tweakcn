@@ -1,4 +1,6 @@
+// Modified by Abtion: portals inside the theme preview render into its themed portal container.
 "use client"
+import { usePreviewPortalContainer } from "@/features/preview-scope/preview-theme-scope"
 
 import * as React from "react"
 import { Tooltip as TooltipPrimitive } from "radix-ui"
@@ -37,7 +39,7 @@ function TooltipContent({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) {
   return (
-    <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Portal container={usePreviewPortalContainer()}>
       <TooltipPrimitive.Content
         data-slot="tooltip-content"
         sideOffset={sideOffset}

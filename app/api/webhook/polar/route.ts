@@ -1,3 +1,5 @@
+// Modified by Abtion: Polar is optional; without POLAR_WEBHOOK_SECRET the webhook answers 503 instead of
+// failing the build.
 import { db } from "@/db";
 import { subscription } from "@/db/schema";
 import { Webhooks } from "@polar-sh/nextjs";
@@ -8,12 +10,16 @@ function safeParseDate(value: string | Date | null | undefined): Date | null {
   return new Date(value);
 }
 
-if (!process.env.POLAR_WEBHOOK_SECRET) {
-  throw new Error("POLAR_WEBHOOK_SECRET environment variable is required");
-}
+const webhookSecret = process.env.POLAR_WEBHOOK_SECRET;
 
-export const POST = Webhooks({
-  webhookSecret: process.env.POLAR_WEBHOOK_SECRET,
+const notConfigured = async () =>
+  Response.json(
+    { error: "Payments are not configured (POLAR_WEBHOOK_SECRET is not set)" },
+    { status: 503 }
+  );
+
+const handler = Webhooks({
+  webhookSecret: webhookSecret ?? "",
   onPayload: async ({ data, type }) => {
     if (
       type === "subscription.created" ||
@@ -98,3 +104,5 @@ export const POST = Webhooks({
     }
   },
 });
+
+export const POST = webhookSecret ? handler : notConfigured;

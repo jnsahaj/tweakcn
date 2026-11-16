@@ -7,9 +7,11 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
+    "test": "node --import tsx --test \"features/**/*.test.ts\"",
+    "theme:check": "node scripts/theme/check.mjs",
     "generate-theme-registry": "tsx scripts/generate-theme-registry.ts && tsx scripts/generate-registry.ts",
     "minify-live-preview": "pnpm dlx terser public/live-preview.js -o public/live-preview.min.js -c -m",
-    "prebuild": "pnpm generate-theme-registry",
+    "prebuild": "npm run generate-theme-registry",
     "postbuild": "pnpm minify-live-preview",
     "prepare": "husky"
   },

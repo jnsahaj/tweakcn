@@ -1,4 +1,6 @@
+// Modified by Abtion: portals inside the theme preview render into its themed portal container.
 "use client"
+import { usePreviewPortalContainer } from "@/features/preview-scope/preview-theme-scope"
 
 import * as React from "react"
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
@@ -32,7 +34,7 @@ function ContextMenuPortal({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Portal>) {
   return (
-    <ContextMenuPrimitive.Portal data-slot="context-menu-portal" {...props} />
+    <ContextMenuPrimitive.Portal container={usePreviewPortalContainer()} data-slot="context-menu-portal" {...props} />
   )
 }
 
@@ -98,7 +100,7 @@ function ContextMenuContent({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Content>) {
   return (
-    <ContextMenuPrimitive.Portal>
+    <ContextMenuPrimitive.Portal container={usePreviewPortalContainer()}>
       <ContextMenuPrimitive.Content
         data-slot="context-menu-content"
         className={cn(

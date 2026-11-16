@@ -1,3 +1,4 @@
+// Modified by Abtion: "Brand" tab (first, default); heading font; per-mode shadow opacity; theme check notes.
 "use client";
 
 import { AlertCircle, Sparkle } from "lucide-react";
@@ -5,6 +6,7 @@ import React from "react";
 
 import { ChatInterface } from "@/components/editor/ai/chat-interface";
 import { ColorsTabContent } from "@/components/editor/colors-tab-content";
+import { BrandTabContent } from "@/features/brand-palettes/components/brand-tab-content";
 import ControlSection from "@/components/editor/control-section";
 import { FontPicker } from "@/components/editor/font-picker";
 import HslAdjustmentControls from "@/components/editor/hsl-adjustment-controls";
@@ -16,7 +18,7 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
-import { COMMON_STYLES, defaultThemeState } from "@/config/theme";
+import { COMMON_STYLES, PER_MODE_STYLES, defaultThemeState } from "@/config/theme";
 import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useControlsTabFromUrl, type ControlTab } from "@/hooks/use-controls-tab-from-url";
 import { useEditorStore } from "@/store/editor-store";
@@ -24,6 +26,9 @@ import { type FontInfo } from "@/types/fonts";
 import { ThemeStyles, ThemeStyleProps } from "@/types/theme";
 import { buildFontFamily } from "@/utils/fonts";
 import { getAppliedThemeFont } from "@/utils/theme-fonts";
+import { Button } from "@/components/ui/button";
+import { CheckNotes } from "@/features/app-shell/components/check-notes";
+import { primaryCustomFamily } from "@/features/app-shell/font-stack";
 
 interface ThemeControlPanelProps {
   styles: ThemeStyles;
@@ -47,7 +52,7 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
   const updateStyle = React.useCallback(
     <K extends keyof typeof currentStyles>(key: K, value: (typeof currentStyles)[K]) => {
       // apply common styles to both light and dark modes
-      if (COMMON_STYLES.includes(key)) {
+      if (COMMON_STYLES.includes(key) && !PER_MODE_STYLES.includes(key)) {
         onChange({
           ...styles,
           light: { ...styles.light, [key]: value },
@@ -100,6 +105,7 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
         >
           <HorizontalScrollArea className="mt-2 mb-1 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
+              <TabsTriggerPill value="brand">Brand</TabsTriggerPill>
               <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
               <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
               <TabsTriggerPill value="other">Other</TabsTriggerPill>
@@ -114,6 +120,10 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
               </TabsTriggerPill>
             </TabsList>
           </HorizontalScrollArea>
+
+          <TabsContent value="brand" className="mt-1 size-full overflow-hidden">
+            <BrandTabContent />
+          </TabsContent>
 
           <TabsContent value="colors" className="mt-1 size-full overflow-hidden">
             <ColorsTabContent currentStyles={currentStyles} updateStyle={updateStyle} updateStyles={updateStyles} />
@@ -187,6 +197,40 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
                       />
                     </div>
                   </div>
+
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="font-heading" className="text-muted-foreground w-16 shrink-0 text-[11px] font-medium">
+                      Heading
+                    </Label>
+                    <div className="flex min-w-0 flex-1 items-center gap-1">
+                      <div className="min-w-0 flex-1">
+                        <FontPicker
+                          value={primaryCustomFamily(currentStyles["font-heading"]) || undefined}
+                          category="all"
+                          placeholder="Same as sans-serif"
+                          onSelect={(font: FontInfo) => {
+                            const fontFamily = buildFontFamily(font.family, font.category);
+                            updateStyle("font-heading", fontFamily);
+                          }}
+                        />
+                      </div>
+                      {currentStyles["font-heading"] && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground h-7 px-2 text-[11px]"
+                          onClick={() => updateStyle("font-heading", undefined)}
+                        >
+                          Same as sans
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground text-[11px]">
+                    Headings: page titles, card and section titles. Exported as --font-heading only when it differs
+                    from the sans font.
+                  </p>
+                  <CheckNotes tokens={["font-sans", "font-serif", "font-mono", "font-heading"]} />
                 </div>
               </ControlSection>
 
@@ -252,6 +296,11 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
                     }
                   }}
                 />
+                <p className="text-muted-foreground pb-1 text-[11px]">
+                  Opacity is set per mode: this value applies to {currentMode} mode. Dark backgrounds usually need
+                  0.4–0.6 for shadows to show.
+                </p>
+                <CheckNotes tokens={["shadow-color", "shadow-opacity"]} className="pb-2" />
               </ControlSection>
             </ScrollArea>
           </TabsContent>

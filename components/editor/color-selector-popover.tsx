@@ -1,5 +1,7 @@
+// Modified by Abtion: "Brand" group (brand palette steps) at the top of the colour popover.
 "use client";
 
+import { BrandListGroups, BrandSwatchRows } from "@/features/brand-palettes/components/brand-color-groups";
 import TailwindCSS from "@/components/icons/tailwind-css";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
@@ -24,14 +26,27 @@ import { Separator } from "../ui/separator";
 type ColorSelectorPopoverProps = {
   currentColor: string;
   onChange: (color: string) => void;
+  /** Live brand reference of this token, e.g. "forest-green-700". */
+  brandRef?: string;
+  /** Link the token to a brand step. Without it, picking a brand step just sets its colour. */
+  onBrandSelect?: (ref: string) => void;
 };
 
-export function ColorSelectorPopover({ currentColor, onChange }: ColorSelectorPopoverProps) {
+export function ColorSelectorPopover({
+  currentColor,
+  onChange,
+  brandRef,
+  onBrandSelect,
+}: ColorSelectorPopoverProps) {
   const handleColorSelect = useCallback(
     (color: string) => {
       onChange(color);
     },
     [onChange]
+  );
+  const handleBrandSelect = useCallback(
+    (ref: string, color: string) => (onBrandSelect ? onBrandSelect(ref) : onChange(color)),
+    [onBrandSelect, onChange]
   );
 
   const { setColorSelectorTab, colorSelectorTab } = usePreferencesStore();
@@ -102,6 +117,12 @@ export function ColorSelectorPopover({ currentColor, onChange }: ColorSelectorPo
                   No Tailwind color found.
                 </CommandEmpty>
 
+                <BrandListGroups
+                  activeRef={brandRef}
+                  isColorSelected={(c) => !brandRef && isColorSelected(c)}
+                  onSelect={handleBrandSelect}
+                />
+
                 {Object.entries(TAILWIND_PALETTE).map(([key, colors]) => {
                   const colorName = key.charAt(0).toUpperCase() + key.slice(1);
                   return (
@@ -136,6 +157,11 @@ export function ColorSelectorPopover({ currentColor, onChange }: ColorSelectorPo
           <TabsContent value="palette" className="my-0 w-full">
             <ScrollArea className="h-84 w-full">
               <div className="flex flex-col gap-0.5 p-1">
+                <BrandSwatchRows
+                  activeRef={brandRef}
+                  isColorSelected={(c) => !brandRef && isColorSelected(c)}
+                  onSelect={handleBrandSelect}
+                />
                 {Object.entries(TAILWIND_PALETTE).map(([key, colors]) => {
                   return (
                     <div key={key} className="flex gap-0.5">

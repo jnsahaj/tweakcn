@@ -1,3 +1,4 @@
+// Modified by Abtion: the edited theme is applied to the preview area only (PreviewThemeScope).
 "use client";
 
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
@@ -24,6 +25,7 @@ import InspectorOverlay from "./inspector-overlay";
 import ColorPreview from "./theme-preview/color-preview";
 import ExamplesPreviewContainer from "./theme-preview/examples-preview-container";
 import TabsTriggerPill from "./theme-preview/tabs-trigger-pill";
+import { PreviewThemeScope } from "@/features/preview-scope/preview-theme-scope";
 
 const DemoCards = lazy(() => import("@/components/examples/cards"));
 const DemoApplication = lazy(() => import("@/components/examples/application"));
@@ -174,7 +176,7 @@ const ThemePreviewPanel = ({
             </div>
           </HorizontalScrollArea>
 
-          <section
+          <PreviewThemeScope
             className={cn(
               "relative size-full overflow-hidden",
               activeTab === "cards" ? "pb-4" : "p-4 pt-1"
@@ -257,7 +259,7 @@ const ThemePreviewPanel = ({
                 </ScrollArea>
               </TabsContent>
             </div>
-          </section>
+          </PreviewThemeScope>
         </Tabs>
       </div>
 

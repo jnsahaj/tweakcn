@@ -1,6 +1,7 @@
+// Modified by Abtion: "App shell" / "Standalone" CSS export and the theme-check warning.
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Heart } from "lucide-react";
+import { Copy, Check, Heart, Download } from "lucide-react";
 import { ThemeEditorState } from "@/types/editor";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { CodeBlock } from "@/components/ai-elements/code-block";
@@ -29,6 +30,12 @@ import {
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { useDialogActions } from "@/hooks/use-dialog-actions";
 import { ColorFormat } from "@/types";
+import { generateTailwindV4Css } from "@/features/app-shell/generate-css";
+import {
+  useExportVariantStore,
+  type ExportVariant,
+} from "@/features/app-shell/export-variant-store";
+import { ExportCheckBanner } from "@/features/app-shell/components/export-check-banner";
 
 interface CodePanelProps {
   themeEditorState: ThemeEditorState;
@@ -56,7 +63,15 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState, themeId }) => {
   );
   const getAvailableColorFormats = usePreferencesStore((state) => state.getAvailableColorFormats);
 
-  const code = generateThemeCode(themeEditorState, colorFormat, tailwindVersion);
+  const variant = useExportVariantStore((state) => state.variant);
+  const setVariant = useExportVariantStore((state) => state.setVariant);
+  const isAppShell = variant === "app-shell";
+  const cssFileName = isAppShell ? "theme.css" : "index.css";
+  const code = isAppShell
+    ? generateTailwindV4Css(themeEditorState, "app-shell")
+    : tailwindVersion === "4"
+      ? generateTailwindV4Css(themeEditorState, "standalone", colorFormat)
+      : generateThemeCode(themeEditorState, colorFormat, tailwindVersion);
   const configCode = generateTailwindConfigCode(themeEditorState, colorFormat, tailwindVersion);
   const layoutCode = generateLayoutCode(themeEditorState);
 
@@ -108,6 +123,16 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState, themeId }) => {
     } catch (err) {
       console.error("Failed to copy text:", err);
     }
+  };
+
+  const downloadCss = () => {
+    const url = URL.createObjectURL(new Blob([code], { type: "text/css" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = cssFileName;
+    a.click();
+    URL.revokeObjectURL(url);
+    captureCopyEvent("DOWNLOAD_CODE");
   };
 
   const showRegistryCommand = useMemo(() => {
@@ -183,39 +208,68 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState, themeId }) => {
           </div>
         </div>
       </div>
+      <ExportCheckBanner styles={themeEditorState.styles} />
       <div className="mb-4 flex items-center gap-2">
         <Select
-          value={tailwindVersion}
-          onValueChange={(value: "3" | "4") => {
-            setTailwindVersion(value);
-            if (value === "4" && colorFormat === "hsl") {
-              setColorFormat("oklch");
-            }
-            if (activeTab === "tailwind.config.ts") {
-              setActiveTab("index.css");
-            }
+          value={variant}
+          onValueChange={(value: ExportVariant) => {
+            setVariant(value);
+            if (activeTab !== "index.css") setActiveTab("index.css");
           }}
         >
           <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
             <SelectValue className="focus:ring-transparent" />
           </SelectTrigger>
           <SelectContent className="z-99999">
-            <SelectItem value="3">Tailwind v3</SelectItem>
-            <SelectItem value="4">Tailwind v4</SelectItem>
+            <SelectItem value="app-shell">App shell</SelectItem>
+            <SelectItem value="standalone">Standalone</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={colorFormat} onValueChange={(value: ColorFormat) => setColorFormat(value)}>
-          <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
-            <SelectValue className="focus:ring-transparent" />
-          </SelectTrigger>
-          <SelectContent className="z-99999">
-            {getAvailableColorFormats().map((colorFormat) => (
-              <SelectItem key={colorFormat} value={colorFormat}>
-                {colorFormat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {!isAppShell && (
+          <>
+            <Select
+              value={tailwindVersion}
+              onValueChange={(value: "3" | "4") => {
+                setTailwindVersion(value);
+                if (value === "4" && colorFormat === "hsl") {
+                  setColorFormat("oklch");
+                }
+                if (activeTab === "tailwind.config.ts") {
+                  setActiveTab("index.css");
+                }
+              }}
+            >
+              <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
+                <SelectValue className="focus:ring-transparent" />
+              </SelectTrigger>
+              <SelectContent className="z-99999">
+                <SelectItem value="3">Tailwind v3</SelectItem>
+                <SelectItem value="4">Tailwind v4</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={colorFormat}
+              onValueChange={(value: ColorFormat) => setColorFormat(value)}
+            >
+              <SelectTrigger className="bg-muted/50 w-fit gap-1 border-none outline-hidden focus:border-none focus:ring-transparent">
+                <SelectValue className="focus:ring-transparent" />
+              </SelectTrigger>
+              <SelectContent className="z-99999">
+                {getAvailableColorFormats().map((colorFormat) => (
+                  <SelectItem key={colorFormat} value={colorFormat}>
+                    {colorFormat}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </>
+        )}
+        {isAppShell && (
+          <span className="text-muted-foreground text-xs">
+            :root and .dark only, OKLCH · use with{" "}
+            <code className="font-mono">npm run theme:apply</code>
+          </span>
+        )}
       </div>
       <Tabs
         value={activeTab}
@@ -226,20 +280,34 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState, themeId }) => {
         <div className="bg-muted/50 flex flex-none items-center justify-between border-b px-4 py-2">
           <TabsList className="h-8 bg-transparent p-0">
             <TabsTrigger value="index.css" className="h-7 px-3 text-sm font-medium">
-              index.css
+              {cssFileName}
             </TabsTrigger>
-            {tailwindVersion === "3" && (
+            {!isAppShell && tailwindVersion === "3" && (
               <TabsTrigger value="tailwind.config.ts" className="h-7 px-3 text-sm font-medium">
                 tailwind.config.ts
               </TabsTrigger>
             )}
-            <TabsTrigger value="layout.tsx" className="h-7 px-3 text-sm font-medium">
-              layout.tsx (Next.js)
-            </TabsTrigger>
+            {!isAppShell && (
+              <TabsTrigger value="layout.tsx" className="h-7 px-3 text-sm font-medium">
+                layout.tsx (Next.js)
+              </TabsTrigger>
+            )}
             <TabsIndicator className="bg-background rounded-sm" />
           </TabsList>
 
           <div className="flex items-center gap-2">
+            {activeTab === "index.css" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => downloadCss()}
+                className="h-8"
+                aria-label="Download"
+              >
+                <Download className="size-4" />
+                <span className="sr-only md:not-sr-only">Download</span>
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"

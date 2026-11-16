@@ -1,4 +1,6 @@
+// Modified by Abtion: portals inside the theme preview render into its themed portal container.
 "use client"
+import { usePreviewPortalContainer } from "@/features/preview-scope/preview-theme-scope"
 
 import * as React from "react"
 import { HoverCard as HoverCardPrimitive } from "radix-ui"
@@ -26,7 +28,7 @@ function HoverCardContent({
   ...props
 }: React.ComponentProps<typeof HoverCardPrimitive.Content>) {
   return (
-    <HoverCardPrimitive.Portal data-slot="hover-card-portal">
+    <HoverCardPrimitive.Portal container={usePreviewPortalContainer()} data-slot="hover-card-portal">
       <HoverCardPrimitive.Content
         data-slot="hover-card-content"
         align={align}

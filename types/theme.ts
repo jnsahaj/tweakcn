@@ -1,3 +1,4 @@
+// Modified by Abtion: optional "font-heading" token (app shell export).
 import { theme } from "@/db/schema";
 import { InferSelectModel } from "drizzle-orm";
 import { z } from "zod";
@@ -13,6 +14,12 @@ export const themeStylePropsSchema = z.object({
   "popover-foreground": z.string().describe("Paired with `popover`."),
   primary: z.string().describe("The main color, paired with `primary-foreground`."),
   "primary-foreground": z.string().describe("Paired with `primary`."),
+  // Modified by Abtion: optional button/badge fill (app shell). Without it the app shell uses primary.
+  brand: z
+    .string()
+    .optional()
+    .describe("Optional fill for buttons and badges, paired with `brand-foreground`. Falls back to `primary`."),
+  "brand-foreground": z.string().optional().describe("Paired with `brand`. Falls back to `primary-foreground`."),
   secondary: z.string().describe("A secondary color, paired with `secondary-foreground`."),
   "secondary-foreground": z.string().describe("Paired with `secondary`."),
   muted: z.string().describe("A muted background color, paired with `muted-foreground`."),
@@ -54,6 +61,10 @@ export const themeStylePropsSchema = z.object({
     ),
   "font-serif": z.string().describe("The preferred serif font family."),
   "font-mono": z.string().describe("The preferred monospace font family. Used for code blocks."),
+  "font-heading": z
+    .string()
+    .optional()
+    .describe("Optional font for headings. Leave empty to use the sans font."),
   radius: z
     .string()
     .describe("The global border-radius for components. Use 0rem for sharp corners."),

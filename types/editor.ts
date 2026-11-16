@@ -1,3 +1,5 @@
+// Modified by Abtion: brand palette fields on ThemeEditorState.
+import type { BrandPaletteThemeFields } from "@/features/brand-palettes/types";
 import { ThemeStyles } from "./theme";
 
 // Base interface for any editor's state
@@ -15,7 +17,7 @@ export interface EditorPreviewProps {
   styles: ThemeStyles;
 }
 
-export interface ThemeEditorState extends BaseEditorState {
+export interface ThemeEditorState extends BaseEditorState, BrandPaletteThemeFields {
   preset?: string;
   styles: ThemeStyles;
   currentMode: "light" | "dark";

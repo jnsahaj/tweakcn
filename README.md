@@ -1,3 +1,7 @@
+<!-- Modified by Abtion -->
+
+> **Note:** This is a modified fork of [tweakcn](https://github.com/jnsahaj/tweakcn) by Abtion, adding brand palettes. Licensed under Apache 2.0 like the original; see `LICENSE`.
+
 <div align="center">
   <h1>tweakcn.com</h1>
 </div>

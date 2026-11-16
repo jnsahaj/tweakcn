@@ -1,9 +1,11 @@
+// Modified by Abtion: the page root gets the neutral default theme; the edited theme is scoped to the preview.
 "use client";
 
 import { createContext, useContext, useEffect } from "react";
 import { useEditorStore } from "../store/editor-store";
 import { applyThemeToElement } from "@/utils/apply-theme";
 import { useThemePresetFromUrl } from "@/hooks/use-theme-preset-from-url";
+import { neutralEditorState } from "@/features/preview-scope/apply-scoped-theme";
 
 type Theme = "dark" | "light";
 
@@ -38,7 +40,9 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
     const root = document.documentElement;
     if (!root) return;
 
-    applyThemeToElement(themeState, root);
+    // The editor chrome keeps tweakcn's neutral default theme; only the preview gets the edited theme
+    // (see features/preview-scope).
+    applyThemeToElement(neutralEditorState(themeState), root);
   }, [themeState]);
 
   const handleThemeChange = (newMode: Theme) => {

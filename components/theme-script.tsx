@@ -1,3 +1,4 @@
+// Modified by Abtion: root CSS variables come from the neutral default theme.
 "use client";
 
 import { defaultDarkThemeStyles, defaultLightThemeStyles } from "@/config/theme";
@@ -64,12 +65,14 @@ export function ThemeScript() {
         mode === "dark"
           ? themeState?.styles?.dark || defaultDarkStyles
           : themeState?.styles?.light || defaultLightStyles;
+      // Abtion: the editor chrome always uses the neutral default theme (edited theme is preview-only).
+      const rootStyles = mode === "dark" ? defaultDarkStyles : defaultLightStyles;
 
       const stylesToApply = Object.keys(defaultLightStyles);
 
       // Apply Theme Styles properties
       for (const styleName of stylesToApply) {
-        const value = activeStyles[styleName];
+        const value = rootStyles[styleName];
         if (value !== undefined) {
           root.style.setProperty(\`--\${styleName}\`, value);
         }

@@ -1,3 +1,4 @@
+// Modified by Abtion: also loads the optional heading font.
 "use client";
 
 import { useMounted } from "@/hooks/use-mounted";
@@ -13,14 +14,16 @@ export function DynamicFontLoader() {
   const fontSans = themeState.styles.light["font-sans"];
   const fontSerif = themeState.styles.light["font-serif"];
   const fontMono = themeState.styles.light["font-mono"];
+  const fontHeading = themeState.styles.light["font-heading"] ?? "";
 
   const currentFonts = useMemo(() => {
     return {
       sans: fontSans,
       serif: fontSerif,
       mono: fontMono,
+      heading: fontHeading,
     } as const;
-  }, [fontSans, fontSerif, fontMono]);
+  }, [fontSans, fontSerif, fontMono, fontHeading]);
 
   useEffect(() => {
     if (!isMounted) return;

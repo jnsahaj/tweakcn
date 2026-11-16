@@ -1,3 +1,4 @@
+/* Modified by Abtion: see the note above the unlayered `*` rule below. */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "streamdown/styles.css";
@@ -16,6 +17,9 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  /* Modified by Abtion: button/badge fill (app shell), falls back to primary */
+  --color-brand: var(--brand, var(--primary));
+  --color-brand-foreground: var(--brand-foreground, var(--primary-foreground));
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -44,11 +48,16 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
+  /* Modified by Abtion: heading font and the app shell's radius scale (shadcn's multipliers, 7 steps). */
+  --font-heading: var(--font-heading, var(--font-sans));
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 
   /* Computed Shadow Variants */
   --shadow-2xs: var(--shadow-2xs);
@@ -77,9 +86,11 @@
   }
 }
 
+/* Modified by Abtion: removed the unlayered `border-color: var(--color-border)` here. Unlayered CSS beats
+   Tailwind's utility layer, so it overrode `border-input`, `border-ring`, `border-destructive` etc. on every
+   component. The same default already comes from `@apply border-border` in @layer base above. */
 * {
   color-scheme: light dark;
-  border-color: var(--color-border);
 }
 
 body {
@@ -87,6 +98,14 @@ body {
   color: var(--color-foreground);
   -webkit-font-smoothing: antialiased;
   letter-spacing: var(--letter-spacing);
+}
+
+/* Modified by Abtion: in the preview, headings use the theme's heading font, as the app shell's titles do. */
+@layer base {
+  [data-preview-theme-scope] :is(h1, h2, h3, [data-slot="card-title"]),
+  [data-preview-portal-root] :is(h1, h2, h3, [data-slot="dialog-title"], [data-slot="sheet-title"]) {
+    font-family: var(--font-heading, var(--font-sans));
+  }
 }
 
 @layer base {

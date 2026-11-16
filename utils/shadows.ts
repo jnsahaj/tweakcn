@@ -1,3 +1,4 @@
+// Modified by Abtion: shadow alpha capped at 1.
 import { colorFormatter } from "./color-converter";
 import { applyStyleToElement } from "./apply-style-to-element";
 import { ThemeEditorState } from "../types/editor";
@@ -17,8 +18,9 @@ export const getShadowMap = (themeEditorState: ThemeEditorState) => {
   const blur = styles["shadow-blur"];
   const spread = styles["shadow-spread"];
   const opacity = parseFloat(styles["shadow-opacity"]);
+  // Modified by Abtion: alpha is capped at 1 (shadow-2xl used opacity × 2.5).
   const color = (opacityMultiplier: number) =>
-    `hsl(${hsl} / ${(opacity * opacityMultiplier).toFixed(2)})`;
+    `hsl(${hsl} / ${Math.min(1, opacity * opacityMultiplier).toFixed(2)})`;
 
   const secondLayer = (fixedOffsetY: string, fixedBlur: string): string => {
     // Use the same offsetX as the first layer

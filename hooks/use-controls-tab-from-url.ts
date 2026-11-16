@@ -1,7 +1,9 @@
+// Modified by Abtion: "brand" tab added first and made the default.
 import { useQueryState } from "nuqs";
 
-const TABS = ["colors", "typography", "other", "ai"] as const;
+const TABS = ["brand", "colors", "typography", "other", "ai"] as const;
 export const DEFAULT_TAB = TABS[0];
+export const COLORS_TAB = "colors";
 export type ControlTab = (typeof TABS)[number];
 
 export const useControlsTabFromUrl = () => {
