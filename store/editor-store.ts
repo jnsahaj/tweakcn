@@ -24,6 +24,8 @@ interface EditorStore {
   saveThemeCheckpoint: () => void;
   restoreThemeCheckpoint: () => void;
   resetToCurrentPreset: () => void;
+  /** Modified by Abtion: blank slate – app shell default theme, no brand palettes or roles. Undoable. */
+  startNewTheme: () => void;
   hasThemeChangedFromCheckpoint: () => boolean;
   hasUnsavedChanges: () => boolean;
   undo: () => void;
@@ -167,6 +169,26 @@ export const useEditorStore = create<EditorStore>()(
           themeState: newThemeState,
           themeCheckpoint: newThemeState,
           history: [],
+          future: [],
+        });
+      },
+      startNewTheme: () => {
+        const { themeState: current, history } = get();
+        const newThemeState: ThemeEditorState = {
+          ...defaultThemeState,
+          preset: "default",
+          currentMode: current.currentMode,
+          brandPalettes: undefined,
+          brandRefs: undefined,
+          brandRoles: undefined,
+        };
+        const updatedHistory = [...history, { state: current, timestamp: Date.now() }].slice(
+          -MAX_HISTORY_COUNT
+        );
+        set({
+          themeState: newThemeState,
+          themeCheckpoint: newThemeState,
+          history: updatedHistory,
           future: [],
         });
       },

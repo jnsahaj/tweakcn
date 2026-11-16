@@ -6,6 +6,7 @@ import { useThemesData } from "@/hooks/themes";
 import { CodeButton } from "./code-button";
 import { ImportButton } from "./import-button";
 import { MoreOptions } from "./more-options";
+import { NewThemeButton } from "./new-theme-button";
 import { PublishButton } from "./publish-button";
 import { ResetButton } from "./reset-button";
 import { SaveButton } from "./save-button";
@@ -54,6 +55,7 @@ export function ActionBarButtons({
       <Separator orientation="vertical" className="mx-1 h-8" />
       <UndoRedoButtons disabled={isGeneratingTheme} />
       <Separator orientation="vertical" className="mx-1 h-8" />
+      <NewThemeButton disabled={isGeneratingTheme} />
       <ResetButton onClick={handleReset} disabled={!hasUnsavedChanges() || isGeneratingTheme} />
       <div className="hidden items-center gap-1 md:flex">
         <ImportButton onClick={onImportClick} disabled={isGeneratingTheme} />
