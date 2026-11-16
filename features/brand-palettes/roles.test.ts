@@ -10,6 +10,7 @@ import {
   getTokenRoleStatus,
   resetAllToAuto,
   resetTokenToAuto,
+  forgetRoleTracking,
   setWhiteBackground,
   syncRoles,
   type RoleState,
@@ -309,4 +310,22 @@ describe("role rules pass the app shell theme check", () => {
       });
     }
   }
+});
+
+describe("switching preset", () => {
+  it("brand roles apply again on top of the new preset's styles", () => {
+    const s0 = withRoles();
+    const lime = s0.styles.light.primary;
+    const preset = {
+      light: { ...defaultThemeState.styles.light, primary: "#8839ef", radius: "1rem" },
+      dark: { ...defaultThemeState.styles.dark, primary: "#cba6f7" },
+    };
+    // without forgetting, every role token is taken as a manual edit and stays on the preset
+    const stuck = syncRoles({ ...s0, styles: preset });
+    assert.equal(stuck.styles.light.primary, "#8839ef");
+    const s = syncRoles(forgetRoleTracking({ ...s0, styles: preset }));
+    assert.equal(s.styles.light.primary, lime);
+    assert.equal(s.styles.light.radius, "1rem");
+    assert.deepEqual(s.brandRoles!.manual, { light: [], dark: [] });
+  });
 });

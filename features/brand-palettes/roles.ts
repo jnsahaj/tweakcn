@@ -415,6 +415,16 @@ export function resetTokenToAuto<S extends RoleState>(state: S, mode: Mode, toke
   }));
 }
 
+/**
+ * After the styles were replaced wholesale (preset applied, reset to preset): forget what the rules
+ * last wrote, so the new values aren't mistaken for manual edits and assigned roles apply again on
+ * top of the preset. Palettes and role assignments are kept.
+ */
+export function forgetRoleTracking<S extends RoleState>(state: S): S {
+  if (!state.brandRoles) return state;
+  return { ...state, brandRoles: { ...state.brandRoles, auto: { light: {}, dark: {} }, manual: { light: [], dark: [] } } };
+}
+
 export function resetAllToAuto<S extends RoleState>(state: S): S {
   return withRoles(state, (r) => ({ ...r, manual: { light: [], dark: [] }, auto: { light: {}, dark: {} } }));
 }

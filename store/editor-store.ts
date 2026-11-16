@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { ThemeEditorState } from "@/types/editor";
 import { defaultThemeState } from "@/config/theme";
 import { getPresetThemeStyles } from "@/utils/theme-preset-helper";
+import { forgetRoleTracking } from "@/features/brand-palettes/roles";
 import { isDeepEqual } from "@/lib/utils";
 
 const MAX_HISTORY_COUNT = 30;
@@ -89,12 +90,13 @@ export const useEditorStore = create<EditorStore>()(
         const currentTime = Date.now();
 
         const newStyles = getPresetThemeStyles(preset);
-        const newThemeState: ThemeEditorState = {
+        // Brand roles re-apply on top of the preset (role-sync runs after this update)
+        const newThemeState: ThemeEditorState = forgetRoleTracking({
           ...currentThemeState,
           preset,
           styles: newStyles,
           hslAdjustments: defaultThemeState.hslAdjustments,
-        };
+        });
 
         const newHistoryEntry = { state: currentThemeState, timestamp: currentTime };
         let updatedHistory = [...oldHistory, newHistoryEntry];
@@ -155,11 +157,11 @@ export const useEditorStore = create<EditorStore>()(
         const currentThemeState = get().themeState;
 
         const presetThemeStyles = getPresetThemeStyles(currentThemeState.preset ?? "default");
-        const newThemeState: ThemeEditorState = {
+        const newThemeState: ThemeEditorState = forgetRoleTracking({
           ...currentThemeState,
           styles: presetThemeStyles,
           hslAdjustments: defaultThemeState.hslAdjustments,
-        };
+        });
 
         set({
           themeState: newThemeState,
