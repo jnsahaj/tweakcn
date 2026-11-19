@@ -47,3 +47,6 @@ next-env.d.ts
 
 # build artifacts
 public/r/themes
+
+# VibeRaven race output
+.viberaven/

@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { subscription } from "@/db/schema";
 import { Webhooks } from "@polar-sh/nextjs";
+import { sql } from "drizzle-orm";
 
 function safeParseDate(value: string | Date | null | undefined): Date | null {
   if (!value) return null;
@@ -61,13 +62,18 @@ export const POST = Webhooks({
           amount: subscriptionData.amount,
         });
 
+        // Polar can deliver events late or out of order. Only apply an event that is
+        // not older than the row we already stored.
+        const eventModifiedAt = subscriptionData.modifiedAt || new Date();
+
         await db
           .insert(subscription)
           .values(subscriptionData)
           .onConflictDoUpdate({
             target: subscription.id,
+            setWhere: sql`${subscription.modifiedAt} IS NULL OR ${subscription.modifiedAt} <= ${eventModifiedAt}`,
             set: {
-              modifiedAt: subscriptionData.modifiedAt || new Date(),
+              modifiedAt: eventModifiedAt,
               amount: subscriptionData.amount,
               currency: subscriptionData.currency,
               recurringInterval: subscriptionData.recurringInterval,
