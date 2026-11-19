@@ -1,0 +1,21 @@
+{
+  "rule": "An older Polar subscription event (active) must not overwrite a newer one (canceled)",
+  "setup": "INSERT INTO subscription(id,status,\"modifiedAt\") VALUES ('sub_1','incomplete','2026-01-01 00:00:00+00')",
+  "invariant": "SELECT status <> 'active' FROM subscription WHERE id='sub_1'",
+  "isolation": [
+    "read committed"
+  ],
+  "notes": "SQL transliteration of the webhook handler; covers bounded SQL orders only, not HTTP or Stripe.",
+  "requests": [
+    {
+      "statements": [
+        "INSERT INTO subscription(id,status,\"modifiedAt\") VALUES ('sub_1','active','2026-02-01 10:00:00+00') ON CONFLICT (id) DO UPDATE SET status=excluded.status,\"modifiedAt\"=excluded.\"modifiedAt\" WHERE subscription.\"modifiedAt\" IS NULL OR subscription.\"modifiedAt\" <= excluded.\"modifiedAt\""
+      ]
+    },
+    {
+      "statements": [
+        "INSERT INTO subscription(id,status,\"modifiedAt\") VALUES ('sub_1','canceled','2026-02-02 10:00:00+00') ON CONFLICT (id) DO UPDATE SET status=excluded.status,\"modifiedAt\"=excluded.\"modifiedAt\" WHERE subscription.\"modifiedAt\" IS NULL OR subscription.\"modifiedAt\" <= excluded.\"modifiedAt\""
+      ]
+    }
+  ]
+}
